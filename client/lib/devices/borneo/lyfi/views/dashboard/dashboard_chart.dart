@@ -11,12 +11,9 @@ class DashboardChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<LyfiViewModel, ({bool isOnline, LyfiMode mode, LyfiState? state, bool isOn})>(
-      selector: (_, vm) => (isOnline: vm.isOnline, mode: vm.mode, state: vm.ledState, isOn: vm.isOn),
+    return Selector<LyfiViewModel, ({LyfiMode mode, LyfiState? state, bool isOn})>(
+      selector: (_, vm) => (mode: vm.mode, state: vm.ledState, isOn: vm.isOn),
       builder: (context, props, _) {
-        if (!props.isOnline) {
-          return const SizedBox.shrink();
-        }
         final Widget widget = switch (props.mode) {
           LyfiMode.manual => ManualRunningChart(),
           LyfiMode.scheduled => ScheduleRunningChart(),
@@ -28,9 +25,8 @@ class DashboardChart extends StatelessWidget {
         };
 
         return AnimatedSwitcher(
-          duration: Duration(milliseconds: 100), // 减少动画时间，让图表快速出现
+          duration: Duration(milliseconds: 100),
           transitionBuilder: (Widget child, Animation<double> animation) {
-            // 使用SlideTransition而不是FadeTransition，避免透明度变化影响背景
             return SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(0.0, 0.1),
