@@ -217,15 +217,20 @@ class DimmingView extends StatelessWidget {
   }
 }
 
-class _LyfiDeviceDetailsScreen extends StatelessWidget {
-  const _LyfiDeviceDetailsScreen();
+class _LyfiDeviceDetailsScreenWithLoader extends StatelessWidget {
+  final bool isLoading;
 
+  const _LyfiDeviceDetailsScreenWithLoader({required this.isLoading});
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) {
+          return;
+        }
+        if (isLoading) {
+          Navigator.of(context).pop();
           return;
         }
         final vm = context.read<LyfiViewModel>();
@@ -240,76 +245,82 @@ class _LyfiDeviceDetailsScreen extends StatelessWidget {
         appBar: AppBar(
           foregroundColor: Theme.of(context).colorScheme.onSurface,
           backgroundColor: Theme.of(context).colorScheme.surface,
-          title: Selector<LyfiViewModel, String>(
-            selector: (_, vm) => vm.name,
-            builder: (contet, name, _) => Text(name),
-          ),
-          leading: Selector<LyfiViewModel, bool>(
-            selector: (context, vm) => vm.isBusy.value,
-            builder: (context, isBusy, child) =>
-                IconButton(icon: Icon(Icons.arrow_back), onPressed: isBusy ? null : () => goBack(context)),
-          ),
+          title: isLoading
+              ? Text('Loading...')
+              : Selector<LyfiViewModel, String>(selector: (_, vm) => vm.name, builder: (contet, name, _) => Text(name)),
+          leading: isLoading
+              ? IconButton(icon: Icon(Icons.arrow_back), onPressed: () => Navigator.of(context).pop())
+              : Selector<LyfiViewModel, bool>(
+                  selector: (context, vm) => vm.isBusy.value,
+                  builder: (context, isBusy, child) =>
+                      IconButton(icon: Icon(Icons.arrow_back), onPressed: isBusy ? null : () => goBack(context)),
+                ),
           actions: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               child: SizedBox(
                 height: 16,
                 width: 16,
-                child: Selector<LyfiViewModel, ({bool isBusy, bool isOnline})>(
-                  selector: (_, vm) => (isBusy: vm.isBusy.value, isOnline: vm.isOnline),
-                  builder: (context, vm, _) => Container(child: vm.isBusy ? CircularProgressIndicator() : null),
-                ),
-              ),
-            ),
-            /*
-            Selector<LyfiViewModel, ({bool isOn, bool isLocked, bool isBusy})>(
-              selector: (_, vm) =>
-                  (isOn: vm.isOn, isLocked: vm.isLocked, isBusy: vm.isBusy.value),
-              builder: (context, vm, _) => vm.isLocked
-                  ? SizedBox()
-                  : Padding(
-                      padding: EdgeInsets.all(4),
-                      child: IconButton(
-                        icon: Icon(Icons.check, size: 24),
-                        onPressed: vm.isOn && !vm.isBusy
-                            ? () =>
-                                context.read<LyfiViewModel>().toggleLock(true)
-                            : null,
+                child: isLoading
+                    ? null
+                    : Selector<LyfiViewModel, ({bool isBusy, bool isOnline})>(
+                        selector: (_, vm) => (isBusy: vm.isBusy.value, isOnline: vm.isOnline),
+                        builder: (context, vm, _) => Container(child: vm.isBusy ? CircularProgressIndicator() : null),
                       ),
-                    ),
-            ),
-            */
-            Selector<LyfiViewModel, RssiLevel?>(
-              selector: (_, vm) => vm.rssiLevel,
-              builder: (content, rssi, _) => Center(
-                child: switch (rssi) {
-                  null => Icon(Icons.link_off, size: 24, color: Theme.of(context).colorScheme.error),
-                  RssiLevel.strong => Icon(Icons.wifi_rounded, size: 24),
-                  RssiLevel.medium => Icon(Icons.wifi_2_bar_rounded, size: 24),
-                  RssiLevel.weak => Icon(Icons.wifi_1_bar_rounded, size: 24),
-                },
               ),
             ),
+            isLoading
+                ? Icon(Icons.link_off, size: 24, color: Theme.of(context).colorScheme.outline)
+                : Selector<LyfiViewModel, RssiLevel?>(
+                    selector: (_, vm) => vm.rssiLevel,
+                    builder: (content, rssi, _) => Center(
+                      child: switch (rssi) {
+                        null => Icon(Icons.link_off, size: 24, color: Theme.of(context).colorScheme.error),
+                        RssiLevel.strong => Icon(Icons.wifi_rounded, size: 24),
+                        RssiLevel.medium => Icon(Icons.wifi_2_bar_rounded, size: 24),
+                        RssiLevel.weak => Icon(Icons.wifi_1_bar_rounded, size: 24),
+                      },
+                    ),
+                  ),
             SizedBox(width: 16),
           ],
         ),
-        body: Selector<LyfiViewModel, ({bool isOnline, bool isLocked})>(
-          selector: (_, props) => (isOnline: props.isOnline, isLocked: props.isLocked),
-          builder: (context, props, _) {
-            final vm = context.read<LyfiViewModel>();
-            return AnimatedSwitcher(
-              duration: Duration(milliseconds: 500),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              child: switch ((vm.isOnline, vm.isOn, vm.isLocked)) {
-                (true, true, false) => DimmingView(key: ValueKey('dimming')),
-                (true, _, true) => DashboardView(key: ValueKey('dashboard')),
-                (false, _, _) => DeviceOfflineView(key: ValueKey('offline')),
-                (true, false, false) => DashboardView(key: ValueKey('dashboard')),
-              },
-            );
-          },
+        body: Column(
+          children: [
+            // Horizontal loading indicator
+            SizedBox(
+              height: 1,
+              child: isLoading
+                  ? LinearProgressIndicator(
+                      backgroundColor: Colors.transparent,
+                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                    )
+                  : Container(color: Colors.transparent),
+            ),
+            // Main content
+            Expanded(
+              child: isLoading
+                  ? Container() // Empty container while loading
+                  : Selector<LyfiViewModel, ({bool isOnline, bool isLocked})>(
+                      selector: (_, props) => (isOnline: props.isOnline, isLocked: props.isLocked),
+                      builder: (context, props, _) {
+                        final vm = context.read<LyfiViewModel>();
+                        return AnimatedSwitcher(
+                          duration: Duration(milliseconds: 500),
+                          transitionBuilder: (Widget child, Animation<double> animation) {
+                            return FadeTransition(opacity: animation, child: child);
+                          },
+                          child: switch ((vm.isOnline, vm.isOn, vm.isLocked)) {
+                            (true, true, false) => DimmingView(key: ValueKey('dimming')),
+                            (true, _, true) => DashboardView(key: ValueKey('dashboard')),
+                            (false, _, _) => DeviceOfflineView(key: ValueKey('offline')),
+                            (true, false, false) => DashboardView(key: ValueKey('dashboard')),
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
     );
@@ -345,12 +356,10 @@ class LyfiView extends StatelessWidget {
         return FutureBuilder(
           future: vm.initFuture,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Scaffold(body: Center(child: CircularProgressIndicator()));
-            } else if (snapshot.hasError) {
+            if (snapshot.hasError) {
               return Scaffold(body: Center(child: Text('Error: [${snapshot.error}]')));
             } else {
-              return _LyfiDeviceDetailsScreen();
+              return _LyfiDeviceDetailsScreenWithLoader(isLoading: snapshot.connectionState == ConnectionState.waiting);
             }
           },
         );
