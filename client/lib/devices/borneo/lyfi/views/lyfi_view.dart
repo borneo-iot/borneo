@@ -295,14 +295,22 @@ class _LyfiDeviceDetailsScreenWithLoader extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
                     )
-                  : Container(color: Colors.transparent),
+                  : ValueListenableBuilder<bool>(
+                      valueListenable: context.read<LyfiViewModel>().isBusy,
+                      builder: (context, isBusy, _) => isBusy
+                          ? LinearProgressIndicator(
+                              backgroundColor: Colors.transparent,
+                              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
+                            )
+                          : Container(color: Colors.transparent),
+                    ),
             ),
             // Main content
             Expanded(
               child: isLoading
                   ? Container() // Empty container while loading
-                  : Selector<LyfiViewModel, ({bool isOnline, bool isLocked})>(
-                      selector: (_, props) => (isOnline: props.isOnline, isLocked: props.isLocked),
+                  : Selector<LyfiViewModel, ({bool isLocked})>(
+                      selector: (_, props) => (isLocked: props.isLocked),
                       builder: (context, props, _) {
                         final vm = context.read<LyfiViewModel>();
                         return AnimatedSwitcher(
@@ -310,11 +318,10 @@ class _LyfiDeviceDetailsScreenWithLoader extends StatelessWidget {
                           transitionBuilder: (Widget child, Animation<double> animation) {
                             return FadeTransition(opacity: animation, child: child);
                           },
-                          child: switch ((vm.isOnline, vm.isOn, vm.isLocked)) {
-                            (true, true, false) => DimmingView(key: ValueKey('dimming')),
-                            (true, _, true) => DashboardView(key: ValueKey('dashboard')),
-                            (false, _, _) => DeviceOfflineView(key: ValueKey('offline')),
-                            (true, false, false) => DashboardView(key: ValueKey('dashboard')),
+                          child: switch ((vm.isOn, vm.isLocked)) {
+                            (true, false) => DimmingView(key: ValueKey('dimming')),
+                            (_, true) => DashboardView(key: ValueKey('dashboard')),
+                            (false, false) => DashboardView(key: ValueKey('dashboard')),
                           },
                         );
                       },

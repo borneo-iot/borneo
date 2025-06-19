@@ -80,6 +80,7 @@ abstract class BaseDeviceViewModel extends BaseViewModel
 
   Future<void> initialize() async {
     assert(!isInitialized);
+    isBusy.value = true;
     try {
       deviceEntity = await deviceManager.getDevice(deviceID);
       _isLoaded = true;
@@ -101,6 +102,7 @@ abstract class BaseDeviceViewModel extends BaseViewModel
         startTimer();
       }
       isInitialized = true;
+      isBusy.value = false;
     }
   }
 
