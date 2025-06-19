@@ -40,7 +40,7 @@ class DeviceTile extends StatelessWidget {
           return ListTile(
             dense: false,
             tileColor: Theme.of(context).colorScheme.surfaceContainer,
-            onTap: vm.isBusy ? null : () => openDevicePage(context, vm.deviceEntity),
+            onTap: vm.isBusy.value ? null : () => openDevicePage(context, vm.deviceEntity),
             onLongPress: () => _showDevicePopMenu(context),
             leading: Container(
               height: 48,

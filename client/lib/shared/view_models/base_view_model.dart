@@ -10,29 +10,26 @@ abstract class BaseViewModel extends ChangeNotifier {
   bool _isDisposed = false;
   final taskQueue = AsyncQueue.autoStart(allowDuplicate: true);
   final CancellationToken taskQueueCancelToken = CancellationToken();
-  bool isBusy = false;
+  final ValueNotifier<bool> isBusy = ValueNotifier<bool>(false);
 
   bool get isDisposed => _isDisposed;
 
   BaseViewModel({this.logger});
-
   @override
   void dispose() {
     if (!_isDisposed) {
       taskQueueCancelToken.cancel();
       taskQueue.stop();
       taskQueue.close();
+      isBusy.dispose();
       super.dispose();
       _isDisposed = true;
     }
   }
 
-  void setBusy(bool value, {bool notify = true}) {
+  void setBusy(bool value) {
     assertNotDisposed(this);
-    isBusy = value;
-    if (notify) {
-      notifyListeners();
-    }
+    isBusy.value = value;
   }
 
   @override
@@ -62,10 +59,10 @@ abstract class BaseViewModel extends ChangeNotifier {
     assertNotDisposed(this);
 
     taskQueue.addJob((args) async {
-      if (isBusy) {
+      if (isBusy.value) {
         return;
       }
-      isBusy = true;
+      isBusy.value = true;
       // notifyListeners();
       try {
         return await job().asCancellable(taskQueueCancelToken);
@@ -76,7 +73,7 @@ abstract class BaseViewModel extends ChangeNotifier {
         notifyAppError('$e', error: e, stackTrace: stackTrace);
       } finally {
         if (!isDisposed) {
-          isBusy = false;
+          isBusy.value = false;
           if (notify) {
             notifyListeners();
           }

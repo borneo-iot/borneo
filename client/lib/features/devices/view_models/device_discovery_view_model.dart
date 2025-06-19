@@ -112,7 +112,7 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
   }
 
   void toggleSmartConfigSwitch(bool? value) async {
-    super.isBusy = true;
+    super.isBusy.value = true;
     notifyListeners();
     try {
       _isSmartConfigEnabled = value ?? false;
@@ -125,7 +125,7 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
     } catch (e, stackTrace) {
       notifyAppError("$e", error: e, stackTrace: stackTrace);
     } finally {
-      super.isBusy = false;
+      super.isBusy.value = false;
       notifyListeners();
     }
   }
@@ -145,15 +145,14 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
 
   Future<void> startDiscovery() async {
     assert(!isDiscovering);
-    assert(!super.isBusy);
+    assert(!super.isBusy.value);
     assert(isSmartConfigEnabled ? isFormValid : true);
 
     _newDeviceCount = 0;
     _discoveredCount = 0;
     _discoveredDevices.value = [];
-
     try {
-      super.isBusy = true;
+      super.isBusy.value = true;
       await _deviceManager.startDiscovery();
 
       if (isSmartConfigEnabled) {
@@ -170,17 +169,17 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
       super.notifyAppError('Error occurred while discovering devices: $e', error: e, stackTrace: stackTrace);
       _logger.e('Failed to discovering devices', error: e, stackTrace: stackTrace);
     } finally {
-      super.isBusy = false;
+      super.isBusy.value = false;
       notifyListeners();
     }
   }
 
   Future<void> stopDiscovery() async {
-    if (!isDiscovering || super.isBusy) {
+    if (!isDiscovering || super.isBusy.value) {
       return;
     }
 
-    super.isBusy = true;
+    super.isBusy.value = true;
     notifyListeners();
     try {
       if (isSmartConfigEnabled) {
@@ -190,7 +189,7 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
     } catch (e, stackTrace) {
       super.notifyAppError('Error occurred while stopping discovery: $e', error: e, stackTrace: stackTrace);
     } finally {
-      super.isBusy = false;
+      super.isBusy.value = false;
       notifyListeners();
     }
   }

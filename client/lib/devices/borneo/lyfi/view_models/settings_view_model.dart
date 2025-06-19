@@ -19,26 +19,25 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
   final LyfiDeviceStatus ledStatus;
 
   ILyfiDeviceApi get api => deviceManager.getBoundDevice(deviceID).api<ILyfiDeviceApi>();
-
   GeoLocation? _location;
   GeoLocation? get location => _location;
-  bool get canUpdateGeoLocation => !isBusy && isOnline;
+  bool get canUpdateGeoLocation => !isBusy.value && isOnline;
 
   String? _timezone;
   String? get timezone => _timezone;
-  bool get canUpdateTimezone => !isBusy && isOnline;
+  bool get canUpdateTimezone => !isBusy.value && isOnline;
 
   LedCorrectionMethod _correctionMethod = LedCorrectionMethod.log;
   LedCorrectionMethod get correctionMethod => _correctionMethod;
-  bool get canUpdateCorrectionMethod => !isBusy && isOnline;
+  bool get canUpdateCorrectionMethod => !isBusy.value && isOnline;
 
   Duration _temporaryDuration = Duration(minutes: 20);
   Duration get temporaryDuration => _temporaryDuration;
-  bool get canUpdateTemporaryDuration => !isBusy && isOnline;
+  bool get canUpdateTemporaryDuration => !isBusy.value && isOnline;
 
   PowerBehavior _powerBehavior;
   PowerBehavior get powerBehavior => _powerBehavior;
-  bool get canUpdatePowerBehavior => !isBusy && isOnline;
+  bool get canUpdatePowerBehavior => !isBusy.value && isOnline;
 
   SettingsViewModel({
     required super.deviceID,
@@ -132,7 +131,6 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
 
   Future<void> updateTimezone() async {
     super.enqueueUIJob(() async {
-      isBusy = true;
       notifyListeners();
       final tzc = TimezoneConverter();
       await tzc.init();
@@ -145,7 +143,6 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
 
   Future<void> updateLedCorrectionMethod(LedCorrectionMethod newMethod) async {
     super.enqueueUIJob(() async {
-      isBusy = true;
       notifyListeners();
       await api.setCorrectionMethod(boundDevice!.device, newMethod);
       _correctionMethod = newMethod;
@@ -155,7 +152,6 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
 
   Future<void> updateTemporaryDuration(Duration dur) async {
     super.enqueueUIJob(() async {
-      isBusy = true;
       notifyListeners();
       await api.setTemporaryDuration(boundDevice!.device, dur);
       _temporaryDuration = dur;
@@ -165,7 +161,6 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
 
   Future<void> updatePowerBehavior(PowerBehavior behavior) async {
     super.enqueueUIJob(() async {
-      isBusy = true;
       notifyListeners();
       await api.setPowerBehavior(boundDevice!.device, behavior);
       _powerBehavior = behavior;

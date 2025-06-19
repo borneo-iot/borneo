@@ -165,7 +165,7 @@ class HeroPanel extends StatelessWidget {
                       icon: Icon(Icons.wb_sunny_outlined, size: 24),
                     ),
                   ],
-                  onSelectionChanged: vm.isOn && !vm.isBusy && !vm.isLocked
+                  onSelectionChanged: vm.isOn && !vm.isBusy.value && !vm.isLocked
                       ? (Set<LyfiMode> newSelection) {
                           if (mode != newSelection.single) {
                             vm.switchMode(newSelection.single);
@@ -245,7 +245,7 @@ class _LyfiDeviceDetailsScreen extends StatelessWidget {
             builder: (contet, name, _) => Text(name),
           ),
           leading: Selector<LyfiViewModel, bool>(
-            selector: (context, vm) => vm.isBusy,
+            selector: (context, vm) => vm.isBusy.value,
             builder: (context, isBusy, child) =>
                 IconButton(icon: Icon(Icons.arrow_back), onPressed: isBusy ? null : () => goBack(context)),
           ),
@@ -256,16 +256,15 @@ class _LyfiDeviceDetailsScreen extends StatelessWidget {
                 height: 16,
                 width: 16,
                 child: Selector<LyfiViewModel, ({bool isBusy, bool isOnline})>(
-                  selector: (_, vm) => (isBusy: vm.isBusy, isOnline: vm.isOnline),
+                  selector: (_, vm) => (isBusy: vm.isBusy.value, isOnline: vm.isOnline),
                   builder: (context, vm, _) => Container(child: vm.isBusy ? CircularProgressIndicator() : null),
                 ),
               ),
             ),
-
             /*
             Selector<LyfiViewModel, ({bool isOn, bool isLocked, bool isBusy})>(
               selector: (_, vm) =>
-                  (isOn: vm.isOn, isLocked: vm.isLocked, isBusy: vm.isBusy),
+                  (isOn: vm.isOn, isLocked: vm.isLocked, isBusy: vm.isBusy.value),
               builder: (context, vm, _) => vm.isLocked
                   ? SizedBox()
                   : Padding(

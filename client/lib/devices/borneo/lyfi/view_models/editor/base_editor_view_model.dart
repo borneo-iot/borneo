@@ -21,7 +21,7 @@ abstract class BaseEditorViewModel extends ChangeNotifier implements IEditor {
   bool get isInitialized => _isInitialized;
 
   bool get isOnline => parent.isOnline;
-  bool get isBusy => parent.isBusy;
+  bool get isBusy => parent.isBusy.value;
 
   bool _isChanged = false;
 

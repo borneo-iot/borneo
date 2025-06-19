@@ -74,14 +74,14 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
 
   Future<void> initialize() async {
     assert(!isInitialized);
-    super.setBusy(true, notify: false);
+    super.setBusy(true);
     try {
       await _reloadAll();
     } on CancelledException {
       logger?.i("Initialization future cancelled");
     } finally {
       _isInitialized = true;
-      super.setBusy(false, notify: false);
+      super.setBusy(false);
     }
   }
 
@@ -100,14 +100,14 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
   }
 
   Future<void> refresh({bool probeOfflineDevices = false}) async {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
     _tryReloadAll();
   }
 
   Future<void> _tryReloadAll() async {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
 
@@ -169,7 +169,7 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
     } catch (e, stackTrace) {
       notifyAppError('Failed to change the group for device "${device.name}"', error: e, stackTrace: stackTrace);
     } finally {
-      setBusy(false, notify: false);
+      setBusy(false);
     }
   }
 
@@ -212,32 +212,32 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
   }
 
   Future<void> deleteDevice(String id) async {
-    assert(!isBusy);
-    setBusy(true, notify: false);
+    assert(!isBusy.value);
+    setBusy(true);
     try {
       await _deviceManager.delete(id);
     } catch (e, stackTrace) {
       notifyAppError('Failed to delete device', error: e, stackTrace: stackTrace);
     } finally {
-      setBusy(false, notify: false);
+      setBusy(false);
     }
   }
 
   void _onCurrentSceneChanged(CurrentSceneChangedEvent event) {
-    if (!super.isDisposed && _isInitialized && !super.isBusy) {
+    if (!super.isDisposed && _isInitialized && !super.isBusy.value) {
       _tryReloadAll();
     }
   }
 
   void _onDeviceGroupCreated(DeviceGroupCreatedEvent event) {
-    if (!isBusy) {
+    if (!isBusy.value) {
       _tryReloadAll();
       notifyListeners();
     }
   }
 
   void _onDeviceGroupDeleted(DeviceGroupDeletedEvent event) {
-    if (!isBusy) {
+    if (!isBusy.value) {
       _tryReloadAll();
       notifyListeners();
     }

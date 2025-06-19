@@ -249,7 +249,7 @@ class DevicesScreen extends StatelessWidget {
     return ChangeNotifierProvider<GroupViewModel>.value(
       value: g,
       builder: (context, child) => Selector<GroupViewModel, ({String name, bool isEmpty, bool isDummy, bool isBusy})>(
-        selector: (_, gvm) => (name: gvm.name, isEmpty: gvm.isEmpty, isDummy: gvm.isDummy, isBusy: gvm.isBusy),
+        selector: (_, gvm) => (name: gvm.name, isEmpty: gvm.isEmpty, isDummy: gvm.isDummy, isBusy: gvm.isBusy.value),
         builder: (context, groupData, child) {
           if (groupData.isDummy && groupData.isEmpty) {
             return SizedBox(height: 0);

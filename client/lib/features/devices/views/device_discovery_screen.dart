@@ -20,7 +20,7 @@ class StartStopButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Selector<DeviceDiscoveryViewModel, (bool, bool, bool, bool)>(
-      selector: (context, vm) => (vm.isBusy, vm.isSmartConfigEnabled, vm.isFormValid, vm.isDiscovering),
+      selector: (context, vm) => (vm.isBusy.value, vm.isSmartConfigEnabled, vm.isFormValid, vm.isDiscovering),
       builder: (context, tuple, child) {
         final (isBusy, isSmartConfigEnabled, isFormValid, isDiscovering) = tuple;
         final vm = context.read<DeviceDiscoveryViewModel>();
@@ -91,7 +91,7 @@ class _SmartConfigFormPanelState extends State<SmartConfigFormPanel> {
                 Consumer<DeviceDiscoveryViewModel>(
                   builder: (context, vm, child) => Switch(
                     value: vm.isSmartConfigEnabled,
-                    onChanged: !vm.isDiscovering && !vm.isBusy ? vm.toggleSmartConfigSwitch : null,
+                    onChanged: !vm.isDiscovering && !vm.isBusy.value ? vm.toggleSmartConfigSwitch : null,
                   ),
                 ),
               ],
@@ -114,7 +114,7 @@ class _SmartConfigFormPanelState extends State<SmartConfigFormPanel> {
                             onChanged: (value) {
                               vm.ssid = value;
                             },
-                            enabled: !vm.isDiscovering && !vm.isBusy && vm.isSmartConfigEnabled,
+                            enabled: !vm.isDiscovering && !vm.isBusy.value && vm.isSmartConfigEnabled,
                             decoration: InputDecoration(
                               labelText: "2.4G WiFi Name (SSID)",
                               border: InputBorder.none,
@@ -141,7 +141,7 @@ class _SmartConfigFormPanelState extends State<SmartConfigFormPanel> {
                           onChanged: (value) {
                             vm.password = value;
                           },
-                          enabled: !vm.isDiscovering && !vm.isBusy && vm.isSmartConfigEnabled,
+                          enabled: !vm.isDiscovering && !vm.isBusy.value && vm.isSmartConfigEnabled,
                           decoration: InputDecoration(
                             labelText: "2.4G WiFi Password",
                             border: InputBorder.none,
@@ -228,7 +228,7 @@ class DeviceDiscoveryScreen extends StatelessWidget {
             return Scaffold(body: Center(child: Text('Error: ︀{snapshot.error}')));
           } else {
             return Selector<DeviceDiscoveryViewModel, bool>(
-              selector: (_, vm) => vm.isBusy,
+              selector: (_, vm) => vm.isBusy.value,
               builder: (context, isBusy, _) => Scaffold(
                 appBar: AppBar(
                   title: Text('Add new device'),
@@ -255,7 +255,7 @@ class DeviceDiscoveryScreen extends StatelessWidget {
         if (didPop) {
           return;
         }
-        if (!vm.isDiscovering && !vm.isBusy) {
+        if (!vm.isDiscovering && !vm.isBusy.value) {
           Navigator.of(context).pop(vm.newDeviceCount > 0);
         }
       },
@@ -353,7 +353,7 @@ class DeviceDiscoveryScreen extends StatelessWidget {
                                       height: 48,
                                       width: 48,
                                       child: IconButton.filledTonal(
-                                        onPressed: vm.isBusy || vm.isDiscovering
+                                        onPressed: vm.isBusy.value || vm.isDiscovering
                                             ? null
                                             : () => _showAddDeviceSheet(context, vm, vm.discoveredDevices.value[index]),
                                         icon: const Icon(Icons.add_outlined, size: 32),

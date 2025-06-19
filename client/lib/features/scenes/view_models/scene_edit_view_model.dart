@@ -49,9 +49,8 @@ class SceneEditViewModel extends AbstractScreenViewModel {
   Future<void> onInitialize() async {
     // nothing to do
   }
-
   Future<void> submit() async {
-    assert(!isBusy && isInitialized);
+    assert(!isBusy.value && isInitialized);
 
     setBusy(true);
     try {
@@ -68,14 +67,14 @@ class SceneEditViewModel extends AbstractScreenViewModel {
   }
 
   Future<void> delete() async {
-    assert(!isCreation && !isBusy && isInitialized);
-    setBusy(true, notify: false);
+    assert(!isCreation && !isBusy.value && isInitialized);
+    setBusy(true);
     try {
       await _sceneManager.delete(id!);
     } catch (e, stackTrace) {
       notifyAppError('Failed to delete scene `$name`', error: e, stackTrace: stackTrace);
     } finally {
-      setBusy(false, notify: false);
+      setBusy(false);
     }
   }
 }

@@ -55,11 +55,11 @@ class ScenesViewModel extends BaseViewModel with ViewModelEventBusMixin, ViewMod
 
   Future<void> initialize() async {
     assert(!isInitialized);
-    super.setBusy(true, notify: false);
+    super.setBusy(true);
     try {
       await _reload();
     } finally {
-      super.setBusy(false, notify: false);
+      super.setBusy(false);
       _isInitialized = true;
     }
   }
@@ -119,17 +119,17 @@ class ScenesViewModel extends BaseViewModel with ViewModelEventBusMixin, ViewMod
   }
 
   Future<void> switchCurrentScene(String newSceneID) async {
-    assert(!isBusy && _isInitialized);
+    assert(!isBusy.value && _isInitialized);
 
     if (newSceneID == _sceneManager.current.id) {
       return;
     }
 
-    super.setBusy(true, notify: false);
+    super.setBusy(true);
     try {
       await _sceneManager.changeCurrent(newSceneID);
     } finally {
-      super.setBusy(false, notify: false);
+      super.setBusy(false);
     }
   }
 
@@ -139,7 +139,7 @@ class ScenesViewModel extends BaseViewModel with ViewModelEventBusMixin, ViewMod
   }
 
   void _onSceneDeleted(SceneDeletedEvent event) {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
     _reload().then((_) => notifyListeners());
@@ -147,7 +147,7 @@ class ScenesViewModel extends BaseViewModel with ViewModelEventBusMixin, ViewMod
 
   void _onSceneUpdated(SceneUpdatedEvent event) {
     /*
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
     for (final svm in _scenes) {
@@ -168,7 +168,7 @@ class ScenesViewModel extends BaseViewModel with ViewModelEventBusMixin, ViewMod
   }
 
   void _onSceneCreated(SceneCreatedEvent event) {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
     _reload().then((_) => notifyListeners());

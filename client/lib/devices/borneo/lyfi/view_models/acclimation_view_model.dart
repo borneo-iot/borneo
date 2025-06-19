@@ -67,7 +67,7 @@ class AcclimationViewModel extends BaseLyfiDeviceViewModel {
   }
 
   bool get canSubmit {
-    return isOnline && !isBusy && validate() && isChanged;
+    return isOnline && !isBusy.value && validate() && isChanged;
   }
 
   bool validate() {

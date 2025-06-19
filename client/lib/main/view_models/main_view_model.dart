@@ -113,13 +113,13 @@ class MainViewModel extends BaseViewModel with ViewModelEventBusMixin, ViewModel
   }
 
   void _onDeviceDiscoveringStarted(DeviceDiscoveringStartedEvent event) {
-    if (!isDisposed && !isBusy) {
+    if (!isDisposed && !isBusy.value) {
       notifyListeners();
     }
   }
 
   void _onDeviceDiscoveringStopped(DeviceDiscoveringStoppedEvent event) {
-    if (!isDisposed && !isBusy) {
+    if (!isDisposed && !isBusy.value) {
       notifyListeners();
     }
   }

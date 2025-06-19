@@ -10,7 +10,7 @@ class DashboardPowerSwitchTile extends StatelessWidget {
     return Selector<LyfiViewModel, ({bool isOn, bool isBusy, bool isLocked, double overallBrightness, bool canUnlock})>(
       selector: (_, vm) => (
         isOn: vm.isOn,
-        isBusy: vm.isBusy,
+        isBusy: vm.isBusy.value,
         isLocked: vm.isLocked,
         overallBrightness: vm.overallBrightness,
         canUnlock: vm.canUnlock,

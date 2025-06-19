@@ -49,7 +49,7 @@ class GroupEditScreen extends StatelessWidget {
       ),
       SizedBox(height: 24),
       ElevatedButton(
-        onPressed: vm.isBusy
+        onPressed: vm.isBusy.value
             ? null
             : () async {
                 if (_formKey.currentState?.validate() ?? false) {

@@ -41,15 +41,14 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
 
   final ValueNotifier<Duration> _temporaryRemaining = ValueNotifier<Duration>(Duration.zero);
   ValueNotifier<Duration> get temporaryRemaining => _temporaryRemaining;
-
-  bool get canLockOrUnlock => !isBusy && isOn;
+  bool get canLockOrUnlock => !isBusy.value && isOn;
   bool get canUnlock =>
-      !isBusy &&
+      !isBusy.value &&
       super.isOnline &&
       isOn &&
       isLocked &&
       (_ledState == LyfiState.normal || _ledState == LyfiState.temporary);
-  bool get canTimedOn => !isBusy && (!isOn || _mode == LyfiMode.scheduled);
+  bool get canTimedOn => !isBusy.value && (!isOn || _mode == LyfiMode.scheduled);
 
   IEditor? currentEditor;
   final List<ScheduledInstant> scheduledInstants = [];
@@ -253,7 +252,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   }
 
   bool get canSwitchTemporaryState =>
-      !isBusy &&
+      !isBusy.value &&
       super.isOn &&
       (_mode == LyfiMode.scheduled || _mode == LyfiMode.sun) &&
       (ledState == LyfiState.temporary || ledState == LyfiState.normal);

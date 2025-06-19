@@ -14,10 +14,9 @@ class RoutineSummaryViewModel extends BaseViewModel {
   final IAppNotificationService _notification;
   final RoutineManager _routineManager;
   RoutineSummaryViewModel(this._model, this._routineManager, this._notification, {super.logger});
-
   Future<void> executeRoutine() async {
-    if (super.isBusy) return;
-    isBusy = true;
+    if (super.isBusy.value) return;
+    isBusy.value = true;
     notifyListeners();
     try {
       await _routineManager.executeRoutine(_model.id);
@@ -26,16 +25,16 @@ class RoutineSummaryViewModel extends BaseViewModel {
       super.logger?.e(e.toString(), error: e, stackTrace: stackTrace);
       _notification.showError('Routine execution failed', body: e.toString());
     } finally {
-      isBusy = false;
+      isBusy.value = false;
       notifyListeners();
     }
   }
 
   Future<void> undoRoutine() async {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
-    isBusy = true;
+    isBusy.value = true;
     notifyListeners();
     try {
       await _routineManager.undoRoutine(_model.id);
@@ -44,7 +43,7 @@ class RoutineSummaryViewModel extends BaseViewModel {
       super.logger?.e(e.toString(), error: e, stackTrace: stackTrace);
       _notification.showError('Undo routine failed', body: e.toString());
     } finally {
-      isBusy = false;
+      isBusy.value = false;
       notifyListeners();
     }
   }

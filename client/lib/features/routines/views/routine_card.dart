@@ -18,7 +18,7 @@ class RoutineCard extends StatelessWidget {
         final colorScheme = Theme.of(context).colorScheme;
         return Consumer<RoutineSummaryViewModel>(
           builder: (context, vm, _) {
-            final isBusy = vm.isBusy;
+            final isBusy = vm.isBusy.value;
             final isActive = vm.isActive;
             final bgColor = isActive ? colorScheme.primaryContainer : colorScheme.surfaceContainer;
             final fgColor = isActive ? colorScheme.onPrimaryContainer : colorScheme.onSurface;

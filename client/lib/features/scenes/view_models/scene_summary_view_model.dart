@@ -103,7 +103,7 @@ class SceneSummaryViewModel extends BaseViewModel {
   }
 
   void _onDeviceBound(DeviceBoundEvent event) {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
 
@@ -115,7 +115,7 @@ class SceneSummaryViewModel extends BaseViewModel {
   }
 
   void _onDeviceRemoved(DeviceRemovedEvent event) {
-    if (isBusy) {
+    if (isBusy.value) {
       return;
     }
 

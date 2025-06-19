@@ -45,7 +45,7 @@ class GroupEditViewModel extends AbstractScreenViewModel {
   }
 
   Future<void> submit() async {
-    assert(!isBusy && isInitialized);
+    assert(!isBusy.value && isInitialized);
 
     setBusy(true);
     try {
@@ -60,14 +60,14 @@ class GroupEditViewModel extends AbstractScreenViewModel {
   }
 
   Future<void> delete() async {
-    assert(!isCreation && !isBusy && isInitialized);
-    setBusy(true, notify: false);
+    assert(!isCreation && !isBusy.value && isInitialized);
+    setBusy(true);
     try {
       await _groupManager.delete(id!);
     } catch (e, stackTrace) {
       notifyAppError('Failed to delete group `$name`', error: e, stackTrace: stackTrace);
     } finally {
-      setBusy(false, notify: false);
+      setBusy(false);
     }
   }
 }

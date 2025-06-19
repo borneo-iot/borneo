@@ -125,7 +125,7 @@ abstract class BaseDeviceViewModel extends BaseViewModel
     Future<void> Function(T, {CancellationToken? cancelToken}) operation, {
     CancellationToken? cancelToken,
   }) async {
-    if (!isOnline || isBusy || !isInitialized) {
+    if (!isOnline || isBusy.value || !isInitialized) {
       return false;
     }
 
@@ -151,7 +151,7 @@ abstract class BaseDeviceViewModel extends BaseViewModel
   Future<void> refreshStatus({CancellationToken? cancelToken});
 
   Future<void> _periodicRefreshTask(CancellationToken? cancelToken) async {
-    if (!hasListeners || isBusy || !isOnline) {
+    if (!hasListeners || isBusy.value || !isOnline) {
       return;
     }
     try {
@@ -186,16 +186,16 @@ abstract class BaseDeviceViewModel extends BaseViewModel
   }
 
   Future<void> delete() async {
-    assert(!isBusy);
+    assert(!isBusy.value);
     stopTimer();
-    isBusy = true;
+    isBusy.value = true;
     try {
       await deviceManager.delete(deviceID);
     } catch (e, stackTrace) {
       logger?.e('$e', error: e, stackTrace: stackTrace);
       notifyAppError('$e', stackTrace: stackTrace);
     } finally {
-      isBusy = false;
+      isBusy.value = false;
       notifyListeners();
     }
   }
