@@ -307,13 +307,13 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   void switchPowerOnOff(bool onOff) async {
     try {
       if (isSuspectedOffline) {
-        notifyAppError(this.gt.translate('Device is offline. Please retry after reconnection.'));
+        notifyAppError(this.gt.translate('Device is offline. Please retry after reconnection.'), allowDuplicates: true);
         return;
       }
       await _switchPowerOnOff(onOff);
     } catch (e, stackTrace) {
       logger?.e('Error in switchPowerOnOff: $e', error: e, stackTrace: stackTrace);
-      notifyAppError(this.gt.translate('Failed to switch power: {0}', pArgs: [e.toString()]));
+      notifyAppError(this.gt.translate('Failed to switch power: {0}', pArgs: [e.toString()]), allowDuplicates: true);
     }
   }
 
@@ -335,7 +335,10 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       await _switchTemporaryState();
     } catch (e, stackTrace) {
       logger?.e('Error in switchTemporaryState: $e', error: e, stackTrace: stackTrace);
-      notifyAppError(this.gt.translate('Failed to switch temporary state: {0}', pArgs: [e.toString()]));
+      notifyAppError(
+        this.gt.translate('Failed to switch temporary state: {0}', pArgs: [e.toString()]),
+        allowDuplicates: true,
+      );
     }
   }
 
@@ -361,7 +364,10 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       await _switchDiscoState();
     } catch (e, stackTrace) {
       logger?.e('Error in switchDiscoState: $e', error: e, stackTrace: stackTrace);
-      notifyAppError(this.gt.translate('Failed to switch disco state: {0}', pArgs: [e.toString()]));
+      notifyAppError(
+        this.gt.translate('Failed to switch disco state: {0}', pArgs: [e.toString()]),
+        allowDuplicates: true,
+      );
     }
   }
 
@@ -381,7 +387,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       await _toggleLock(isLocked);
     } catch (e, stackTrace) {
       logger?.e('Error in toggleLock: $e', error: e, stackTrace: stackTrace);
-      notifyAppError(this.gt.translate('Failed to toggle lock: {0}', pArgs: [e.toString()]));
+      notifyAppError(this.gt.translate('Failed to toggle lock: {0}', pArgs: [e.toString()]), allowDuplicates: true);
     }
   }
 
@@ -425,7 +431,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       await _switchMode(mode);
     } catch (e, stackTrace) {
       logger?.e('Error in switchMode: $e', error: e, stackTrace: stackTrace);
-      notifyAppError(this.gt.translate('Failed to switch mode: %s', pArgs: [e.toString()]));
+      notifyAppError(this.gt.translate('Failed to switch mode: %s', pArgs: [e.toString()]), allowDuplicates: true);
     }
   }
 
@@ -435,19 +441,23 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     }
 
     if (isSuspectedOffline) {
-      notifyAppError(this.gt.translate('Device is offline. Please retry after reconnection.'));
+      notifyAppError(this.gt.translate('Device is offline. Please retry after reconnection.'), allowDuplicates: true);
       return;
     }
 
     if (newMode == LyfiMode.sun) {
       if (borneoDeviceStatus?.timezone.isEmpty ?? true) {
-        notifyAppError(this.gt.translate("Unable to switch to Sun Simulation mode, the device's timezone is not set."));
+        notifyAppError(
+          this.gt.translate("Unable to switch to Sun Simulation mode, the device's timezone is not set."),
+          allowDuplicates: true,
+        );
         return;
       }
       final location = await executeLyfiCommand(() => _deviceApi.getLocation(super.boundDevice!.device));
       if (location == null) {
         notifyAppError(
           this.gt.translate("Unable to switch to Sun Simulation mode, the device's geographic location is not set."),
+          allowDuplicates: true,
         );
         return;
       }

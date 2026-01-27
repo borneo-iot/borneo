@@ -4,5 +4,5 @@ class MyViewModel extends BaseViewModel {
   MyViewModel();
 
   @override
-  void notifyAppError(String message, {Object? error, StackTrace? stackTrace}) {}
+  void notifyAppError(String message, {Object? error, StackTrace? stackTrace, bool allowDuplicates = false}) {}
 }

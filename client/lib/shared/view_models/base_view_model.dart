@@ -34,7 +34,7 @@ abstract class BaseViewModel extends ChangeNotifier {
     super.notifyListeners();
   }
 
-  void notifyAppError(String message, {Object? error, StackTrace? stackTrace});
+  void notifyAppError(String message, {Object? error, StackTrace? stackTrace, bool allowDuplicates = false});
 
   static bool assertNotDisposed(BaseViewModel vm) {
     assert(() {
@@ -55,8 +55,8 @@ mixin ViewModelEventBusMixin on BaseViewModel {
   late final EventBus globalEventBus;
 
   @override
-  void notifyAppError(String message, {Object? error, StackTrace? stackTrace}) {
-    globalEventBus.fire(AppErrorEvent(message, error: error, stackTrace: stackTrace));
+  void notifyAppError(String message, {Object? error, StackTrace? stackTrace, bool allowDuplicates = false}) {
+    globalEventBus.fire(AppErrorEvent(message, error: error, stackTrace: stackTrace, allowDuplicates: allowDuplicates));
   }
 }
 

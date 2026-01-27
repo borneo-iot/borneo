@@ -122,7 +122,8 @@ class MainViewModel extends BaseViewModel with ViewModelEventBusMixin, ViewModel
   }
 
   void _onAppError(AppErrorEvent event) {
-    if (_errorsStack.isEmpty || _errorsStack.last.error.runtimeType != event.error.runtimeType) {
+    final isDuplicate = _errorsStack.isNotEmpty && _errorsStack.last.message == event.message;
+    if (event.allowDuplicates || !isDuplicate) {
       _errorsStack.add(event);
       notification.showError(_gt.translate("ERROR"), body: event.message);
     }
