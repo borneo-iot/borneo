@@ -4,23 +4,25 @@
 #include <stdbool.h>
 #include <errno.h>
 
-#include <freertos/FreeRTOS.h>
-#include <freertos/event_groups.h>
-#include <freertos/task.h>
+#include <cbor.h>
 
 #include <esp_event.h>
 #include <esp_log.h>
-#include <esp_smartconfig.h>
 #include <esp_system.h>
 #include <esp_wifi.h>
 #include <esp_netif.h>
 #include <nvs_flash.h>
+
+#include <freertos/FreeRTOS.h>
+#include <freertos/event_groups.h>
+#include <freertos/task.h>
 
 #include <network_provisioning/manager.h>
 #include <network_provisioning/scheme_ble.h>
 #include <borneo/common.h>
 #include <borneo/system.h>
 #include <borneo/wifi.h>
+#include <borneo/auth.h>
 
 #include "np.h"
 
@@ -142,16 +144,135 @@ static void get_device_service_name(char* service_name, size_t max)
 esp_err_t prov_binding_data_handler(uint32_t session_id, const uint8_t* inbuf, ssize_t inlen, uint8_t** outbuf,
                                     ssize_t* outlen, void* priv_data)
 {
-    if (inbuf) {
-        ESP_LOGI(TAG, "Received data: %.*s", inlen, (char*)inbuf);
+    esp_err_t ret = ESP_OK;
+
+    if (!inbuf || inlen <= 0) {
+        ESP_LOGW(TAG, "Invalid input buffer");
+        ret = ESP_ERR_INVALID_ARG;
+        goto error;
     }
-    char response[] = "SUCCESS";
-    *outbuf = (uint8_t*)strdup(response);
+
+    ESP_LOGI(TAG, "Received binding data: %d bytes", inlen);
+
+    // Parse CBOR data
+    CborParser parser;
+    CborValue root;
+    CborError err = cbor_parser_init(inbuf, inlen, 0, &parser, &root);
+
+    if (err != CborNoError) {
+        ESP_LOGE(TAG, "CBOR parser init failed: %d", err);
+        ret = ESP_ERR_INVALID_ARG;
+        goto error;
+    }
+
+    if (!cbor_value_is_map(&root)) {
+        ESP_LOGE(TAG, "Expected CBOR map");
+        ret = ESP_ERR_INVALID_ARG;
+        goto error;
+    }
+
+    CborValue it;
+    cbor_value_enter_container(&root, &it);
+
+    uint64_t timestamp = 0;
+    uint8_t admin_token[16] = { 0 };
+    uint8_t api_token[16] = { 0 };
+    size_t admin_token_len = 0;
+    size_t api_token_len = 0;
+
+    // Parse the map entries
+    while (!cbor_value_at_end(&it)) {
+        // Get key
+        if (!cbor_value_is_text_string(&it)) {
+            ESP_LOGW(TAG, "Expected text string key");
+            cbor_value_advance(&it);
+            continue;
+        }
+
+        char key[32] = { 0 };
+        size_t key_len = sizeof(key) - 1;
+        cbor_value_copy_text_string(&it, key, &key_len, &it);
+        key[key_len] = '\0';
+
+        // Parse value based on key
+        if (strcmp(key, "timestamp") == 0) {
+            if (cbor_value_is_unsigned_integer(&it)) {
+                cbor_value_get_uint64(&it, &timestamp);
+                ESP_LOGI(TAG, "Timestamp: %llu", timestamp);
+            }
+            cbor_value_advance(&it);
+        }
+        else if (strcmp(key, "adminToken") == 0) {
+            if (cbor_value_is_byte_string(&it)) {
+                admin_token_len = sizeof(admin_token);
+                cbor_value_copy_byte_string(&it, admin_token, &admin_token_len, &it);
+                ESP_LOGI(TAG, "Admin token length: %u", admin_token_len);
+            }
+            else {
+                cbor_value_advance(&it);
+            }
+        }
+        else if (strcmp(key, "apiToken") == 0) {
+            if (cbor_value_is_byte_string(&it)) {
+                api_token_len = sizeof(api_token);
+                cbor_value_copy_byte_string(&it, api_token, &api_token_len, &it);
+                ESP_LOGI(TAG, "API token length: %u", api_token_len);
+            }
+            else {
+                cbor_value_advance(&it);
+            }
+        }
+        else {
+            ESP_LOGW(TAG, "Unknown key: %s", key);
+            cbor_value_advance(&it);
+        }
+    }
+
+    cbor_value_leave_container(&root, &it);
+
+    // Call bo_auth_bind to store tokens with timestamp validation
+    ret = bo_auth_bind(admin_token, admin_token_len, api_token, api_token_len, timestamp);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "bo_auth_bind failed: %s", esp_err_to_name(ret));
+    }
+    else {
+        ESP_LOGI(TAG, "Binding tokens saved successfully");
+    }
+
+error:
+    // Prepare CBOR response
+    uint8_t response_buf[256];
+    CborEncoder encoder;
+    cbor_encoder_init(&encoder, response_buf, sizeof(response_buf), 0);
+
+    // Create response map
+    CborEncoder map_encoder;
+    cbor_encoder_create_map(&encoder, &map_encoder, CborIndefiniteLength);
+
+    // Add error code (0 for success, non-zero for error)
+    int error_code = (ret == ESP_OK) ? 0 : (int)ret;
+    cbor_encode_text_stringz(&map_encoder, "code");
+    cbor_encode_int(&map_encoder, error_code);
+
+    // Add error message only if there's an error
+    if (ret != ESP_OK) {
+        cbor_encode_text_stringz(&map_encoder, "message");
+        cbor_encode_text_stringz(&map_encoder, esp_err_to_name(ret));
+    }
+
+    cbor_encoder_close_container(&encoder, &map_encoder);
+
+    size_t encoded_size = cbor_encoder_get_buffer_size(&encoder, response_buf);
+
+    // Allocate and copy encoded response
+    *outbuf = (uint8_t*)malloc(encoded_size);
     if (*outbuf == NULL) {
         ESP_LOGE(TAG, "System out of memory");
         return ESP_ERR_NO_MEM;
     }
-    *outlen = strlen(response) + 1; /* +1 for NULL terminating byte */
+
+    memcpy(*outbuf, response_buf, encoded_size);
+    *outlen = encoded_size;
 
     return ESP_OK;
 }
