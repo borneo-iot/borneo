@@ -26,6 +26,8 @@ unsigned int coap_adjust_basetime(coap_context_t* ctx, coap_tick_t now);
 
 static void bo_coap_deinit();
 static int register_resource(coap_context_t* ctx, const struct coap_resource_desc* res);
+static void bo_coap_unified_handler(coap_resource_t* resource, coap_session_t* session, const coap_pdu_t* request,
+                                    const coap_string_t* query, coap_pdu_t* response);
 static void _bo_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 
 #define TAG "coap-server"
@@ -157,6 +159,64 @@ void bo_coap_deinit()
     }
 }
 
+static void bo_coap_unified_handler(coap_resource_t* resource, coap_session_t* session, const coap_pdu_t* request,
+                                    const coap_string_t* query, coap_pdu_t* response)
+{
+    const struct coap_resource_desc* res = coap_resource_get_userdata(resource);
+    if (res == NULL) {
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE(500));
+        return;
+    }
+
+    // Check auth if required
+    if (res->auth_perm != AUTH_PERM_PUBLIC) {
+        coap_opt_iterator_t opt_iter;
+        coap_opt_t* auth_opt = coap_check_option(request, 3000, &opt_iter);
+        if (auth_opt == NULL) {
+            coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
+            return;
+        }
+        const uint8_t* token = coap_opt_value(auth_opt);
+        size_t token_len = coap_opt_length(auth_opt);
+        if (token_len != 32 || bo_auth_verify_token(token, token_len) != 0) {
+            coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
+            return;
+        }
+        if (!bo_auth_check_perm(res->auth_perm)) {
+            coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
+            return;
+        }
+    }
+
+    // Call the specific handler based on method
+    coap_method_handler_t handler = NULL;
+    coap_pdu_code_t method = coap_pdu_get_code(request);
+    switch (method) {
+    case COAP_REQUEST_GET:
+        handler = res->get_handler;
+        break;
+    case COAP_REQUEST_POST:
+        handler = res->post_handler;
+        break;
+    case COAP_REQUEST_PUT:
+        handler = res->put_handler;
+        break;
+    case COAP_REQUEST_DELETE:
+        handler = res->delete_handler;
+        break;
+    default:
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE(405));
+        return;
+    }
+
+    if (handler == NULL) {
+        coap_pdu_set_code(response, COAP_RESPONSE_CODE(405));
+        return;
+    }
+
+    handler(resource, session, request, query, response);
+}
+
 static int register_resource(coap_context_t* ctx, const struct coap_resource_desc* res)
 {
     if (ctx == NULL || res == NULL) {
@@ -169,17 +229,20 @@ static int register_resource(coap_context_t* ctx, const struct coap_resource_des
         return -EINVAL;
     }
 
+    // Set userdata to the resource descriptor
+    coap_resource_set_userdata(resource, (void*)res);
+
     if (res->get_handler != NULL) {
-        coap_register_request_handler(resource, COAP_REQUEST_GET, res->get_handler);
+        coap_register_request_handler(resource, COAP_REQUEST_GET, bo_coap_unified_handler);
     }
     if (res->post_handler != NULL) {
-        coap_register_request_handler(resource, COAP_REQUEST_POST, res->post_handler);
+        coap_register_request_handler(resource, COAP_REQUEST_POST, bo_coap_unified_handler);
     }
     if (res->put_handler != NULL) {
-        coap_register_request_handler(resource, COAP_REQUEST_PUT, res->put_handler);
+        coap_register_request_handler(resource, COAP_REQUEST_PUT, bo_coap_unified_handler);
     }
     if (res->delete_handler != NULL) {
-        coap_register_request_handler(resource, COAP_REQUEST_DELETE, res->delete_handler);
+        coap_register_request_handler(resource, COAP_REQUEST_DELETE, bo_coap_unified_handler);
     }
     coap_resource_set_get_observable(resource, res->is_observable ? 1 : 0);
     coap_add_resource(ctx, resource);
