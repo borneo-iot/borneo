@@ -5,6 +5,7 @@ extern "C" {
 #endif
 
 #include "common.h"
+#include "auth.h"
 
 #define BO_COAP_HEARTBEAT_INTERVAL_MS (5000)
 
@@ -15,17 +16,18 @@ struct coap_resource_desc {
     coap_method_handler_t put_handler;
     coap_method_handler_t delete_handler;
     bool is_observable;
+    auth_resource_permission_t auth_perm;
 };
 
 #define __COAP_MAKE_UNIQUE_TOKEN(x, y) _CONCAT(x, y)
 
-#define COAP_RESOURCE_DEFINE(res_path, res_is_observable, res_get, res_post, res_put, res_delete)                      \
+#define COAP_RESOURCE_DEFINE(res_path, res_is_observable, res_get, res_post, res_put, res_delete, res_auth_perm)       \
     static const struct coap_resource_desc                                                                             \
         __attribute__((section(".coap_resource_desc"), used)) __COAP_MAKE_UNIQUE_TOKEN(__coap_resource_desc_,          \
                                                                                        __LINE__)                       \
         = {                                                                                                            \
-              .path = {                                                                                                  \
-                  .s = (const uint8_t *)res_path,                                                                                       \
+              .path = {                                                                                                \
+                  .s = (const uint8_t *)res_path,                                                                      \
                   .length = sizeof(res_path) - 1,                                                                      \
               },                                                                                                       \
               .is_observable = (res_is_observable),                                                                    \
@@ -33,6 +35,7 @@ struct coap_resource_desc {
               .post_handler = (res_post),                                                                              \
               .put_handler = (res_put),                                                                                \
               .delete_handler = (res_delete),                                                                          \
+              .auth_perm = (res_auth_perm),                                                                            \
           };
 
 #define BO_COAP_TRY(expression, response)                                                                              \

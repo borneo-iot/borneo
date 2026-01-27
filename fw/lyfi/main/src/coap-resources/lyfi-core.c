@@ -403,32 +403,36 @@ static void coap_hnd_cloud_enabled_put(coap_resource_t* resource, coap_session_t
     coap_pdu_set_code(response, BO_COAP_CODE_204_CHANGED);
 }
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/color", false, coap_hnd_color_get, NULL, coap_hnd_color_put, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/color", false, coap_hnd_color_get, NULL, coap_hnd_color_put, NULL, AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/schedule", false, coap_hnd_schedule_get, NULL, coap_hnd_schedule_put, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/schedule", false, coap_hnd_schedule_get, NULL, coap_hnd_schedule_put, NULL,
+                     AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/info", false, coap_hnd_info_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/info", false, coap_hnd_info_get, NULL, NULL, NULL, AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/status", false, coap_hnd_status_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/status", false, coap_hnd_status_get, NULL, NULL, NULL, AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/temperature", true, coap_hnd_temp_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/temperature", true, coap_hnd_temp_get, NULL, NULL, NULL, AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE(LYFI_COAP_PATH_LED_STATE, true, coap_hnd_state_get, NULL, coap_hnd_state_put, NULL);
+COAP_RESOURCE_DEFINE(LYFI_COAP_PATH_LED_STATE, true, coap_hnd_state_get, NULL, coap_hnd_state_put, NULL,
+                     AUTH_PERM_PUBLIC);
 
 COAP_RESOURCE_DEFINE("borneo/lyfi/correction-method", false, coap_hnd_correction_method_get, NULL,
-                     coap_hnd_correction_method_put, NULL);
+                     coap_hnd_correction_method_put, NULL, AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE(LYFI_COAP_PATH_LED_MODE, true, coap_hnd_mode_get, NULL, coap_hnd_mode_put, NULL);
+COAP_RESOURCE_DEFINE(LYFI_COAP_PATH_LED_MODE, true, coap_hnd_mode_get, NULL, coap_hnd_mode_put, NULL, AUTH_PERM_PUBLIC);
 
 COAP_RESOURCE_DEFINE("borneo/lyfi/temporary-duration", false, coap_hnd_temporary_duration_get, NULL,
-                     coap_hnd_temporary_duration_put, NULL);
+                     coap_hnd_temporary_duration_put, NULL, AUTH_PERM_PUBLIC);
 
 COAP_RESOURCE_DEFINE("borneo/lyfi/geo-location", false, coap_hnd_geo_location_get, NULL, coap_hnd_geo_location_put,
-                     NULL);
+                     NULL, AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/tz/enabled", false, coap_hnd_tz_enabled_get, NULL, coap_hnd_tz_enabled_put, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/tz/enabled", false, coap_hnd_tz_enabled_get, NULL, coap_hnd_tz_enabled_put, NULL,
+                     AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/tz/offset", false, coap_hnd_tz_offset_get, NULL, coap_hnd_tz_offset_put, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/tz/offset", false, coap_hnd_tz_offset_get, NULL, coap_hnd_tz_offset_put, NULL,
+                     AUTH_PERM_PUBLIC);
 
 COAP_RESOURCE_DEFINE("borneo/lyfi/cloud/enabled", false, coap_hnd_cloud_enabled_get, NULL, coap_hnd_cloud_enabled_put,
-                     NULL);
+                     NULL, AUTH_PERM_PUBLIC);

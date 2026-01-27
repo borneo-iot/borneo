@@ -352,7 +352,8 @@ static void coap_hnd_download(coap_resource_t* resource, coap_session_t* session
     }
 }
 
-COAP_RESOURCE_DEFINE("borneo/ota/coap/status", false, coap_hnd_status_get, NULL, NULL, NULL);
-COAP_RESOURCE_DEFINE("borneo/ota/coap/download", false, NULL, coap_hnd_download, coap_hnd_download, NULL);
+COAP_RESOURCE_DEFINE("borneo/ota/coap/status", false, coap_hnd_status_get, NULL, NULL, NULL, AUTH_PERM_ADMIN);
+COAP_RESOURCE_DEFINE("borneo/ota/coap/download", false, NULL, coap_hnd_download, coap_hnd_download, NULL,
+                     AUTH_PERM_ADMIN);
 
 #endif // CONFIG_BORNEO_EDITION_CE

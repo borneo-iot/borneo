@@ -138,11 +138,15 @@ static void _coap_hnd_manual_fan_put(coap_resource_t* resource, coap_session_t* 
     coap_pdu_set_code(response, BO_COAP_CODE_204_CHANGED);
 }
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/temp/current", true, _coap_hnd_thermal_current_temp_get, NULL, NULL, NULL);
-COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/temp/keep", false, _coap_hnd_thermal_keep_temp_get, NULL, NULL, NULL);
-COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/settings", false, _coap_hnd_thermal_settings_get, NULL, NULL, NULL);
-COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/fan/mode", false, _coap_hnd_fan_mode_get, NULL, _coap_hnd_fan_mode_put, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/temp/current", true, _coap_hnd_thermal_current_temp_get, NULL, NULL, NULL,
+                     AUTH_PERM_PUBLIC);
+COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/temp/keep", false, _coap_hnd_thermal_keep_temp_get, NULL, NULL, NULL,
+                     AUTH_PERM_PUBLIC);
+COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/settings", false, _coap_hnd_thermal_settings_get, NULL, NULL, NULL,
+                     AUTH_PERM_PUBLIC);
+COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/fan/mode", false, _coap_hnd_fan_mode_get, NULL, _coap_hnd_fan_mode_put, NULL,
+                     AUTH_PERM_PUBLIC);
 COAP_RESOURCE_DEFINE("borneo/lyfi/thermal/fan/manual", false, _coap_hnd_manual_fan_get, NULL, _coap_hnd_manual_fan_put,
-                     NULL);
+                     NULL, AUTH_PERM_PUBLIC);
 
 #endif // CONFIG_LYFI_THERMAL_ENABLED

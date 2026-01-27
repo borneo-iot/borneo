@@ -89,6 +89,7 @@ static void coap_hnd_borneo_power_behavior_put(coap_resource_t* resource, coap_s
     coap_pdu_set_code(response, COAP_RESPONSE_CODE(204));
 }
 
-COAP_RESOURCE_DEFINE(BO_COAP_PATH_POWER, true, coap_hnd_borneo_power_get, NULL, coap_hnd_borneo_power_put, NULL);
+COAP_RESOURCE_DEFINE(BO_COAP_PATH_POWER, true, coap_hnd_borneo_power_get, NULL, coap_hnd_borneo_power_put, NULL,
+                     AUTH_PERM_PUBLIC);
 COAP_RESOURCE_DEFINE("borneo/power/behavior", false, coap_hnd_borneo_power_behavior_get, NULL,
-                     coap_hnd_borneo_power_behavior_put, NULL);
+                     coap_hnd_borneo_power_behavior_put, NULL, AUTH_PERM_PUBLIC);

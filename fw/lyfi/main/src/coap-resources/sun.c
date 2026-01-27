@@ -64,6 +64,6 @@ static void coap_hnd_sun_curve_get(coap_resource_t* resource, coap_session_t* se
     coap_add_data_blocked_response(request, response, COAP_MEDIATYPE_APPLICATION_CBOR, 0, encoded_size, buf);
 }
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/sun/schedule", false, coap_hnd_sun_schedule_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/sun/schedule", false, coap_hnd_sun_schedule_get, NULL, NULL, NULL, AUTH_PERM_PUBLIC);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/sun/curve", false, coap_hnd_sun_curve_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/sun/curve", false, coap_hnd_sun_curve_get, NULL, NULL, NULL, AUTH_PERM_PUBLIC);

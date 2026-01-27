@@ -56,4 +56,5 @@ static void _coap_hnd_fan_power_put(coap_resource_t* resource, coap_session_t* s
     return;
 }
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/fan/power", false, _coap_hnd_fan_power_get, NULL, _coap_hnd_fan_power_put, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/fan/power", false, _coap_hnd_fan_power_get, NULL, _coap_hnd_fan_power_put, NULL,
+                     AUTH_PERM_PUBLIC);

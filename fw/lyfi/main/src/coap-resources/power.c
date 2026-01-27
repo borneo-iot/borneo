@@ -31,5 +31,5 @@ static void coap_hnd_power_meas_power_get(coap_resource_t* resource, coap_sessio
     coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
     return;
 }
-COAP_RESOURCE_DEFINE("lyfi/power/meas/power", false, coap_hnd_power_meas_power_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("lyfi/power/meas/power", false, coap_hnd_power_meas_power_get, NULL, NULL, NULL, AUTH_PERM_PUBLIC);
 #endif // CONFIG_BORNEO_MEAS_VOLTAGE_SUPPORT && CONFIG_LYFI_MEAS_CURRENT_SUPPORT
