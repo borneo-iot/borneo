@@ -9,6 +9,9 @@ extern "C" {
 
 #define BO_COAP_HEARTBEAT_INTERVAL_MS (5000)
 
+// CoAP option number for authentication token
+#define BO_COAP_OPT_AUTH_TOKEN 3000
+
 struct coap_resource_desc {
     coap_str_const_t path;
     coap_method_handler_t get_handler;

@@ -169,9 +169,28 @@ static void bo_coap_unified_handler(coap_resource_t* resource, coap_session_t* s
     }
 
     // Check auth if required
-    if (res->auth_perm != AUTH_PERM_PUBLIC) {
+    coap_pdu_code_t method = coap_pdu_get_code(request);
+    auth_resource_permission_t required_perm;
+    switch (method) {
+
+    case COAP_REQUEST_GET: {
+        required_perm = res->auth_perm;
+    } break;
+
+    case COAP_REQUEST_POST:
+    case COAP_REQUEST_PUT:
+    case COAP_REQUEST_DELETE: {
+        required_perm = (res->auth_perm < AUTH_PERM_ADMIN) ? res->auth_perm + 1 : AUTH_PERM_ADMIN;
+    } break;
+
+    default: {
+        required_perm = AUTH_PERM_AUTHENTICATED;
+    } break;
+    }
+
+    if (required_perm != AUTH_PERM_PUBLIC) {
         coap_opt_iterator_t opt_iter;
-        coap_opt_t* auth_opt = coap_check_option(request, 3000, &opt_iter);
+        coap_opt_t* auth_opt = coap_check_option(request, BO_COAP_OPT_AUTH_TOKEN, &opt_iter);
         if (auth_opt == NULL) {
             coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
             return;
@@ -182,7 +201,7 @@ static void bo_coap_unified_handler(coap_resource_t* resource, coap_session_t* s
             coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
             return;
         }
-        if (!bo_auth_check_perm(res->auth_perm)) {
+        if (!bo_auth_check_perm(required_perm)) {
             coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
             return;
         }
@@ -190,7 +209,6 @@ static void bo_coap_unified_handler(coap_resource_t* resource, coap_session_t* s
 
     // Call the specific handler based on method
     coap_method_handler_t handler = NULL;
-    coap_pdu_code_t method = coap_pdu_get_code(request);
     switch (method) {
     case COAP_REQUEST_GET:
         handler = res->get_handler;
