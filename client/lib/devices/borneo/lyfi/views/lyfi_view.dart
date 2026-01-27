@@ -3,6 +3,7 @@ import 'package:borneo_app/features/devices/models/device_entity.dart';
 import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -179,6 +180,7 @@ class LyfiView extends StatelessWidget {
         notification: cb.read<IAppNotificationService>(),
         localeService: cb.read<ILocaleService>(),
         logger: cb.read<Logger>(),
+        gt: cb.read<GettextLocalizations>(),
       ),
       builder: (context, child) {
         final vm = context.read<LyfiViewModel>();

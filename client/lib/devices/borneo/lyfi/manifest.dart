@@ -11,6 +11,7 @@ import 'package:borneo_common/exceptions.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 import 'package:logger/logger.dart';
 import 'package:lw_wot/wot.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/wot.dart';
@@ -36,6 +37,7 @@ class LyfiDeviceModuleMetadata extends DeviceModuleMetadata {
           notification: context.read<IAppNotificationService>(),
           localeService: context.read<ILocaleService>(),
           logger: context.read<Logger>(),
+          gt: context.read<GettextLocalizations>(),
         ),
         deviceIconBuilder: _buildDeviceIcon,
         primaryStateIconBuilder: _buildPrimaryStateIcon,

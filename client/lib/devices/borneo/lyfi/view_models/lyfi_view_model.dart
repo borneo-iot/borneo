@@ -30,6 +30,8 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
 
   bool _isDisposed = false;
 
+  final GettextLocalizations gt;
+
   final ILocaleService localeService;
   Future<void>? _rapidProbeTask;
 
@@ -94,6 +96,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     required super.globalEventBus,
     required super.notification,
     required this.localeService,
+    required this.gt,
     super.logger,
   });
 
@@ -302,11 +305,16 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   }
 
   void switchPowerOnOff(bool onOff) async {
-    if (isSuspectedOffline) {
-      notifyAppError('Device is offline. Please retry after reconnection.');
-      return;
+    try {
+      if (isSuspectedOffline) {
+        notifyAppError(this.gt.translate('Device is offline. Please retry after reconnection.'));
+        return;
+      }
+      await _switchPowerOnOff(onOff);
+    } catch (e, stackTrace) {
+      logger?.e('Error in switchPowerOnOff: $e', error: e, stackTrace: stackTrace);
+      notifyAppError(this.gt.translate('Failed to switch power: {0}', pArgs: [e.toString()]));
     }
-    await _switchPowerOnOff(onOff);
   }
 
   Future<void> _switchPowerOnOff(bool onOff) async {
@@ -322,8 +330,13 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       (super.state == LyfiState.temporary || super.state == LyfiState.normal);
 
   void switchTemporaryState() async {
-    assert(super.state == LyfiState.normal || super.state == LyfiState.temporary);
-    await _switchTemporaryState();
+    try {
+      assert(super.state == LyfiState.normal || super.state == LyfiState.temporary);
+      await _switchTemporaryState();
+    } catch (e, stackTrace) {
+      logger?.e('Error in switchTemporaryState: $e', error: e, stackTrace: stackTrace);
+      notifyAppError(this.gt.translate('Failed to switch temporary state: {0}', pArgs: [e.toString()]));
+    }
   }
 
   Future<void> _switchTemporaryState() async {
@@ -344,7 +357,12 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       (super.state == LyfiState.temporary || super.state == LyfiState.normal);
 
   void switchDiscoState() async {
-    await _switchDiscoState();
+    try {
+      await _switchDiscoState();
+    } catch (e, stackTrace) {
+      logger?.e('Error in switchDiscoState: $e', error: e, stackTrace: stackTrace);
+      notifyAppError(this.gt.translate('Failed to switch disco state: {0}', pArgs: [e.toString()]));
+    }
   }
 
   Future<void> _switchDiscoState() async {
@@ -359,7 +377,12 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   }
 
   void toggleLock(bool isLocked) async {
-    await _toggleLock(isLocked);
+    try {
+      await _toggleLock(isLocked);
+    } catch (e, stackTrace) {
+      logger?.e('Error in toggleLock: $e', error: e, stackTrace: stackTrace);
+      notifyAppError(this.gt.translate('Failed to toggle lock: {0}', pArgs: [e.toString()]));
+    }
   }
 
   Future<void> _toggleLock(bool newIsLocked) async {
@@ -398,7 +421,12 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   }
 
   void switchMode(LyfiMode mode) async {
-    await _switchMode(mode);
+    try {
+      await _switchMode(mode);
+    } catch (e, stackTrace) {
+      logger?.e('Error in switchMode: $e', error: e, stackTrace: stackTrace);
+      notifyAppError(this.gt.translate('Failed to switch mode: %s', pArgs: [e.toString()]));
+    }
   }
 
   Future<void> _switchMode(LyfiMode newMode) async {
@@ -407,18 +435,20 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     }
 
     if (isSuspectedOffline) {
-      notifyAppError('Device is offline. Please retry after reconnection.');
+      notifyAppError(this.gt.translate('Device is offline. Please retry after reconnection.'));
       return;
     }
 
     if (newMode == LyfiMode.sun) {
       if (borneoDeviceStatus?.timezone.isEmpty ?? true) {
-        notifyAppError("Unable to switch to Sun Simulation mode, the device's timezone is not set.");
+        notifyAppError(this.gt.translate("Unable to switch to Sun Simulation mode, the device's timezone is not set."));
         return;
       }
       final location = await executeLyfiCommand(() => _deviceApi.getLocation(super.boundDevice!.device));
       if (location == null) {
-        notifyAppError("Unable to switch to Sun Simulation mode, the device's geographic location is not set.");
+        notifyAppError(
+          this.gt.translate("Unable to switch to Sun Simulation mode, the device's geographic location is not set."),
+        );
         return;
       }
     }
