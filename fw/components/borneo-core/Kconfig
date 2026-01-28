@@ -63,6 +63,12 @@ menu "Borneo Core"
         endchoice
     endmenu
 
+    menu "Auth"
+        config BORNEO_AUTH_ADMIN_TOKEN_EXPIRY_MINUTES
+            int "Auth Admin Token Expiry Duration in Minutes"
+            default 0
+    endmenu
+
     menu "ADC settings"
         config BORNEO_ADC_ENABLED
             bool "ADC enabled"

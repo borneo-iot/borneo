@@ -30,12 +30,12 @@
 
 #define TAG "network-prov"
 #define SSID_PREFIX "BOPROV_"
-#define PROV_BINDING_ENDPOINT "binding"
+#define PROV_PAIR_ENDPOINT "pair"
 
 // 7b76e0cd-0d0c-4be2-9bea-c5ed333382b7
 
 /* LSB <------------------------------------------------------------------------------> MSB */
-#define BINDING_SERVICE_UUID                                                                                           \
+#define PAIR_SERVICE_UUID                                                                                              \
     {                                                                                                                  \
         0xcd, 0xe0, 0x76, 0x7b, 0x0c, 0x0d, 0xe2, 0x4b, 0x9b, 0xea, 0xc5, 0xed, 0x33, 0x33, 0x82, 0xb7,                \
     }
@@ -45,8 +45,8 @@ typedef struct {
 } np_context_t;
 
 static void get_device_service_name(char* service_name, size_t max);
-esp_err_t prov_binding_data_handler(uint32_t session_id, const uint8_t* inbuf, ssize_t inlen, uint8_t** outbuf,
-                                    ssize_t* outlen, void* priv_data);
+esp_err_t prov_pair_data_handler(uint32_t session_id, const uint8_t* inbuf, ssize_t inlen, uint8_t** outbuf,
+                                 ssize_t* outlen, void* priv_data);
 
 static np_context_t* s_np_ctx = NULL;
 
@@ -127,9 +127,9 @@ int bo_wifi_np_start()
     const void* sec_params = NULL;
     const char* service_key = NULL;
 
-    BO_TRY_ESP(network_prov_mgr_endpoint_create(PROV_BINDING_ENDPOINT));
+    BO_TRY_ESP(network_prov_mgr_endpoint_create(PROV_PAIR_ENDPOINT));
     BO_TRY_ESP(network_prov_mgr_start_provisioning(security, sec_params, s_np_ctx->service_name, service_key));
-    network_prov_mgr_endpoint_register(PROV_BINDING_ENDPOINT, prov_binding_data_handler, NULL);
+    network_prov_mgr_endpoint_register(PROV_PAIR_ENDPOINT, prov_pair_data_handler, NULL);
 
     return 0;
 }
@@ -141,8 +141,8 @@ static void get_device_service_name(char* service_name, size_t max)
     snprintf(service_name, max, "%s%02X%02X%02X", SSID_PREFIX, eth_mac[3], eth_mac[4], eth_mac[5]);
 }
 
-esp_err_t prov_binding_data_handler(uint32_t session_id, const uint8_t* inbuf, ssize_t inlen, uint8_t** outbuf,
-                                    ssize_t* outlen, void* priv_data)
+esp_err_t prov_pair_data_handler(uint32_t session_id, const uint8_t* inbuf, ssize_t inlen, uint8_t** outbuf,
+                                 ssize_t* outlen, void* priv_data)
 {
     esp_err_t ret = ESP_OK;
 
@@ -152,7 +152,7 @@ esp_err_t prov_binding_data_handler(uint32_t session_id, const uint8_t* inbuf, s
         goto error;
     }
 
-    ESP_LOGI(TAG, "Received binding data: %d bytes", inlen);
+    ESP_LOGI(TAG, "Received pairing data: %d bytes", inlen);
 
     // Parse CBOR data
     CborParser parser;
@@ -230,13 +230,12 @@ esp_err_t prov_binding_data_handler(uint32_t session_id, const uint8_t* inbuf, s
 
     cbor_value_leave_container(&root, &it);
 
-    // Call bo_auth_bind to store tokens with timestamp validation
-    ret = bo_auth_bind(admin_token, admin_token_len, api_token, api_token_len, timestamp);
+    ret = bo_auth_pair(admin_token, admin_token_len, api_token, api_token_len, timestamp);
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "bo_auth_bind failed: %s", esp_err_to_name(ret));
+        ESP_LOGE(TAG, "bo_auth_pair failed: %s", esp_err_to_name(ret));
     }
     else {
-        ESP_LOGI(TAG, "Binding tokens saved successfully");
+        ESP_LOGI(TAG, "Pairing tokens saved successfully");
     }
 
 error:

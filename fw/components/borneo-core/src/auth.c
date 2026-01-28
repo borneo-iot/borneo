@@ -52,7 +52,7 @@ esp_err_t bo_auth_init()
     return ESP_OK;
 }
 
-esp_err_t bo_auth_bind(const uint8_t* admin_token, size_t admin_token_len, const uint8_t* api_token,
+esp_err_t bo_auth_pair(const uint8_t* admin_token, size_t admin_token_len, const uint8_t* api_token,
                        size_t api_token_len, uint64_t timestamp)
 {
     if (admin_token_len != AUTH_KEY_LENGTH || api_token_len != AUTH_KEY_LENGTH) {
@@ -178,7 +178,7 @@ static esp_err_t _compute_hmac(const uint8_t* key, time_t timestamp, uint8_t* ou
     return ESP_OK;
 }
 
-esp_err_t bo_auth_verify_token(const uint8_t* token, size_t token_len)
+bool bo_auth_verify_token(const uint8_t* token, size_t token_len, auth_resource_permission_t required_perm)
 {
     if (token_len != 32 || !_auth_ctx.keys_loaded) {
         // Update global context with failure state
@@ -187,7 +187,7 @@ esp_err_t bo_auth_verify_token(const uint8_t* token, size_t token_len)
         _auth_ctx.is_admin = false;
         _auth_ctx.token_expiry = 0;
         portEXIT_CRITICAL(&_auth_ctx_spinlock);
-        return ESP_ERR_INVALID_ARG;
+        return false;
     }
 
     // Get current timestamp
@@ -199,11 +199,11 @@ esp_err_t bo_auth_verify_token(const uint8_t* token, size_t token_len)
         _auth_ctx.is_admin = false;
         _auth_ctx.token_expiry = 0;
         portEXIT_CRITICAL(&_auth_ctx_spinlock);
-        return ESP_ERR_INVALID_STATE;
+        return false;
     }
 
     uint8_t computed[32];
-    esp_err_t result = ESP_FAIL;
+    bool token_valid = false;
 
     // Take mutex for thread-safe key access
     if (xSemaphoreTake(_auth_mutex, pdMS_TO_TICKS(1000)) != pdTRUE) {
@@ -213,7 +213,7 @@ esp_err_t bo_auth_verify_token(const uint8_t* token, size_t token_len)
         _auth_ctx.is_admin = false;
         _auth_ctx.token_expiry = 0;
         portEXIT_CRITICAL(&_auth_ctx_spinlock);
-        return ESP_ERR_TIMEOUT;
+        return false;
     }
 
     // Check admin token
@@ -223,9 +223,14 @@ esp_err_t bo_auth_verify_token(const uint8_t* token, size_t token_len)
         portENTER_CRITICAL(&_auth_ctx_spinlock);
         _auth_ctx.authenticated = true;
         _auth_ctx.is_admin = true;
-        _auth_ctx.token_expiry = (uint64_t)now + 3600; // Auto-refresh: 1 hour expiry
+#if CONFIG_BORNEO_AUTH_ADMIN_TOKEN_EXPIRY_MINUTES == 0
+        _auth_ctx.token_expiry = 0;
+#else
+        _auth_ctx.token_expiry
+            = (uint64_t)now + (CONFIG_BORNEO_AUTH_ADMIN_TOKEN_EXPIRY_MINUTES * 60); // Auto-refresh: 1 hour expiry
+#endif
         portEXIT_CRITICAL(&_auth_ctx_spinlock);
-        result = ESP_OK;
+        token_valid = true;
     }
     else {
         // Check API token
@@ -237,68 +242,85 @@ esp_err_t bo_auth_verify_token(const uint8_t* token, size_t token_len)
             _auth_ctx.is_admin = false;
             _auth_ctx.token_expiry = 0; // API token never expires
             portEXIT_CRITICAL(&_auth_ctx_spinlock);
-            result = ESP_OK;
+            token_valid = true;
         }
     }
 
     xSemaphoreGive(_auth_mutex);
 
-    if (result != ESP_OK) {
+    if (!token_valid) {
         // Update global context with failure state
         portENTER_CRITICAL(&_auth_ctx_spinlock);
         _auth_ctx.authenticated = false;
         _auth_ctx.is_admin = false;
         _auth_ctx.token_expiry = 0;
         portEXIT_CRITICAL(&_auth_ctx_spinlock);
+        return false;
     }
 
-    return result;
-}
-
-bool bo_auth_check_perm(auth_resource_permission_t required_perm)
-{
-    // Enter critical section for reading auth context
+    // Now check permissions
     portENTER_CRITICAL(&_auth_ctx_spinlock);
-
-    bool result;
+    bool perm_granted;
     if (required_perm == AUTH_PERM_PUBLIC) {
-        result = true;
+        perm_granted = true;
     }
     else if (!_auth_ctx.authenticated) {
-        result = false;
+        perm_granted = false;
     }
     else if (required_perm == AUTH_PERM_AUTHENTICATED) {
-        result = true;
+        perm_granted = true;
     }
     else if (required_perm == AUTH_PERM_ADMIN) {
-        result = _auth_ctx.is_admin;
+        perm_granted = _auth_ctx.is_admin;
     }
     else {
-        result = false;
+        perm_granted = false;
     }
-
     portEXIT_CRITICAL(&_auth_ctx_spinlock);
-    return result;
+
+    return perm_granted;
 }
 
-bool bo_auth_is_token_expired()
+bool bo_auth_is_token_expired(const uint8_t* token, size_t token_len)
 {
-    // Enter critical section for reading auth context
-    portENTER_CRITICAL(&_auth_ctx_spinlock);
-
-    bool result;
-    if (!_auth_ctx.authenticated) {
-        result = true; // Unauthenticated is considered expired
+    if (token_len != 32 || !_auth_ctx.keys_loaded) {
+        return true;
     }
-    else if (_auth_ctx.token_expiry == 0) {
-        result = false; // token_expiry == 0 means never expires (API key)
+
+    time_t now = time(NULL);
+    if (now == 0) {
+        return true;
+    }
+
+    uint8_t computed[32];
+    bool result = true;
+
+    if (xSemaphoreTake(_auth_mutex, pdMS_TO_TICKS(1000)) != pdTRUE) {
+        return true;
+    }
+
+    // Check admin token
+    esp_err_t err = _compute_hmac(_auth_ctx.admin_key, now, computed);
+    if (err == ESP_OK && memcmp(token, computed, 32) == 0) {
+        // It's admin token, check expiry
+        portENTER_CRITICAL(&_auth_ctx_spinlock);
+        if (_auth_ctx.authenticated && _auth_ctx.is_admin && _auth_ctx.token_expiry != 0) {
+            result = (uint64_t)now >= _auth_ctx.token_expiry;
+        }
+        else {
+            result = true;
+        }
+        portEXIT_CRITICAL(&_auth_ctx_spinlock);
     }
     else {
-        time_t now = time(NULL);
-        result = (uint64_t)now >= _auth_ctx.token_expiry;
+        // Check API token
+        err = _compute_hmac(_auth_ctx.api_key, now, computed);
+        if (err == ESP_OK && memcmp(token, computed, 32) == 0) {
+            result = false; // API token never expires
+        }
     }
 
-    portEXIT_CRITICAL(&_auth_ctx_spinlock);
+    xSemaphoreGive(_auth_mutex);
     return result;
 }
 

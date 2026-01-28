@@ -197,11 +197,7 @@ static void bo_coap_unified_handler(coap_resource_t* resource, coap_session_t* s
         }
         const uint8_t* token = coap_opt_value(auth_opt);
         size_t token_len = coap_opt_length(auth_opt);
-        if (token_len != 32 || bo_auth_verify_token(token, token_len) != 0) {
-            coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
-            return;
-        }
-        if (!bo_auth_check_perm(required_perm)) {
+        if (!bo_auth_verify_token(token, token_len, required_perm)) {
             coap_pdu_set_code(response, COAP_RESPONSE_CODE(401));
             return;
         }
