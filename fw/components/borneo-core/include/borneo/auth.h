@@ -23,7 +23,7 @@ typedef enum {
 struct auth_context {
     bool authenticated; ///< Whether the user is authenticated
     bool is_admin; ///< Whether the user has admin privileges
-    uint32_t token_expiry; ///< Expiration timestamp (0 means never expires)
+    uint64_t token_expiry; ///< Expiration timestamp (0 means never expires)
     uint8_t admin_key[16]; ///< Cached admin key (128-bit)
     uint8_t api_key[16]; ///< Cached API key (128-bit)
     bool keys_loaded; ///< Whether keys have been loaded from NVS

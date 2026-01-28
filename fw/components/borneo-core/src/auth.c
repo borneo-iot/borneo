@@ -223,7 +223,7 @@ esp_err_t bo_auth_verify_token(const uint8_t* token, size_t token_len)
         portENTER_CRITICAL(&_auth_ctx_spinlock);
         _auth_ctx.authenticated = true;
         _auth_ctx.is_admin = true;
-        _auth_ctx.token_expiry = (uint32_t)now + 3600; // Auto-refresh: 1 hour expiry
+        _auth_ctx.token_expiry = (uint64_t)now + 3600; // Auto-refresh: 1 hour expiry
         portEXIT_CRITICAL(&_auth_ctx_spinlock);
         result = ESP_OK;
     }
@@ -295,7 +295,7 @@ bool bo_auth_is_token_expired()
     }
     else {
         time_t now = time(NULL);
-        result = (uint32_t)now >= _auth_ctx.token_expiry;
+        result = (uint64_t)now >= _auth_ctx.token_expiry;
     }
 
     portEXIT_CRITICAL(&_auth_ctx_spinlock);
