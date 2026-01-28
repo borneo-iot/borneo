@@ -124,28 +124,13 @@ esp_err_t bo_auth_pair(const uint8_t* admin_token, size_t admin_token_len, const
  *
  * @param key 128-bit key (16 bytes)
  * @param timestamp Current system timestamp
- * @param output Output buffer for 32-byte HMAC result
+ * @param output Output buffer for AUTH_TOKEN_LENGTH-byte HMAC result
  * @return ESP_OK on success, error code otherwise
  */
 static esp_err_t _compute_hmac(const uint8_t* key, time_t timestamp, uint8_t* output)
 {
     const mbedtls_md_info_t* md_info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
     if (!md_info) {
-        return ESP_FAIL;
-    }
-
-    mbedtls_md_context_t ctx;
-    mbedtls_md_init(&ctx);
-    int ret = mbedtls_md_setup(&ctx, md_info, 1); // 1 for HMAC
-    if (ret != 0) {
-        ESP_LOGE(TAG, "mbedtls_md_setup failed: %d", ret);
-        return ESP_FAIL;
-    }
-
-    ret = mbedtls_md_hmac_starts(&ctx, key, AUTH_KEY_LENGTH);
-    if (ret != 0) {
-        ESP_LOGE(TAG, "mbedtls_md_hmac_starts failed: %d", ret);
-        mbedtls_md_free(&ctx);
         return ESP_FAIL;
     }
 
@@ -160,27 +145,18 @@ static esp_err_t _compute_hmac(const uint8_t* key, time_t timestamp, uint8_t* ou
     timestamp_bytes[6] = (timestamp >> 8) & 0xFF;
     timestamp_bytes[7] = timestamp & 0xFF;
 
-    ret = mbedtls_md_hmac_update(&ctx, timestamp_bytes, sizeof(timestamp_bytes));
+    int ret = mbedtls_md_hmac(md_info, key, AUTH_KEY_LENGTH, timestamp_bytes, sizeof(timestamp_bytes), output);
     if (ret != 0) {
-        ESP_LOGE(TAG, "mbedtls_md_hmac_update failed: %d", ret);
-        mbedtls_md_free(&ctx);
+        ESP_LOGE(TAG, "mbedtls_md_hmac failed: %d", ret);
         return ESP_FAIL;
     }
 
-    ret = mbedtls_md_hmac_finish(&ctx, output);
-    if (ret != 0) {
-        ESP_LOGE(TAG, "mbedtls_md_hmac_finish failed: %d", ret);
-        mbedtls_md_free(&ctx);
-        return ESP_FAIL;
-    }
-
-    mbedtls_md_free(&ctx);
     return ESP_OK;
 }
 
 bool bo_auth_verify_token(const uint8_t* token, size_t token_len, auth_resource_permission_t required_perm)
 {
-    if (token_len != 32 || !_auth_ctx.keys_loaded) {
+    if (token_len != AUTH_TOKEN_LENGTH || !_auth_ctx.keys_loaded) {
         // Update global context with failure state
         portENTER_CRITICAL(&_auth_ctx_spinlock);
         _auth_ctx.authenticated = false;
@@ -202,7 +178,7 @@ bool bo_auth_verify_token(const uint8_t* token, size_t token_len, auth_resource_
         return false;
     }
 
-    uint8_t computed[32];
+    uint8_t computed[AUTH_TOKEN_LENGTH];
     bool token_valid = false;
 
     // Take mutex for thread-safe key access
@@ -218,7 +194,7 @@ bool bo_auth_verify_token(const uint8_t* token, size_t token_len, auth_resource_
 
     // Check admin token
     esp_err_t err = _compute_hmac(_auth_ctx.admin_key, now, computed);
-    if (err == ESP_OK && memcmp(token, computed, 32) == 0) {
+    if (err == ESP_OK && memcmp(token, computed, AUTH_TOKEN_LENGTH) == 0) {
         // Update global context with success state
         portENTER_CRITICAL(&_auth_ctx_spinlock);
         _auth_ctx.authenticated = true;
@@ -235,7 +211,7 @@ bool bo_auth_verify_token(const uint8_t* token, size_t token_len, auth_resource_
     else {
         // Check API token
         err = _compute_hmac(_auth_ctx.api_key, now, computed);
-        if (err == ESP_OK && memcmp(token, computed, 32) == 0) {
+        if (err == ESP_OK && memcmp(token, computed, AUTH_TOKEN_LENGTH) == 0) {
             // Update global context with success state
             portENTER_CRITICAL(&_auth_ctx_spinlock);
             _auth_ctx.authenticated = true;
@@ -283,7 +259,7 @@ bool bo_auth_verify_token(const uint8_t* token, size_t token_len, auth_resource_
 
 bool bo_auth_is_token_expired(const uint8_t* token, size_t token_len)
 {
-    if (token_len != 32 || !_auth_ctx.keys_loaded) {
+    if (token_len != AUTH_TOKEN_LENGTH || !_auth_ctx.keys_loaded) {
         return true;
     }
 
@@ -292,7 +268,7 @@ bool bo_auth_is_token_expired(const uint8_t* token, size_t token_len)
         return true;
     }
 
-    uint8_t computed[32];
+    uint8_t computed[AUTH_TOKEN_LENGTH];
     bool result = true;
 
     if (xSemaphoreTake(_auth_mutex, pdMS_TO_TICKS(1000)) != pdTRUE) {
@@ -301,7 +277,7 @@ bool bo_auth_is_token_expired(const uint8_t* token, size_t token_len)
 
     // Check admin token
     esp_err_t err = _compute_hmac(_auth_ctx.admin_key, now, computed);
-    if (err == ESP_OK && memcmp(token, computed, 32) == 0) {
+    if (err == ESP_OK && memcmp(token, computed, AUTH_TOKEN_LENGTH) == 0) {
         // It's admin token, check expiry
         portENTER_CRITICAL(&_auth_ctx_spinlock);
         if (_auth_ctx.authenticated && _auth_ctx.is_admin && _auth_ctx.token_expiry != 0) {
@@ -315,7 +291,7 @@ bool bo_auth_is_token_expired(const uint8_t* token, size_t token_len)
     else {
         // Check API token
         err = _compute_hmac(_auth_ctx.api_key, now, computed);
-        if (err == ESP_OK && memcmp(token, computed, 32) == 0) {
+        if (err == ESP_OK && memcmp(token, computed, AUTH_TOKEN_LENGTH) == 0) {
             result = false; // API token never expires
         }
     }

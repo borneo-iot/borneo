@@ -8,6 +8,8 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
+#define AUTH_TOKEN_LENGTH 32 // 256-bit HMAC
+
 /**
  * @brief Resource permission enumeration
  */
@@ -64,8 +66,8 @@ esp_err_t bo_auth_pair(const uint8_t* admin_token, size_t admin_token_len, const
  * Updates global authentication context on success/failure.
  * Checks if the required permission is granted after verification.
  *
- * @param token Provided token (32 bytes HMAC-SHA256 output)
- * @param token_len Length of token (must be 32)
+ * @param token Provided token (AUTH_TOKEN_LENGTH bytes HMAC-SHA256 output)
+ * @param token_len Length of token (must be AUTH_TOKEN_LENGTH)
  * @param required_perm Required permission level
  * @return true if token is valid and permission is granted, false otherwise
  */
@@ -74,8 +76,8 @@ bool bo_auth_verify_token(const uint8_t* token, size_t token_len, auth_resource_
 /**
  * @brief Check if the given token is expired
  *
- * @param token The token to check (32 bytes HMAC-SHA256 output)
- * @param token_len Length of token (must be 32)
+ * @param token The token to check (AUTH_TOKEN_LENGTH bytes HMAC-SHA256 output)
+ * @param token_len Length of token (must be AUTH_TOKEN_LENGTH)
  * @return true if expired or invalid, false if valid
  * @note Admin tokens expire after 1 hour, API tokens never expire
  */
