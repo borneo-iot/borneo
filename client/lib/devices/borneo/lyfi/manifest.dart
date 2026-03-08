@@ -214,13 +214,7 @@ class _LyfiBrightnessChart extends StatelessWidget {
                 ? 10.0
                 : 7.0)
             .toDouble();
-
-    // Label: abbreviate to fit — fewer chars for many channels
-    final maxLabelLen = channelCount <= 4
-        ? 4
-        : channelCount <= 6
-        ? 3
-        : 2;
+    final barRadius = (barWidth * 0.22).clamp(2.0, 4.0).toDouble();
 
     final groups = <BarChartGroupData>[];
     for (int i = 0; i < channelCount; i++) {
@@ -244,7 +238,7 @@ class _LyfiBrightnessChart extends StatelessWidget {
           barRods: [
             BarChartRodData(
               toY: value,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(barRadius),
               color: primaryColor,
               width: barWidth,
               backDrawRodData: BackgroundBarChartRodData(
