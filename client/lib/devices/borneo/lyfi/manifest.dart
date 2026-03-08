@@ -266,25 +266,7 @@ class _LyfiBrightnessChart extends StatelessWidget {
         groupsSpace: channelCount > 6 ? 4 : 8,
         titlesData: FlTitlesData(
           show: true,
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 14,
-              getTitlesWidget: (value, _) {
-                final idx = value.toInt();
-                if (idx < 0 || idx >= deviceInfo.channels.length) return const SizedBox.shrink();
-                final ch = deviceInfo.channels[idx];
-                final label = ch.name.length > maxLabelLen ? ch.name.substring(0, maxLabelLen) : ch.name;
-                return Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    fontSize: channelCount > 6 ? 8.0 : 9.0,
-                    color: colorScheme.onSurface.withValues(alpha: 0.38),
-                  ),
-                );
-              },
-            ),
-          ),
+          bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
           rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),

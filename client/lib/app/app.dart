@@ -129,11 +129,11 @@ class _BorneoAppState extends State<BorneoApp> {
             //darkTheme: BorneoTheme(Theme.of(context).textTheme).dark(),
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff493b72), brightness: Brightness.light),
-              useMaterial3: true, // 推荐使用 Material 3
+              useMaterial3: true,
             ),
             darkTheme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff493b72), brightness: Brightness.dark),
-              useMaterial3: true, // 推荐使用 Material 3
+              useMaterial3: true,
             ),
             themeMode: _themeMode,
             locale: _locale,
