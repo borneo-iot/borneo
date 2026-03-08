@@ -6,6 +6,7 @@ import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:borneo_kernel/drivers/borneo/probe_coap_config.dart';
+import 'package:borneo_common/io/net/host_resolution.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:coap/coap.dart';
 import 'package:cbor/cbor.dart' as cbor2;
@@ -59,8 +60,13 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
 
   @override
   Future<bool> probe(Device dev, {CancellationToken? cancelToken}) async {
+    final resolvedAddress = await resolveUriHostToPreferredAddress(dev.address);
+    if (resolvedAddress != dev.address) {
+      logger?.i('Resolved device address `${dev.address}` -> `${resolvedAddress}`');
+    }
+
     final probeCoapClient = BorneoCoapClient(
-      dev.address,
+      resolvedAddress,
       config: BorneoProbeCoapConfig.coapConfig,
       device: dev,
       offlineDetectionEnabled: false,
@@ -74,7 +80,7 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
       }
 
       final coapClient = BorneoCoapClient(
-        dev.address,
+        resolvedAddress,
         config: BorneoCoapConfig.coapConfig,
         device: dev,
         offlineDetectionEnabled: true,

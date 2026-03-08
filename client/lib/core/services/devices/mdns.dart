@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bonsoir/bonsoir.dart';
 import 'package:borneo_common/exceptions.dart';
+import 'package:borneo_common/io/net/host_resolution.dart';
 import 'package:borneo_kernel_abstractions/events.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:event_bus/event_bus.dart';
@@ -45,17 +46,17 @@ final class NsdMdnsDiscovery implements IMdnsDiscovery {
         break;
       case BonsoirDiscoveryServiceResolvedEvent():
         {
-          _eventBus.fire(FoundDeviceEvent(_toDiscoveredDevice(event.service)));
+          unawaited(_emitFoundDevice(event.service));
         }
         break;
       case BonsoirDiscoveryServiceUpdatedEvent():
         {
-          _eventBus.fire(FoundDeviceEvent(_toDiscoveredDevice(event.service)));
+          unawaited(_emitFoundDevice(event.service));
         }
         break;
       case BonsoirDiscoveryServiceLostEvent():
         {
-          _eventBus.fire(LostDeviceEvent(_toDiscoveredDevice(event.service)));
+          unawaited(_emitLostDevice(event.service));
         }
         break;
       default:
@@ -63,9 +64,28 @@ final class NsdMdnsDiscovery implements IMdnsDiscovery {
     }
   }
 
-  MdnsDiscoveredDevice _toDiscoveredDevice(BonsoirService service) {
+  Future<void> _emitFoundDevice(BonsoirService service) async {
+    final discovered = await _toDiscoveredDevice(service, normalizeHost: true);
+    if (_isDisposed) {
+      return;
+    }
+    _eventBus.fire(FoundDeviceEvent(discovered));
+  }
+
+  Future<void> _emitLostDevice(BonsoirService service) async {
+    final discovered = await _toDiscoveredDevice(service, normalizeHost: false);
+    if (_isDisposed) {
+      return;
+    }
+    _eventBus.fire(LostDeviceEvent(discovered));
+  }
+
+  Future<MdnsDiscoveredDevice> _toDiscoveredDevice(BonsoirService service, {required bool normalizeHost}) async {
+    final rawHost = service.host ?? 'UNKNOWN';
+    final host = normalizeHost && rawHost != 'UNKNOWN' ? await resolveHostToPreferredAddress(rawHost) : rawHost;
+
     return MdnsDiscoveredDevice(
-      host: service.host ?? 'UNKNOWN',
+      host: host,
       port: service.port,
       serviceType: service.type,
       name: service.name,
