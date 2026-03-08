@@ -13,13 +13,16 @@ abstract class AbstractChore with BaseEntity {
   final String iconAssetPath;
 
   final List<String> requiredCapabilities;
+  final List<Type>? _mutuallyExclusiveChoreTypes;
+  List<Type> get mutuallyExclusiveChoreTypes => _mutuallyExclusiveChoreTypes ?? const <Type>[];
 
   const AbstractChore({
     required this.id,
     required this.name,
     required this.iconAssetPath,
     required this.requiredCapabilities,
-  });
+    List<Type>? mutuallyExclusiveChoreTypes,
+  }) : _mutuallyExclusiveChoreTypes = mutuallyExclusiveChoreTypes;
 
   bool checkAvailable(SceneEntity scene, IDeviceManager deviceManager) {
     final things = deviceManager.wotThingsInCurrentScene;
@@ -34,6 +37,27 @@ abstract class AbstractChore with BaseEntity {
   };
 
   Future<List<Map<String, dynamic>>> execute(SceneEntity currentScene, IDeviceManager deviceManager);
+
+  bool isThingOperable(WotThing thing) {
+    return thing.getProperty<bool>('online') ?? false;
+  }
+
+  bool appliesToThing(WotThing thing) {
+    return isThingOperable(thing) && matchAllCapabilities(thing);
+  }
+
+  int countApplicableDevices(IDeviceManager deviceManager) {
+    return deviceManager.wotThingsInCurrentScene.where(appliesToThing).length;
+  }
+
+  bool isMutuallyExclusiveWith(AbstractChore other) {
+    if (identical(this, other) || runtimeType == other.runtimeType) {
+      return false;
+    }
+
+    return mutuallyExclusiveChoreTypes.contains(other.runtimeType) ||
+        other.mutuallyExclusiveChoreTypes.contains(runtimeType);
+  }
 
   bool matchAllCapabilities(WotThing thing) {
     return requiredCapabilities.every((capability) => _hasCapability(thing, capability));
@@ -56,6 +80,10 @@ abstract class AbstractChore with BaseEntity {
 }
 
 abstract class AbstractBuiltinChore extends AbstractChore {
-  AbstractBuiltinChore({required super.name, required super.iconAssetPath, required super.requiredCapabilities})
-    : super(id: BaseEntity.generateID());
+  AbstractBuiltinChore({
+    required super.name,
+    required super.iconAssetPath,
+    required super.requiredCapabilities,
+    super.mutuallyExclusiveChoreTypes = const <Type>[],
+  }) : super(id: BaseEntity.generateID());
 }

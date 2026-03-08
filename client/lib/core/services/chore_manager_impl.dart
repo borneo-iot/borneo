@@ -78,31 +78,56 @@ final class ChoreManagerImpl implements IChoreManager {
     await _opLock.synchronized(() async {
       final chore = allChores.singleWhere((r) => r.id == choreId);
       final currentScene = _sceneManager.current;
+      await _undoMutuallyExclusiveChores(chore);
       final steps = await chore.execute(currentScene, _deviceManager);
       if (steps.isNotEmpty) {
         await _historyStore.addRecord(ChoreHistoryRecord(choreId: choreId, timestamp: this.clock.now(), steps: steps));
       }
+      _globalBus.fire(ChoresChangedEvent(currentScene));
     });
   }
 
   @override
   Future<void> undoChore(String choreId) async {
     await _opLock.synchronized(() async {
-      final chore = allChores.singleWhere((r) => r.id == choreId);
-      final records = await _historyStore.getAllRecords();
-      final last = records.where((r) => r.choreId == choreId).lastOrNull;
-      if (last == null) return;
-      final stepObjs = last.steps.map(chore.createAction).toList();
-      for (final step in stepObjs.reversed) {
-        await step.undo(_deviceManager);
-      }
-      await _historyStore.clearByChoreId(choreId);
+      await _undoChoreById(choreId);
+      _globalBus.fire(ChoresChangedEvent(_sceneManager.current));
     });
   }
 
   @override
   Future<bool> hasHistoryForChore(String choreId) async {
     return await _historyStore.hasHistoryForChore(choreId);
+  }
+
+  Future<void> _undoMutuallyExclusiveChores(AbstractChore chore) async {
+    for (final other in allChores) {
+      if (!chore.isMutuallyExclusiveWith(other)) {
+        continue;
+      }
+
+      final hasHistory = await _historyStore.hasHistoryForChore(other.id);
+      if (!hasHistory) {
+        continue;
+      }
+
+      await _undoChoreById(other.id);
+    }
+  }
+
+  Future<void> _undoChoreById(String choreId) async {
+    final chore = allChores.singleWhere((r) => r.id == choreId);
+    final records = await _historyStore.getAllRecords();
+    final last = records.where((r) => r.choreId == choreId).lastOrNull;
+    if (last == null) {
+      return;
+    }
+
+    final stepObjs = last.steps.map(chore.createAction).toList();
+    for (final step in stepObjs.reversed) {
+      await step.undo(_deviceManager);
+    }
+    await _historyStore.clearByChoreId(choreId);
   }
 
   @override

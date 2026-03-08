@@ -25,6 +25,7 @@ import 'package:borneo_app/features/chores/models/abstract_chore.dart';
 import 'package:borneo_app/core/services/chore_manager.dart';
 import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:borneo_app/core/providers.dart';
+import 'package:lw_wot/wot.dart';
 
 import '../../mocks/mocks.dart';
 
@@ -290,6 +291,14 @@ void main() {
       overrides: [
         choreManagerProvider.overrideWithValue(_StaticChoreManager([chore])),
         appNotificationServiceProvider.overrideWithValue(_DummyNotification()),
+        eventBusProvider.overrideWithValue(EventBus()),
+        deviceManagerProvider.overrideWithValue(
+          StubDeviceManager(
+            things: [
+              _buildThing(id: 'light-1', types: ['OnOffSwitch', 'Light'], on: true, online: true),
+            ],
+          ),
+        ),
         choreSummaryProvider.overrideWith2((arg) => ChoreSummaryNotifier(arg)),
         choresProvider.overrideWith(() => fakeNotifier),
       ],
@@ -309,6 +318,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ChoreCard), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
 
     // Start a load cycle - spinner appears and chore cards disappear.
     fakeNotifier.setLoadingFlag(true);
@@ -322,6 +332,43 @@ void main() {
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.byType(ChoreCard), findsOneWidget);
+  });
+
+  testWidgets('chore switch is disabled when applicable device count is zero', (WidgetTester tester) async {
+    final chore = PowerOffAllChore(name: 'Power off all');
+
+    final container = ProviderContainer(
+      overrides: [
+        choreManagerProvider.overrideWithValue(_StaticChoreManager([chore])),
+        appNotificationServiceProvider.overrideWithValue(_DummyNotification()),
+        eventBusProvider.overrideWithValue(EventBus()),
+        deviceManagerProvider.overrideWithValue(
+          StubDeviceManager(
+            things: [
+              _buildThing(id: 'light-1', types: ['OnOffSwitch', 'Light'], on: true, online: false),
+            ],
+          ),
+        ),
+        choreSummaryProvider.overrideWith2((arg) => ChoreSummaryNotifier(arg)),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          localizationsDelegates: const [_FakeGettextDelegate()],
+          supportedLocales: const [Locale('en', 'US')],
+          home: Scaffold(body: ChoreCard(chore)),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('0'), findsOneWidget);
+    final switchWidget = tester.widget<Switch>(find.byKey(Key('chore_switch_${chore.id}')));
+    expect(switchWidget.onChanged, isNull);
   });
 
   // -------------------------------------------------------------------------
@@ -496,6 +543,31 @@ void main() {
       expect(afterReload, equals(afterSelect));
     });
   });
+}
+
+WotThing _buildThing({required String id, required List<String> types, bool? on, bool? online}) {
+  final thing = WotThing(id: id, title: id, type: types, description: 'test thing');
+  if (on != null) {
+    thing.addProperty(
+      WotProperty<bool>(
+        thing: thing,
+        name: 'on',
+        value: WotValue<bool>(initialValue: on),
+        metadata: WotPropertyMetadata(type: 'boolean'),
+      ),
+    );
+  }
+  if (online != null) {
+    thing.addProperty(
+      WotProperty<bool>(
+        thing: thing,
+        name: 'online',
+        value: WotValue<bool>(initialValue: online),
+        metadata: WotPropertyMetadata(type: 'boolean', readOnly: true),
+      ),
+    );
+  }
+  return thing;
 }
 
 // ---------------------------------------------------------------------------
