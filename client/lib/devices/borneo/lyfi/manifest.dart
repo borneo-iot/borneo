@@ -69,7 +69,8 @@ class LyfiDeviceModuleMetadata extends DeviceModuleMetadata {
   }
 
   /// Custom card center: bar chart of per-channel brightness.
-  /// Falls back to large device icon when offline, powered off, or data unavailable.
+  /// Falls back to a large offline icon when disconnected, otherwise the device
+  /// icon when powered off or data is unavailable.
   static Widget _buildCardCenter(BuildContext context, AbstractDeviceSummaryViewModel vm) {
     final lvm = vm as LyfiSummaryDeviceViewModel;
     return Selector<AbstractDeviceSummaryViewModel, LyfiDeviceInfo?>(
@@ -90,6 +91,13 @@ class LyfiDeviceModuleMetadata extends DeviceModuleMetadata {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final iconSize = constraints.maxHeight * 0.72;
+                    if (!lvm.isOnline) {
+                      return Icon(
+                        Icons.wifi_off,
+                        size: iconSize,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.38),
+                      );
+                    }
                     return _buildDeviceIcon(context, iconSize, lvm.isOnline);
                   },
                 ),
