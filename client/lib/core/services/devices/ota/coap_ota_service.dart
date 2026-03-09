@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:borneo_app/core/services/devices/ota/ota_providers.dart';
+import 'package:borneo_app/core/services/devices/ota/ota_service.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
 import 'package:cancellation_token/cancellation_token.dart';
@@ -13,29 +14,6 @@ import 'package:pub_semver/pub_semver.dart';
 
 const String _kManifestUrl = 'https://flasher.borneoiot.com/firmware/manifests.json';
 const String _kFirmwareBaseUrl = 'https://flasher.borneoiot.com/firmware/';
-
-final class OtaUpgradeInfo {
-  final Version remoteVersion;
-  final Version localVersion;
-  final bool canUpgrade;
-  final DateTime remoteTime;
-  final String otaFilename;
-  final String otaSha256;
-
-  const OtaUpgradeInfo({
-    required this.remoteVersion,
-    required this.localVersion,
-    required this.canUpgrade,
-    required this.remoteTime,
-    required this.otaFilename,
-    required this.otaSha256,
-  });
-}
-
-abstract class IOtaService {
-  Future<OtaUpgradeInfo> checkNewVersion(BoundDevice bound, {CancellationToken? cancelToken});
-  Future<void> upgrade(BoundDevice bound, {CancellationToken? cancelToken, bool force = false});
-}
 
 final class CoapOtaService implements IOtaService {
   final Logger? _logger;
@@ -141,14 +119,4 @@ final class CoapOtaService implements IOtaService {
     await api.otaCoapEngage(bound.device, firmwareBuffer, cancelToken: cancelToken);
     _logger?.i('OTA firmware upload completed successfully');
   }
-}
-
-final class OtaProvider {
-  static const String kCoapType = 'coap';
-  const OtaProvider();
-
-  IOtaService create({String type = kCoapType, required GettextLocalizations gt, Logger? logger}) => switch (type) {
-    kCoapType => CoapOtaService(logger: logger, gt: gt),
-    _ => throw Error(),
-  };
 }

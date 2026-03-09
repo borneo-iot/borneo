@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:borneo_app/core/services/devices/ota_providers.dart';
+import 'package:borneo_app/core/services/devices/ota/ota_providers.dart';
 import 'package:borneo_app/devices/borneo/lyfi/view_models/controller_settings_view_model.dart';
 import 'package:borneo_app/devices/borneo/lyfi/view_models/settings_view_model.dart';
 import 'package:borneo_app/devices/borneo/lyfi/views/controller_settings_screen.dart';

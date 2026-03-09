@@ -49,7 +49,6 @@ class _BorneoAppState extends State<BorneoApp> {
   Locale? _locale;
   late StreamSubscription _localeSub;
   late StreamSubscription _themeSub;
-  late StreamSubscription _tempUnitSub;
   ThemeData _currentTheme = ThemeData();
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
@@ -80,21 +79,12 @@ class _BorneoAppState extends State<BorneoApp> {
         _themeMode = event.themeMode;
       });
     });
-    _tempUnitSub = widget.globalEventBus.on<AppTemperatureUnitChangedEvent>().listen((event) {
-      // rebuilding the root forces every widget/provider under MaterialApp
-      // to rebuild so that new temperature formatting takes effect even if
-      // they don't explicitly observe the service. this mirrors how
-      // language/theme changes work and gives the impression of a "soft
-      // restart".
-      setState(() {});
-    });
   }
 
   @override
   void dispose() {
     _localeSub.cancel();
     _themeSub.cancel();
-    _tempUnitSub.cancel();
     super.dispose();
   }
 

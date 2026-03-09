@@ -7,7 +7,7 @@ import 'package:borneo_app/core/services/devices/ble_provisioner.dart';
 import 'package:borneo_app/core/services/devices/device_module_harvesters.dart';
 import 'package:borneo_app/core/services/devices/device_module_registry.dart';
 import 'package:borneo_app/core/services/devices/mdns.dart';
-import 'package:borneo_app/core/services/devices/ota_providers.dart';
+import 'package:borneo_app/core/services/devices/ota/ota_providers.dart';
 import 'package:borneo_app/core/services/devices/static_modular_driver_registry.dart';
 import 'package:borneo_kernel/kernel.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
@@ -80,6 +80,7 @@ Future<Widget> buildAppWidget({
   final prefs = sharedPreferences ?? await SharedPreferences.getInstance();
   final bus = eventBus ?? EventBus();
   final registry = deviceModuleRegistry ?? DeviceModuleRegistry(StaticDeviceModuleHarvester());
+  final localeService = AppLocaleService();
 
   // Read locale synchronously from the already-loaded SharedPreferences so the
   // first frame uses the correct locale instead of the system locale.
@@ -155,7 +156,7 @@ Future<Widget> buildAppWidget({
     ),
 
     // LocaleService
-    provider.Provider<ILocaleService>(create: (_) => AppLocaleService(), lazy: false),
+    provider.Provider<ILocaleService>(create: (_) => localeService, lazy: false),
 
     // PlatformService (used by various components to make platform checks testable)
     provider.Provider<PlatformService>(create: (_) => PlatformServiceImpl(), lazy: false),
@@ -185,6 +186,7 @@ Future<Widget> buildAppWidget({
       sharedPreferencesProvider.overrideWithValue(prefs),
       eventBusProvider.overrideWithValue(bus),
       deviceModuleRegistryProvider.overrideWithValue(registry),
+      localeServiceProvider.overrideWithValue(localeService),
       platformDeviceInfoProvider.overrideWithValue(platformInfo),
       // other overrides may be added as the migration continues
     ],

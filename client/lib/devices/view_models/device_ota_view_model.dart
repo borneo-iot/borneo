@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:borneo_app/core/events/app_events.dart';
+import 'package:borneo_app/core/services/devices/ota/ota_service.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:flutter/foundation.dart';
-import 'package:borneo_app/core/services/devices/ota_providers.dart';
+import 'package:borneo_app/core/services/devices/ota/ota_providers.dart';
 import 'package:borneo_kernel_abstractions/models/bound_device.dart';
 import 'package:event_bus/event_bus.dart';
 
