@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 15:19+0800\n"
+"POT-Creation-Date: 2026-03-09 21:12+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,6 +32,25 @@ msgstr ""
 
 #: core\services\chore_manager_impl.dart:48
 msgid "Dry Scape Mode"
+msgstr ""
+
+#: core\services\devices\device_manager_impl.dart:409
+#, python-brace-format
+msgid ""
+"Device firmware version {currentVersion} is not supported. Required: "
+"{requiredVersion}."
+msgstr ""
+
+#: core\services\devices\device_manager_impl.dart:418
+msgid "This device is not compatible with the selected driver."
+msgstr ""
+
+#: core\services\devices\device_manager_impl.dart:422
+msgid "Timed out while probing the device."
+msgstr ""
+
+#: core\services\devices\device_manager_impl.dart:434
+msgid "Unable to connect to this device."
 msgstr ""
 
 #: core\services\devices\ota\coap_ota_service.dart:29
@@ -105,15 +124,15 @@ msgstr ""
 msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
 msgstr ""
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:633
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:632
 msgid "Unable to switch to Sun Simulation mode: the location is not set."
 msgstr ""
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:640
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:638
 msgid "Failed to switch mode"
 msgstr ""
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:724
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:722
 msgid "Device is not reachable at the moment."
 msgstr ""
 
@@ -467,7 +486,7 @@ msgid "ON"
 msgstr ""
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_power_switch_tile.dart:74
-#: features\devices\views\device_card.dart:156
+#: features\devices\views\device_card.dart:158
 msgid "OFF"
 msgstr ""
 
@@ -930,7 +949,7 @@ msgid ""
 msgstr ""
 
 #: devices\views\device_offline_view.dart:36
-#: features\devices\views\device_discovery_screen.dart:127
+#: features\devices\views\device_discovery_screen.dart:130
 #: features\devices\views\provisioning_progress_screen.dart:123
 #: features\devices\views\provisioning_screen.dart:546
 msgid "Close"
@@ -1146,7 +1165,7 @@ msgstr ""
 msgid "Failed to change the group for device '{deviceName}'"
 msgstr ""
 
-#: features\devices\view_models\provisioning_wizard_view_model.dart:91
+#: features\devices\view_models\provisioning_wizard_view_model.dart:92
 msgid "Failed to scan  WiFi networks"
 msgstr ""
 
@@ -1158,34 +1177,34 @@ msgstr ""
 msgid "Failed to scan WiFi networks"
 msgstr ""
 
-#: features\devices\views\device_card.dart:130
-#: features\devices\views\device_card.dart:143
+#: features\devices\views\device_card.dart:132
+#: features\devices\views\device_card.dart:145
 msgid "OFF-LINE"
 msgstr ""
 
-#: features\devices\views\device_card.dart:197
+#: features\devices\views\device_card.dart:199
 #: shared\widgets\device_status_indicator.dart:74
 msgid "Reconnect"
 msgstr ""
 
-#: features\devices\views\device_card.dart:202
+#: features\devices\views\device_card.dart:204
 msgid "Change group..."
 msgstr ""
 
-#: features\devices\views\device_card.dart:204
+#: features\devices\views\device_card.dart:206
 msgid "Delete..."
 msgstr ""
 
-#: features\devices\views\device_card.dart:218
+#: features\devices\views\device_card.dart:220
 #, python-brace-format
 msgid "Are you sure to delete the device \"{deviceName}\"?"
 msgstr ""
 
-#: features\devices\views\device_card.dart:234
+#: features\devices\views\device_card.dart:236
 msgid "Change Device Group"
 msgstr ""
 
-#: features\devices\views\device_card.dart:236
+#: features\devices\views\device_card.dart:238
 #, python-brace-format
 msgid "Select the group to which device \"{deviceName}\" belongs:"
 msgstr ""
@@ -1199,35 +1218,35 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
-#: features\devices\views\device_discovery_screen.dart:100
+#: features\devices\views\device_discovery_screen.dart:103
 msgid ""
 "Bluetooth is not supported on this system; device WiFi provisioning is "
 "unavailable."
 msgstr ""
 
-#: features\devices\views\device_discovery_screen.dart:160
+#: features\devices\views\device_discovery_screen.dart:163
 msgid "No devices found"
 msgstr ""
 
-#: features\devices\views\device_discovery_screen.dart:194
+#: features\devices\views\device_discovery_screen.dart:197
 msgid "Searching for devices..."
 msgstr ""
 
-#: features\devices\views\device_discovery_screen.dart:199
+#: features\devices\views\device_discovery_screen.dart:202
 #, python-brace-format
 msgid "{0} seconds remaining"
 msgstr ""
 
-#: features\devices\views\device_discovery_screen.dart:207
+#: features\devices\views\device_discovery_screen.dart:210
 #: features\devices\views\provisioning_progress_screen.dart:41
 msgid "Stop"
 msgstr ""
 
-#: features\devices\views\device_discovery_screen.dart:242
+#: features\devices\views\device_discovery_screen.dart:245
 msgid "Detected on network"
 msgstr ""
 
-#: features\devices\views\device_discovery_screen.dart:274
+#: features\devices\views\device_discovery_screen.dart:282
 msgid "Ready to provision"
 msgstr ""
 

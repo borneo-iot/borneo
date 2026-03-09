@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 15:19+0800\n"
+"POT-Creation-Date: 2026-03-09 21:12+0800\n"
 "PO-Revision-Date: 2026-01-03 14:43+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -33,6 +33,25 @@ msgstr "Modo cambio de agua"
 #: core\services\chore_manager_impl.dart:48
 msgid "Dry Scape Mode"
 msgstr "Modo paisajismo seco"
+
+#: core\services\devices\device_manager_impl.dart:409
+#, python-brace-format
+msgid ""
+"Device firmware version {currentVersion} is not supported. Required: "
+"{requiredVersion}."
+msgstr "La versión de firmware del dispositivo {currentVersion} no es compatible. Se requiere: {requiredVersion}."
+
+#: core\services\devices\device_manager_impl.dart:418
+msgid "This device is not compatible with the selected driver."
+msgstr "Este dispositivo no es compatible con el controlador seleccionado."
+
+#: core\services\devices\device_manager_impl.dart:422
+msgid "Timed out while probing the device."
+msgstr "Se agotó el tiempo al sondear el dispositivo."
+
+#: core\services\devices\device_manager_impl.dart:434
+msgid "Unable to connect to this device."
+msgstr "No se puede conectar a este dispositivo."
 
 #: core\services\devices\ota\coap_ota_service.dart:29
 #, python-brace-format
@@ -105,17 +124,21 @@ msgstr "No se pudieron guardar los cambios. Por favor, inténtelo de nuevo."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:627
 msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
-msgstr "No se puede cambiar al modo de simulación solar: la zona horaria no está configurada."
+msgstr ""
+"No se puede cambiar al modo de simulación solar: la zona horaria no está "
+"configurada."
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:633
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:632
 msgid "Unable to switch to Sun Simulation mode: the location is not set."
-msgstr "No se puede cambiar al modo de simulación solar: la ubicación no está configurada."
+msgstr ""
+"No se puede cambiar al modo de simulación solar: la ubicación no está "
+"configurada."
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:640
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:638
 msgid "Failed to switch mode"
 msgstr "Error al cambiar de modo"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:724
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:722
 msgid "Device is not reachable at the moment."
 msgstr "El dispositivo no está disponible en este momento."
 
@@ -473,7 +496,7 @@ msgid "ON"
 msgstr "ENCENDIDO"
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_power_switch_tile.dart:74
-#: features\devices\views\device_card.dart:156
+#: features\devices\views\device_card.dart:158
 msgid "OFF"
 msgstr "APAGADO"
 
@@ -944,7 +967,7 @@ msgstr ""
 "conexión de red o alimentación."
 
 #: devices\views\device_offline_view.dart:36
-#: features\devices\views\device_discovery_screen.dart:127
+#: features\devices\views\device_discovery_screen.dart:130
 #: features\devices\views\provisioning_progress_screen.dart:123
 #: features\devices\views\provisioning_screen.dart:546
 msgid "Close"
@@ -1176,7 +1199,7 @@ msgstr "Dispositivos no agrupados"
 msgid "Failed to change the group for device '{deviceName}'"
 msgstr "Error al cambiar el grupo para el dispositivo '{deviceName}'"
 
-#: features\devices\view_models\provisioning_wizard_view_model.dart:91
+#: features\devices\view_models\provisioning_wizard_view_model.dart:92
 msgid "Failed to scan  WiFi networks"
 msgstr "Error al escanear redes WiFi"
 
@@ -1188,34 +1211,34 @@ msgstr "El escaneo de WiFi ha sido cancelado."
 msgid "Failed to scan WiFi networks"
 msgstr "Error al escanear redes WiFi"
 
-#: features\devices\views\device_card.dart:130
-#: features\devices\views\device_card.dart:143
+#: features\devices\views\device_card.dart:132
+#: features\devices\views\device_card.dart:145
 msgid "OFF-LINE"
 msgstr "FUERA DE LÍNEA"
 
-#: features\devices\views\device_card.dart:197
+#: features\devices\views\device_card.dart:199
 #: shared\widgets\device_status_indicator.dart:74
 msgid "Reconnect"
 msgstr "Reconectar"
 
-#: features\devices\views\device_card.dart:202
+#: features\devices\views\device_card.dart:204
 msgid "Change group..."
 msgstr "Cambiar grupo..."
 
-#: features\devices\views\device_card.dart:204
+#: features\devices\views\device_card.dart:206
 msgid "Delete..."
 msgstr "Eliminar..."
 
-#: features\devices\views\device_card.dart:218
+#: features\devices\views\device_card.dart:220
 #, python-brace-format
 msgid "Are you sure to delete the device \"{deviceName}\"?"
 msgstr "¿Está seguro de eliminar el dispositivo \"{deviceName}\"?"
 
-#: features\devices\views\device_card.dart:234
+#: features\devices\views\device_card.dart:236
 msgid "Change Device Group"
 msgstr "Cambiar Grupo de Dispositivo"
 
-#: features\devices\views\device_card.dart:236
+#: features\devices\views\device_card.dart:238
 #, python-brace-format
 msgid "Select the group to which device \"{deviceName}\" belongs:"
 msgstr "Seleccione el grupo al que pertenece el dispositivo \"{deviceName}\":"
@@ -1229,7 +1252,7 @@ msgstr "Agregar Dispositivo"
 msgid "Refresh"
 msgstr "Actualizar"
 
-#: features\devices\views\device_discovery_screen.dart:100
+#: features\devices\views\device_discovery_screen.dart:103
 msgid ""
 "Bluetooth is not supported on this system; device WiFi provisioning is "
 "unavailable."
@@ -1237,29 +1260,29 @@ msgstr ""
 "Bluetooth no es compatible con este sistema; el aprovisionamiento WiFi del "
 "dispositivo no está disponible."
 
-#: features\devices\views\device_discovery_screen.dart:160
+#: features\devices\views\device_discovery_screen.dart:163
 msgid "No devices found"
 msgstr "No se encontraron dispositivos"
 
-#: features\devices\views\device_discovery_screen.dart:194
+#: features\devices\views\device_discovery_screen.dart:197
 msgid "Searching for devices..."
 msgstr "Buscando dispositivos..."
 
-#: features\devices\views\device_discovery_screen.dart:199
+#: features\devices\views\device_discovery_screen.dart:202
 #, python-brace-format
 msgid "{0} seconds remaining"
 msgstr "Quedan {0} segundos"
 
-#: features\devices\views\device_discovery_screen.dart:207
+#: features\devices\views\device_discovery_screen.dart:210
 #: features\devices\views\provisioning_progress_screen.dart:41
 msgid "Stop"
 msgstr "Detener"
 
-#: features\devices\views\device_discovery_screen.dart:242
+#: features\devices\views\device_discovery_screen.dart:245
 msgid "Detected on network"
 msgstr "Detectado en la red"
 
-#: features\devices\views\device_discovery_screen.dart:274
+#: features\devices\views\device_discovery_screen.dart:282
 msgid "Ready to provision"
 msgstr "Listo para aprovisionar"
 
