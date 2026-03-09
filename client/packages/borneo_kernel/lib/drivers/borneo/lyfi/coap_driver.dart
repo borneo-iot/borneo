@@ -62,7 +62,7 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
   Future<bool> probe(Device dev, {CancellationToken? cancelToken}) async {
     final resolvedAddress = await resolveUriHostToPreferredAddress(dev.address);
     if (resolvedAddress != dev.address) {
-      logger?.i('Resolved device address `${dev.address}` -> `${resolvedAddress}`');
+      logger?.i('Resolved device address `${dev.address}` -> `$resolvedAddress`');
     }
 
     final probeCoapClient = BorneoCoapClient(

@@ -6,7 +6,6 @@ import 'package:event_bus/event_bus.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lw_wot/wot.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
-import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_memory.dart';
 
 import '../../mocks/mocks.dart';
