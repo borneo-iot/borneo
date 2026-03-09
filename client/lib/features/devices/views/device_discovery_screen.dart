@@ -291,10 +291,12 @@ class _DeviceDiscoveryContent extends StatelessWidget {
           : () async {
               if (vm.isMobile) {
                 await vm.stopDiscovery();
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => ProvisioningScreen(deviceName: bleName)),
-                );
+                if (context.mounted) {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ProvisioningScreen(deviceName: bleName)),
+                  );
+                }
                 if (context.mounted) {
                   await vm.startDiscovery();
                 }
