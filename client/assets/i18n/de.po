@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 11:21+0800\n"
+"POT-Creation-Date: 2026-03-09 15:19+0800\n"
 "PO-Revision-Date: 2025-09-09 14:10+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -87,7 +87,8 @@ msgstr "VORHERIG"
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:500
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:613
 msgid "Device is offline. Please retry after reconnection."
-msgstr "Gerät ist offline. Bitte versuchen Sie es nach dem erneuten Verbinden erneut."
+msgstr ""
+"Gerät ist offline. Bitte versuchen Sie es nach dem erneuten Verbinden erneut."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:516
 msgid "Bad device state"
@@ -99,18 +100,16 @@ msgstr "Fehler beim Wechsel in den temporären Zustand"
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:596
 msgid "Failed to save changes. Please try again."
-msgstr "Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut."
+msgstr ""
+"Änderungen konnten nicht gespeichert werden. Bitte versuchen Sie es erneut."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:627
-msgid ""
-"Unable to switch to Sun Simulation mode, the device's timezone is not set."
-msgstr "Wechsel in den Sonnensimulationsmodus nicht möglich, die Zeitzone des Geräts ist nicht eingestellt."
+msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
+msgstr "Kann nicht in den Sonnen-Simulationsmodus wechseln: Die Zeitzone ist nicht eingestellt."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:633
-msgid ""
-"Unable to switch to Sun Simulation mode, the device's geographic location is "
-"not set."
-msgstr "Wechsel in den Sonnensimulationsmodus nicht möglich, der geografische Standort des Geräts ist nicht eingestellt."
+msgid "Unable to switch to Sun Simulation mode: the location is not set."
+msgstr "Kann nicht in den Sonnen-Simulationsmodus wechseln: Der Standort ist nicht eingestellt."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:640
 msgid "Failed to switch mode"
@@ -1666,6 +1665,19 @@ msgstr "Aktueller Standort"
 #: shared\widgets\map_location_picker.dart:220
 msgid "Tap globe to select location"
 msgstr "Tippen Sie auf den Globus, um den Standort auszuwählen"
+
+#~ msgid ""
+#~ "Unable to switch to Sun Simulation mode, the device's timezone is not set."
+#~ msgstr ""
+#~ "Wechsel in den Sonnensimulationsmodus nicht möglich, die Zeitzone des "
+#~ "Geräts ist nicht eingestellt."
+
+#~ msgid ""
+#~ "Unable to switch to Sun Simulation mode, the device's geographic location "
+#~ "is not set."
+#~ msgstr ""
+#~ "Wechsel in den Sonnensimulationsmodus nicht möglich, der geografische "
+#~ "Standort des Geräts ist nicht eingestellt."
 
 #~ msgid "Failed to update device location: $e"
 #~ msgstr "Fehler beim Aktualisieren des Gerätestandorts: $e"

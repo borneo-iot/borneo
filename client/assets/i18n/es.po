@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 11:21+0800\n"
+"POT-Creation-Date: 2026-03-09 15:19+0800\n"
 "PO-Revision-Date: 2026-01-03 14:43+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -87,7 +87,9 @@ msgstr "ANTERIOR"
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:500
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:613
 msgid "Device is offline. Please retry after reconnection."
-msgstr "El dispositivo está desconectado. Por favor, inténtelo de nuevo después de reconectarse."
+msgstr ""
+"El dispositivo está desconectado. Por favor, inténtelo de nuevo después de "
+"reconectarse."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:516
 msgid "Bad device state"
@@ -102,15 +104,12 @@ msgid "Failed to save changes. Please try again."
 msgstr "No se pudieron guardar los cambios. Por favor, inténtelo de nuevo."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:627
-msgid ""
-"Unable to switch to Sun Simulation mode, the device's timezone is not set."
-msgstr "No se puede cambiar al modo de simulación solar, la zona horaria del dispositivo no está configurada."
+msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
+msgstr "No se puede cambiar al modo de simulación solar: la zona horaria no está configurada."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:633
-msgid ""
-"Unable to switch to Sun Simulation mode, the device's geographic location is "
-"not set."
-msgstr "No se puede cambiar al modo de simulación solar, la ubicación geográfica del dispositivo no está configurada."
+msgid "Unable to switch to Sun Simulation mode: the location is not set."
+msgstr "No se puede cambiar al modo de simulación solar: la ubicación no está configurada."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:640
 msgid "Failed to switch mode"
@@ -1665,6 +1664,19 @@ msgstr "Ubicación actual"
 #: shared\widgets\map_location_picker.dart:220
 msgid "Tap globe to select location"
 msgstr "Toque el globo para seleccionar la ubicación"
+
+#~ msgid ""
+#~ "Unable to switch to Sun Simulation mode, the device's timezone is not set."
+#~ msgstr ""
+#~ "No se puede cambiar al modo de simulación solar, la zona horaria del "
+#~ "dispositivo no está configurada."
+
+#~ msgid ""
+#~ "Unable to switch to Sun Simulation mode, the device's geographic location "
+#~ "is not set."
+#~ msgstr ""
+#~ "No se puede cambiar al modo de simulación solar, la ubicación geográfica "
+#~ "del dispositivo no está configurada."
 
 #~ msgid "Failed to update device location: $e"
 #~ msgstr "Error al actualizar la ubicación del dispositivo: $e"

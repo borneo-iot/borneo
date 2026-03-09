@@ -325,6 +325,15 @@ jobs:
             echo "prerelease=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Create latest asset aliases
+        run: |
+          cp \
+            "release-artifacts/borneo-app-ce-${{ needs.build-apk.outputs.version }}.apk" \
+            "release-artifacts/borneo-app-ce-latest.apk"
+          cp \
+            "release-artifacts/borneo-app-ce-${{ needs.build-windows.outputs.version }}-windows-x64.zip" \
+            "release-artifacts/borneo-app-ce-latest.windows-x64.zip"
+
       - name: Create Versionized GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -384,4 +393,9 @@ jobs:
           tag_name: release-app-latest
           name: Latest App Release
           draft: false
-          files: release-artifacts/*
+          overwrite_files: true
+          files: |
+            release-artifacts/borneo-app-ce-${{ needs.build-apk.outputs.version }}.apk
+            release-artifacts/borneo-app-ce-latest.apk
+            release-artifacts/borneo-app-ce-${{ needs.build-windows.outputs.version }}-windows-x64.zip
+            release-artifacts/borneo-app-ce-latest.windows-x64.zip

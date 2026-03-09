@@ -624,13 +624,13 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
 
       if (newMode == LyfiMode.sun) {
         if (borneoDeviceStatus?.timezone.isEmpty ?? true) {
-          notifyAppError(gt.translate("Unable to switch to Sun Simulation mode, the device's timezone is not set."));
+          notifyAppError(gt.translate("Unable to switch to Sun Simulation mode: the timezone is not set."));
           return;
         }
         final location = super.lyfiThing.getProperty<GeoLocation?>('location');
         if (location == null) {
           notifyAppError(
-            gt.translate("Unable to switch to Sun Simulation mode, the device's geographic location is not set."),
+            gt.translate("Unable to switch to Sun Simulation mode: the location is not set."),
           );
           return;
         }

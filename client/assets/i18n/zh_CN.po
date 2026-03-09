@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 11:21+0800\n"
+"POT-Creation-Date: 2026-03-09 15:19+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -101,15 +101,12 @@ msgid "Failed to save changes. Please try again."
 msgstr "保存更改失败，请重试。"
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:627
-msgid ""
-"Unable to switch to Sun Simulation mode, the device's timezone is not set."
-msgstr "无法切换到日光模拟模式，设备的时区未设置。"
+msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
+msgstr "无法切换到太阳模拟模式：时区未设置。"
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:633
-msgid ""
-"Unable to switch to Sun Simulation mode, the device's geographic location is "
-"not set."
-msgstr "无法切换到日光模拟模式，设备的地理位置未设置。"
+msgid "Unable to switch to Sun Simulation mode: the location is not set."
+msgstr "无法切换到太阳模拟模式：位置未设置。"
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:640
 msgid "Failed to switch mode"
@@ -1630,6 +1627,15 @@ msgstr "当前位置"
 #: shared\widgets\map_location_picker.dart:220
 msgid "Tap globe to select location"
 msgstr "点击地球以选择位置"
+
+#~ msgid ""
+#~ "Unable to switch to Sun Simulation mode, the device's timezone is not set."
+#~ msgstr "无法切换到日光模拟模式，设备的时区未设置。"
+
+#~ msgid ""
+#~ "Unable to switch to Sun Simulation mode, the device's geographic location "
+#~ "is not set."
+#~ msgstr "无法切换到日光模拟模式，设备的地理位置未设置。"
 
 #~ msgid "Failed to update device location: $e"
 #~ msgstr "更新设备位置失败：$e"
