@@ -77,8 +77,12 @@ abstract class BaseBorneoDeviceViewModel extends BaseDeviceViewModel {
       final tzc = TimezoneConverter();
       await tzc.init();
       _localPosixTimezone = await tzc.getLocalPosixTimezone();
-    } catch (e) {
-      logger?.e('Failed to initialize local timezone: $e');
+    } catch (e, stackTrace) {
+      notifyAppError(
+        gt.translate('Failed to initialize local timezone: {msg}', nArgs: {'msg': e.toString()}),
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -104,23 +108,29 @@ abstract class BaseBorneoDeviceViewModel extends BaseDeviceViewModel {
   Future<void> syncDeviceTimezone() async {
     final success = await _syncDeviceTimezone();
     if (success) {
-      notification.showSuccess('Timezone synchronized successfully');
-    } else {
-      notification.showError('Failed to sync timezone');
+      notification.showSuccess(gt.translate('Timezone synchronized successfully'));
     }
   }
 
   Future<bool> _syncDeviceTimezone() async {
-    if (!super.isOnline || _localPosixTimezone == null) return false;
+    if (!isBusy || !super.isOnline || _localPosixTimezone == null) {
+      return false;
+    }
+    setBusy(true);
 
     try {
       await borneoDeviceApi.setTimeZone(super.boundDevice!.device, _localPosixTimezone!);
       wotThing.findProperty('timezone')?.value.notifyOfExternalUpdate(_localPosixTimezone);
-      notifyListeners();
       return true;
-    } catch (e) {
-      logger?.e('Failed to sync device timezone: $e');
+    } catch (e, stackTrace) {
+      notifyAppError(
+        gt.translate('Failed to sync timezone: {msg}', nArgs: {'msg': e.toString()}),
+        error: e,
+        stackTrace: stackTrace,
+      );
       return false;
+    } finally {
+      setBusy(false);
     }
   }
 }

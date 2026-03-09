@@ -3,14 +3,12 @@ import 'package:borneo_app/core/services/devices/ble_provisioner.dart';
 import 'package:borneo_app/features/devices/models/ble_provision_state.dart';
 import 'package:borneo_app/shared/view_models/abstract_screen_view_model.dart';
 import 'package:cancellation_token/cancellation_token.dart';
-import 'package:logger/logger.dart';
 
 class ProvisioningProgressViewModel extends AbstractScreenViewModel {
   final IBleProvisioner _bleProvisioner;
   final String deviceName;
   final String ssid;
   final String password;
-  final Logger _logger = Logger();
 
   BleProvisioningState _state = BleProvisioningState.idle;
   BleProvisioningState get state => _state;
@@ -18,7 +16,7 @@ class ProvisioningProgressViewModel extends AbstractScreenViewModel {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  final CancellationToken _provisionCancelToken = CancellationToken();
+  final CancellationToken _provCancel = CancellationToken();
 
   ProvisioningProgressViewModel(
     this._bleProvisioner,
@@ -33,7 +31,7 @@ class ProvisioningProgressViewModel extends AbstractScreenViewModel {
   @override
   void dispose() {
     if (isBusy) {
-      _provisionCancelToken.cancel();
+      _provCancel.cancel();
     }
     super.dispose();
   }
@@ -44,34 +42,32 @@ class ProvisioningProgressViewModel extends AbstractScreenViewModel {
   }
 
   Future<void> startProvisioning() async {
-    if (_state != BleProvisioningState.idle) {
+    if (isBusy || _state != BleProvisioningState.idle) {
       return;
     }
 
     isBusy = true;
-    notifyListeners();
     try {
-      // 1. Sending Credentials
       _updateState(BleProvisioningState.sendingCredentials);
 
-      // This sends credentials and waits for ESP confirmation
-      await _bleProvisioner.provisionWifi(deviceName, ssid, password, cancelToken: _provisionCancelToken);
+      await _bleProvisioner.provisionWifi(deviceName, ssid, password, cancelToken: _provCancel);
 
-      // 2. Connecting to Wifi (Assumed by plugin usually, or happens now)
       _updateState(BleProvisioningState.connectingToWifi);
 
-      // Provisioning completed successfully
+      isBusy = false;
       _updateState(BleProvisioningState.success);
     } on CancelledException {
-      _logger.i('The provisioning task has been cancelled.');
-    } catch (e, stackTrace) {
-      _logger.e('Provisioning failed', error: e, stackTrace: stackTrace);
-      _errorMessage = e.toString();
-      _updateState(BleProvisioningState.failed);
-    } finally {
+      logger?.i('The provisioning task has been cancelled.');
       isBusy = false;
-      if (!_provisionCancelToken.isCancelled && !super.isDisposed) {
-        notifyListeners();
+      if (!super.isDisposed) {
+        _updateState(BleProvisioningState.failed);
+      }
+    } catch (e, stackTrace) {
+      logger?.e('Provisioning failed', error: e, stackTrace: stackTrace);
+      if (!super.isDisposed) {
+        _errorMessage = e.toString();
+        isBusy = false;
+        _updateState(BleProvisioningState.failed);
       }
     }
   }

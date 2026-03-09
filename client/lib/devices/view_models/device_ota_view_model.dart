@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:borneo_app/core/events/app_events.dart';
 import 'package:borneo_app/core/services/devices/ota/ota_service.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:flutter/foundation.dart';
@@ -108,23 +107,22 @@ class DeviceOtaViewModel extends BaseViewModel with ViewModelEventBusMixin {
 
   /// Cancels an in-progress upgrade.
   void cancelUpgrade() {
-    if (!isUpgrading) return;
+    if (!isUpgrading) {
+      return;
+    }
     _cancelToken?.cancel();
   }
 
   void _setState(OtaState newState) {
     _state = newState;
-    if (!isDisposed) notifyListeners();
+    if (!isDisposed) {
+      notifyListeners();
+    }
   }
 
   @override
   void dispose() {
     _cancelToken?.cancel();
     super.dispose();
-  }
-
-  @override
-  void notifyAppError(String message, {Object? error, StackTrace? stackTrace}) {
-    globalEventBus.fire(AppErrorEvent(message, error: error, stackTrace: stackTrace));
   }
 }

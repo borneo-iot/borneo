@@ -3,12 +3,10 @@ import 'package:borneo_app/core/services/devices/ble_provisioner.dart';
 import 'package:borneo_app/shared/view_models/abstract_screen_view_model.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:flutter_esp_ble_prov/flutter_esp_ble_prov.dart';
-import 'package:logger/logger.dart';
 
 class WifiSelectionViewModel extends AbstractScreenViewModel {
   final IBleProvisioner _bleProvisioner;
   final String deviceName;
-  final Logger _logger = Logger(); // Or inject
   final IAppNotificationService? notificationService;
 
   List<WifiNetwork>? _networks;
@@ -45,8 +43,7 @@ class WifiSelectionViewModel extends AbstractScreenViewModel {
     } on CancelledException {
       this.notificationService?.showWarning(super.gt.translate('The WiFi scanning has been cancelled.'));
     } catch (e, stackTrace) {
-      _logger.e('Failed to scan wifi networks', error: e, stackTrace: stackTrace);
-      notifyAppError(e.toString());
+      notifyAppError(gt.translate('Failed to scan WiFi networks'), error: e, stackTrace: stackTrace);
     } finally {
       isBusy = false;
       if (!_scanCancelToken.isCancelled && !super.isDisposed) {

@@ -88,8 +88,7 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
     } on CancelledException {
       logger?.i('The WiFi scanning has been cancelled.');
     } catch (e, stackTrace) {
-      logger?.e('Failed to scan wifi networks', error: e, stackTrace: stackTrace);
-      notifyAppError(e.toString());
+      notifyAppError(gt.translate('Failed to scan  WiFi networks'), error: e, stackTrace: stackTrace);
     } finally {
       isBusy = false;
       if (!_cancelToken.isCancelled && !isDisposed) {

@@ -497,7 +497,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
 
   void switchPowerOnOff(bool onOff) {
     if (isSuspectedOffline) {
-      notifyAppError('Device is offline. Please retry after reconnection.');
+      notifyAppError(gt.translate('Device is offline. Please retry after reconnection.'));
       return;
     }
     super.lyfiThing.findProperty('on')?.setValue(onOff);
@@ -593,8 +593,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
             _syncScheduleTables(mode: LyfiMode.sun, force: true);
           }
         } catch (e, stackTrace) {
-          logger?.e('Failed to save editor changes', error: e, stackTrace: stackTrace);
-          notifyAppError('Failed to save changes. Please try again.');
+          notifyAppError(gt.translate('Failed to save changes. Please try again.'), error: e, stackTrace: stackTrace);
           return; // Prevent state change if save fails
         }
       }
@@ -611,7 +610,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
 
   Future<void> _switchMode(LyfiMode newMode) async {
     if (!isOnline || isSuspectedOffline) {
-      notifyAppError('Device is offline. Please retry after reconnection.');
+      notifyAppError(gt.translate('Device is offline. Please retry after reconnection.'));
       return;
     }
 
@@ -625,12 +624,14 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
 
       if (newMode == LyfiMode.sun) {
         if (borneoDeviceStatus?.timezone.isEmpty ?? true) {
-          notifyAppError("Unable to switch to Sun Simulation mode, the device's timezone is not set.");
+          notifyAppError(gt.translate("Unable to switch to Sun Simulation mode, the device's timezone is not set."));
           return;
         }
         final location = super.lyfiThing.getProperty<GeoLocation?>('location');
         if (location == null) {
-          notifyAppError("Unable to switch to Sun Simulation mode, the device's geographic location is not set.");
+          notifyAppError(
+            gt.translate("Unable to switch to Sun Simulation mode, the device's geographic location is not set."),
+          );
           return;
         }
       }

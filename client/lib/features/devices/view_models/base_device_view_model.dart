@@ -135,11 +135,18 @@ abstract class BaseDeviceViewModel extends BaseViewModel
     } on IOException catch (ioex, stackTrace) {
       logger?.e(ioex.toString(), error: ioex, stackTrace: stackTrace);
       if (isOnline) {
-        super.notifyAppError('Failed to initialize device: $ioex', stackTrace: stackTrace);
+        super.notifyAppError(
+          gt.translate('Failed to initialize device: {msg}', nArgs: {'msg': ioex.toString()}),
+          error: ioex,
+          stackTrace: stackTrace,
+        );
       }
     } catch (e, stackTrace) {
-      logger?.e('Failed to initialize device($deviceID): $e', error: e, stackTrace: stackTrace);
-      super.notifyAppError('Failed to initialize device: $e', stackTrace: stackTrace);
+      super.notifyAppError(
+        gt.translate('Failed to initialize device: {msg}', nArgs: {'msg': e.toString()}),
+        error: e,
+        stackTrace: stackTrace,
+      );
     } finally {
       isInitialized = true;
     }
@@ -406,8 +413,7 @@ abstract class BaseDeviceViewModel extends BaseViewModel
     try {
       await deviceManager.delete(deviceID, cancelToken: masterCancellation);
     } catch (e, stackTrace) {
-      logger?.e('$e', error: e, stackTrace: stackTrace);
-      notifyAppError('$e', stackTrace: stackTrace);
+      notifyAppError(gt.translate('Failed to delete device'), error: e, stackTrace: stackTrace);
     } finally {
       isBusy = false;
       if (shouldUpdate && _isAvailable && !isDisposed) {
