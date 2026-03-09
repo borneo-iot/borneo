@@ -281,25 +281,22 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
   }
 
   Future<void> addNewDevice(SupportedDeviceDescriptor deviceInfo) async {
-    if (this.isBusy) {
+    if (this.isDisposed) {
       return;
     }
 
-    this.isBusy = true;
-    this.notifyListeners();
     try {
       await _deviceManager.addNewDevice(deviceInfo, groupID: null);
-    } finally {
-      this.isBusy = false;
-      this.notifyListeners();
-    }
+    } finally {}
   }
 
   Future<void> _onNewDeviceEntityAdded(NewDeviceEntityAddedEvent event) async {
     try {
       _updateDiscoverableList();
     } finally {
-      notifyListeners();
+      if (!this.isDisposed) {
+        notifyListeners();
+      }
     }
   }
 

@@ -53,28 +53,31 @@ class DeviceDiscoveryScreen extends StatelessWidget {
               ),
             ],
           ),
-          body: Column(
-            children: [
-              Selector<DeviceDiscoveryViewModel, bool>(
-                selector: (_, vm) => vm.isBusy,
-                builder: (_, isBusy, _) =>
-                    SizedBox(height: 2, child: isBusy ? const LinearProgressIndicator() : const SizedBox.expand()),
-              ),
-              Expanded(
-                child: FutureBuilder<void>(
-                  future: vm.initFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text(snapshot.error.toString()));
-                    }
-                    return const _DeviceDiscoveryContent();
-                  },
+          body: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Selector<DeviceDiscoveryViewModel, bool>(
+                  selector: (_, vm) => vm.isBusy,
+                  builder: (_, isBusy, _) =>
+                      SizedBox(height: 2, child: isBusy ? const LinearProgressIndicator() : const SizedBox.expand()),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: FutureBuilder<void>(
+                    future: vm.initFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.hasError) {
+                        return Center(child: Text(snapshot.error.toString()));
+                      }
+                      return const _DeviceDiscoveryContent();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -287,13 +290,13 @@ class _DeviceDiscoveryContent extends StatelessWidget {
           ? null
           : () async {
               if (vm.isMobile) {
+                await vm.stopDiscovery();
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => ProvisioningScreen(deviceName: bleName)),
                 );
-                // Check if we need to refresh after provisioning; enable auto‑add mode
-                if (result != null && result is Map && result['refresh'] == true) {
-                  vm.startDiscovery();
+                if (context.mounted) {
+                  await vm.startDiscovery();
                 }
               }
             },

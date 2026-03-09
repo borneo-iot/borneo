@@ -57,6 +57,9 @@ class ProvisioningBleProvisioner implements IBleProvisioner {
 class ProvisioningDeviceManager implements IDeviceManager {
   final DefaultEventDispatcher _events = DefaultEventDispatcher();
   final List<String> addedFingerprints = [];
+  int startDiscoveryCalls = 0;
+  int stopDiscoveryCalls = 0;
+  bool _isDiscovering = false;
 
   @override
   EventDispatcher get allDeviceEvents => _events;
@@ -65,7 +68,7 @@ class ProvisioningDeviceManager implements IDeviceManager {
   bool get isInitialized => true;
 
   @override
-  bool get isDiscoverying => true;
+  bool get isDiscoverying => _isDiscovering;
 
   @override
   Iterable<BoundDevice> get boundDevices => const [];
@@ -108,7 +111,10 @@ class ProvisioningDeviceManager implements IDeviceManager {
   }
 
   @override
-  Future<void> startDiscovery({Duration? timeout, CancellationToken? cancelToken}) async {}
+  Future<void> startDiscovery({Duration? timeout, CancellationToken? cancelToken}) async {
+    startDiscoveryCalls++;
+    _isDiscovering = true;
+  }
 
   @override
   Future<void> initialize({CancellationToken? cancelToken}) async {}
@@ -159,7 +165,10 @@ class ProvisioningDeviceManager implements IDeviceManager {
   Future<List<DeviceEntity>> fetchAllDevicesInScene({String? sceneID}) async => [];
 
   @override
-  Future<void> stopDiscovery() async {}
+  Future<void> stopDiscovery() async {
+    stopDiscoveryCalls++;
+    _isDiscovering = false;
+  }
 
   @override
   WotThing getWotThing(String deviceID) => throw UnimplementedError();
@@ -242,6 +251,7 @@ void main() {
       await vm.startProvisioning('password');
       await Future<void>.delayed(Duration.zero);
 
+      expect(deviceManager.startDiscoveryCalls, 1);
       expect(deviceManager.addedFingerprints, ['fp-1']);
       expect(vm.provisioningSucceeded, isTrue);
       expect(vm.step, ProvisioningWizardStep.done);
@@ -260,6 +270,28 @@ void main() {
 
       expect(deviceManager.addedFingerprints, ['fp-1']);
       expect(vm.provisioningSucceeded, isTrue);
+    });
+
+    test('restarts discovery for registration when a previous discovery session is active', () async {
+      deviceManager.startDiscoveryCalls = 0;
+      deviceManager.stopDiscoveryCalls = 0;
+      await deviceManager.startDiscovery();
+
+      await vm.startProvisioning('password');
+
+      expect(deviceManager.stopDiscoveryCalls, 1);
+      expect(deviceManager.startDiscoveryCalls, 2);
+    });
+
+    test('stops registration discovery on dispose', () async {
+      await vm.startProvisioning('password');
+      expect(deviceManager.isDiscoverying, isTrue);
+
+      vm.dispose();
+      await Future<void>.delayed(Duration.zero);
+
+      expect(deviceManager.stopDiscoveryCalls, 1);
+      expect(deviceManager.isDiscoverying, isFalse);
     });
   });
 }

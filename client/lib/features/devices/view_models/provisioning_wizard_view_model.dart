@@ -37,6 +37,7 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
   int get registerRemainingSeconds => _registerRemainingSeconds;
 
   StreamSubscription<NewDeviceEntityAddedEvent>? _registerSub;
+  bool _ownsRegistrationDiscovery = false;
 
   // auto‑add tracking: true once a device has been successfully added during
   // the registration phase.  Exposed so UI can enable Done button.
@@ -126,6 +127,7 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
       await _bleProvisioner.provisionWifi(deviceName, _selectedSsid!, password, cancelToken: _cancelToken);
       _updateProvisioningState(BleProvisioningState.connectingToWifi);
 
+      await _restartRegistrationDiscovery();
       _updateProvisioningState(BleProvisioningState.registeringDevice);
       _startRegisterTimer();
       _listenForRegisterEvent();
@@ -147,6 +149,7 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
 
   /// Retry from the beginning: back to WiFi scan.
   void retry() {
+    unawaited(_stopOwnedRegistrationDiscovery());
     _cancelRegisterTimer();
     _step = ProvisioningWizardStep.selectWifi;
     _selectedSsid = null;
@@ -200,9 +203,30 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
         _cancelRegisterTimer();
         _registerSub?.cancel();
         _newDeviceCandidatesStore.removeListener(_onCandidatesChanged);
+        unawaited(_stopOwnedRegistrationDiscovery());
         notifyListeners();
       }
     });
+  }
+
+  Future<void> _restartRegistrationDiscovery() async {
+    if (_deviceManager.isDiscoverying) {
+      await _deviceManager.stopDiscovery();
+    }
+
+    await _deviceManager.startDiscovery(cancelToken: _cancelToken);
+    _ownsRegistrationDiscovery = true;
+  }
+
+  Future<void> _stopOwnedRegistrationDiscovery() async {
+    if (!_ownsRegistrationDiscovery) {
+      return;
+    }
+
+    _ownsRegistrationDiscovery = false;
+    if (_deviceManager.isDiscoverying) {
+      await _deviceManager.stopDiscovery();
+    }
   }
 
   void _listenForCandidate() {
@@ -253,6 +277,7 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
     _cancelRegisterTimer();
     _registerSub?.cancel();
     _newDeviceCandidatesStore.removeListener(_onCandidatesChanged);
+    unawaited(_stopOwnedRegistrationDiscovery());
     super.dispose();
   }
 }
