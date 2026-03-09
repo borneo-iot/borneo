@@ -75,6 +75,7 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
 
   void _onBound(DeviceBoundEvent event) {
     if (event.device.id == deviceEntity.id) {
+      deviceEntity.lastErrorMessage = null;
       notifyListeners();
     }
   }

@@ -41,9 +41,12 @@ final class DeviceManagerImpl extends IDeviceManager {
   late final StreamSubscription<UnboundDeviceDiscoveredEvent> _unboundDeviceDiscoveredEventSub;
   late final StreamSubscription<KnownDeviceDiscoveryUpdatedEvent> _knownDeviceDiscoveryUpdatedEventSub;
   late final StreamSubscription<CurrentSceneChangedEvent> _currentSceneChangedEventSub;
+  late final StreamSubscription<LoadingDriverFailedEvent> _loadingDriverFailedEventSub;
+  late final StreamSubscription<DeviceBoundEvent> _deviceBoundEventSub;
 
   // WotThing management
   final Map<String, WotThing> _wotThings = {};
+  final Map<String, String> _lastDeviceErrors = {};
   final IDeviceModuleRegistry _deviceModuleRegistry;
 
   final IKernel _kernel;
@@ -65,6 +68,8 @@ final class DeviceManagerImpl extends IDeviceManager {
     _knownDeviceDiscoveryUpdatedEventSub = allDeviceEvents.on<KnownDeviceDiscoveryUpdatedEvent>().listen(
       _onKnownDeviceDiscoveryUpdated,
     );
+    _loadingDriverFailedEventSub = allDeviceEvents.on<LoadingDriverFailedEvent>().listen(_onLoadingDriverFailed);
+    _deviceBoundEventSub = allDeviceEvents.on<DeviceBoundEvent>().listen(_onDeviceBound);
 
     // Listen for scene changes to manage WotThing lifecycle
     _currentSceneChangedEventSub = _globalBus.on<CurrentSceneChangedEvent>().listen(_onCurrentSceneChanged);
@@ -114,6 +119,8 @@ final class DeviceManagerImpl extends IDeviceManager {
       _unboundDeviceDiscoveredEventSub.cancel();
       _knownDeviceDiscoveryUpdatedEventSub.cancel();
       _currentSceneChangedEventSub.cancel();
+      _loadingDriverFailedEventSub.cancel();
+      _deviceBoundEventSub.cancel();
 
       _disposeAllWotThings();
 
@@ -228,6 +235,7 @@ final class DeviceManagerImpl extends IDeviceManager {
       throw KeyNotFoundException(message: 'Cannot found device with ID `$id`');
     }
     final oldEntity = DeviceEntity.fromMap(id, originalRecord);
+    _restoreLastError(oldEntity);
     final fieldsToUpdate = <String, dynamic>{};
 
     if (name != null) {
@@ -242,6 +250,7 @@ final class DeviceManagerImpl extends IDeviceManager {
 
     final updatedRecord = await store.record(id).update(tx, fieldsToUpdate);
     final updatedEntity = DeviceEntity.fromMap(id, updatedRecord!);
+    _restoreLastError(updatedEntity);
     allDeviceEvents.fire(DeviceEntityUpdatedEvent(oldEntity, updatedEntity));
     return updatedEntity;
   }
@@ -292,7 +301,7 @@ final class DeviceManagerImpl extends IDeviceManager {
         return null;
       }
       final device = DeviceEntity.fromMap(record.key, record.value);
-      return device;
+      return _restoreLastError(device);
     }
   }
 
@@ -314,6 +323,7 @@ final class DeviceManagerImpl extends IDeviceManager {
     }
 
     final bindResult = await tryBind(device);
+    _restoreLastError(device);
     if (!bindResult) {
       logger?.e('Failed to bind device: $device');
     }
@@ -362,7 +372,7 @@ final class DeviceManagerImpl extends IDeviceManager {
         throw KeyNotFoundException(message: 'Cannot find device with ID `$id`', key: id);
       }
       final device = DeviceEntity.fromMap(id, record);
-      return device;
+      return _restoreLastError(device);
     }
   }
 
@@ -372,9 +382,56 @@ final class DeviceManagerImpl extends IDeviceManager {
       final store = stringMapStoreFactory.store(StoreNames.devices);
       final finder = Finder(filter: Filter.equals(DeviceEntity.kSceneIDFieldName, sceneID ?? _sceneManager.current.id));
       final records = await store.find(tx, finder: finder);
-      final devices = records.map((record) => DeviceEntity.fromMap(record.key, record.value)).toList();
+      final devices = records
+          .map((record) => _restoreLastError(DeviceEntity.fromMap(record.key, record.value)))
+          .toList();
       return devices;
     });
+  }
+
+  void _onLoadingDriverFailed(LoadingDriverFailedEvent event) {
+    _lastDeviceErrors[event.device.id] = _formatLoadingDriverFailed(event);
+  }
+
+  void _onDeviceBound(DeviceBoundEvent event) {
+    _lastDeviceErrors.remove(event.device.id);
+  }
+
+  DeviceEntity _restoreLastError(DeviceEntity device) {
+    device.lastErrorMessage = _lastDeviceErrors[device.id];
+    return device;
+  }
+
+  String _formatLoadingDriverFailed(LoadingDriverFailedEvent event) {
+    final error = event.error;
+    if (error is UnsupportedVersionError) {
+      return gettext.translate(
+        'Device firmware version {currentVersion} is not supported. Required: {requiredVersion}.',
+        nArgs: {
+          'currentVersion': error.currentVersion.toString(),
+          'requiredVersion': error.versionRange?.toString() ?? 'unknown',
+        },
+      );
+    }
+
+    if (error is UncompatibleDeviceError) {
+      return gettext.translate('This device is not compatible with the selected driver.');
+    }
+
+    if (error is TimeoutException) {
+      return gettext.translate('Timed out while probing the device.');
+    }
+
+    final message = event.message?.trim();
+    if (message != null && message.isNotEmpty) {
+      return message;
+    }
+
+    if (error != null) {
+      return error.toString();
+    }
+
+    return gettext.translate('Unable to connect to this device.');
   }
 
   @override

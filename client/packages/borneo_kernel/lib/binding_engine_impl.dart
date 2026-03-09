@@ -77,8 +77,11 @@ class DefaultBindingEngine implements BindingEngine {
         return false;
       } on TimeoutException catch (error, stackTrace) {
         _logger.w('Probing device($device) timed out:', error: error, stackTrace: stackTrace);
+        _events.fire(LoadingDriverFailedEvent(device, error: error, message: 'Device probe timed out'));
         return false;
-      } on DeviceProbeError catch (_) {
+      } on DeviceProbeError catch (error, stackTrace) {
+        _logger.w('Probing device($device) failed:', error: error, stackTrace: stackTrace);
+        _events.fire(LoadingDriverFailedEvent(device, error: error, message: error.toString()));
         return false;
       } catch (e, stackTrace) {
         _logger.e('Engine error: $e', error: e, stackTrace: stackTrace);
