@@ -15,9 +15,11 @@ class DeviceCard extends StatelessWidget {
 
   void _openDevicePage(BuildContext context, DeviceEntity device) {
     final vm = context.read<AbstractDeviceSummaryViewModel>();
-    Navigator.of(
-      context,
-    ).pushNamed(AppRoutes.makeDeviceScreenRoute(device.driverID), arguments: device).then((_) => vm.notifyListeners());
+    Navigator.of(context).pushNamed(AppRoutes.makeDeviceScreenRoute(device.driverID), arguments: device).then((_) {
+      if (!vm.isDisposed) {
+        vm.notifyListeners();
+      }
+    });
   }
 
   @override

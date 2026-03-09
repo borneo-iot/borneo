@@ -629,9 +629,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
         }
         final location = super.lyfiThing.getProperty<GeoLocation?>('location');
         if (location == null) {
-          notifyAppError(
-            gt.translate("Unable to switch to Sun Simulation mode: the location is not set."),
-          );
+          notifyAppError(gt.translate("Unable to switch to Sun Simulation mode: the location is not set."));
           return;
         }
       }

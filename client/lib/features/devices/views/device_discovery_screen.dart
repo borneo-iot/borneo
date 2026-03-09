@@ -172,7 +172,7 @@ class _DeviceDiscoveryContent extends StatelessWidget {
                     ListView.separated(
                       primary: true,
                       itemCount: devices.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: 1.5),
+                      separatorBuilder: (context, index) => const Divider(height: 1, indent: 80, thickness: 1),
                       itemBuilder: (context, index) {
                         final vm = context.read<DeviceDiscoveryViewModel>();
                         return _buildDeviceTile(context, vm, devices[index], isBusy);
@@ -240,7 +240,12 @@ class _DeviceDiscoveryContent extends StatelessWidget {
       leading: _buildDeviceIcon(context, vm, deviceDesc),
       title: Text(deviceDesc.name),
       subtitle: Text(context.translate('Detected on network')),
-      trailing: const Icon(Icons.add),
+      trailing: Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, shape: BoxShape.circle),
+        child: const Icon(Icons.add),
+      ),
       onTap: isBusy
           ? null
           : () async {
@@ -272,7 +277,12 @@ class _DeviceDiscoveryContent extends StatelessWidget {
       ),
       title: Text(device.name),
       subtitle: Text(context.translate('Ready to provision')),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerLow, shape: BoxShape.circle),
+        child: const Icon(Icons.chevron_right),
+      ),
       onTap: isBusy
           ? null
           : () async {
