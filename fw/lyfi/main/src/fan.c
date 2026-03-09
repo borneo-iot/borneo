@@ -15,7 +15,7 @@
 #include <driver/gpio.h>
 
 #if SOC_DAC_SUPPORTED && CONFIG_LYFI_FAN_CTRL_VREG_SUPPORT
-#include <driver/dac.h>
+#include <driver/dac_oneshot.h>
 #endif
 
 #include <drvfx/drvfx.h>
