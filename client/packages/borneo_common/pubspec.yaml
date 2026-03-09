@@ -12,6 +12,7 @@ dependencies:
   coap: ^9.2.0
   cbor: ^6.5.0
   cancellation_token: ^2.0.1
+  pub_semver: ^2.2.0
 
 dev_dependencies:
   test: ^1.26.0

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:borneo_app/devices/borneo/lyfi/core/wot.dart';
 import 'package:borneo_app/devices/borneo/view_models/base_borneo_summary_device_view_model.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
@@ -39,10 +40,7 @@ class LyfiSummaryDeviceViewModel extends BaseBorneoSummaryDeviceViewModel {
     final stateValue = wotThing?.getProperty(LyfiKnownProperties.kState);
     if (stateValue != null) {
       final state = LyfiState.fromString(stateValue as String);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (this.isDisposed) {
-          return;
-        }
+      _applyOrDefer(() {
         if (ledState != state) {
           ledState = state;
           notifyListeners();
@@ -58,10 +56,7 @@ class LyfiSummaryDeviceViewModel extends BaseBorneoSummaryDeviceViewModel {
     final modeValue = wotThing?.getProperty(LyfiKnownProperties.kMode);
     if (modeValue != null) {
       final mode = LyfiMode.fromString(modeValue as String);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (this.isDisposed) {
-          return;
-        }
+      _applyOrDefer(() {
         if (ledMode != mode) {
           ledMode = mode;
           notifyListeners();
@@ -76,11 +71,7 @@ class LyfiSummaryDeviceViewModel extends BaseBorneoSummaryDeviceViewModel {
     }
     final color = wotThing?.getProperty<List<int>>('color');
     if (color != null) {
-      // defer assignment to avoid modifying state during build
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (this.isDisposed) {
-          return;
-        }
+      _applyOrDefer(() {
         final newList = List<int>.from(color);
         if (channelBrightness == null || !listEquals(channelBrightness, newList)) {
           channelBrightness = newList;
@@ -96,10 +87,7 @@ class LyfiSummaryDeviceViewModel extends BaseBorneoSummaryDeviceViewModel {
     }
     final info = wotThing?.getProperty<LyfiDeviceInfo>('lyfiDeviceInfo');
     if (info != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (this.isDisposed) {
-          return;
-        }
+      _applyOrDefer(() {
         if (lyfiDeviceInfo != info) {
           lyfiDeviceInfo = info;
           notifyListeners();
@@ -153,10 +141,7 @@ class LyfiSummaryDeviceViewModel extends BaseBorneoSummaryDeviceViewModel {
     }
 
     if (newState != null || newMode != null || newColor != null || newInfo != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (isDisposed) {
-          return;
-        }
+      _applyOrDefer(() {
         bool changed = false;
         if (newState != null && ledState != newState) {
           ledState = newState;
@@ -177,5 +162,28 @@ class LyfiSummaryDeviceViewModel extends BaseBorneoSummaryDeviceViewModel {
         if (changed) notifyListeners();
       });
     }
+  }
+
+  void _applyOrDefer(VoidCallback callback) {
+    if (isDisposed) {
+      return;
+    }
+
+    final schedulerPhase = WidgetsBinding.instance.schedulerPhase;
+    final shouldDefer =
+        schedulerPhase == SchedulerPhase.transientCallbacks ||
+        schedulerPhase == SchedulerPhase.midFrameMicrotasks ||
+        schedulerPhase == SchedulerPhase.persistentCallbacks;
+
+    if (shouldDefer) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!isDisposed) {
+          callback();
+        }
+      });
+      return;
+    }
+
+    callback();
   }
 }

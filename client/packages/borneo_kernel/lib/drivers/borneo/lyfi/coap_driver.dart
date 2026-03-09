@@ -1,3 +1,4 @@
+import 'package:borneo_common/version_ext.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/base_lyfi_driver.dart';
 import 'package:borneo_kernel/drivers/borneo/coap_client.dart';
 import 'package:borneo_kernel/drivers/borneo/coap_config.dart';
@@ -173,8 +174,18 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
 
   static SupportedDeviceDescriptor? matches(DiscoveredDevice discovered) {
     if (discovered is MdnsDiscoveredDevice) {
-      final compatible = discovered.txt?['compatible'] ?? '';
-      final fwVer = Version.parse(discovered.txt?['fwver'] ?? '');
+      final compatible = discovered.txt?['compatible'];
+      if (compatible == null || compatible.isEmpty || !compatible.contains(',')) {
+        return null;
+      }
+      final fwVerText = discovered.txt?['fwver'];
+      if (fwVerText == null || fwVerText.isEmpty) {
+        return null;
+      }
+      final fwVer = VersionTryParsing.tryParse(fwVerText);
+      if (fwVer == null) {
+        return null;
+      }
       if (compatible == lyfiCompatibleString) {
         final matched = SupportedDeviceDescriptor(
           driverDescriptor: borneoLyfiDriverDescriptor,
