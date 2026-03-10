@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:borneo_app/core/services/devices/ota/ota_service.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
@@ -13,6 +15,31 @@ import 'package:pub_semver/pub_semver.dart';
 
 const String _kManifestUrl = 'https://flasher.borneoiot.com/firmware/manifests.json';
 const String _kFirmwareBaseUrl = 'https://flasher.borneoiot.com/firmware/';
+
+final class _FirmwareVerificationRequest {
+  final Uint8List compressedData;
+  final String expectedSha256;
+
+  const _FirmwareVerificationRequest({required this.compressedData, required this.expectedSha256});
+}
+
+final class _FirmwareVerificationResult {
+  final bool hashMatches;
+  final Uint8List firmwareBuffer;
+
+  const _FirmwareVerificationResult({required this.hashMatches, required this.firmwareBuffer});
+}
+
+_FirmwareVerificationResult _verifyAndDecompressFirmware(_FirmwareVerificationRequest request) {
+  final digest = sha256.convert(request.compressedData);
+  if (digest.toString() != request.expectedSha256) {
+    return _FirmwareVerificationResult(hashMatches: false, firmwareBuffer: Uint8List(0));
+  }
+
+  final codec = CodecFactory.codec(CodecType.gzip);
+  final firmwareBuffer = Uint8List.fromList(codec.decompress(request.compressedData));
+  return _FirmwareVerificationResult(hashMatches: true, firmwareBuffer: firmwareBuffer);
+}
 
 final class CoapOtaService implements IOtaService {
   final Logger? _logger;
@@ -100,18 +127,20 @@ final class CoapOtaService implements IOtaService {
       throw StateError(msg);
     }
     final compressedData = httpResponse.bodyBytes;
+    cancelToken?.throwIfCancelled();
 
-    // Step 3: Verify SHA256 of compressed file
-    final digest = sha256.convert(compressedData);
-    if (digest.toString() != upgradeInfo.otaSha256) {
+    // Step 3: Verify and decompress in a background isolate to avoid UI jank.
+    final verificationResult = await compute(
+      _verifyAndDecompressFirmware,
+      _FirmwareVerificationRequest(compressedData: compressedData, expectedSha256: upgradeInfo.otaSha256),
+    );
+    cancelToken?.throwIfCancelled();
+    if (!verificationResult.hashMatches) {
       final msg = gt.translate('Firmware hash mismatch');
       _logger?.e(msg);
       throw StateError(msg);
     }
-
-    // Step 4: Decompress gzip in memory
-    final codec = CodecFactory.codec(CodecType.gzip);
-    final firmwareBuffer = Uint8List.fromList(codec.decompress(compressedData));
+    final firmwareBuffer = verificationResult.firmwareBuffer;
     _logger?.i('Firmware decompressed: ${firmwareBuffer.length} bytes, starting OTA upload');
 
     // Step 5: Upload firmware via CoAP OTA engage
