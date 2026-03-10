@@ -14,6 +14,8 @@ export 'binding_engine_impl.dart';
 
 final class DefaultKernel implements IKernel {
   static const Duration kStartupDiscoveryDuration = Duration(seconds: 15);
+  static const Duration kDiscoveryLossGracePeriod = Duration(seconds: 8);
+  static const Duration kNetworkRestartDebounce = Duration(seconds: 2);
 
   // Configurable heartbeat / probe parameters. Defaults chosen to detect
   // disconnects faster while remaining conservative for flaky networks.
@@ -24,16 +26,20 @@ final class DefaultKernel implements IKernel {
   final int consecutiveFailureThreshold;
   final int heartbeatRetryMaxAttempts;
   final int observationTimeoutMultiplier;
+  final Duration discoveryLossGracePeriod;
+  final Duration networkRestartDebounce;
 
   bool _isInitialized = false;
   bool _isDisposed = false;
   bool _isScanning = false;
+  bool _scanRequested = false;
 
   late final HeartbeatService _heartbeatService;
 
   final Logger _logger;
   final IDriverRegistry _driverRegistry;
   final IMdnsProvider? mdnsProvider;
+  final NetworkMonitor? networkMonitor;
   late final DiscoveryManager _discoveryManager;
   late final BindingEngine _bindingEngine;
 
@@ -55,10 +61,16 @@ final class DefaultKernel implements IKernel {
   late final StreamSubscription<DeviceCommunicationEvent> _deviceCommunicationSub;
   late final StreamSubscription<DeviceBoundEvent> _deviceBoundSub;
   late final StreamSubscription<DeviceRemovedEvent> _deviceRemovedSub;
+  StreamSubscription<NetworkSnapshot>? _networkMonitorSub;
 
   // backoff state for retrying unbound devices
   final Map<String, int> _backoffCount = {};
   final Map<String, DateTime> _nextBindAttempt = {};
+  final Map<String, Timer> _pendingDiscoveryLossTimers = {};
+  Timer? _networkRestartTimer;
+  NetworkSnapshot? _lastNetworkSnapshot;
+  Duration? _pendingScanTimeout;
+  DateTime? _scanRequestedAt;
   static const Duration _maxBackoff = Duration(minutes: 1);
 
   // Default values
@@ -89,6 +101,7 @@ final class DefaultKernel implements IKernel {
     this._logger,
     this._driverRegistry, {
     this.mdnsProvider,
+    this.networkMonitor,
     DiscoveryManager? discoveryManager,
     BindingEngine? bindingEngine,
     HeartbeatService? heartbeatService,
@@ -100,13 +113,17 @@ final class DefaultKernel implements IKernel {
     int? consecutiveFailureThreshold,
     int? heartbeatRetryMaxAttempts,
     int? observationTimeoutMultiplier,
+    Duration? discoveryLossGracePeriod,
+    Duration? networkRestartDebounce,
   }) : localProbeTimeout = localProbeTimeout ?? const Duration(seconds: 1),
        localBindTimeout = localBindTimeout ?? const Duration(seconds: 5),
        heartbeatPollingInterval = heartbeatPollingInterval ?? const Duration(seconds: 5),
        maxMissedObservations = maxMissedObservations ?? _defaultMaxMissedObservations,
        consecutiveFailureThreshold = consecutiveFailureThreshold ?? _defaultConsecutiveFailureThreshold,
        heartbeatRetryMaxAttempts = heartbeatRetryMaxAttempts ?? _defaultHeartbeatRetryMaxAttempts,
-       observationTimeoutMultiplier = observationTimeoutMultiplier ?? _defaultObservationTimeoutMultiplier {
+       observationTimeoutMultiplier = observationTimeoutMultiplier ?? _defaultObservationTimeoutMultiplier,
+       discoveryLossGracePeriod = discoveryLossGracePeriod ?? kDiscoveryLossGracePeriod,
+       networkRestartDebounce = networkRestartDebounce ?? kNetworkRestartDebounce {
     // initialize late discovery manager after events are available
     _discoveryManager =
         discoveryManager ?? DefaultDiscoveryManager(_logger, _driverRegistry, _events, mdnsProvider: mdnsProvider);
@@ -149,6 +166,10 @@ final class DefaultKernel implements IKernel {
 
     // forward discovery manager lost events to kernel event bus
     _lostDeviceSub = _discoveryManager.onDeviceLost.listen(_onDeviceLost);
+
+    if (networkMonitor != null) {
+      _networkMonitorSub = networkMonitor!.onNetworkChanged.listen(_onNetworkChanged);
+    }
   }
 
   // --------- private event handlers extracted from constructor ----------
@@ -158,6 +179,7 @@ final class DefaultKernel implements IKernel {
   }
 
   Future<void> _handleDeviceOfflineEvent(DeviceOfflineEvent event) async {
+    _cancelPendingDiscoveryLoss(event.device.fingerprint);
     try {
       await unbind(event.device.id);
     } catch (e, stackTrace) {
@@ -178,6 +200,7 @@ final class DefaultKernel implements IKernel {
   }
 
   void _handleDeviceRemovedEvent(DeviceRemovedEvent e) {
+    _cancelPendingDiscoveryLoss(e.device.fingerprint);
     _heartbeatService.unregisterDevice(e.device.id);
   }
 
@@ -271,6 +294,9 @@ final class DefaultKernel implements IKernel {
       _deviceCommunicationSub.cancel();
       _deviceBoundSub.cancel();
       _deviceRemovedSub.cancel();
+      _networkMonitorSub?.cancel();
+      _networkRestartTimer?.cancel();
+      _cancelAllPendingDiscoveryLosses();
 
       _discoveryManager.dispose();
 
@@ -415,6 +441,7 @@ final class DefaultKernel implements IKernel {
     );
     final matched = _matchesDriver(event.discovered);
     if (matched != null) {
+      _cancelPendingDiscoveryLoss(matched.fingerprint);
       final knownDevice = _findRegisteredDeviceByFingerprint(matched.fingerprint);
       if (knownDevice != null) {
         if (knownDevice.address != matched.address) {
@@ -438,20 +465,32 @@ final class DefaultKernel implements IKernel {
       return;
     }
 
-    final knownDevice = _findRegisteredDeviceByFingerprint(matched.fingerprint);
-    if (knownDevice == null) {
-      _events.fire(UnboundDeviceLostEvent(matched.fingerprint));
-      return;
-    }
+    _scheduleDiscoveryLossConfirmation(matched.fingerprint);
+  }
 
-    final bound = _bindingEngine.getBoundDevice(knownDevice.id);
-    if (bound != null) {
-      _logger.w('Bound device lost from discovery: `${knownDevice.id}`');
-      _events.fire(DeviceOfflineEvent(bound.device));
-      return;
-    }
+  void _scheduleDiscoveryLossConfirmation(String fingerprint) {
+    _cancelPendingDiscoveryLoss(fingerprint);
+    _pendingDiscoveryLossTimers[fingerprint] = Timer(discoveryLossGracePeriod, () {
+      _pendingDiscoveryLossTimers.remove(fingerprint);
+      if (_isDisposed || !_isInitialized) {
+        return;
+      }
 
-    _events.fire(UnboundDeviceLostEvent(matched.fingerprint));
+      final knownDevice = _findRegisteredDeviceByFingerprint(fingerprint);
+      if (knownDevice == null) {
+        _events.fire(UnboundDeviceLostEvent(fingerprint));
+        return;
+      }
+
+      final bound = _bindingEngine.getBoundDevice(knownDevice.id);
+      if (bound != null) {
+        _logger.w('Bound device loss confirmed after grace period: `${knownDevice.id}`');
+        _events.fire(DeviceOfflineEvent(bound.device));
+        return;
+      }
+
+      _events.fire(UnboundDeviceLostEvent(fingerprint));
+    });
   }
 
   Device? _findRegisteredDeviceByFingerprint(String fingerprint) {
@@ -465,6 +504,33 @@ final class DefaultKernel implements IKernel {
 
   @override
   Future<void> startDevicesScanning({Duration? timeout, CancellationToken? cancelToken}) async {
+    if (_scanRequested) {
+      return;
+    }
+    _scanRequested = true;
+    _pendingScanTimeout = timeout;
+    _scanRequestedAt = DateTime.now();
+
+    final snapshot = await _currentNetworkSnapshot();
+    _lastNetworkSnapshot = snapshot;
+    if (_canRunDiscoveryOn(snapshot)) {
+      await _startActiveDiscovery(timeout: _remainingScanTimeout(), cancelToken: cancelToken);
+    }
+  }
+
+  @override
+  Future<void> stopDevicesScanning({CancellationToken? cancelToken}) async {
+    _scanRequested = false;
+    _pendingScanTimeout = null;
+    _scanRequestedAt = null;
+    _networkRestartTimer?.cancel();
+    if (!_isScanning && !_discoveryManager.isActive) {
+      return;
+    }
+    await _stopActiveDiscovery();
+  }
+
+  Future<void> _startActiveDiscovery({Duration? timeout, CancellationToken? cancelToken}) async {
     if (_isScanning || _discoveryManager.isActive) {
       return;
     }
@@ -477,8 +543,7 @@ final class DefaultKernel implements IKernel {
     }
   }
 
-  @override
-  Future<void> stopDevicesScanning({CancellationToken? cancelToken}) async {
+  Future<void> _stopActiveDiscovery() async {
     if (!_isScanning && !_discoveryManager.isActive) {
       return;
     }
@@ -496,6 +561,87 @@ final class DefaultKernel implements IKernel {
     }
   }
 
+  Future<NetworkSnapshot> _currentNetworkSnapshot() async {
+    if (networkMonitor == null) {
+      return const NetworkSnapshot(localDiscoveryAvailable: true, fingerprint: 'unmanaged');
+    }
+    try {
+      return await networkMonitor!.getCurrentSnapshot();
+    } catch (e, stackTrace) {
+      _logger.w('Failed to read network state for discovery.', error: e, stackTrace: stackTrace);
+      return NetworkSnapshot.unavailable;
+    }
+  }
+
+  bool _canRunDiscoveryOn(NetworkSnapshot snapshot) {
+    if (networkMonitor == null) {
+      return true;
+    }
+    return snapshot.localDiscoveryAvailable;
+  }
+
+  Duration? _remainingScanTimeout() {
+    final timeout = _pendingScanTimeout;
+    final requestedAt = _scanRequestedAt;
+    if (timeout == null || requestedAt == null) {
+      return null;
+    }
+    final elapsed = DateTime.now().difference(requestedAt);
+    final remaining = timeout - elapsed;
+    if (remaining <= Duration.zero) {
+      return Duration.zero;
+    }
+    return remaining;
+  }
+
+  void _onNetworkChanged(NetworkSnapshot snapshot) {
+    final previous = _lastNetworkSnapshot;
+    _lastNetworkSnapshot = snapshot;
+
+    if (!_scanRequested || _isDisposed || !_isInitialized) {
+      return;
+    }
+    if (previous == snapshot) {
+      return;
+    }
+
+    _networkRestartTimer?.cancel();
+
+    if (!_canRunDiscoveryOn(snapshot)) {
+      unawaited(_stopActiveDiscovery());
+      return;
+    }
+
+    _networkRestartTimer = Timer(networkRestartDebounce, () {
+      unawaited(_restartDiscoveryForNetworkChange());
+    });
+  }
+
+  Future<void> _restartDiscoveryForNetworkChange() async {
+    if (!_scanRequested || _isDisposed || !_isInitialized) {
+      return;
+    }
+
+    final snapshot = await _currentNetworkSnapshot();
+    _lastNetworkSnapshot = snapshot;
+    if (!_canRunDiscoveryOn(snapshot)) {
+      await _stopActiveDiscovery();
+      return;
+    }
+
+    final remainingTimeout = _remainingScanTimeout();
+    if (remainingTimeout != null && remainingTimeout <= Duration.zero) {
+      await stopDevicesScanning();
+      return;
+    }
+
+    if (_isScanning || _discoveryManager.isActive) {
+      await _stopActiveDiscovery();
+    }
+
+    await _startActiveDiscovery(timeout: remainingTimeout);
+  }
+
   @override
   void registerDevice(BoundDeviceDescriptor device) {
     _registeredDevices[device.device.id] = device;
@@ -510,11 +656,28 @@ final class DefaultKernel implements IKernel {
 
   @override
   void unregisterDevice(String deviceID) {
-    _registeredDevices.remove(deviceID);
+    final removed = _registeredDevices.remove(deviceID);
+    if (removed != null) {
+      _cancelPendingDiscoveryLoss(removed.device.fingerprint);
+    }
   }
 
   @override
   void unregisterAllDevices() {
+    for (final descriptor in _registeredDevices.values) {
+      _cancelPendingDiscoveryLoss(descriptor.device.fingerprint);
+    }
     _registeredDevices.clear();
+  }
+
+  void _cancelPendingDiscoveryLoss(String fingerprint) {
+    _pendingDiscoveryLossTimers.remove(fingerprint)?.cancel();
+  }
+
+  void _cancelAllPendingDiscoveryLosses() {
+    for (final timer in _pendingDiscoveryLossTimers.values) {
+      timer.cancel();
+    }
+    _pendingDiscoveryLossTimers.clear();
   }
 }

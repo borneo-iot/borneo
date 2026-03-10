@@ -7,6 +7,7 @@ import Foundation
 
 import app_review
 import bonsoir_darwin
+import connectivity_plus
 import file_selector_macos
 import flutter_timezone
 import geolocator_apple
@@ -18,6 +19,7 @@ import window_size
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AppReviewPlugin.register(with: registry.registrar(forPlugin: "AppReviewPlugin"))
   SwiftBonsoirPlugin.register(with: registry.registrar(forPlugin: "SwiftBonsoirPlugin"))
+  ConnectivityPlusPlugin.register(with: registry.registrar(forPlugin: "ConnectivityPlusPlugin"))
   FileSelectorPlugin.register(with: registry.registrar(forPlugin: "FileSelectorPlugin"))
   FlutterTimezonePlugin.register(with: registry.registrar(forPlugin: "FlutterTimezonePlugin"))
   GeolocatorPlugin.register(with: registry.registrar(forPlugin: "GeolocatorPlugin"))

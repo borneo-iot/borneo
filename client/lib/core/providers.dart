@@ -24,6 +24,7 @@ import 'package:logger/logger.dart';
 import 'package:borneo_app/core/services/clock.dart';
 import 'package:borneo_app/core/services/device_exception_handler.dart';
 import 'package:borneo_app/core/services/devices/mdns.dart';
+import 'package:borneo_app/core/services/network_change_monitor.dart';
 import 'package:borneo_app/core/services/devices/device_module_registry.dart';
 import 'package:borneo_app/core/services/devices/static_modular_driver_registry.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
@@ -57,6 +58,9 @@ final deviceExceptionHandlerProvider = Provider<DeviceExceptionHandler>((ref) {
 /// implementations.
 final mdnsProvider = Provider<IMdnsProvider>((ref) => NsdMdnsProvider());
 
+/// Network monitor used by the kernel to react to local network changes.
+final networkMonitorProvider = Provider<NetworkMonitor>((ref) => ConnectivityNetworkChangeMonitor());
+
 /// Device module registry; overridden by the value created in main.
 final deviceModuleRegistryProvider = Provider<IDeviceModuleRegistry>(
   (ref) => throw UnimplementedError('deviceModuleRegistryProvider must be overridden'),
@@ -79,7 +83,8 @@ final kernelProvider = Provider<IKernel>((ref) {
   final logger = ref.watch(loggerProvider);
   final driverReg = ref.watch(driverRegistryProvider);
   final mdns = ref.watch(mdnsProvider);
-  return DefaultKernel(logger, driverReg, mdnsProvider: mdns);
+  final networkMonitor = ref.watch(networkMonitorProvider);
+  return DefaultKernel(logger, driverReg, mdnsProvider: mdns, networkMonitor: networkMonitor);
 });
 
 /// Locale service, eagerly created.

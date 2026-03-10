@@ -158,6 +158,29 @@ class MockMdnsProvider implements IMdnsProvider {
   }
 }
 
+class MockNetworkMonitor implements NetworkMonitor {
+  final StreamController<NetworkSnapshot> _controller = StreamController.broadcast();
+  NetworkSnapshot _currentSnapshot;
+
+  MockNetworkMonitor({NetworkSnapshot? initialSnapshot})
+    : _currentSnapshot = initialSnapshot ?? const NetworkSnapshot(localDiscoveryAvailable: true, fingerprint: 'wifi');
+
+  @override
+  Stream<NetworkSnapshot> get onNetworkChanged => _controller.stream;
+
+  @override
+  Future<NetworkSnapshot> getCurrentSnapshot() async => _currentSnapshot;
+
+  void emit(NetworkSnapshot snapshot) {
+    _currentSnapshot = snapshot;
+    _controller.add(snapshot);
+  }
+
+  Future<void> dispose() async {
+    await _controller.close();
+  }
+}
+
 class TestMdnsDiscoveredDevice extends MdnsDiscoveredDevice {
   TestMdnsDiscoveredDevice({required super.host, super.port, super.name, super.txt, super.serviceType});
 }

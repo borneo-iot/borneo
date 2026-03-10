@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   bonsoir_windows
+  connectivity_plus
   file_selector_windows
   flutter_timezone
   geolocator_windows

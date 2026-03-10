@@ -15,6 +15,7 @@ export 'errors.dart';
 export 'events.dart';
 export 'device.dart';
 export 'mdns.dart';
+export 'network.dart';
 
 export 'models/bound_device.dart';
 export 'models/discovered_device.dart';

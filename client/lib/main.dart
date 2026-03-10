@@ -7,6 +7,7 @@ import 'package:borneo_app/core/services/devices/ble_provisioner.dart';
 import 'package:borneo_app/core/services/devices/device_module_harvesters.dart';
 import 'package:borneo_app/core/services/devices/device_module_registry.dart';
 import 'package:borneo_app/core/services/devices/mdns.dart';
+import 'package:borneo_app/core/services/network_change_monitor.dart';
 import 'package:borneo_app/core/services/devices/ota/ota_providers.dart';
 import 'package:borneo_app/core/services/devices/static_modular_driver_registry.dart';
 import 'package:borneo_kernel/kernel.dart';
@@ -147,10 +148,13 @@ Future<Widget> buildAppWidget({
       lazy: true,
     ),
 
+    // Network monitor used by the kernel to react to local network changes.
+    provider.Provider<NetworkMonitor>(create: (_) => ConnectivityNetworkChangeMonitor(), lazy: false),
+
     // IKernel
-    provider.ProxyProvider3<Logger, IDriverRegistry, IMdnsProvider, IKernel>(
-      update: (_, logger, driverReg, nsdMdns, kernel) =>
-          kernel ?? DefaultKernel(logger, driverReg, mdnsProvider: nsdMdns),
+    provider.ProxyProvider4<Logger, IDriverRegistry, IMdnsProvider, NetworkMonitor, IKernel>(
+      update: (_, logger, driverReg, nsdMdns, networkMonitor, kernel) =>
+          kernel ?? DefaultKernel(logger, driverReg, mdnsProvider: nsdMdns, networkMonitor: networkMonitor),
       dispose: (context, kernel) => kernel.dispose(),
       lazy: true,
     ),

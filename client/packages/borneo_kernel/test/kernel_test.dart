@@ -4,6 +4,7 @@ import 'package:borneo_kernel/kernel.dart';
 import 'package:borneo_kernel_abstractions/device.dart';
 import 'package:borneo_kernel_abstractions/events.dart';
 import 'package:borneo_kernel_abstractions/event_dispatcher.dart';
+import 'package:borneo_kernel_abstractions/network.dart';
 import 'package:borneo_kernel_abstractions/models/bound_device.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:test/test.dart';
@@ -33,6 +34,7 @@ void main() {
     late MockLogger mockLogger;
     late MockDriverRegistry mockDriverRegistry;
     late MockMdnsProvider mockMdnsProvider;
+    late MockNetworkMonitor mockNetworkMonitor;
     late DefaultKernel kernel;
     late MockDriver testDriver;
 
@@ -40,17 +42,25 @@ void main() {
       mockLogger = MockLogger();
       mockDriverRegistry = MockDriverRegistry();
       mockMdnsProvider = MockMdnsProvider();
+      mockNetworkMonitor = MockNetworkMonitor();
       testDriver = MockDriver('test-driver');
 
       // 设置测试驱动程序
       final driverDescriptor = createTestDriverDescriptor('test-driver', testDriver);
       mockDriverRegistry.addDriver('test-driver', driverDescriptor);
 
-      kernel = DefaultKernel(mockLogger, mockDriverRegistry, mdnsProvider: mockMdnsProvider);
+      kernel = DefaultKernel(
+        mockLogger,
+        mockDriverRegistry,
+        mdnsProvider: mockMdnsProvider,
+        networkMonitor: mockNetworkMonitor,
+        networkRestartDebounce: Duration(milliseconds: 20),
+      );
     });
 
-    tearDown(() {
+    tearDown(() async {
       kernel.dispose();
+      await mockNetworkMonitor.dispose();
     });
 
     test('uses DefaultEventDispatcher internally', () {
@@ -339,14 +349,20 @@ void main() {
       test('kernel forwards unbound device lost events', () async {
         await kernel.start();
         final mgr = MockDiscoveryManager();
-        final k2 = DefaultKernel(mockLogger, mockDriverRegistry, mdnsProvider: mockMdnsProvider, discoveryManager: mgr);
+        final k2 = DefaultKernel(
+          mockLogger,
+          mockDriverRegistry,
+          mdnsProvider: mockMdnsProvider,
+          discoveryManager: mgr,
+          discoveryLossGracePeriod: Duration(milliseconds: 20),
+        );
         await k2.start();
         UnboundDeviceLostEvent? got;
         k2.events.on<UnboundDeviceLostEvent>().listen((e) {
           got = e;
         });
         mgr.emitLost(TestMdnsDiscoveredDevice(host: 'abc', port: 80, name: 'lost-device'));
-        await Future.delayed(Duration.zero);
+        await Future.delayed(Duration(milliseconds: 30));
         expect(got?.deviceId, 'test-test-driver');
       });
 
@@ -373,7 +389,13 @@ void main() {
       test('kernel treats lost bound devices as offline candidates', () async {
         await kernel.start();
         final mgr = MockDiscoveryManager();
-        final k2 = DefaultKernel(mockLogger, mockDriverRegistry, mdnsProvider: mockMdnsProvider, discoveryManager: mgr);
+        final k2 = DefaultKernel(
+          mockLogger,
+          mockDriverRegistry,
+          mdnsProvider: mockMdnsProvider,
+          discoveryManager: mgr,
+          discoveryLossGracePeriod: Duration(milliseconds: 40),
+        );
         await k2.start();
 
         final device = TestDevice('test-driver', 'http://192.168.1.10');
@@ -388,8 +410,41 @@ void main() {
         mgr.emitLost(TestMdnsDiscoveredDevice(host: '192.168.1.20', port: 8080, name: 'lost-bound'));
         await Future.delayed(Duration(milliseconds: 10));
 
+        expect(receivedEvent, isNull);
+
+        await Future.delayed(Duration(milliseconds: 50));
+
         expect(receivedEvent, isNotNull);
         expect(receivedEvent!.device.id, equals('test-driver'));
+      });
+
+      test('kernel cancels pending offline transition when discovery recovers', () async {
+        await kernel.start();
+        final mgr = MockDiscoveryManager();
+        final k2 = DefaultKernel(
+          mockLogger,
+          mockDriverRegistry,
+          mdnsProvider: mockMdnsProvider,
+          discoveryManager: mgr,
+          discoveryLossGracePeriod: Duration(milliseconds: 60),
+        );
+        await k2.start();
+
+        final device = TestDevice('test-driver', 'http://192.168.1.10');
+        k2.registerDevice(BoundDeviceDescriptor(device: device, driverID: 'test-driver'));
+        await k2.bind(device, 'test-driver');
+
+        DeviceOfflineEvent? receivedEvent;
+        k2.events.on<DeviceOfflineEvent>().listen((event) {
+          receivedEvent = event;
+        });
+
+        mgr.emitLost(TestMdnsDiscoveredDevice(host: '192.168.1.20', port: 8080, name: 'lost-bound'));
+        await Future.delayed(Duration(milliseconds: 10));
+        k2.events.fire(FoundDeviceEvent(TestMdnsDiscoveredDevice(host: '192.168.1.20', port: 8080, name: 'known')));
+        await Future.delayed(Duration(milliseconds: 80));
+
+        expect(receivedEvent, isNull);
       });
 
       test('should start and stop device scanning', () async {
@@ -406,6 +461,63 @@ void main() {
 
         final discoveries = mockMdnsProvider.discoveries.values;
         expect(discoveries.every((d) => d.isStopped), isTrue);
+      });
+
+      test('should defer scanning until a local network is available', () async {
+        final networkMonitor = MockNetworkMonitor(initialSnapshot: NetworkSnapshot.unavailable);
+        final k2 = DefaultKernel(
+          mockLogger,
+          mockDriverRegistry,
+          mdnsProvider: mockMdnsProvider,
+          networkMonitor: networkMonitor,
+          networkRestartDebounce: Duration(milliseconds: 20),
+        );
+        await k2.start();
+
+        await k2.startDevicesScanning();
+        expect(k2.isScanning, isFalse);
+        expect(mockMdnsProvider.startedServices, isEmpty);
+
+        networkMonitor.emit(const NetworkSnapshot(localDiscoveryAvailable: true, fingerprint: 'wifi-a'));
+        await Future.delayed(Duration(milliseconds: 40));
+
+        expect(k2.isScanning, isTrue);
+        expect(mockMdnsProvider.startedServices, contains('_test._tcp'));
+
+        k2.dispose();
+        await networkMonitor.dispose();
+      });
+
+      test('should restart scanning when the local network changes', () async {
+        final networkMonitor = MockNetworkMonitor(
+          initialSnapshot: const NetworkSnapshot(localDiscoveryAvailable: true, fingerprint: 'wifi-a'),
+        );
+        final mdnsProvider = MockMdnsProvider();
+        final k2 = DefaultKernel(
+          mockLogger,
+          mockDriverRegistry,
+          mdnsProvider: mdnsProvider,
+          networkMonitor: networkMonitor,
+          networkRestartDebounce: Duration(milliseconds: 20),
+        );
+        await k2.start();
+
+        await k2.startDevicesScanning();
+        expect(k2.isScanning, isTrue);
+        expect(mdnsProvider.startedServices.length, 1);
+
+        networkMonitor.emit(const NetworkSnapshot(localDiscoveryAvailable: false, fingerprint: 'offline'));
+        await Future.delayed(Duration(milliseconds: 10));
+        expect(k2.isScanning, isFalse);
+
+        networkMonitor.emit(const NetworkSnapshot(localDiscoveryAvailable: true, fingerprint: 'wifi-b'));
+        await Future.delayed(Duration(milliseconds: 40));
+
+        expect(k2.isScanning, isTrue);
+        expect(mdnsProvider.startedServices.length, 2);
+
+        k2.dispose();
+        await networkMonitor.dispose();
       });
 
       test('should handle found device event', () async {
