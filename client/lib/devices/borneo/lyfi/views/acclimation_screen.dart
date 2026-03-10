@@ -18,6 +18,12 @@ class AcclimationScreen extends StatelessWidget {
   final String deviceID;
   const AcclimationScreen({required this.deviceID, super.key});
 
+  Color _valueColor(BuildContext context, bool hasError) {
+    return hasError
+        ? Theme.of(context).colorScheme.error
+        : Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = AcclimationViewModel(
@@ -25,6 +31,7 @@ class AcclimationScreen extends StatelessWidget {
       globalEventBus: context.read<EventBus>(),
       notification: context.read<IAppNotificationService>(),
       wotThing: context.read<IDeviceManager>().getWotThing(deviceID),
+      clock: context.read<IClock>(),
       gt: context.read<GettextLocalizations>(),
       logger: context.read<Logger>(),
     );
@@ -86,7 +93,7 @@ class AcclimationScreen extends StatelessWidget {
             SettingsTile.switchTile(
               title: Text(context.translate('Enable acclimation')),
               initialValue: vm.enabled,
-              onToggle: !vm.isBusy && vm.isOnline && vm.isOn ? vm.setEanbled : null,
+              onToggle: !vm.isBusy && vm.isOnline && vm.isOn ? vm.updateEnabled : null,
             ),
             SettingsTile.navigation(
               title: Text(context.translate('Start date')),
@@ -97,6 +104,7 @@ class AcclimationScreen extends StatelessWidget {
                     vm.startTimestamp.toLocal().year < 2025
                         ? context.translate('Not set')
                         : DateFormat.yMd(locale).format(vm.startTimestamp.toLocal()),
+                    style: TextStyle(color: _valueColor(context, vm.hasStartDateError)),
                   );
                 },
               ),
@@ -117,7 +125,10 @@ class AcclimationScreen extends StatelessWidget {
             ),
             SettingsTile.navigation(
               title: Text(context.translate('Duration')),
-              value: Text(context.translate('{d} days', nArgs: {'d': vm.days.round().toString()})),
+              value: Text(
+                context.translate('{d} days', nArgs: {'d': vm.days.round().toString()}),
+                style: TextStyle(color: _valueColor(context, vm.hasDurationError)),
+              ),
               onPressed: !vm.isBusy && vm.isOnline
                   ? (bc) async {
                       final options = [5, 7, 15, 30, 60, 100].map((e) => e.toDouble()).toList();
@@ -141,7 +152,10 @@ class AcclimationScreen extends StatelessWidget {
             ),
             SettingsTile.navigation(
               title: Text(context.translate('Start strength')),
-              value: Text('${vm.startPercent.round().toString()}%'),
+              value: Text(
+                '${vm.startPercent.round().toString()}%',
+                style: TextStyle(color: _valueColor(context, vm.hasStartPercentError)),
+              ),
               onPressed: !vm.isBusy && vm.isOnline
                   ? (bc) async {
                       final options = [10, 20, 30, 40, 50, 60, 70, 80, 90].map((e) => e.toDouble()).toList();
@@ -165,21 +179,13 @@ class AcclimationScreen extends StatelessWidget {
   }
 
   Future<void> onSubmit(AcclimationViewModel vm, BuildContext context) async {
-    try {
-      await vm.submitToDevice();
-      if (context.mounted) {
-        Provider.of<IAppNotificationService>(
-          context,
-          listen: false,
-        ).showSuccess(context.translate('Update acclimation settings succeed.'));
-        Navigator.of(context).pop();
-      }
-    } catch (e, st) {
-      if (context.mounted) {
-        context.read<IAppNotificationService>().showError(context.translate('Error'), body: e.toString());
-        // log for diagnostics if logger is available on the VM
-        vm.logger?.e('Failed to submit acclimation settings', error: e, stackTrace: st);
-      }
+    final didSubmit = await vm.submitToDevice();
+    if (didSubmit && context.mounted) {
+      Provider.of<IAppNotificationService>(
+        context,
+        listen: false,
+      ).showSuccess(context.translate('Update acclimation settings succeed.'));
+      Navigator.of(context).pop();
     }
   }
 }

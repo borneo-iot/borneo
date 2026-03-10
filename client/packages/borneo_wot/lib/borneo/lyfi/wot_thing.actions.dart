@@ -94,16 +94,16 @@ extension LyfiThingActions on LyfiThing {
           input: {'enabled': 'boolean', 'startTimestamp': 'number', 'startPercent': 'number', 'days': 'number'},
         ),
         (thing, input) {
-          final settings = AcclimationSettings(
-            enabled: input['enabled'] as bool,
-            startTimestamp: DateTime.fromMillisecondsSinceEpoch((input['startTimestamp'] as num).toInt() * 1000),
-            startPercent: input['startPercent'] as int,
-            days: input['days'] as int,
-          );
+          final settings = {
+            'enabled': input['enabled'] as bool,
+            'startTimestamp': input['startTimestamp'],
+            'startPercent': input['startPercent'] as int,
+            'days': input['days'] as int,
+          };
           return LyfiSetAcclimationAction(
             id: DateTime.now().millisecondsSinceEpoch.toString(),
             thing: thing,
-            settings: settings,
+            input: settings,
             lyfiApi: _requireLyfiApi(),
             device: _requireDevice(),
             logger: logger,

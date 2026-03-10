@@ -258,6 +258,33 @@ void main() {
         final action = thing.performAction('nonexistent', {});
         expect(action, isNull);
       });
+
+      test('performActionAndWait executes action and waits for completion', () async {
+        thing.addAvailableAction(
+          'testAction',
+          WotActionMetadata(),
+          (WotThing t, dynamic input) => TestThingAction(
+            id: 'action-1',
+            thing: t,
+            name: 'testAction',
+            input: input is Map<String, dynamic> ? input : null,
+          ),
+        );
+
+        final action = await thing.performActionAndWait('testAction', {'param': 'value'});
+
+        expect(action, isNotNull);
+        expect(action, isA<TestThingAction>());
+        expect((action! as TestThingAction).wasExecuted, isTrue);
+        expect(action.status, equals('completed'));
+        expect(action.timeCompleted, isNotNull);
+      });
+
+      test('performActionAndWait with non-existent action', () async {
+        final action = await thing.performActionAndWait('nonexistent', {});
+        expect(action, isNull);
+      });
+
       test('getAction and removeAction', () {
         thing.addAvailableAction(
           'testAction',

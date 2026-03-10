@@ -125,7 +125,6 @@ class LyfiSetScheduleAction extends WotAction<Map<String, dynamic>> {
 
 /// Custom action for setting acclimation settings
 class LyfiSetAcclimationAction extends WotAction<Map<String, dynamic>> {
-  final AcclimationSettings settings;
   final ILyfiDeviceApi lyfiApi;
   final Device device;
   final Logger? logger;
@@ -133,25 +132,24 @@ class LyfiSetAcclimationAction extends WotAction<Map<String, dynamic>> {
   LyfiSetAcclimationAction({
     required super.id,
     required super.thing,
-    required this.settings,
     required this.lyfiApi,
     required this.device,
+    required super.input,
     this.logger,
-  }) : super(
-         name: 'setAcclimation',
-         input: {
-           'enabled': settings.enabled,
-           'startTimestamp': (settings.startTimestamp.millisecondsSinceEpoch / 1000).round(),
-           'startPercent': settings.startPercent,
-           'days': settings.days,
-         },
-       );
+  }) : super(name: 'setAcclimation');
 
   @override
   Future<void> performAction() async {
     try {
+      final settings = AcclimationSettings.fromMap(input);
       await lyfiApi.setAcclimation(device, settings);
       thing.findProperty('acclimation')?.value.notifyOfExternalUpdate(settings);
+      thing.findProperty('acclimationEnabled')?.value.notifyOfExternalUpdate(settings.enabled);
+
+      // Temporary Lyfi status property for refactoring - TODO: Remove after refactoring
+      final status = await lyfiApi.getLyfiStatus(device);
+      thing.findProperty('lyfiStatus')?.value.notifyOfExternalUpdate(status);
+      thing.findProperty('acclimationActivated')?.value.notifyOfExternalUpdate(status.acclimationActivated);
     } catch (e, st) {
       logger?.e('setAcclimation failed for device ${device.id}', error: e, stackTrace: st);
       rethrow;

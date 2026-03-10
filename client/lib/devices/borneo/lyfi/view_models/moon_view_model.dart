@@ -59,7 +59,7 @@ class MoonViewModel extends BaseLyfiDeviceViewModel {
 
     final config = MoonConfig(enabled: _enabled, color: _editor.channels.map((x) => x.value).toList());
 
-    await super.lyfiThing.performAction('setMoonConfig', config)!.invoke();
+    await super.lyfiThing.performActionAndWait('setMoonConfig', config);
     _isChanged = false;
     _editor.isChanged = false;
   }

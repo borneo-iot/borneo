@@ -321,6 +321,19 @@ class WotThing {
     return action;
   }
 
+  /// Perform an action on the thing and wait until it finishes.
+  ///
+  /// Returns the action that was created, or null if the action does not exist.
+  Future<WotAction?> performActionAndWait(String actionName, [dynamic input]) async {
+    final action = performAction(actionName, input);
+    if (action == null) {
+      return null;
+    }
+
+    await action.invoke();
+    return action;
+  }
+
   /// Remove an existing action.
   ///
   /// Returns boolean indicating the presence of the action.

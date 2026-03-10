@@ -16,14 +16,14 @@ class DashboardAcclimationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<
       LyfiViewModel,
-      ({bool isOnline, bool isOn, bool enabled, bool activated, AcclimationSettings acclimation})
+      ({bool isOnline, bool isOn, bool enabled, bool activated, AcclimationSettings? acclimation})
     >(
       selector: (_, vm) => (
         isOnline: vm.isOnline,
         isOn: vm.isOn,
-        enabled: vm.lyfiThing.getProperty<bool>('acclimationEnabled')!,
-        activated: vm.lyfiThing.getProperty<bool>('acclimationActivated')!,
-        acclimation: vm.lyfiThing.getProperty<AcclimationSettings>('acclimation')!,
+        enabled: vm.acclimationEnabled,
+        activated: vm.acclimationActivated,
+        acclimation: vm.acclimationSettings,
       ),
       builder: (context, props, _) {
         final theme = Theme.of(context);
@@ -40,7 +40,7 @@ class DashboardAcclimationTile extends StatelessWidget {
         // Calculate progress and remaining time
         double progress = 0.0;
         String remainingText = '';
-        if (isActive && acclimation.days > 0) {
+        if (isActive && acclimation != null && acclimation.days > 0) {
           final now = DateTime.now().toUtc();
           final elapsed = now.difference(acclimation.startTimestamp);
           final total = Duration(days: acclimation.days);
