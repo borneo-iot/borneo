@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:borneo_app/core/services/devices/ota/ota_service.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
