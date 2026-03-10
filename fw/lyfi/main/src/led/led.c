@@ -6,6 +6,7 @@
 #include <esp_event.h>
 #include <esp_timer.h>
 #include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
 #include <freertos/task.h>
 #include <driver/ledc.h>
 #include <esp_err.h>
@@ -41,6 +42,14 @@ static void system_events_handler(void* handler_args, esp_event_base_t base, int
 static void led_events_handler(void* handler_args, esp_event_base_t base, int32_t id, void* event_data);
 
 static void led_render_task();
+static void led_handle_pending_requests(uint32_t notifications);
+static void led_handle_temporary_toggle_request();
+static void led_handle_fault_shutdown_request();
+static void led_handle_scheduled_shutdown_request();
+static void led_handle_power_on_request();
+static int led_switch_state_now(uint8_t state);
+static int led_request_state_switch(uint8_t state, bool wait_for_completion);
+static bool led_is_render_task_context();
 
 static void led_temporary_state_entry();
 static void led_temporary_state_run();
@@ -75,6 +84,12 @@ static inline void led_dimming_reset_timeout();
 #define LED_UPDATE_PERIOD_TICKS (pdMS_TO_TICKS(10)) // Ticks in 10ms
 #define TEMPORARY_FADE_PERIOD_MS 7000
 #define LED_CHANNEL_SELF_TEST_WAIT_MS 500
+
+#define LED_TASK_NOTIFY_TEMPORARY_TOGGLE BIT0
+#define LED_TASK_NOTIFY_FAULT_SHUTDOWN BIT1
+#define LED_TASK_NOTIFY_SCHEDULED_SHUTDOWN BIT2
+#define LED_TASK_NOTIFY_POWER_ON BIT3
+#define LED_TASK_NOTIFY_STATE_SWITCH BIT4
 
 static inline led_duty_t channel_brightness_to_duty(led_brightness_t power);
 static inline void color_to_duties(const led_color_t color, led_duty_t* duties);
@@ -165,7 +180,16 @@ struct led_status _led;
 
 portMUX_TYPE g_led_spinlock = portMUX_INITIALIZER_UNLOCKED;
 
+struct led_state_switch_request {
+    bool pending;
+    uint8_t state;
+    int* result_out;
+    SemaphoreHandle_t completion;
+};
+
 static ledc_channel_config_t _ledc_channels[CONFIG_LYFI_LED_CHANNEL_COUNT];
+static TaskHandle_t s_led_render_task_handle;
+static struct led_state_switch_request s_led_state_switch_request;
 /**
  * Initialize the LED controller
  *
@@ -261,7 +285,12 @@ int led_init()
     BO_TRY(led_channel_self_test());
 #endif
 
-    xTaskCreate(&led_render_task, "led_render_task", 8 * 1024, NULL, TASK_PRIORITY, NULL);
+    if (xTaskCreate(&led_render_task, "led_render_task", 8 * 1024, NULL, TASK_PRIORITY, &s_led_render_task_handle)
+        != pdPASS) {
+        s_led_render_task_handle = NULL;
+        return -ENOMEM;
+    }
+
     ESP_LOGI(TAG, "LED Controller module has been initialized successfully.");
     return 0;
 }
@@ -557,37 +586,20 @@ static void system_events_handler(void* handler_args, esp_event_base_t base, int
     switch (event_id) {
     case BO_EVENT_SHUTDOWN_FAULT:
     case BO_EVENT_FATAL_ERROR: {
-        if (led_is_fading()) {
-            BO_MUST(led_fade_stop());
-        }
-        led_blank();
-        if (led_get_state() != LED_STATE_NORMAL) {
-            smf_set_state(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_NORMAL]);
+        if (s_led_render_task_handle != NULL) {
+            xTaskNotify(s_led_render_task_handle, LED_TASK_NOTIFY_FAULT_SHUTDOWN, eSetBits);
         }
     } break;
 
     case BO_EVENT_SHUTDOWN_SCHEDULED: {
-        int rc = led_fade_black();
-        if (rc) {
-            ESP_LOGE(TAG, "Failed to invoke `led_fade_black()`, errcode=%d", rc);
-        }
-        if (led_get_state() != LED_STATE_NORMAL) {
-            smf_set_state(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_NORMAL]);
+        if (s_led_render_task_handle != NULL) {
+            xTaskNotify(s_led_render_task_handle, LED_TASK_NOTIFY_SCHEDULED_SHUTDOWN, eSetBits);
         }
     } break;
 
     case BO_EVENT_POWER_ON: {
-        if (k_get_mode() == KERNEL_MODE_NORMAL) {
-            int rc = led_fade_to_normal();
-            if (rc) {
-                ESP_LOGE(TAG, "Failed to invoke `led_fade_to_normal()`, errcode=%d", rc);
-            }
-            if (led_get_state() != LED_STATE_NORMAL) {
-                rc = led_switch_state(LED_STATE_NORMAL);
-                if (rc) {
-                    ESP_LOGE(TAG, "Failed to swtich state to normal, errcode=%d", rc);
-                }
-            }
+        if (s_led_render_task_handle != NULL) {
+            xTaskNotify(s_led_render_task_handle, LED_TASK_NOTIFY_POWER_ON, eSetBits);
         }
     } break;
 
@@ -615,14 +627,8 @@ static void led_events_handler(void* handler_args, esp_event_base_t base, int32_
     switch (event_id) {
 
     case LYFI_EVENT_LED_NOTIFY_TEMPORARY_STATE: {
-        if (bo_power_is_on() && k_get_mode() == KERNEL_MODE_NORMAL) {
-            if (led_get_state() == LED_STATE_NORMAL
-                && (_led.settings.mode == LED_MODE_SCHEDULED || _led.settings.mode == LED_MODE_SUN)) {
-                led_switch_state(LED_STATE_TEMPORARY);
-            }
-            else if (led_get_state() == LED_STATE_TEMPORARY) {
-                BO_MUST(led_switch_state(LED_STATE_NORMAL));
-            }
+        if (s_led_render_task_handle != NULL) {
+            xTaskNotify(s_led_render_task_handle, LED_TASK_NOTIFY_TEMPORARY_TOGGLE, eSetBits);
         }
     } break;
 
@@ -710,6 +716,9 @@ void led_render_task()
         esp_task_wdt_reset();
 
         int64_t frame_start_us = esp_timer_get_time();
+        uint32_t notifications = 0;
+        xTaskNotifyWait(0, UINT32_MAX, &notifications, 0);
+        led_handle_pending_requests(notifications);
 
         int smf_ret = smf_run_state(SMF_CTX(&_led));
         if (smf_ret) {
@@ -753,7 +762,119 @@ void led_render_task()
     }
 }
 
+static void led_handle_pending_requests(uint32_t notifications)
+{
+    if (notifications & LED_TASK_NOTIFY_TEMPORARY_TOGGLE) {
+        led_handle_temporary_toggle_request();
+    }
+
+    if (notifications & LED_TASK_NOTIFY_FAULT_SHUTDOWN) {
+        led_handle_fault_shutdown_request();
+    }
+
+    if (notifications & LED_TASK_NOTIFY_SCHEDULED_SHUTDOWN) {
+        led_handle_scheduled_shutdown_request();
+    }
+
+    if (notifications & LED_TASK_NOTIFY_POWER_ON) {
+        led_handle_power_on_request();
+    }
+
+    if (notifications & LED_TASK_NOTIFY_STATE_SWITCH) {
+        struct led_state_switch_request request = { 0 };
+        bool has_request = false;
+
+        portENTER_CRITICAL(&g_led_spinlock);
+        if (s_led_state_switch_request.pending) {
+            request = s_led_state_switch_request;
+            s_led_state_switch_request.pending = false;
+            has_request = true;
+        }
+        portEXIT_CRITICAL(&g_led_spinlock);
+
+        if (has_request) {
+            int rc = led_switch_state_now(request.state);
+            if (request.result_out != NULL) {
+                *request.result_out = rc;
+            }
+            if (request.completion != NULL) {
+                xSemaphoreGive(request.completion);
+            }
+        }
+    }
+}
+
+static void led_handle_temporary_toggle_request()
+{
+    if (!(bo_power_is_on() && k_get_mode() == KERNEL_MODE_NORMAL)) {
+        return;
+    }
+
+    if (led_get_state() == LED_STATE_NORMAL
+        && (_led.settings.mode == LED_MODE_SCHEDULED || _led.settings.mode == LED_MODE_SUN)) {
+        BO_MUST(led_switch_state_now(LED_STATE_TEMPORARY));
+        return;
+    }
+
+    if (led_get_state() == LED_STATE_TEMPORARY) {
+        BO_MUST(led_switch_state_now(LED_STATE_NORMAL));
+    }
+}
+
+static void led_handle_fault_shutdown_request()
+{
+    if (led_is_fading()) {
+        BO_MUST(led_fade_stop());
+    }
+
+    led_blank();
+
+    if (led_get_state() != LED_STATE_NORMAL) {
+        BO_MUST(led_switch_state_now(LED_STATE_NORMAL));
+    }
+}
+
+static void led_handle_scheduled_shutdown_request()
+{
+    int rc = led_fade_black();
+    if (rc) {
+        ESP_LOGE(TAG, "Failed to invoke `led_fade_black()`, errcode=%d", rc);
+    }
+
+    if (led_get_state() != LED_STATE_NORMAL) {
+        BO_MUST(led_switch_state_now(LED_STATE_NORMAL));
+    }
+}
+
+static void led_handle_power_on_request()
+{
+    if (k_get_mode() != KERNEL_MODE_NORMAL) {
+        return;
+    }
+
+    int rc = led_fade_to_normal();
+    if (rc) {
+        ESP_LOGE(TAG, "Failed to invoke `led_fade_to_normal()`, errcode=%d", rc);
+    }
+
+    if (led_get_state() != LED_STATE_NORMAL) {
+        rc = led_switch_state_now(LED_STATE_NORMAL);
+        if (rc) {
+            ESP_LOGE(TAG, "Failed to switch state to normal, errcode=%d", rc);
+        }
+    }
+}
+
 int led_switch_state(uint8_t state)
+{
+    if (led_is_render_task_context()) {
+        return led_switch_state_now(state);
+    }
+
+    return led_request_state_switch(state, true);
+}
+
+static int led_switch_state_now(uint8_t state)
 {
     if (state >= LED_STATE_COUNT) {
         return -EINVAL;
@@ -820,6 +941,54 @@ int led_switch_state(uint8_t state)
 
     return 0;
 }
+
+static int led_request_state_switch(uint8_t state, bool wait_for_completion)
+{
+    if (state >= LED_STATE_COUNT) {
+        return -EINVAL;
+    }
+
+    if (s_led_render_task_handle == NULL) {
+        return -EAGAIN;
+    }
+
+    SemaphoreHandle_t completion = NULL;
+    int result = -EINPROGRESS;
+
+    if (wait_for_completion) {
+        completion = xSemaphoreCreateBinary();
+        if (completion == NULL) {
+            return -ENOMEM;
+        }
+    }
+
+    portENTER_CRITICAL(&g_led_spinlock);
+    if (s_led_state_switch_request.pending) {
+        portEXIT_CRITICAL(&g_led_spinlock);
+        if (completion != NULL) {
+            vSemaphoreDelete(completion);
+        }
+        return -EBUSY;
+    }
+
+    s_led_state_switch_request.pending = true;
+    s_led_state_switch_request.state = state;
+    s_led_state_switch_request.result_out = wait_for_completion ? &result : NULL;
+    s_led_state_switch_request.completion = completion;
+    portEXIT_CRITICAL(&g_led_spinlock);
+
+    xTaskNotify(s_led_render_task_handle, LED_TASK_NOTIFY_STATE_SWITCH, eSetBits);
+
+    if (!wait_for_completion) {
+        return 0;
+    }
+
+    xSemaphoreTake(completion, portMAX_DELAY);
+    vSemaphoreDelete(completion);
+    return result;
+}
+
+static bool led_is_render_task_context() { return xTaskGetCurrentTaskHandle() == s_led_render_task_handle; }
 
 int led_switch_mode(uint8_t mode)
 {
