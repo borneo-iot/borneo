@@ -59,7 +59,7 @@ final deviceExceptionHandlerProvider = Provider<DeviceExceptionHandler>((ref) {
 final mdnsProvider = Provider<IMdnsProvider>((ref) => NsdMdnsProvider());
 
 /// Network monitor used by the kernel to react to local network changes.
-final networkMonitorProvider = Provider<NetworkMonitor>((ref) => ConnectivityNetworkChangeMonitor());
+final networkMonitorProvider = Provider<INetworkMonitor>((ref) => ConnectivityNetworkChangeMonitor());
 
 /// Device module registry; overridden by the value created in main.
 final deviceModuleRegistryProvider = Provider<IDeviceModuleRegistry>(

@@ -39,7 +39,7 @@ final class DefaultKernel implements IKernel {
   final Logger _logger;
   final IDriverRegistry _driverRegistry;
   final IMdnsProvider? mdnsProvider;
-  final NetworkMonitor? networkMonitor;
+  final INetworkMonitor? networkMonitor;
   late final DiscoveryManager _discoveryManager;
   late final BindingEngine _bindingEngine;
 

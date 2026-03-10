@@ -1,6 +1,6 @@
 import 'dart:async';
 
-abstract class NetworkMonitor {
+abstract class INetworkMonitor {
   Stream<NetworkSnapshot> get onNetworkChanged;
 
   Future<NetworkSnapshot> getCurrentSnapshot();
@@ -25,7 +25,7 @@ final class NetworkSnapshot {
   int get hashCode => Object.hash(localDiscoveryAvailable, fingerprint);
 }
 
-final class NullNetworkMonitor implements NetworkMonitor {
+final class NullNetworkMonitor implements INetworkMonitor {
   const NullNetworkMonitor();
 
   @override

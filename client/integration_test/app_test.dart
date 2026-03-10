@@ -10,6 +10,7 @@ import 'package:sembast/sembast_memory.dart' hide Finder;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:borneo_app/main.dart' as app;
+import 'package:borneo_kernel_abstractions/network.dart';
 
 // bring in other test suites so this file serves as the aggregate entry point
 import 'device_group_test.dart' as device_group_test;
@@ -24,13 +25,24 @@ class _FakeRegistry implements IDeviceModuleRegistry {
   UnmodifiableMapView<String, DeviceModuleMetadata> get metaModules => UnmodifiableMapView({});
 }
 
+/// A simple network monitor that never attempts to talk to the platform.
+/// Used in tests to avoid the Connectivity plugin initialising D‑Bus.
+class _NoOpNetworkMonitor implements INetworkMonitor {
+  @override
+  Stream<NetworkSnapshot> get onNetworkChanged => const Stream<NetworkSnapshot>.empty();
+
+  @override
+  Future<NetworkSnapshot> getCurrentSnapshot() async =>
+      const NetworkSnapshot(localDiscoveryAvailable: false, fingerprint: '');
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 /// Builds the full app widget backed by an in-memory database, suitable for
 /// integration tests that must not touch the filesystem.
-Future<Widget> _buildTestApp({IDeviceModuleRegistry? registry}) async {
+Future<Widget> _buildTestApp({IDeviceModuleRegistry? registry, INetworkMonitor? networkMonitor}) async {
   // Force English locale so text-matching assertions are language-independent.
   SharedPreferences.setMockInitialValues({'app.locale': 'en_US'});
   final db = await databaseFactoryMemory.openDatabase('test_${DateTime.now().microsecondsSinceEpoch}.db');
@@ -38,6 +50,7 @@ Future<Widget> _buildTestApp({IDeviceModuleRegistry? registry}) async {
     database: db,
     sharedPreferences: await SharedPreferences.getInstance(),
     deviceModuleRegistry: registry ?? _FakeRegistry(),
+    networkMonitor: networkMonitor ?? _NoOpNetworkMonitor(),
   );
 }
 

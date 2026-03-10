@@ -1,7 +1,7 @@
 import 'package:borneo_kernel_abstractions/network.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-final class ConnectivityNetworkChangeMonitor implements NetworkMonitor {
+final class ConnectivityNetworkChangeMonitor implements INetworkMonitor {
   final Connectivity _connectivity;
 
   ConnectivityNetworkChangeMonitor({Connectivity? connectivity}) : _connectivity = connectivity ?? Connectivity();

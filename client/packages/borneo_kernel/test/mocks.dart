@@ -158,7 +158,7 @@ class MockMdnsProvider implements IMdnsProvider {
   }
 }
 
-class MockNetworkMonitor implements NetworkMonitor {
+class MockNetworkMonitor implements INetworkMonitor {
   final StreamController<NetworkSnapshot> _controller = StreamController.broadcast();
   NetworkSnapshot _currentSnapshot;
 

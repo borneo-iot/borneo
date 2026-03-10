@@ -72,6 +72,7 @@ Future<Widget> buildAppWidget({
   EventBus? eventBus,
   IDeviceModuleRegistry? deviceModuleRegistry,
   IMdnsProvider? mdnsProvider,
+  INetworkMonitor? networkMonitor,
 
   /// Optional override of the screen radius, used by tests or fallback
   /// environments.  If `null` the real plugin result is fetched.
@@ -101,6 +102,10 @@ Future<Widget> buildAppWidget({
     }
   }
   final platformInfo = PlatformDeviceInfo(screenCornerRadius: screenRadius);
+
+  // network monitor override for tests; fall back to the real connectivity
+  // implementation otherwise.
+  final nm = networkMonitor ?? ConnectivityNetworkChangeMonitor();
 
   final List<SingleChildWidget> providers = [
     // Logger
@@ -149,10 +154,11 @@ Future<Widget> buildAppWidget({
     ),
 
     // Network monitor used by the kernel to react to local network changes.
-    provider.Provider<NetworkMonitor>(create: (_) => ConnectivityNetworkChangeMonitor(), lazy: false),
+    // this may have been provided by the caller (tests) or is created above.
+    provider.Provider<INetworkMonitor>(create: (_) => nm, lazy: false),
 
     // IKernel
-    provider.ProxyProvider4<Logger, IDriverRegistry, IMdnsProvider, NetworkMonitor, IKernel>(
+    provider.ProxyProvider4<Logger, IDriverRegistry, IMdnsProvider, INetworkMonitor, IKernel>(
       update: (_, logger, driverReg, nsdMdns, networkMonitor, kernel) =>
           kernel ?? DefaultKernel(logger, driverReg, mdnsProvider: nsdMdns, networkMonitor: networkMonitor),
       dispose: (context, kernel) => kernel.dispose(),
