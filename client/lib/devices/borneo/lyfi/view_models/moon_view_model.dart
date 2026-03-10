@@ -51,17 +51,58 @@ class MoonViewModel extends BaseLyfiDeviceViewModel {
   }
 
   bool validate() {
-    return true; // No specific validation for moon config
+    final hasLocation = super.lyfiThing.getProperty<GeoLocation?>('location') != null;
+    final tz = super.lyfiThing.getProperty<String?>('timezone');
+    return _editor.channels.isNotEmpty &&
+        _editor.channels.any((x) => x.value > 0) &&
+        hasLocation &&
+        tz != null &&
+        tz.isNotEmpty;
   }
 
-  Future<void> submitToDevice() async {
-    assert(isOnline && validate());
+  String? get validationErrorMessage {
+    if (_editor.channels.isEmpty || !_editor.channels.any((x) => x.value > 0)) {
+      return gt.translate('Unable to update Moon mode: configure at least one channel with brightness greater than 0.');
+    }
+
+    final hasLocation = super.lyfiThing.getProperty<GeoLocation?>('location') != null;
+    if (!hasLocation) {
+      return gt.translate('Unable to update Moon mode: the location is not set.');
+    }
+
+    final tz = super.lyfiThing.getProperty<String?>('timezone');
+    if (tz == null || tz.isEmpty) {
+      return gt.translate('Unable to update Moon mode: the timezone is not set.');
+    }
+
+    return null;
+  }
+
+  Future<bool> submitToDevice() async {
+    if (!isOnline) {
+      notifyAppError(gt.translate('Device is offline. Please retry after reconnection.'));
+      return false;
+    }
+
+    final validationMessage = validationErrorMessage;
+    if (validationMessage != null) {
+      notifyAppError(validationMessage);
+      notifyListeners();
+      return false;
+    }
 
     final config = MoonConfig(enabled: _enabled, color: _editor.channels.map((x) => x.value).toList());
 
-    await super.lyfiThing.performActionAndWait('setMoonConfig', config);
-    _isChanged = false;
-    _editor.isChanged = false;
+    try {
+      await super.lyfiThing.performActionAndWait('setMoonConfig', config);
+      _isChanged = false;
+      _editor.isChanged = false;
+      notifyListeners();
+      return true;
+    } catch (e, st) {
+      notifyAppError(gt.translate('Failed to update moon settings.'), error: e, stackTrace: st);
+      return false;
+    }
   }
 
   @override

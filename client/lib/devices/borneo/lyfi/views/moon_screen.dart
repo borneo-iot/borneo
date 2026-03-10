@@ -108,20 +108,15 @@ class MoonScreen extends StatelessWidget {
   }
 
   Future<void> onSubmit(MoonViewModel vm, BuildContext context) async {
-    try {
-      await vm.submitToDevice();
-      if (context.mounted) {
-        Provider.of<IAppNotificationService>(
-          context,
-          listen: false,
-        ).showSuccess(context.translate('Update moon settings succeed.'));
-        Navigator.of(context).pop();
-      }
-    } catch (e, st) {
-      if (context.mounted) {
-        context.read<IAppNotificationService>().showError(context.translate('Error'), body: e.toString());
-        vm.logger?.e('Failed to submit moon settings', error: e, stackTrace: st);
-      }
+    final didSubmit = await vm.submitToDevice();
+    if (!didSubmit || !context.mounted) {
+      return;
     }
+
+    Provider.of<IAppNotificationService>(
+      context,
+      listen: false,
+    ).showSuccess(context.translate('Update moon settings succeed.'));
+    Navigator.of(context).pop();
   }
 }
