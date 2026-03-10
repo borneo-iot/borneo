@@ -34,6 +34,8 @@ bool led_acclimation_is_activated() { return led_acclimation_is_enabled() && _le
 
 int led_acclimation_drive(time_t utc_now, led_color_t color)
 {
+    bool should_terminate = false;
+
     portENTER_CRITICAL(&g_led_spinlock);
     if (led_acclimation_is_activated() && !led_acclimation_is_enabled()) {
         _led.acclimation_activated = false;
@@ -74,14 +76,17 @@ int led_acclimation_drive(time_t utc_now, led_color_t color)
         goto exit;
     }
     else {
-        if (led_acclimation_is_enabled()) {
-            BO_TRY(led_acclimation_terminate());
-        }
+        should_terminate = true;
         goto exit;
     }
 
 exit:
     portEXIT_CRITICAL(&g_led_spinlock);
+
+    if (should_terminate) {
+        BO_TRY(led_acclimation_terminate());
+    }
+
     return 0;
 }
 
