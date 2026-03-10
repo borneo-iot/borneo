@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 21:12+0800\n"
+"POT-Creation-Date: 2026-03-10 17:39+0800\n"
 "PO-Revision-Date: 2026-01-03 14:43+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -39,7 +39,9 @@ msgstr "Modo paisajismo seco"
 msgid ""
 "Device firmware version {currentVersion} is not supported. Required: "
 "{requiredVersion}."
-msgstr "La versión de firmware del dispositivo {currentVersion} no es compatible. Se requiere: {requiredVersion}."
+msgstr ""
+"La versión de firmware del dispositivo {currentVersion} no es compatible. Se "
+"requiere: {requiredVersion}."
 
 #: core\services\devices\device_manager_impl.dart:418
 msgid "This device is not compatible with the selected driver."
@@ -103,12 +105,30 @@ msgstr "TEMP"
 msgid "PREV"
 msgstr "ANTERIOR"
 
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:109
+msgid "Start date is invalid."
+msgstr "La fecha de inicio no es válida."
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:111
+msgid "Duration must be between 5 and 100 days."
+msgstr "La duración debe estar entre 5 y 100 días."
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:113
+msgid "Start strength must be between 10% and 90%."
+msgstr "La intensidad inicial debe estar entre 10% y 90%."
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:135
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:500
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:613
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:83
 msgid "Device is offline. Please retry after reconnection."
 msgstr ""
 "El dispositivo está desconectado. Por favor, inténtelo de nuevo después de "
 "reconectarse."
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:158
+msgid "Failed to update acclimation settings."
+msgstr "Error al actualizar la configuración de aclimatación."
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:516
 msgid "Bad device state"
@@ -141,6 +161,26 @@ msgstr "Error al cambiar de modo"
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:722
 msgid "Device is not reachable at the moment."
 msgstr "El dispositivo no está disponible en este momento."
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:65
+msgid ""
+"Unable to update Moon mode: configure at least one channel with brightness "
+"greater than 0."
+msgstr ""
+"No se puede actualizar el modo Luna: configure al menos un canal con brillo "
+"mayor que 0."
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:70
+msgid "Unable to update Moon mode: the location is not set."
+msgstr "No se puede actualizar el modo Luna: la ubicación no está configurada."
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:75
+msgid "Unable to update Moon mode: the timezone is not set."
+msgstr "No se puede actualizar el modo Luna: la zona horaria no está configurada."
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:103
+msgid "Failed to update moon settings."
+msgstr "Error al actualizar la configuración de la luna."
 
 #: devices\borneo\lyfi\view_models\settings_view_model.dart:84
 msgid "Location updated successfully"
@@ -238,14 +278,14 @@ msgstr "Falló al restaurar el dispositivo a la configuración de fábrica"
 msgid "Failed to reset device network settings"
 msgstr "Falló al restablecer la configuración de red del dispositivo"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:41
-#: devices\borneo\lyfi\views\acclimation_screen.dart:49
+#: devices\borneo\lyfi\views\acclimation_screen.dart:48
 #: devices\borneo\lyfi\views\acclimation_screen.dart:56
+#: devices\borneo\lyfi\views\acclimation_screen.dart:63
 #: devices\borneo\lyfi\views\dashboard\dashboard_acclimation_tile.dart:126
 msgid "Acclimation"
 msgstr "Aclimatación"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:61
+#: devices\borneo\lyfi\views\acclimation_screen.dart:68
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:92
 #: devices\borneo\lyfi\views\easy_setup_screen.dart:43
 #: devices\borneo\lyfi\views\moon_screen.dart:57
@@ -253,53 +293,47 @@ msgstr "Aclimatación"
 msgid "Apply"
 msgstr "Aplicar"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:84
+#: devices\borneo\lyfi\views\acclimation_screen.dart:91
 msgid "SETTINGS"
 msgstr "CONFIGURACIONES"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:87
+#: devices\borneo\lyfi\views\acclimation_screen.dart:94
 msgid "Enable acclimation"
 msgstr "Habilitar aclimatación"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:92
+#: devices\borneo\lyfi\views\acclimation_screen.dart:99
 msgid "Start date"
 msgstr "Fecha de inicio"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:98
+#: devices\borneo\lyfi\views\acclimation_screen.dart:105
 msgid "Not set"
 msgstr "No establecido"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:119
+#: devices\borneo\lyfi\views\acclimation_screen.dart:127
 msgid "Duration"
 msgstr "Duración"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:120
-#: devices\borneo\lyfi\views\acclimation_screen.dart:132
+#: devices\borneo\lyfi\views\acclimation_screen.dart:129
+#: devices\borneo\lyfi\views\acclimation_screen.dart:143
 #, python-brace-format
 msgid "{d} days"
 msgstr "{d} días"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:127
+#: devices\borneo\lyfi\views\acclimation_screen.dart:138
 msgid "Select Duration"
 msgstr "Seleccionar Duración"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:143
+#: devices\borneo\lyfi\views\acclimation_screen.dart:154
 msgid "Start strength"
 msgstr "Fuerza inicial"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:151
+#: devices\borneo\lyfi\views\acclimation_screen.dart:165
 msgid "Select Start strength"
 msgstr "Seleccionar fuerza inicial"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:174
+#: devices\borneo\lyfi\views\acclimation_screen.dart:187
 msgid "Update acclimation settings succeed."
 msgstr "Configuración de aclimatación actualizada exitosamente."
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:179
-#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:81
-#: devices\borneo\lyfi\views\moon_screen.dart:122
-msgid "Error"
-msgstr "Error"
 
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:52
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:62
@@ -510,6 +544,10 @@ msgstr "Potencia LED"
 msgid "Settings"
 msgstr "Configuración"
 
+#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:81
+msgid "Error"
+msgstr "Error"
+
 #: devices\borneo\lyfi\views\dashboard\dashboard_temperature_tile.dart:44
 msgid "Temperature & Fan"
 msgstr "Temperatura y Ventilador"
@@ -627,7 +665,7 @@ msgstr "Confirmación"
 msgid "Are you sure you want to remove all schedule entries?"
 msgstr "¿Está seguro de que desea eliminar todas las entradas del horario?"
 
-#: devices\borneo\lyfi\views\moon_screen.dart:117
+#: devices\borneo\lyfi\views\moon_screen.dart:119
 msgid "Update moon settings succeed."
 msgstr "Configuración lunar actualizada correctamente."
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 21:12+0800\n"
+"POT-Creation-Date: 2026-03-10 17:39+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -102,10 +102,28 @@ msgstr "温度"
 msgid "PREV"
 msgstr "之前"
 
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:109
+msgid "Start date is invalid."
+msgstr "开始日期无效。"
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:111
+msgid "Duration must be between 5 and 100 days."
+msgstr "持续时间必须在 5 到 100 天之间。"
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:113
+msgid "Start strength must be between 10% and 90%."
+msgstr "开始强度必须在 10% 到 90% 之间。"
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:135
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:500
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:613
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:83
 msgid "Device is offline. Please retry after reconnection."
 msgstr "设备离线，请重新连接后重试。"
+
+#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:158
+msgid "Failed to update acclimation settings."
+msgstr "更新适应设置失败。"
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:516
 msgid "Bad device state"
@@ -134,6 +152,25 @@ msgstr "切换模式失败"
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:722
 msgid "Device is not reachable at the moment."
 msgstr "设备当前不可达"
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:65
+msgid ""
+"Unable to update Moon mode: configure at least one channel with brightness "
+"greater than 0."
+msgstr ""
+"无法更新月亮模式：至少配置一个亮度大于0的通道。"
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:70
+msgid "Unable to update Moon mode: the location is not set."
+msgstr "无法更新月亮模式：位置未设置。"
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:75
+msgid "Unable to update Moon mode: the timezone is not set."
+msgstr "无法更新月亮模式：时区未设置。"
+
+#: devices\borneo\lyfi\view_models\moon_view_model.dart:103
+msgid "Failed to update moon settings."
+msgstr "更新月亮设置失败。"
 
 #: devices\borneo\lyfi\view_models\settings_view_model.dart:84
 msgid "Location updated successfully"
@@ -231,14 +268,14 @@ msgstr "将设备恢复到出厂设置失败"
 msgid "Failed to reset device network settings"
 msgstr "重置设备网络设置失败"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:41
-#: devices\borneo\lyfi\views\acclimation_screen.dart:49
+#: devices\borneo\lyfi\views\acclimation_screen.dart:48
 #: devices\borneo\lyfi\views\acclimation_screen.dart:56
+#: devices\borneo\lyfi\views\acclimation_screen.dart:63
 #: devices\borneo\lyfi\views\dashboard\dashboard_acclimation_tile.dart:126
 msgid "Acclimation"
 msgstr "适应模式"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:61
+#: devices\borneo\lyfi\views\acclimation_screen.dart:68
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:92
 #: devices\borneo\lyfi\views\easy_setup_screen.dart:43
 #: devices\borneo\lyfi\views\moon_screen.dart:57
@@ -246,53 +283,47 @@ msgstr "适应模式"
 msgid "Apply"
 msgstr "应用"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:84
+#: devices\borneo\lyfi\views\acclimation_screen.dart:91
 msgid "SETTINGS"
 msgstr "设置"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:87
+#: devices\borneo\lyfi\views\acclimation_screen.dart:94
 msgid "Enable acclimation"
 msgstr "启用适应模式"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:92
+#: devices\borneo\lyfi\views\acclimation_screen.dart:99
 msgid "Start date"
 msgstr "开始"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:98
+#: devices\borneo\lyfi\views\acclimation_screen.dart:105
 msgid "Not set"
 msgstr "未设置"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:119
+#: devices\borneo\lyfi\views\acclimation_screen.dart:127
 msgid "Duration"
 msgstr "持续时间"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:120
-#: devices\borneo\lyfi\views\acclimation_screen.dart:132
+#: devices\borneo\lyfi\views\acclimation_screen.dart:129
+#: devices\borneo\lyfi\views\acclimation_screen.dart:143
 #, python-brace-format
 msgid "{d} days"
 msgstr "{d}天"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:127
+#: devices\borneo\lyfi\views\acclimation_screen.dart:138
 msgid "Select Duration"
 msgstr "选择时长"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:143
+#: devices\borneo\lyfi\views\acclimation_screen.dart:154
 msgid "Start strength"
 msgstr "起始强度"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:151
+#: devices\borneo\lyfi\views\acclimation_screen.dart:165
 msgid "Select Start strength"
 msgstr "选择起始强度"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:174
+#: devices\borneo\lyfi\views\acclimation_screen.dart:187
 msgid "Update acclimation settings succeed."
 msgstr "适应模式设置已更新。"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:179
-#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:81
-#: devices\borneo\lyfi\views\moon_screen.dart:122
-msgid "Error"
-msgstr "错误"
 
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:52
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:62
@@ -501,6 +532,10 @@ msgstr "LED 功率"
 msgid "Settings"
 msgstr "设置"
 
+#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:81
+msgid "Error"
+msgstr "错误"
+
 #: devices\borneo\lyfi\views\dashboard\dashboard_temperature_tile.dart:44
 msgid "Temperature & Fan"
 msgstr "温度与风扇"
@@ -618,7 +653,7 @@ msgstr "确认"
 msgid "Are you sure you want to remove all schedule entries?"
 msgstr "您确定要删除所有日程条目吗？"
 
-#: devices\borneo\lyfi\views\moon_screen.dart:117
+#: devices\borneo\lyfi\views\moon_screen.dart:119
 msgid "Update moon settings succeed."
 msgstr "月相设置已更新。"
 
