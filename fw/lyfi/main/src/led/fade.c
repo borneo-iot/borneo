@@ -52,6 +52,11 @@ int led_fade_to_color(const led_color_t color, uint32_t duration_ms)
     BO_TRY(led_get_color(_led.fade_start_color));
     portENTER_CRITICAL(&g_led_spinlock);
     memcpy(_led.fade_end_color, color, sizeof(led_color_t));
+    for (size_t ch = 0; ch < led_channel_count(); ch++) {
+        _led.fade_start_virtual_color[ch] = led_brightness_to_virtual(_led.fade_start_color[ch]);
+        _led.fade_end_virtual_color[ch] = led_brightness_to_virtual(color[ch]);
+        _led.fade_current_virtual_color[ch] = _led.fade_start_virtual_color[ch];
+    }
     portEXIT_CRITICAL(&g_led_spinlock);
     // publish fade active after all state is set
     atomic_store_explicit(&_led.fade_active, true, memory_order_release);
@@ -122,8 +127,12 @@ void led_fade_drive()
     int64_t fade_duration_ms = _led.fade_duration_ms;
     led_color_t fade_start_color;
     led_color_t fade_end_color;
+    led_virtual_color_t fade_start_virtual_color;
+    led_virtual_color_t fade_end_virtual_color;
     memcpy(fade_start_color, _led.fade_start_color, sizeof(led_color_t));
     memcpy(fade_end_color, _led.fade_end_color, sizeof(led_color_t));
+    memcpy(fade_start_virtual_color, _led.fade_start_virtual_color, sizeof(led_virtual_color_t));
+    memcpy(fade_end_virtual_color, _led.fade_end_virtual_color, sizeof(led_virtual_color_t));
     portEXIT_CRITICAL(&g_led_spinlock);
 
     int64_t now = bo_timer_uptime_ms();
@@ -137,10 +146,18 @@ void led_fade_drive()
     uint32_t progress = ((elapsed_time_ms << 16) + (fade_duration_ms >> 1)) / fade_duration_ms;
 
     led_color_t color;
+    led_virtual_color_t virtual_color;
     for (size_t ich = 0; ich < led_channel_count(); ich++) {
-        int32_t delta = (int32_t)(fade_end_color[ich] - fade_start_color[ich]) * progress;
-        color[ich] = fade_start_color[ich] + ((delta + (1 << 15)) >> 16);
+        uint64_t blended = ((uint64_t)fade_start_virtual_color[ich] * (65536U - progress))
+            + ((uint64_t)fade_end_virtual_color[ich] * progress) + (1U << 15);
+        virtual_color[ich] = (led_virtual_brightness_t)(blended >> 16);
+        color[ich] = led_virtual_to_brightness(virtual_color[ich]);
     }
+
+    portENTER_CRITICAL(&g_led_spinlock);
+    memcpy(_led.fade_current_virtual_color, virtual_color, sizeof(led_virtual_color_t));
+    portEXIT_CRITICAL(&g_led_spinlock);
+
     BO_MUST(led_update_color(color));
 }
 

@@ -17,11 +17,26 @@ extern "C" {
 
 typedef uint16_t led_brightness_t;
 typedef uint16_t led_duty_t;
+typedef uint16_t led_virtual_brightness_t;
 typedef led_brightness_t led_color_t[CONFIG_LYFI_LED_CHANNEL_COUNT];
 typedef led_duty_t led_duties_t[CONFIG_LYFI_LED_CHANNEL_COUNT];
+typedef led_virtual_brightness_t led_virtual_color_t[CONFIG_LYFI_LED_CHANNEL_COUNT];
 
 #define LED_BRIGHTNESS_MIN ((led_brightness_t)0)
 #define LED_BRIGHTNESS_MAX ((led_brightness_t)4095)
+#define LED_VIRTUAL_BRIGHTNESS_MAX ((led_virtual_brightness_t)65535)
+
+static inline led_virtual_brightness_t led_brightness_to_virtual(led_brightness_t brightness)
+{
+    return (led_virtual_brightness_t)(((uint32_t)brightness * LED_VIRTUAL_BRIGHTNESS_MAX + (LED_BRIGHTNESS_MAX / 2))
+                                      / LED_BRIGHTNESS_MAX);
+}
+
+static inline led_brightness_t led_virtual_to_brightness(led_virtual_brightness_t brightness)
+{
+    return (led_brightness_t)(((uint32_t)brightness * LED_BRIGHTNESS_MAX + (LED_VIRTUAL_BRIGHTNESS_MAX / 2))
+                              / LED_VIRTUAL_BRIGHTNESS_MAX);
+}
 
 #define LED_ACCLIMATION_DAYS_MAX 100
 #define LED_ACCLIMATION_DAYS_MIN 5
@@ -120,6 +135,9 @@ struct led_status {
 
     led_color_t fade_start_color;
     led_color_t fade_end_color;
+    led_virtual_color_t fade_start_virtual_color;
+    led_virtual_color_t fade_end_virtual_color;
+    led_virtual_color_t fade_current_virtual_color;
     int64_t fade_start_time_ms; ///< Time point of fading started
     uint32_t fade_duration_ms; ///< The duration of fading
     atomic_bool fade_active; ///< Lock-free flag for whether fading is active

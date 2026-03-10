@@ -92,9 +92,11 @@ static inline void led_dimming_reset_timeout();
 #define LED_TASK_NOTIFY_STATE_SWITCH BIT4
 
 static inline led_duty_t channel_brightness_to_duty(led_brightness_t power);
+static inline led_duty_t channel_virtual_brightness_to_duty(led_virtual_brightness_t brightness);
 static inline void color_to_duties(const led_color_t color, led_duty_t* duties);
 static int led_set_channel_duty(uint8_t ch, led_duty_t duty);
 static int __attribute__((unused)) led_set_duties(const led_duty_t* duties);
+static int led_set_channel_virtual_brightness(uint8_t ch, led_virtual_brightness_t brightness);
 
 static int led_mode_manual_entry();
 static int led_mode_scheduled_entry();
@@ -445,6 +447,46 @@ inline led_duty_t channel_brightness_to_duty(led_brightness_t brightness)
     }
 }
 
+inline led_duty_t channel_virtual_brightness_to_duty(led_virtual_brightness_t brightness)
+{
+    const led_duty_t* lut = NULL;
+
+    switch (_led.settings.correction_method) {
+    case LED_CORRECTION_CIE1931:
+        lut = LED_CORLUT_CIE1931;
+        break;
+
+    case LED_CORRECTION_GAMMA:
+        lut = LED_CORLUT_GAMMA;
+        break;
+
+    case LED_CORRECTION_LOG:
+        lut = LED_CORLUT_LOG;
+        break;
+
+    case LED_CORRECTION_EXP:
+        lut = LED_CORLUT_EXP;
+        break;
+
+    default:
+        return (led_duty_t)(((uint32_t)brightness * LED_MAX_DUTY + (LED_VIRTUAL_BRIGHTNESS_MAX / 2))
+                            / LED_VIRTUAL_BRIGHTNESS_MAX);
+    }
+
+    uint32_t position = (uint32_t)brightness * LED_BRIGHTNESS_MAX;
+    uint32_t index = position / LED_VIRTUAL_BRIGHTNESS_MAX;
+    uint32_t fraction = position % LED_VIRTUAL_BRIGHTNESS_MAX;
+
+    if (index >= LED_BRIGHTNESS_MAX) {
+        return lut[LED_BRIGHTNESS_MAX];
+    }
+
+    uint32_t low = lut[index];
+    uint32_t high = lut[index + 1];
+    return (led_duty_t)(low
+                        + (((high - low) * fraction + (LED_VIRTUAL_BRIGHTNESS_MAX / 2)) / LED_VIRTUAL_BRIGHTNESS_MAX));
+}
+
 inline void color_to_duties(const led_color_t color, led_duty_t* duties)
 {
     for (size_t ch = 0; ch < led_channel_count(); ch++) {
@@ -496,6 +538,17 @@ int led_set_channel_brightness(uint8_t ch, led_brightness_t brightness)
         return -EINVAL;
     }
     led_duty_t duty = channel_brightness_to_duty(brightness);
+    BO_TRY_ESP(led_set_channel_duty(ch, duty));
+    return 0;
+}
+
+int led_set_channel_virtual_brightness(uint8_t ch, led_virtual_brightness_t brightness)
+{
+    if (ch >= led_channel_count()) {
+        return -EINVAL;
+    }
+
+    led_duty_t duty = channel_virtual_brightness_to_duty(brightness);
     BO_TRY_ESP(led_set_channel_duty(ch, duty));
     return 0;
 }
@@ -701,6 +754,7 @@ int led_mode_sun_entry()
 void led_render_task()
 {
     led_color_t last_color;
+    led_virtual_color_t last_virtual_color = { 0 };
     memcpy(last_color, LED_COLOR_BLANK, sizeof(led_color_t));
 
     if (bo_power_is_on() && k_get_mode() != KERNEL_MODE_NORMAL) {
@@ -734,13 +788,27 @@ void led_render_task()
             // first call per channel, and creating FreeRTOS primitives with interrupts disabled is
             // undefined behaviour that corrupts scheduler state.
             led_color_t new_color;
+            led_virtual_color_t new_virtual_color;
+            bool fade_active;
             portENTER_CRITICAL(&g_led_spinlock);
             memcpy(new_color, _led.color, sizeof(led_color_t));
+            memcpy(new_virtual_color, _led.fade_current_virtual_color, sizeof(led_virtual_color_t));
+            fade_active = atomic_load_explicit(&_led.fade_active, memory_order_acquire);
             portEXIT_CRITICAL(&g_led_spinlock);
 
             // Sync color to hardware outside critical section
             bool color_changed = memcmp(last_color, new_color, sizeof(led_color_t)) != 0;
-            if (color_changed) {
+            bool virtual_changed = memcmp(last_virtual_color, new_virtual_color, sizeof(led_virtual_color_t)) != 0;
+            if (fade_active && virtual_changed) {
+                for (size_t ch = 0; ch < led_channel_count(); ch++) {
+                    if (last_virtual_color[ch] != new_virtual_color[ch]) {
+                        last_virtual_color[ch] = new_virtual_color[ch];
+                        last_color[ch] = new_color[ch];
+                        BO_MUST(led_set_channel_virtual_brightness(ch, last_virtual_color[ch]));
+                    }
+                }
+            }
+            else if (color_changed) {
                 for (size_t ch = 0; ch < led_channel_count(); ch++) {
                     if (last_color[ch] != new_color[ch]) {
                         last_color[ch] = new_color[ch];
