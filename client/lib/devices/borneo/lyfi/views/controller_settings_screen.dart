@@ -98,7 +98,6 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
   /// Convert the old widget-based groups into a [SettingsList] with sections.
   SettingsList _buildSettingsList(BuildContext context) {
     return SettingsList(
-      platform: DevicePlatform.iOS,
       sections: [
         SettingsSection(
           title: Text(context.translate('LED CONFIGURATION')),

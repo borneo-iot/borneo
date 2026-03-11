@@ -88,7 +88,6 @@ class SettingsScreen extends StatelessWidget {
   SettingsList _buildSettingsList(BuildContext context) {
     final lvm = context.watch<SettingsViewModel>();
     return SettingsList(
-      platform: DevicePlatform.iOS,
       sections: [
         SettingsSection(
           title: Text(context.translate('DEVICE INFORMATION')),

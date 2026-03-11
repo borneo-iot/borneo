@@ -3,7 +3,7 @@ import 'package:borneo_app/devices/borneo/lyfi/view_models/acclimation_view_mode
 import 'package:borneo_app/core/services/devices/device_manager.dart';
 import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:borneo_app/shared/widgets/app_bar_apply_button.dart';
-import 'package:borneo_app/shared/widgets/generic_bottom_sheet_picker.dart';
+import 'package:borneo_app/shared/widgets/settings_ui/settings_tile_extensions.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +85,6 @@ class AcclimationScreen extends StatelessWidget {
     final vm = context.watch<AcclimationViewModel>();
 
     return SettingsList(
-      platform: DevicePlatform.iOS,
       sections: [
         SettingsSection(
           title: Text(context.translate('SETTINGS')),
@@ -123,54 +122,39 @@ class AcclimationScreen extends StatelessWidget {
                     }
                   : null,
             ),
-            SettingsTile.navigation(
+            settingsSliderTile(
               title: Text(context.translate('Duration')),
-              value: Text(
+              value: vm.days.clamp(5, 100),
+              min: 5,
+              max: 100,
+              divisions: 95,
+              label: context.translate('{d} days', nArgs: {'d': vm.days.round().toString()}),
+              trailing: Text(
                 context.translate('{d} days', nArgs: {'d': vm.days.round().toString()}),
-                style: TextStyle(color: _valueColor(context, vm.hasDurationError)),
+                style: TextStyle(
+                  color: _valueColor(context, vm.hasDurationError),
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
               ),
-              onPressed: !vm.isBusy && vm.isOnline
-                  ? (bc) async {
-                      final options = [5, 7, 15, 30, 60, 100].map((e) => e.toDouble()).toList();
-                      final current = options.contains(vm.days) ? vm.days : options.first;
-                      await GenericBottomSheetPicker.show<double>(
-                        context: context,
-                        title: context.translate('Select Duration'),
-                        entries: options
-                            .map(
-                              (d) => GenericBottomSheetPickerEntry(
-                                value: d,
-                                label: context.translate('{d} days', nArgs: {'d': d.round().toString()}),
-                              ),
-                            )
-                            .toList(),
-                        selectedValue: current,
-                        onValueSelected: (val) => vm.updateDays(val),
-                      );
-                    }
-                  : null,
+              enabled: !vm.isBusy && vm.isOnline,
+              onChanged: (value) => vm.updateDays(value.roundToDouble()),
             ),
-            SettingsTile.navigation(
+            settingsSliderTile(
               title: Text(context.translate('Start strength')),
-              value: Text(
-                '${vm.startPercent.round().toString()}%',
-                style: TextStyle(color: _valueColor(context, vm.hasStartPercentError)),
+              value: vm.startPercent.clamp(10, 90),
+              min: 10,
+              max: 90,
+              divisions: 80,
+              label: '${vm.startPercent.round()}%',
+              trailing: Text(
+                '${vm.startPercent.round()}%',
+                style: TextStyle(
+                  color: _valueColor(context, vm.hasStartPercentError),
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
               ),
-              onPressed: !vm.isBusy && vm.isOnline
-                  ? (bc) async {
-                      final options = [10, 20, 30, 40, 50, 60, 70, 80, 90].map((e) => e.toDouble()).toList();
-                      final current = options.contains(vm.startPercent) ? vm.startPercent : options.first;
-                      await GenericBottomSheetPicker.show<double>(
-                        context: context,
-                        title: context.translate('Select Start strength'),
-                        entries: options
-                            .map((p) => GenericBottomSheetPickerEntry(value: p, label: '${p.round()}%'))
-                            .toList(),
-                        selectedValue: current,
-                        onValueSelected: (val) => vm.updateStartPercent(val),
-                      );
-                    }
-                  : null,
+              enabled: !vm.isBusy && vm.isOnline,
+              onChanged: (value) => vm.updateStartPercent(value.roundToDouble()),
             ),
           ],
         ),
