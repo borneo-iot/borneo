@@ -1,6 +1,7 @@
 import 'package:borneo_app/devices/borneo/lyfi/view_models/constants.dart';
 import 'package:borneo_app/devices/borneo/lyfi/views/brightness_slider_list.dart';
 import 'package:borneo_app/devices/borneo/lyfi/views/color_chart.dart';
+import 'package:borneo_app/devices/borneo/lyfi/views/spectrum_chart.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:flutter/material.dart';
 
@@ -93,6 +94,9 @@ class ManualEditorView extends StatelessWidget {
   Widget buildGraph(BuildContext context) {
     return Consumer<ManualEditorViewModel>(
       builder: (context, vm, _) {
+        if (canRenderSpectrumChart(vm.deviceInfo.channels)) {
+          return LyfiSpectrumChart(channels: vm.deviceInfo.channels, brightnessValues: vm.channels);
+        }
         return MultiValueListenableBuilder<int>(
           valueNotifiers: vm.channels,
           builder: (context, values, _) => LyfiColorChart(

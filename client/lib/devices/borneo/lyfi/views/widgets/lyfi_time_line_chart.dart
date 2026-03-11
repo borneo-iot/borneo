@@ -27,7 +27,7 @@ class LyfiTimeLineChart extends StatelessWidget {
     this.currentTime,
     this.extraVerticalLines,
     this.leftTitleBuilder,
-    this.animationDuration = const Duration(milliseconds: 200),
+    this.animationDuration = const Duration(milliseconds: 90),
     this.allowZoom = false,
     this.lineTouchData,
     this.labelAngleRadians = math.pi / 2, //math.pi / 4,
@@ -98,7 +98,7 @@ class LyfiTimeLineChart extends StatelessWidget {
             sideTitleAlignment: SideTitleAlignment.outside,
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 32,
+              reservedSize: 40,
               interval: _resolvePercentInterval(minY, maxY),
               getTitlesWidget: (value, meta) {
                 final text = leftTitleBuilder?.call(value) ?? _formatPercentLabel(value, minY, maxY);
@@ -108,7 +108,7 @@ class LyfiTimeLineChart extends StatelessWidget {
                     text,
                     style: Theme.of(
                       context,
-                    ).textTheme.labelSmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.38), fontSize: 8),
+                    ).textTheme.labelSmall?.copyWith(color: cs.onSurface.withValues(alpha: 0.38), fontSize: 9),
                   ),
                 );
               },

@@ -3,6 +3,7 @@ import 'package:borneo_app/devices/borneo/lyfi/views/easy_setup_screen.dart';
 import 'package:borneo_app/core/infrastructure/duration.dart';
 import 'package:borneo_app/core/infrastructure/time_of_day.dart';
 import 'package:borneo_common/duration_ext.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ import 'package:borneo_app/devices/borneo/lyfi/view_models/editor/schedule_edito
 import 'package:borneo_app/core/utils/hex_color.dart';
 import '../brightness_slider_list.dart';
 import '../widgets/lyfi_time_line_chart.dart';
+
+const Duration _kScheduleChartAnimationDuration = Duration(milliseconds: 20);
 
 class ScheduleEditorView extends StatelessWidget {
   final ScheduleEditorViewModel viewModel;
@@ -52,32 +55,6 @@ class ScheduleEditorView extends StatelessWidget {
     );
   }
 
-  List<LineChartBarData> buildLineDatas(ScheduleEditorViewModel vm) {
-    final series = <LineChartBarData>[];
-    final sortedEntries = _sortedEntries(vm);
-    for (int channelIndex = 0; channelIndex < vm.channels.length; channelIndex++) {
-      final spots = <FlSpot>[];
-      for (final entry in sortedEntries) {
-        double x = entry.instant.inSeconds.toDouble();
-        double y = entry.channels[channelIndex].toDouble();
-        final spot = FlSpot(x, y);
-        spots.add(spot);
-      }
-      // Skip empty channel
-      final channelColor = HexColor.fromHex(vm.deviceInfo.channels[channelIndex].color);
-      series.add(
-        LineChartBarData(
-          isCurved: false,
-          barWidth: 1.5,
-          color: channelColor,
-          dotData: const FlDotData(show: true),
-          spots: spots,
-        ),
-      );
-    }
-    return series;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
@@ -110,14 +87,12 @@ class ScheduleEditorView extends StatelessWidget {
                         }
                       }
                       final maxScale = ((maxX - minX) / minSpanSeconds).clamp(1.0, double.infinity);
-                      return LyfiTimeLineChart(
-                        lineBarsData: buildLineDatas(vm),
+                      return _ScheduleRunningChart(
+                        entries: vm.entries,
+                        channelInfo: vm.deviceInfo.channels,
                         minX: minX,
                         maxX: maxX,
-                        minY: 0,
-                        maxY: kLyfiBrightnessMax.toDouble(),
                         currentTime: vm.currentEntry?.instant,
-                        allowZoom: true,
                         maxScale: maxScale,
                         lineTouchData: LineTouchData(
                           handleBuiltInTouches: true,
@@ -304,6 +279,100 @@ class ScheduleEditorView extends StatelessWidget {
         //
       }
     });
+  }
+}
+
+class _ScheduleRunningChart extends StatefulWidget {
+  final List<ScheduleEntryViewModel> entries;
+  final List<LyfiChannelInfo> channelInfo;
+  final double minX;
+  final double maxX;
+  final Duration? currentTime;
+  final double maxScale;
+  final LineTouchData lineTouchData;
+
+  const _ScheduleRunningChart({
+    required this.entries,
+    required this.channelInfo,
+    required this.minX,
+    required this.maxX,
+    required this.currentTime,
+    required this.maxScale,
+    required this.lineTouchData,
+  });
+
+  @override
+  State<_ScheduleRunningChart> createState() => _ScheduleRunningChartState();
+}
+
+class _ScheduleRunningChartState extends State<_ScheduleRunningChart> {
+  late List<LineChartBarData> _lineData;
+  late int _lineDataSignature;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshLineData();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ScheduleRunningChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final signature = _buildLineDataSignature(widget.entries, widget.channelInfo);
+    if (signature != _lineDataSignature) {
+      _refreshLineData();
+    }
+  }
+
+  void _refreshLineData() {
+    _lineDataSignature = _buildLineDataSignature(widget.entries, widget.channelInfo);
+    _lineData = _buildLineData(widget.entries, widget.channelInfo);
+  }
+
+  int _buildLineDataSignature(List<ScheduleEntryViewModel> entries, List<LyfiChannelInfo> channelInfo) {
+    return Object.hashAll([
+      channelInfo.length,
+      for (final channel in channelInfo) Object.hash(channel.name, channel.color, channel.wavelength),
+      entries.length,
+      for (final entry in entries) Object.hash(entry.instant, Object.hashAll(entry.channels)),
+    ]);
+  }
+
+  List<LineChartBarData> _buildLineData(List<ScheduleEntryViewModel> entries, List<LyfiChannelInfo> channelInfo) {
+    final sortedEntries = entries.toList()..sort((a, b) => a.instant.compareTo(b.instant));
+    final series = <LineChartBarData>[];
+    for (int channelIndex = 0; channelIndex < channelInfo.length; channelIndex++) {
+      final spots = <FlSpot>[];
+      for (final entry in sortedEntries) {
+        spots.add(FlSpot(entry.instant.inSeconds.toDouble(), entry.channels[channelIndex].toDouble()));
+      }
+      series.add(
+        LineChartBarData(
+          isCurved: false,
+          barWidth: 1.5,
+          color: HexColor.fromHex(channelInfo[channelIndex].color),
+          dotData: const FlDotData(show: true),
+          spots: spots,
+        ),
+      );
+    }
+    return series;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LyfiTimeLineChart(
+      lineBarsData: _lineData,
+      minX: widget.minX,
+      maxX: widget.maxX,
+      minY: 0,
+      maxY: kLyfiBrightnessMax.toDouble(),
+      currentTime: widget.currentTime,
+      allowZoom: true,
+      maxScale: widget.maxScale,
+      lineTouchData: widget.lineTouchData,
+      animationDuration: _kScheduleChartAnimationDuration,
+    );
   }
 }
 

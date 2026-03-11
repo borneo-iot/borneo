@@ -1,19 +1,19 @@
 import 'package:borneo_app/devices/borneo/lyfi/view_models/moon_view_model.dart';
 import 'package:borneo_app/core/services/devices/device_manager.dart';
 import 'package:borneo_app/core/services/app_notification_service.dart';
+import 'package:borneo_app/devices/borneo/lyfi/views/widgets/moon_running_chart.dart';
 import 'package:borneo_app/shared/widgets/app_bar_apply_button.dart';
 import 'package:borneo_app/shared/widgets/screen_top_rounded_container.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 import 'package:logger/logger.dart';
-import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 
 import 'package:provider/provider.dart';
 import 'brightness_slider_list.dart';
-import 'widgets/moon_running_chart.dart';
 
 class MoonScreen extends StatelessWidget {
   final String deviceID;
