@@ -169,7 +169,7 @@ static int bo_try_sync_time()
     ESP_LOGI(TAG, "Starting SNTP...");
 
     unsigned long seconds = 0, fractional = 0;
-    while (bo_sntp(SNTP_SERVER_0, 123, &seconds, &fractional) != 0) {
+    while (bo_sntp(CONFIG_BORNEO_SNTP_SERVER, 123, &seconds, &fractional) != 0) {
         ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, MAX_RETRY_COUNT);
 
         if (retry >= MAX_RETRY_COUNT) {

@@ -157,5 +157,11 @@ menu "Borneo Core"
             default 15242
     endmenu
 
+    menu "SNTP Configuration"
+        config BORNEO_SNTP_SERVER
+            string "SNTP Server Address"
+            default "pool.ntp.org"
+    endmenu
+
 
 endmenu
