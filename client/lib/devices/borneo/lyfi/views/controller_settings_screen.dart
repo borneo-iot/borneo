@@ -330,6 +330,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
       {'value': 4000, 'label': '4 kHz'},
       {'value': 8000, 'label': '8 kHz'},
       {'value': 19000, 'label': '19 kHz'},
+      {'value': 19530, 'label': '19.53 kHz'},
     ];
 
     final currentIndex = options.indexWhere((option) => option['value'] == currentValue);
