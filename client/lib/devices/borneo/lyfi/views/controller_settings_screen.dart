@@ -258,9 +258,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
                 Navigator.of(dialogContext).pop();
                 await widget.vm.submit();
                 if (context.mounted) {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
+                  await Navigator.of(context).maybePop();
                 }
               },
               child: Text(context.translate('Confirm')),
