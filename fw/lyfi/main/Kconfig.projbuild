@@ -34,8 +34,8 @@ menu "Borneo LyFi"
 
         config LYFI_DEFAULT_PWM_FREQ
             int "LED PWM frequency"
-            default 19000
-            range 1000 19000
+            default 19530
+            range 500 19530
 
         config LYFI_DIMMING_TIMEOUT
             int "DIMMING mode timeout (seconds)"
