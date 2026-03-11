@@ -41,11 +41,12 @@ import 'app/app.dart';
 import 'core/config/language_config.dart';
 import 'routes/route_manager.dart';
 
+import 'core/services/app_storage.dart';
 import 'core/services/db.dart';
 import 'core/services/local_service.dart';
 
 Future<Database> openDatabase() async {
-  final appDir = await getApplicationDocumentsDirectory();
+  final appDir = await getAppSupportDataDirectory();
   await appDir.create(recursive: true);
 
   final dbProvider = DBProvider(appDir.path);

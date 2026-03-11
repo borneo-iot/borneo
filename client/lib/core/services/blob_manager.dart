@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:borneo_app/core/services/app_storage.dart';
 import 'package:borneo_app/shared/models/base_entity.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 abstract class IBlobManager {
@@ -37,7 +37,7 @@ class FlutterAppBlobManager implements IBlobManager {
       return;
     }
     logger?.i('Start to initialize BlobManager...');
-    final appDir = await getApplicationDocumentsDirectory();
+    final appDir = await getAppSupportDataDirectory();
     await appDir.create(recursive: true);
 
     final blobsDir = Directory(path.join(appDir.path, 'blobs'));
