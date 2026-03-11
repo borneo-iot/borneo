@@ -1,70 +1,120 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 
-import 'package:provider/provider.dart';
+import 'package:borneo_app/devices/borneo/lyfi/view_models/controller_settings_view_model.dart';
 
-import 'package:borneo_app/devices/borneo/lyfi/view_models/channel_settings_view_model.dart';
+class DimmerChannelView extends StatefulWidget {
+  final ChannelSettingsDraft initialValue;
 
-class DimmerChannelView extends StatelessWidget {
-  final ChannelSettingsViewModel vm;
-  const DimmerChannelView({super.key, required this.vm});
+  const DimmerChannelView({super.key, required this.initialValue});
+
+  @override
+  State<DimmerChannelView> createState() => _DimmerChannelViewState();
+}
+
+class _DimmerChannelViewState extends State<DimmerChannelView> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _wavelengthController;
+  late String _color;
+
+  String get _name => _nameController.text;
+
+  int? get _wavelength => int.tryParse(_wavelengthController.text);
+
+  bool get _nameValid => isValidChannelName(_name);
+
+  bool get _wavelengthValid {
+    final wavelength = _wavelength;
+    return wavelength != null && isValidChannelWavelength(wavelength);
+  }
+
+  bool get _hasChanges {
+    return _name != widget.initialValue.name ||
+        _color != widget.initialValue.color ||
+        _wavelength != widget.initialValue.wavelength;
+  }
+
+  bool get _canSave => _hasChanges && _nameValid && _wavelengthValid;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.initialValue.name);
+    _wavelengthController = TextEditingController(text: widget.initialValue.wavelength.toString());
+    _color = widget.initialValue.color;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _wavelengthController.dispose();
+    super.dispose();
+  }
+
+  ChannelSettingsDraft _buildResult() {
+    return ChannelSettingsDraft(name: _name, color: _color, wavelength: _wavelength ?? widget.initialValue.wavelength);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: vm,
-      builder: (context, child) {
-        return Consumer<ChannelSettingsViewModel>(
-          builder: (context, vm, child) => Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-            appBar: AppBar(
-              title: Text(context.translate('Channel Settings')),
-              actions: [
-                TextButton(
-                  onPressed: vm.canSave
-                      ? () {
-                          vm.save();
-                          Navigator.of(context).pop();
-                        }
-                      : null,
-                  child: Text(context.translate('Save')),
-                ),
-              ],
-            ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              primary: true,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    initialValue: vm.name,
-                    decoration: InputDecoration(
-                      labelText: context.translate('Name'),
-                      hintText: context.translate('1-15 characters'),
-                      errorText: vm.nameValid ? null : context.translate('Invalid name'),
-                    ),
-                    onChanged: vm.setName,
-                  ),
-                  const SizedBox(height: 24),
-                  Text(context.translate('Color')),
-                  const SizedBox(height: 12),
-                  ColorPicker(
-                    hexInputBar: true,
-                    enableAlpha: false,
-                    pickerColor: _parseHexColor(context, vm.color),
-                    onColorChanged: (c) {
-                      final hex = _colorToHex(c);
-                      vm.setColor(hex);
-                    },
-                  ),
-                ],
-              ),
-            ),
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+      appBar: AppBar(
+        title: Text(context.translate('Channel Settings')),
+        actions: [
+          TextButton(
+            onPressed: _canSave ? () => Navigator.of(context).pop(_buildResult()) : null,
+            child: Text(context.translate('Save')),
           ),
-        );
-      },
+        ],
+      ),
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          primary: true,
+          child: Column(
+            spacing: 12,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: context.translate('Name'),
+                  hintText: context.translate('1-15 characters'),
+                  errorText: _nameValid ? null : context.translate('Invalid name'),
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+              TextField(
+                controller: _wavelengthController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  labelText: context.translate('Wavelength'),
+                  hintText: '0 - 65535',
+                  errorText: _wavelengthValid ? null : context.translate('Invalid wavelength'),
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+              Text(context.translate('Color')),
+              ColorPicker(
+                hexInputBar: true,
+                enableAlpha: false,
+                colorPickerWidth: 200,
+                pickerColor: _parseHexColor(context, _color),
+                onColorChanged: (color) {
+                  setState(() {
+                    _color = _colorToHex(color);
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

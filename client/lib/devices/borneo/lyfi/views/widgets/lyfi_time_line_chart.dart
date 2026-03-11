@@ -75,14 +75,14 @@ class LyfiTimeLineChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 32,
+              reservedSize: 24,
               interval: xInterval,
               getTitlesWidget: (value, meta) {
                 final text = _formatAxisLabel(value);
                 return SideTitleWidget(
-                  angle: labelAngleRadians,
+                  // angle: labelAngleRadians,
                   meta: meta,
-                  space: 8,
+                  space: 4,
                   child: Text(
                     text,
                     textAlign: TextAlign.center,
@@ -178,16 +178,16 @@ class LyfiTimeLineChart extends StatelessWidget {
   String _formatAxisLabel(double seconds) {
     final d = Duration(seconds: seconds.round());
     if (d.inHours == 24 && d.inMinutes % 60 == 0) {
-      return '24:00';
+      return '24';
     }
     final hours = d.inHours % 24;
-    final minutes = d.inMinutes % 60;
+    // final minutes = d.inMinutes % 60;
     final h = hours.toString().padLeft(2, '0');
-    final m = minutes.toString().padLeft(2, '0');
+    // final m = minutes.toString().padLeft(2, '0');
     if (d.inHours >= 24) {
-      return '$h:$m\nD2';
+      return '$h\nD2';
     }
-    return '$h:$m';
+    return h;
   }
 
   String _formatNowLabel(double seconds) {

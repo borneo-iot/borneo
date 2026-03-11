@@ -2,6 +2,33 @@ import 'dart:convert';
 
 import 'package:borneo_app/devices/borneo/lyfi/view_models/base_lyfi_device_view_model.dart';
 
+bool isValidChannelName(String value) {
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) {
+    return false;
+  }
+
+  try {
+    final bytes = utf8.encode(value);
+    return bytes.isNotEmpty && bytes.length <= 15;
+  } catch (_) {
+    return false;
+  }
+}
+
+bool isValidChannelWavelength(int value) => value >= 0 && value <= 0xFFFF;
+
+class ChannelSettingsDraft {
+  final String name;
+  final String color;
+  final int wavelength;
+
+  const ChannelSettingsDraft({required this.name, required this.color, required this.wavelength});
+
+  bool get nameValid => isValidChannelName(name);
+  bool get wavelengthValid => isValidChannelWavelength(wavelength);
+}
+
 class NvsSettingEntry<T> {
   final String namespace;
   final String key;
@@ -35,32 +62,40 @@ class NvsSettingEntry<T> {
 class ChannelSettingsEntry {
   final int index;
   final void Function() _notifyListeners;
-  final bool Function(String) _validateName;
 
   String _name;
   String _initialName;
   String _color;
   String _initialColor;
+  int _initialWavelength;
+  int _wavelength;
 
   String get name => _name;
   String get color => _color;
+  int get wavelength => _wavelength;
+
   bool get nameChanged => _name != _initialName;
   bool get colorChanged => _color != _initialColor;
-  bool get changed => _name != _initialName || _color != _initialColor;
-  bool get nameValid => _validateName(_name);
+  bool get wavelengthChanged => _wavelength != _initialWavelength;
+
+  bool get changed => nameChanged || colorChanged || wavelengthChanged;
+
+  bool get nameValid => isValidChannelName(_name);
+  bool get wavelengthValid => isValidChannelWavelength(_wavelength);
 
   ChannelSettingsEntry({
     required this.index,
     required String name,
     required String color,
+    required int wavelength,
     required void Function() notifyListeners,
-    required bool Function(String) validateName,
   }) : _name = name,
        _initialName = name,
        _color = color,
        _initialColor = color,
-       _notifyListeners = notifyListeners,
-       _validateName = validateName;
+       _wavelength = wavelength,
+       _initialWavelength = wavelength,
+       _notifyListeners = notifyListeners;
 
   void setName(String value) {
     if (_name != value) {
@@ -76,9 +111,32 @@ class ChannelSettingsEntry {
     }
   }
 
+  void setWavelength(int value) {
+    if (_wavelength != value) {
+      _wavelength = value;
+      _notifyListeners();
+    }
+  }
+
+  ChannelSettingsDraft toDraft() {
+    return ChannelSettingsDraft(name: _name, color: _color, wavelength: _wavelength);
+  }
+
+  void applyDraft(ChannelSettingsDraft draft) {
+    if (_name == draft.name && _color == draft.color && _wavelength == draft.wavelength) {
+      return;
+    }
+
+    _name = draft.name;
+    _color = draft.color;
+    _wavelength = draft.wavelength;
+    _notifyListeners();
+  }
+
   void syncInitial() {
     _initialName = _name;
     _initialColor = _color;
+    _initialWavelength = _wavelength;
   }
 }
 
@@ -106,17 +164,12 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
     return basicChanged || channelChanged;
   }
 
-  bool get canSubmit => hasChanges && _channels.every((channel) => channel.nameValid);
+  bool get canSubmit => hasChanges && _channels.every((channel) => channel.nameValid && channel.wavelengthValid);
 
-  String getChannelName(int index) => _channels[index].name;
-  String getChannelColor(int index) => _channels[index].color;
-  bool isChannelNameValid(int index) => _channels[index].nameValid;
-  void setChannelName(int index, String value) {
-    _channels[index].setName(value);
-  }
+  ChannelSettingsDraft getChannelDraft(int index) => _channels[index].toDraft();
 
-  void setChannelColor(int index, String value) {
-    _channels[index].setColor(value);
+  void applyChannelDraft(int index, ChannelSettingsDraft draft) {
+    _channels[index].applyDraft(draft);
   }
 
   ControllerSettingsViewModel({
@@ -143,70 +196,84 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
 
     maxChannelCount = info.channelCountMax;
 
-    await _initSetting(
-      pwmFreq,
-      () async => await this.borneoDeviceApi.getFactoryNvsU16(boundDevice!.device, pwmFreq.namespace, pwmFreq.key),
-    );
-    await _initSetting(
-      overpowerEnabled,
-      () async =>
-          (await this.borneoDeviceApi.getFactoryNvsU8(
-            boundDevice!.device,
-            overpowerEnabled.namespace,
-            overpowerEnabled.key,
-          )) !=
-          0,
-    );
-    await _initSetting(
-      overpowerCutoff,
-      () async => await this.borneoDeviceApi.getFactoryNvsI32(
-        boundDevice!.device,
-        overpowerCutoff.namespace,
-        overpowerCutoff.key,
-      ),
-    );
-    await _initSetting(
-      overtempEnabled,
-      () async =>
-          (await this.borneoDeviceApi.getFactoryNvsU8(
-            boundDevice!.device,
-            overtempEnabled.namespace,
-            overtempEnabled.key,
-          )) !=
-          0,
-    );
-    await _initSetting(
-      overtempCutoff,
-      () async =>
-          await this.borneoDeviceApi.getFactoryNvsU8(boundDevice!.device, overtempCutoff.namespace, overtempCutoff.key),
-    );
-    await _initSetting(
-      channelCountSetting,
-      () async => await this.borneoDeviceApi.getFactoryNvsU8(
-        boundDevice!.device,
-        channelCountSetting.namespace,
-        channelCountSetting.key,
-      ),
-    );
+    try {
+      await _initSetting(
+        pwmFreq,
+        () async => await this.borneoDeviceApi.getFactoryNvsU16(boundDevice!.device, pwmFreq.namespace, pwmFreq.key),
+      );
+      await _initSetting(
+        overpowerEnabled,
+        () async =>
+            (await this.borneoDeviceApi.getFactoryNvsU8(
+              boundDevice!.device,
+              overpowerEnabled.namespace,
+              overpowerEnabled.key,
+            )) !=
+            0,
+      );
+      await _initSetting(
+        overpowerCutoff,
+        () async => await this.borneoDeviceApi.getFactoryNvsI32(
+          boundDevice!.device,
+          overpowerCutoff.namespace,
+          overpowerCutoff.key,
+        ),
+      );
+      await _initSetting(
+        overtempEnabled,
+        () async =>
+            (await this.borneoDeviceApi.getFactoryNvsU8(
+              boundDevice!.device,
+              overtempEnabled.namespace,
+              overtempEnabled.key,
+            )) !=
+            0,
+      );
+      await _initSetting(
+        overtempCutoff,
+        () async => await this.borneoDeviceApi.getFactoryNvsU8(
+          boundDevice!.device,
+          overtempCutoff.namespace,
+          overtempCutoff.key,
+        ),
+      );
+      await _initSetting(
+        channelCountSetting,
+        () async => await this.borneoDeviceApi.getFactoryNvsU8(
+          boundDevice!.device,
+          channelCountSetting.namespace,
+          channelCountSetting.key,
+        ),
+      );
 
-    final channelNames = List<String>.filled(maxChannelCount, '', growable: false);
-    final channelColors = List<String>.filled(maxChannelCount, '#FFFFFF', growable: false);
-    for (int channel = 0; channel < maxChannelCount; channel++) {
-      channelNames[channel] = await _loadChannelNameFromNvs(channel);
-      channelColors[channel] = await _loadChannelColorFromNvs(channel);
+      final channelNames = List<String>.filled(maxChannelCount, '', growable: false);
+      final channelColors = List<String>.filled(maxChannelCount, '#FFFFFF', growable: false);
+      final channelWavelengths = List<int>.filled(maxChannelCount, 0, growable: false);
+      for (int channel = 0; channel < maxChannelCount; channel++) {
+        channelNames[channel] = await _loadChannelNameFromNvs(channel);
+        channelColors[channel] = await _loadChannelColorFromNvs(channel);
+        channelWavelengths[channel] = await _loadChannelWavelengthFromNvs(channel);
+      }
+
+      _channels = List<ChannelSettingsEntry>.generate(
+        maxChannelCount,
+        (i) => ChannelSettingsEntry(
+          index: i,
+          name: channelNames[i],
+          color: channelColors[i],
+          wavelength: channelWavelengths[i],
+          notifyListeners: notifyListeners,
+        ),
+        growable: false,
+      );
+    } catch (error, stackTrace) {
+      notifyAppError(
+        gt.translate('Failed to load controller settings: {msg}', nArgs: {'msg': error.toString()}),
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
     }
-
-    _channels = List<ChannelSettingsEntry>.generate(
-      maxChannelCount,
-      (i) => ChannelSettingsEntry(
-        index: i,
-        name: channelNames[i],
-        color: channelColors[i],
-        notifyListeners: notifyListeners,
-        validateName: _validateChannelName,
-      ),
-      growable: false,
-    );
   }
 
   String _defaultChannelName(int channel) => 'CH${channel + 1}';
@@ -214,71 +281,51 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
   Future<String> _loadChannelNameFromNvs(int channel) async {
     final key = 'ch$channel.name';
     final fallback = _defaultChannelName(channel);
-    try {
-      final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
-      if (!exists) {
-        return fallback;
-      }
-
-      final value = await this.borneoDeviceApi.getFactoryNvsString(boundDevice!.device, 'led', key);
-      if (!_validateChannelName(value)) {
-        return fallback;
-      }
-      return value;
-    } catch (error, stackTrace) {
-      super.logger?.w('Failed to read factory NVS led/$key: $error', error: error, stackTrace: stackTrace);
+    final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
+    if (!exists) {
       return fallback;
     }
+
+    final value = await this.borneoDeviceApi.getFactoryNvsString(boundDevice!.device, 'led', key);
+    if (!isValidChannelName(value)) {
+      return fallback;
+    }
+    return value;
   }
 
   Future<String> _loadChannelColorFromNvs(int channel) async {
     final key = 'ch$channel.color';
     const fallback = '#FFFFFF';
-    try {
-      final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
-      if (!exists) {
-        return fallback;
-      }
-
-      final value = await this.borneoDeviceApi.getFactoryNvsString(boundDevice!.device, 'led', key);
-      if (value.trim().isEmpty) {
-        return fallback;
-      }
-      return value;
-    } catch (error, stackTrace) {
-      super.logger?.w('Failed to read factory NVS led/$key: $error', error: error, stackTrace: stackTrace);
+    final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
+    if (!exists) {
       return fallback;
     }
+
+    final value = await this.borneoDeviceApi.getFactoryNvsString(boundDevice!.device, 'led', key);
+    if (value.trim().isEmpty) {
+      return fallback;
+    }
+    return value;
   }
 
-  bool _validateChannelName(String value) {
-    // Must be 1-15 bytes in UTF-8 and not all whitespace
-    final trimmed = value.trim();
-    if (trimmed.isEmpty) return false;
-    try {
-      final bytes = utf8.encode(value);
-      return bytes.isNotEmpty && bytes.length <= 15;
-    } catch (_) {
-      return false;
+  Future<int> _loadChannelWavelengthFromNvs(int channel) async {
+    final key = 'ch$channel.wl';
+    const fallback = 0;
+    final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
+    if (!exists) {
+      return fallback;
     }
+
+    return await this.borneoDeviceApi.getFactoryNvsU16(boundDevice!.device, 'led', key);
   }
 
   Future<void> _initSetting<T>(NvsSettingEntry<T> setting, Future<T> Function() getter) async {
-    try {
-      if (await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, setting.namespace, setting.key)) {
-        setting._value = await getter();
-        setting._initialValue = setting._value;
-        setting.available = true;
-      } else {
-        setting.available = false;
-      }
-    } catch (error, stackTrace) {
+    if (await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, setting.namespace, setting.key)) {
+      setting._value = await getter();
+      setting._initialValue = setting._value;
+      setting.available = true;
+    } else {
       setting.available = false;
-      super.logger?.w(
-        'factoryNvsExists failed for ${setting.namespace}/${setting.key}: $error',
-        error: error,
-        stackTrace: stackTrace,
-      );
     }
   }
 
@@ -358,12 +405,22 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
           channel.name,
         );
       }
+
       if (channel.colorChanged) {
         await this.borneoDeviceApi.setFactoryNvsString(
           boundDevice!.device,
           "led",
           "ch${channel.index}.color",
           channel.color,
+        );
+      }
+
+      if (channel.wavelengthChanged) {
+        await this.borneoDeviceApi.setFactoryNvsU16(
+          boundDevice!.device,
+          "led",
+          "ch${channel.index}.wl",
+          channel.wavelength,
         );
       }
       if (channel.changed) {

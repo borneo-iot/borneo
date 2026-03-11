@@ -3,28 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 
-import 'package:borneo_app/devices/borneo/lyfi/view_models/channel_settings_view_model.dart';
+import 'package:borneo_app/devices/borneo/lyfi/view_models/controller_settings_view_model.dart';
 import 'package:borneo_app/devices/borneo/lyfi/views/dimmer_channel_view.dart';
 import '../../../mocks/mocks.dart';
-
-class _FakeParent {
-  final List<String> names;
-  final List<String> colors;
-
-  _FakeParent(int count)
-    : names = List<String>.generate(count, (i) => 'ch${i + 1}'),
-      colors = List<String>.filled(count, '#FFFFFF');
-
-  String getChannelName(int idx) => names[idx];
-  String getChannelColor(int idx) => colors[idx];
-  void setChannelName(int idx, String value) {
-    names[idx] = value;
-  }
-
-  void setChannelColor(int idx, String value) {
-    colors[idx] = value;
-  }
-}
 
 // Localizations delegate used throughout the tests to satisfy
 // widgets that call `context.translate()`.
@@ -42,50 +23,98 @@ class _FakeGettextDelegate extends LocalizationsDelegate<GettextLocalizations> {
 }
 
 void main() {
-  testWidgets('DimmerChannelView embeds ColorPicker and handles save', (tester) async {
-    final parent = _FakeParent(1);
-    final vm = ChannelSettingsViewModel(
-      index: 0,
-      readName: parent.getChannelName,
-      readColor: parent.getChannelColor,
-      writeName: parent.setChannelName,
-      writeColor: parent.setChannelColor,
+  testWidgets('DimmerChannelView returns edited draft on save', (tester) async {
+    BuildContext? navigatorContext;
+    final nameField = find.byWidgetPredicate((widget) => widget is TextField && widget.decoration?.labelText == 'Name');
+    final wavelengthField = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.labelText == 'Wavelength',
     );
 
-    // wrap with localization support so translate() works
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: const [_FakeGettextDelegate()],
         supportedLocales: const [Locale('en', 'US')],
-        home: DimmerChannelView(vm: vm),
+        home: Builder(
+          builder: (context) {
+            navigatorContext = context;
+            return const Scaffold(body: SizedBox.shrink());
+          },
+        ),
       ),
     );
-    // allow asynchronous builds to settle
+    await tester.pump();
+
+    final resultFuture = Navigator.of(navigatorContext!).push<ChannelSettingsDraft>(
+      MaterialPageRoute(
+        builder: (_) => const DimmerChannelView(
+          initialValue: ChannelSettingsDraft(name: 'ch1', color: '#FFFFFF', wavelength: 450),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
 
-    // initial state - field should be present and save disabled
-    expect(find.byType(TextFormField), findsOneWidget);
+    expect(nameField, findsOneWidget);
+    expect(wavelengthField, findsOneWidget);
     expect(find.byType(ColorPicker), findsOneWidget);
-    expect(vm.canSave, isFalse);
+    expect(find.widgetWithText(TextButton, 'Save').evaluate().single.widget, isA<TextButton>());
 
-    // invalid name disables save
-    await tester.enterText(find.byType(TextFormField), '');
+    await tester.enterText(nameField, '');
     await tester.pumpAndSettle();
-    expect(vm.nameValid, isFalse);
-    expect(vm.canSave, isFalse);
+    final disabledSave = tester.widget<TextButton>(find.widgetWithText(TextButton, 'Save'));
+    expect(disabledSave.onPressed, isNull);
 
-    // valid name and change color should enable save
-    await tester.enterText(find.byType(TextFormField), 'foo');
+    await tester.enterText(nameField, 'foo');
+    await tester.enterText(wavelengthField, '660');
     await tester.pumpAndSettle();
-    expect(vm.nameValid, isTrue);
-    expect(vm.canSave, isTrue);
 
-    // tap save; there is no previous route in this test, but the callback
-    // should write data back to the parent.
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
-    // parent should have been updated
-    expect(parent.names[0], equals('foo'));
+    final result = await resultFuture;
+    expect(result, isNotNull);
+    expect(result!.name, equals('foo'));
+    expect(result.color, equals('#FFFFFF'));
+    expect(result.wavelength, equals(660));
+  });
+
+  testWidgets('DimmerChannelView wavelength field accepts zero and rejects negative input', (tester) async {
+    BuildContext? navigatorContext;
+    final wavelengthField = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.labelText == 'Wavelength',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [_FakeGettextDelegate()],
+        supportedLocales: const [Locale('en', 'US')],
+        home: Builder(
+          builder: (context) {
+            navigatorContext = context;
+            return const Scaffold(body: SizedBox.shrink());
+          },
+        ),
+      ),
+    );
+    await tester.pump();
+
+    Navigator.of(navigatorContext!).push<void>(
+      MaterialPageRoute(
+        builder: (_) => const DimmerChannelView(
+          initialValue: ChannelSettingsDraft(name: 'ch1', color: '#FFFFFF', wavelength: 450),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final wavelengthTextField = tester.widget<TextField>(wavelengthField);
+    expect(wavelengthTextField.inputFormatters, isNotNull);
+    expect(wavelengthTextField.decoration?.hintText, equals('0 - 65535'));
+
+    final formatter = wavelengthTextField.inputFormatters!.single;
+    const oldValue = TextEditingValue(text: '450');
+
+    expect(formatter.formatEditUpdate(oldValue, const TextEditingValue(text: '0')).text, equals('0'));
+    expect(formatter.formatEditUpdate(oldValue, const TextEditingValue(text: '-1')).text, equals('1'));
+    expect(formatter.formatEditUpdate(oldValue, const TextEditingValue(text: '123')).text, equals('123'));
   });
 }

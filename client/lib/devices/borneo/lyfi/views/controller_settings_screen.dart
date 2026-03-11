@@ -10,7 +10,6 @@ import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:provider/provider.dart';
 
 import 'package:borneo_app/devices/borneo/lyfi/views/dimmer_channel_view.dart';
-import 'package:borneo_app/devices/borneo/lyfi/view_models/channel_settings_view_model.dart';
 
 class ControllerSettingsScreen extends StatefulWidget {
   final ControllerSettingsViewModel vm;
@@ -283,16 +282,15 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
     return Theme.of(context).colorScheme.primary;
   }
 
-  void _editChannel(BuildContext context, int index) {
-    final vm = ChannelSettingsViewModel(
-      index: index,
-      readName: widget.vm.getChannelName,
-      readColor: widget.vm.getChannelColor,
-      writeName: widget.vm.setChannelName,
-      writeColor: widget.vm.setChannelColor,
+  Future<void> _editChannel(BuildContext context, int index) async {
+    final draft = await Navigator.push<ChannelSettingsDraft>(
+      context,
+      MaterialPageRoute(builder: (ctx) => DimmerChannelView(initialValue: widget.vm.getChannelDraft(index))),
     );
-    final route = MaterialPageRoute(builder: (ctx) => DimmerChannelView(vm: vm));
-    Navigator.push(context, route);
+
+    if (draft != null && context.mounted) {
+      widget.vm.applyChannelDraft(index, draft);
+    }
   }
 
   void _showChannelCountPicker(BuildContext context) {
