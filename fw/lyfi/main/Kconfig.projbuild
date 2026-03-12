@@ -28,9 +28,9 @@ menu "Borneo LyFi"
     menu "LED PWM settings"
 
         config LYFI_LED_NOMINAL_PAR_DEFAULT
-            int "LED norminal power"
+            int "LED norminal PAR"
             default 0
-            range 0 9999999
+            range 0 10000
 
         config LYFI_LED_NOMINAL_POWER_DEFAULT
             int "LED norminal power"
