@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:provider/provider.dart';
 import 'package:community_material_icon/community_material_icon.dart';
 
@@ -89,13 +89,14 @@ class DashboardMoonTile extends StatelessWidget {
                   final vm = context.read<LyfiViewModel>();
                   final deviceID = vm.deviceID;
                   if (context.mounted) {
-                    await PersistentNavBarNavigator.pushNewScreen(
+                    await pushScreen(
                       context,
                       screen: ChangeNotifierProvider.value(
                         value: vm,
                         child: MoonScreen(deviceID: deviceID),
                       ),
                       withNavBar: false,
+                      pageTransitionAnimation: PageTransitionAnimation.cupertino,
                     );
                   }
                 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
+import 'package:borneo_app/routes/platform_page_route.dart';
 
 import '../view_models/scenes_view_model.dart';
 import '../providers/scenes_provider.dart';
@@ -242,7 +243,7 @@ class SceneCard extends ConsumerWidget {
   Future<void> _showEditSceneScreen(BuildContext context) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      platformPageRoute(
         builder: (_) => SceneEditScreen(args: SceneEditArguments(isCreation: false, model: scene.scene)),
       ),
     );

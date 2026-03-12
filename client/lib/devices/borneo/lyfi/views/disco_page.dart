@@ -62,6 +62,10 @@ class _DiscoPageState extends State<DiscoPage> with SingleTickerProviderStateMix
   }
 
   Future<void> _exitDiscoMode() async {
+    await _exitDiscoModeAndMaybePop(shouldPop: true);
+  }
+
+  Future<void> _exitDiscoModeAndMaybePop({required bool shouldPop}) async {
     if (_isExiting) return;
     _isExiting = true;
 
@@ -73,7 +77,7 @@ class _DiscoPageState extends State<DiscoPage> with SingleTickerProviderStateMix
       vm.switchDiscoState();
     }
 
-    if (mounted) {
+    if (shouldPop && mounted) {
       Navigator.of(context).pop();
     }
   }
@@ -81,10 +85,13 @@ class _DiscoPageState extends State<DiscoPage> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        await _exitDiscoMode();
+        if (didPop) {
+          await _exitDiscoModeAndMaybePop(shouldPop: false);
+          return;
+        }
+        await _exitDiscoModeAndMaybePop(shouldPop: true);
       },
       child: Scaffold(
         backgroundColor: Colors.black,

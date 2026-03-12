@@ -93,11 +93,16 @@ class DimmingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.read<LyfiViewModel>();
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        final vm = context.read<LyfiViewModel>();
+        if (didPop) {
+          if (vm.isOnline && !vm.isLocked && !vm.isSuspectedOffline) {
+            await vm.toggleLock(true);
+          }
+          return;
+        }
         if (vm.isOnline && !vm.isLocked && !vm.isSuspectedOffline) {
           await vm.toggleLock(true);
         }
@@ -117,7 +122,6 @@ class DimmingScreen extends StatelessWidget {
               slivers: [
                 DimmingAppBar(
                   onBack: () async {
-                    final vm = context.read<LyfiViewModel>();
                     if (!vm.isLocked && !vm.isSuspectedOffline) {
                       await vm.toggleLock(true);
                     }

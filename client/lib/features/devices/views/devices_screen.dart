@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:borneo_app/features/devices/providers/group_edit_provider.dart';
 import 'package:borneo_app/features/devices/providers/new_device_candidates_store.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -72,10 +72,11 @@ class NoDataHintView extends StatelessWidget {
       hasScrollBody: false,
       child: EmptyGroupsWidget(
         onCreateGroup: () async {
-          await PersistentNavBarNavigator.pushNewScreen(
+          await pushScreen(
             context,
             screen: const DeviceDiscoveryScreen(),
             withNavBar: false,
+            pageTransitionAnimation: PageTransitionAnimation.cupertino,
           );
           // Refresh after adding devices
           if (context.mounted) {
@@ -93,11 +94,16 @@ class DevicesScreen extends StatelessWidget {
   static const _smallShadow = Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Color.fromARGB(128, 0, 0, 0));
 
   Future<void> _showDiscoveryPage(BuildContext context) async {
-    await PersistentNavBarNavigator.pushNewScreen(context, screen: const DeviceDiscoveryScreen(), withNavBar: false);
+    await pushScreen(
+      context,
+      screen: const DeviceDiscoveryScreen(),
+      withNavBar: false,
+      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+    );
   }
 
   Future<void> _showNewGroupScreen(BuildContext context) async {
-    final result = await PersistentNavBarNavigator.pushNewScreen(
+    final result = await pushScreen(
       context,
       screen: const GroupEditScreen(args: GroupEditArguments(isCreation: true)),
       withNavBar: false,
@@ -358,7 +364,7 @@ class DevicesScreen extends StatelessWidget {
   }
 
   void _showEditGroupPage(BuildContext context, DeviceGroupEntity group) async {
-    final result = await PersistentNavBarNavigator.pushNewScreen(
+    final result = await pushScreen(
       context,
       screen: GroupEditScreen(args: GroupEditArguments(isCreation: false, model: group)),
       withNavBar: false,

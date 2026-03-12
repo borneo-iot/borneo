@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as provider;
+import 'package:borneo_app/routes/platform_page_route.dart';
 
 import 'package:borneo_app/features/my/providers/about_provider.dart';
 
@@ -180,7 +181,7 @@ The author assumes no responsibility or liability for any direct or indirect con
                   hideLink: true,
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      platformPageRoute(
                         builder: (_) => const _AssetTextScreen(
                           title: 'GNU General Public License v3',
                           assetPath: 'assets/docs/license.txt',

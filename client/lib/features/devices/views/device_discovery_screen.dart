@@ -4,6 +4,7 @@ import 'package:borneo_app/features/devices/views/provisioning_screen.dart';
 import 'package:borneo_kernel_abstractions/models/supported_device_descriptor.dart';
 import 'package:flutter/material.dart';
 import 'package:borneo_app/core/services/platform_service.dart';
+import 'package:borneo_app/routes/platform_page_route.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 import 'package:provider/provider.dart';
@@ -294,7 +295,7 @@ class _DeviceDiscoveryContent extends StatelessWidget {
                 if (context.mounted) {
                   await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => ProvisioningScreen(deviceName: bleName)),
+                    platformPageRoute(builder: (_) => ProvisioningScreen(deviceName: bleName)),
                   );
                 }
                 if (context.mounted) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:provider/provider.dart';
 
 import 'package:borneo_app/features/devices/widgets/dashboard_tile.dart';
@@ -126,10 +126,11 @@ class DashboardTemporaryTile extends StatelessWidget {
     }
     vm.switchDiscoState();
     if (context.mounted) {
-      await PersistentNavBarNavigator.pushNewScreen(
+      await pushScreen(
         context,
         screen: ChangeNotifierProvider.value(value: vm, child: const DiscoPage()),
         withNavBar: false,
+        pageTransitionAnimation: PageTransitionAnimation.cupertino,
       );
     }
   }

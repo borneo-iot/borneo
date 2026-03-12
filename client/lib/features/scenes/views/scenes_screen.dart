@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as legacy;
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
+import 'package:borneo_app/routes/platform_page_route.dart';
 
 import '../providers/scenes_provider.dart';
 import '../../../core/providers.dart';
@@ -102,7 +103,7 @@ class _ScenesScreenState extends ConsumerState<ScenesScreen> {
   Future<void> _showNewSceneScreen(BuildContext context) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const SceneEditScreen(args: SceneEditArguments(isCreation: true))),
+      platformPageRoute(builder: (_) => const SceneEditScreen(args: SceneEditArguments(isCreation: true))),
     );
   }
 }

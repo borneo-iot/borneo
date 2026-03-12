@@ -8,6 +8,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
+import 'package:borneo_app/routes/platform_page_route.dart';
 
 import 'package:borneo_app/devices/borneo/lyfi/view_models/editor/schedule_editor_view_model.dart';
 import 'package:borneo_app/core/utils/hex_color.dart';
@@ -149,7 +150,7 @@ class ScheduleEditorView extends StatelessWidget {
                           onPressed: () async {
                             await vm.easySetupEnter();
                             if (context.mounted) {
-                              final route = MaterialPageRoute(builder: (context) => EasySetupScreen(vm));
+                              final route = platformPageRoute(builder: (context) => EasySetupScreen(vm));
                               final applied = await Navigator.push(context, route);
                               if (applied == true) {
                                 await vm.easySetupFinish();

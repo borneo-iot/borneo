@@ -129,13 +129,16 @@ class _LyfiDeviceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.read<LyfiViewModel>();
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) {
+          if (!vm.isLocked && !vm.isSuspectedOffline) {
+            await vm.toggleLock(true);
+          }
           return;
         }
-        final vm = context.read<LyfiViewModel>();
         if (!vm.isLocked && !vm.isSuspectedOffline) {
           await vm.toggleLock(true);
         } else {
@@ -165,6 +168,9 @@ class _LyfiDeviceDetailsScreen extends StatelessWidget {
     } else {
       if (!vm.isSuspectedOffline) {
         await vm.toggleLock(true);
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
       }
     }
   }

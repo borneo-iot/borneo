@@ -6,6 +6,7 @@ import 'package:borneo_app/features/devices/views/device_discovery_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../routes/app_routes.dart';
+import '../routes/platform_page_route.dart';
 import '../main/views/main_screen.dart';
 import '../features/devices/views/devices_screen.dart';
 import '../features/my/views/my_screen.dart';
@@ -31,9 +32,9 @@ class RouteManager {
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final builder = _routes[settings.name];
     if (builder != null) {
-      return MaterialPageRoute(builder: builder, settings: settings);
+      return platformPageRoute(builder: builder, settings: settings);
     } else {
-      return MaterialPageRoute(builder: (_) => const DevicesScreen(), settings: settings);
+      return platformPageRoute(builder: (_) => const DevicesScreen(), settings: settings);
     }
   }
 

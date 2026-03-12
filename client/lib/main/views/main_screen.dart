@@ -17,7 +17,7 @@ import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -48,11 +48,16 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Future<void> showDiscoveryScreen(BuildContext context) async {
-    await PersistentNavBarNavigator.pushNewScreen(context, screen: const DeviceDiscoveryScreen(), withNavBar: false);
+    await pushScreen(
+      context,
+      screen: const DeviceDiscoveryScreen(),
+      withNavBar: false,
+      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+    );
   }
 
   Future<void> showNewGroupScreen(BuildContext context) async {
-    final result = await PersistentNavBarNavigator.pushNewScreen(
+    final result = await pushScreen(
       context,
       screen: const GroupEditScreen(args: GroupEditArguments(isCreation: true)),
       withNavBar: false,
@@ -65,7 +70,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Future<void> showNewSceneScreen(BuildContext context) async {
-    await PersistentNavBarNavigator.pushNewScreen(
+    await pushScreen(
       context,
       screen: SceneEditScreen(args: SceneEditArguments(isCreation: true)),
       withNavBar: false,
@@ -112,7 +117,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // controller for persistent_bottom_nav_bar package
+  // Controller for the persistent bottom navigation bar.
   late final PersistentTabController _persistentController;
 
   // One GlobalKey per tab so we can interrogate each tab's Navigator state
@@ -134,66 +139,68 @@ class _MainScreenState extends State<MainScreen> {
     final mainVM = context.read<MainViewModel>();
     final routeManager = context.read<RouteManager>();
 
-    List<Widget> buildScreens() => const [
-      ProvideScenesViewModel(child: ScenesScreen(key: ValueKey('scenes'))),
-      DevicesScreen(key: ValueKey('devices')),
-      MyScreen(key: ValueKey('my')),
-    ];
-
-    // Each tab needs its own RouteAndNavigatorSettings so that
+    // Each tab needs its own NavigatorConfig so that
     // Navigator.of(context).pushNamed(...) calls inside tabs can resolve
     // named routes (device detail pages, discovery screen, etc.).
     // We also pass individual GlobalKeys so the outer PopScope can check
     // whether a tab's navigator can pop before running the exit logic.
-    RouteAndNavigatorSettings tabNavSettings(int index) =>
-        RouteAndNavigatorSettings(onGenerateRoute: routeManager.onGenerateRoute, navigatorKey: _tabNavKeys[index]);
+    NavigatorConfig tabNavSettings(int index) =>
+        NavigatorConfig(onGenerateRoute: routeManager.onGenerateRoute, navigatorKey: _tabNavKeys[index]);
 
-    List<PersistentBottomNavBarItem> navBarItems() => [
-      PersistentBottomNavBarItem(
-        icon: const Icon(Icons.house),
-        inactiveIcon: const Icon(Icons.house_outlined),
-        title: context.translate('Scenes'),
-        activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Theme.of(context).colorScheme.onSurface,
-        routeAndNavigatorSettings: tabNavSettings(0),
+    List<PersistentTabConfig> navBarTabs() => [
+      PersistentTabConfig(
+        screen: const ProvideScenesViewModel(child: ScenesScreen(key: ValueKey('scenes'))),
+        item: ItemConfig(
+          icon: const Icon(Icons.house),
+          inactiveIcon: const Icon(Icons.house_outlined),
+          title: context.translate('Scenes'),
+          activeForegroundColor: Theme.of(context).colorScheme.primary,
+          inactiveForegroundColor: Theme.of(context).colorScheme.onSurface,
+        ),
+        navigatorConfig: tabNavSettings(0),
       ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(Icons.device_hub),
-        inactiveIcon: const Icon(Icons.device_hub_outlined),
-        title: context.translate('Devices'),
-        activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Theme.of(context).colorScheme.onSurface,
-        routeAndNavigatorSettings: tabNavSettings(1),
+      PersistentTabConfig(
+        screen: const DevicesScreen(key: ValueKey('devices')),
+        item: ItemConfig(
+          icon: const Icon(Icons.device_hub),
+          inactiveIcon: const Icon(Icons.device_hub_outlined),
+          title: context.translate('Devices'),
+          activeForegroundColor: Theme.of(context).colorScheme.primary,
+          inactiveForegroundColor: Theme.of(context).colorScheme.onSurface,
+        ),
+        navigatorConfig: tabNavSettings(1),
       ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(Icons.person),
-        inactiveIcon: const Icon(Icons.person_outline),
-        title: context.translate('My'),
-        activeColorPrimary: Theme.of(context).colorScheme.primary,
-        inactiveColorPrimary: Theme.of(context).colorScheme.onSurface,
-        routeAndNavigatorSettings: tabNavSettings(2),
+      PersistentTabConfig(
+        screen: const MyScreen(key: ValueKey('my')),
+        item: ItemConfig(
+          icon: const Icon(Icons.person),
+          inactiveIcon: const Icon(Icons.person_outline),
+          title: context.translate('My'),
+          activeForegroundColor: Theme.of(context).colorScheme.primary,
+          inactiveForegroundColor: Theme.of(context).colorScheme.onSurface,
+        ),
+        navigatorConfig: tabNavSettings(2),
       ),
     ];
 
     return Selector<MainViewModel, TabIndices>(
       selector: (context, vm) => vm.currentTabIndex,
       builder: (context, tabIndex, child) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final navBarColor = colorScheme.surfaceContainer;
+
         // keep controller in sync with view model state
         if (_persistentController.index != tabIndex.index) {
           _persistentController.jumpToTab(tabIndex.index);
         }
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Theme.of(context).brightness,
-          ),
+          value: SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: theme.brightness),
           child: PersistentTabView(
-            context,
             controller: _persistentController,
-            screens: buildScreens(),
-            items: navBarItems(),
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+            tabs: navBarTabs(),
+            backgroundColor: theme.scaffoldBackgroundColor,
             //Theme.of(context).bottomNavigationBarTheme.backgroundColor ??
             //Theme.of(context).colorScheme.surfaceContainerHighest,
             // Back-button handling is fully managed by the outer PopScope
@@ -201,12 +208,24 @@ class _MainScreenState extends State<MainScreen> {
             // handler to avoid double-handling.
             handleAndroidBackButtonPress: false,
             resizeToAvoidBottomInset: true,
-            onItemSelected: (index) {
+            onTabChanged: (index) {
               if (index != tabIndex.index) {
                 mainVM.setIndex(TabIndices.values[index]);
               }
             },
-            navBarStyle: NavBarStyle.style1,
+            navBarBuilder: (navBarConfig) => Style1BottomNavBar(
+              navBarConfig: navBarConfig,
+              navBarDecoration: NavBarDecoration(
+                color: navBarColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withValues(alpha: theme.brightness == Brightness.dark ? 0.18 : 0.08),
+                    blurRadius: 4,
+                    offset: const Offset(0, -1),
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },

@@ -7,6 +7,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
+import 'package:borneo_app/routes/platform_page_route.dart';
 
 import 'package:provider/provider.dart';
 
@@ -318,7 +319,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
   Future<void> _editChannel(BuildContext context, int index) async {
     final draft = await Navigator.push<ChannelSettingsDraft>(
       context,
-      MaterialPageRoute(builder: (ctx) => DimmerChannelView(initialValue: widget.vm.getChannelDraft(index))),
+      platformPageRoute(builder: (ctx) => DimmerChannelView(initialValue: widget.vm.getChannelDraft(index))),
     );
 
     if (draft != null && context.mounted) {

@@ -19,7 +19,8 @@ import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:logger/logger.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
+import 'package:borneo_app/routes/platform_page_route.dart';
 
 import 'package:provider/provider.dart';
 import 'package:borneo_app/routes/app_routes.dart';
@@ -61,7 +62,7 @@ class SettingsScreen extends StatelessWidget {
         ? GlobeCoordinates(vm.location!.lat, vm.location!.lng)
         : null;
 
-    final route = MaterialPageRoute<GlobeCoordinates?>(
+    final route = platformPageRoute<GlobeCoordinates?>(
       builder: (context) => MapLocationPicker(initialLocation: initialLocation),
       fullscreenDialog: true,
     );
@@ -282,7 +283,12 @@ class SettingsScreen extends StatelessWidget {
       logger: context.read<Logger>(),
     );
 
-    PersistentNavBarNavigator.pushNewScreen(context, screen: DeviceOtaScreen(otaVm), withNavBar: false);
+    pushScreen(
+      context,
+      screen: DeviceOtaScreen(otaVm),
+      withNavBar: false,
+      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+    );
   }
 
   void _goControllerSettings(BuildContext context, SettingsViewModel svm) {
@@ -293,7 +299,7 @@ class SettingsScreen extends StatelessWidget {
       wotThing: svm.wotThing,
       gt: context.read<GettextLocalizations>(),
     );
-    final route = MaterialPageRoute(builder: (context) => ControllerSettingsScreen(csvm));
+    final route = platformPageRoute(builder: (context) => ControllerSettingsScreen(csvm));
     Navigator.push(context, route);
   }
 
