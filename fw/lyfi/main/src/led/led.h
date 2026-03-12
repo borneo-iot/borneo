@@ -95,7 +95,7 @@ struct led_channel_settings {
 };
 
 struct led_factory_settings {
-    uint32_t nominal_pfd; ///< Nominal pfd
+    uint16_t nominal_pfd; ///< Nominal pfd
     uint16_t nominal_power; ///< Nominal power in Watts
     uint8_t channel_count; ///< PWM channel count
     uint16_t pwm_freq; ///< The frequency of PWM signals

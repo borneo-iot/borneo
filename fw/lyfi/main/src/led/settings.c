@@ -111,6 +111,7 @@ struct led_channel_defaults {
     const char* name;
     const char* color;
     int16_t wavelength;
+    // uint8_t percent;
 };
 
 static const struct led_channel_defaults LED_DEFAULT_CHANNELS[CONFIG_LYFI_LED_CHANNEL_COUNT] = {
@@ -119,6 +120,7 @@ static const struct led_channel_defaults LED_DEFAULT_CHANNELS[CONFIG_LYFI_LED_CH
             .name = CONFIG_LYFI_LED_CH0_NAME,
             .color = CONFIG_LYFI_LED_CH0_COLOR,
             .wavelength = CONFIG_LYFI_LED_CH0_WAVELENGTH,
+            // .percent = 0,
         },
 #endif
 #if CONFIG_LYFI_LED_CH1_ENABLED
@@ -198,7 +200,7 @@ int led_load_factory_settings()
 
     bool changed = false;
 
-    BO_TRY(bo_nvs_get_or_set_u32(handle, LED_NVS_KEY_NOMINAL_PFD, &s_factory_settings.nominal_pfd,
+    BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_NOMINAL_PFD, &s_factory_settings.nominal_pfd,
                                  CONFIG_LYFI_LED_NOMINAL_PFD_DEFAULT, &changed));
 
     BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_NOMINAL_POWER, &s_factory_settings.nominal_power,
