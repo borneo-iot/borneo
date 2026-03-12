@@ -19,6 +19,7 @@ class SettingsTileSlider extends AbstractSettingsTile {
     this.divisions,
     this.label,
     this.enabled = true,
+    this.showStepButtons = false,
     this.backgroundColor,
     super.key,
   });
@@ -36,6 +37,7 @@ class SettingsTileSlider extends AbstractSettingsTile {
   final int? divisions;
   final String? label;
   final bool enabled;
+  final bool showStepButtons;
   final Color? backgroundColor;
 
   @override
@@ -61,6 +63,7 @@ class SettingsTileSlider extends AbstractSettingsTile {
           onChanged: enabled ? onChanged : null,
           onChangeEnd: enabled ? onChangeEnd : null,
           enabled: enabled,
+          showStepButtons: showStepButtons,
           backgroundColor: backgroundColor,
         );
       case DevicePlatform.iOS:
@@ -80,6 +83,7 @@ class SettingsTileSlider extends AbstractSettingsTile {
           onChanged: enabled ? onChanged : null,
           onChangeEnd: enabled ? onChangeEnd : null,
           enabled: enabled,
+          showStepButtons: showStepButtons,
           backgroundColor: backgroundColor,
         );
       case DevicePlatform.web:
@@ -97,6 +101,7 @@ class SettingsTileSlider extends AbstractSettingsTile {
           onChanged: enabled ? onChanged : null,
           onChangeEnd: enabled ? onChangeEnd : null,
           enabled: enabled,
+          showStepButtons: showStepButtons,
           backgroundColor: backgroundColor,
           transparentBackground: true,
         );
@@ -116,6 +121,7 @@ class _MaterialSettingsTileSlider extends StatelessWidget {
     required this.min,
     required this.max,
     required this.enabled,
+    required this.showStepButtons,
     this.transparentBackground = false,
     this.leading,
     this.trailing,
@@ -140,6 +146,7 @@ class _MaterialSettingsTileSlider extends StatelessWidget {
   final ValueChanged<double>? onChanged;
   final ValueChanged<double>? onChangeEnd;
   final bool enabled;
+  final bool showStepButtons;
   final Color? backgroundColor;
   final bool transparentBackground;
 
@@ -147,6 +154,8 @@ class _MaterialSettingsTileSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = SettingsTheme.of(context);
     final scaleFactor = MediaQuery.textScalerOf(context).scale(1);
+    final trailingColor = enabled ? theme.themeData.settingsTileTextColor : theme.themeData.inactiveTitleColor;
+    final step = _resolveStepSize(min: min, max: max, divisions: divisions);
 
     return IgnorePointer(
       ignoring: !enabled,
@@ -195,9 +204,7 @@ class _MaterialSettingsTileSlider extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsetsDirectional.only(start: 12),
                             child: DefaultTextStyle(
-                              style: TextStyle(
-                                color: enabled ? theme.themeData.trailingTextColor : theme.themeData.inactiveTitleColor,
-                              ),
+                              style: TextStyle(color: trailingColor),
                               child: trailing!,
                             ),
                           ),
@@ -217,15 +224,17 @@ class _MaterialSettingsTileSlider extends StatelessWidget {
                       ),
                     Padding(
                       padding: const EdgeInsetsDirectional.only(top: 8),
-                      child: AdaptiveSlider(
+                      child: _SliderControlRow(
                         platform: platform,
-                        value: value.clamp(min, max),
+                        value: value,
                         min: min,
                         max: max,
                         divisions: divisions,
                         label: label,
                         onChanged: onChanged,
                         onChangeEnd: onChangeEnd,
+                        showStepButtons: showStepButtons,
+                        step: step,
                       ),
                     ),
                   ],
@@ -247,6 +256,7 @@ class _IosSettingsTileSlider extends StatelessWidget {
     required this.min,
     required this.max,
     required this.enabled,
+    required this.showStepButtons,
     this.leading,
     this.trailing,
     this.description,
@@ -270,6 +280,7 @@ class _IosSettingsTileSlider extends StatelessWidget {
   final ValueChanged<double>? onChanged;
   final ValueChanged<double>? onChangeEnd;
   final bool enabled;
+  final bool showStepButtons;
   final Color? backgroundColor;
 
   @override
@@ -277,6 +288,8 @@ class _IosSettingsTileSlider extends StatelessWidget {
     final additionalInfo = IOSSettingsTileAdditionalInfo.of(context);
     final theme = SettingsTheme.of(context);
     final scaleFactor = MediaQuery.textScalerOf(context).scale(1);
+    final trailingColor = enabled ? theme.themeData.settingsTileTextColor : theme.themeData.inactiveTitleColor;
+    final step = _resolveStepSize(min: min, max: max, divisions: divisions);
 
     Widget content = Container(
       width: MediaQuery.of(context).size.width,
@@ -325,12 +338,7 @@ class _IosSettingsTileSlider extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsetsDirectional.only(start: 12),
                                 child: DefaultTextStyle(
-                                  style: TextStyle(
-                                    color: enabled
-                                        ? theme.themeData.trailingTextColor
-                                        : theme.themeData.inactiveTitleColor,
-                                    fontSize: 17,
-                                  ),
+                                  style: TextStyle(color: trailingColor, fontSize: 17),
                                   child: trailing!,
                                 ),
                               ),
@@ -355,15 +363,17 @@ class _IosSettingsTileSlider extends StatelessWidget {
                         padding: const EdgeInsetsDirectional.only(bottom: 12),
                         child: SizedBox(
                           width: double.infinity,
-                          child: AdaptiveSlider(
+                          child: _SliderControlRow(
                             platform: platform,
-                            value: value.clamp(min, max),
+                            value: value,
                             min: min,
                             max: max,
                             divisions: divisions,
                             label: label,
                             onChanged: onChanged,
                             onChangeEnd: onChangeEnd,
+                            showStepButtons: showStepButtons,
+                            step: step,
                           ),
                         ),
                       ),
@@ -394,4 +404,119 @@ class _IosSettingsTileSlider extends StatelessWidget {
       ),
     );
   }
+}
+
+class _SliderControlRow extends StatelessWidget {
+  const _SliderControlRow({
+    required this.platform,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.step,
+    required this.showStepButtons,
+    this.divisions,
+    this.label,
+    this.onChanged,
+    this.onChangeEnd,
+  });
+
+  final DevicePlatform platform;
+  final double value;
+  final double min;
+  final double max;
+  final double step;
+  final bool showStepButtons;
+  final int? divisions;
+  final String? label;
+  final ValueChanged<double>? onChanged;
+  final ValueChanged<double>? onChangeEnd;
+
+  @override
+  Widget build(BuildContext context) {
+    final clampedValue = value.clamp(min, max);
+
+    if (!showStepButtons) {
+      return AdaptiveSlider(
+        platform: platform,
+        value: clampedValue,
+        min: min,
+        max: max,
+        divisions: divisions,
+        label: label,
+        onChanged: onChanged,
+        onChangeEnd: onChangeEnd,
+      );
+    }
+
+    return Row(
+      children: [
+        _SliderStepButton(
+          icon: Icons.remove,
+          onPressed: onChanged == null || clampedValue <= min
+              ? null
+              : () => _stepTo(onChanged!, onChangeEnd, clampedValue, min, max, -step),
+        ),
+        Expanded(
+          child: AdaptiveSlider(
+            platform: platform,
+            value: clampedValue,
+            min: min,
+            max: max,
+            divisions: divisions,
+            label: label,
+            onChanged: onChanged,
+            onChangeEnd: onChangeEnd,
+          ),
+        ),
+        _SliderStepButton(
+          icon: Icons.add,
+          onPressed: onChanged == null || clampedValue >= max
+              ? null
+              : () => _stepTo(onChanged!, onChangeEnd, clampedValue, min, max, step),
+        ),
+      ],
+    );
+  }
+
+  void _stepTo(
+    ValueChanged<double> onChanged,
+    ValueChanged<double>? onChangeEnd,
+    double currentValue,
+    double min,
+    double max,
+    double delta,
+  ) {
+    final nextValue = (currentValue + delta).clamp(min, max);
+    onChanged(nextValue);
+    onChangeEnd?.call(nextValue);
+  }
+}
+
+class _SliderStepButton extends StatelessWidget {
+  const _SliderStepButton({required this.icon, this.onPressed});
+
+  final IconData icon;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 36,
+      height: 36,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        visualDensity: VisualDensity.compact,
+        onPressed: onPressed,
+        icon: Icon(icon, size: 18),
+      ),
+    );
+  }
+}
+
+double _resolveStepSize({required double min, required double max, int? divisions}) {
+  if (divisions != null && divisions > 0) {
+    return (max - min) / divisions;
+  }
+
+  return 1;
 }

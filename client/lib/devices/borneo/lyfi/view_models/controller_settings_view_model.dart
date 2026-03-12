@@ -142,6 +142,8 @@ class ChannelSettingsEntry {
 
 class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
   late final int maxChannelCount;
+  late final NvsSettingEntry<int> nominalPfdSetting;
+  late final NvsSettingEntry<int> nominalPowerSetting;
   late final NvsSettingEntry<int> pwmFreq;
   late final NvsSettingEntry<bool> overpowerEnabled;
   late final NvsSettingEntry<int> overpowerCutoff;
@@ -154,6 +156,8 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
 
   bool get hasChanges {
     final basicChanged =
+        nominalPfdSetting.changed ||
+        nominalPowerSetting.changed ||
         pwmFreq.changed ||
         overpowerEnabled.changed ||
         overpowerCutoff.changed ||
@@ -184,6 +188,8 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
   Future<void> onInitialize() async {
     await super.onInitialize();
 
+    nominalPfdSetting = NvsSettingEntry<int>(0, notifyListeners, namespace: "led", key: "npfd");
+    nominalPowerSetting = NvsSettingEntry<int>(0, notifyListeners, namespace: "led", key: "npower");
     pwmFreq = NvsSettingEntry<int>(500, notifyListeners, namespace: "led", key: "pwmfreq");
     overpowerEnabled = NvsSettingEntry<bool>(true, notifyListeners, namespace: "protect", key: "opp.en");
     overpowerCutoff = NvsSettingEntry<int>(999999, notifyListeners, namespace: "protect", key: "opp.v");
@@ -197,6 +203,22 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
     maxChannelCount = info.channelCountMax;
 
     try {
+      await _initSetting(
+        nominalPfdSetting,
+        () async => await this.borneoDeviceApi.getFactoryNvsU16(
+          boundDevice!.device,
+          nominalPfdSetting.namespace,
+          nominalPfdSetting.key,
+        ),
+      );
+      await _initSetting(
+        nominalPowerSetting,
+        () async => await this.borneoDeviceApi.getFactoryNvsU16(
+          boundDevice!.device,
+          nominalPowerSetting.namespace,
+          nominalPowerSetting.key,
+        ),
+      );
       await _initSetting(
         pwmFreq,
         () async => await this.borneoDeviceApi.getFactoryNvsU16(boundDevice!.device, pwmFreq.namespace, pwmFreq.key),
@@ -340,6 +362,26 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
   }
 
   Future<void> doSubmit() async {
+    if (nominalPfdSetting.changed) {
+      await this.borneoDeviceApi.setFactoryNvsU16(
+        boundDevice!.device,
+        nominalPfdSetting.namespace,
+        nominalPfdSetting.key,
+        nominalPfdSetting.value,
+      );
+      nominalPfdSetting.reset();
+    }
+
+    if (nominalPowerSetting.changed) {
+      await this.borneoDeviceApi.setFactoryNvsU16(
+        boundDevice!.device,
+        nominalPowerSetting.namespace,
+        nominalPowerSetting.key,
+        nominalPowerSetting.value,
+      );
+      nominalPowerSetting.reset();
+    }
+
     if (pwmFreq.changed) {
       await this.borneoDeviceApi.setFactoryNvsU16(boundDevice!.device, pwmFreq.namespace, pwmFreq.key, pwmFreq.value);
       pwmFreq.reset();

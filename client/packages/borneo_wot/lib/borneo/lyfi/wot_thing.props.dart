@@ -552,7 +552,7 @@ extension LyfiThingProperties on LyfiThing {
       name: 'lyfiDeviceInfo',
       value: WotValue<LyfiDeviceInfo>(
         initialValue: LyfiDeviceInfo(
-          nominalPar: null,
+          nominalPfd: null,
           nominalPower: null,
           channelCountMax: 0,
           channelCount: 0,

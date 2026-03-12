@@ -1,7 +1,10 @@
+import 'dart:ui' show FontFeature;
+
 import 'package:borneo_app/devices/borneo/lyfi/view_models/controller_settings_view_model.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
 import 'package:borneo_app/shared/widgets/app_bar_apply_button.dart';
 import 'package:borneo_app/shared/widgets/bottom_sheet_picker.dart';
+import 'package:borneo_app/shared/widgets/settings_ui/settings_tile_extensions.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -101,6 +104,40 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
         SettingsSection(
           title: Text(context.translate('LED CONFIGURATION')),
           tiles: [
+            if (widget.vm.nominalPfdSetting.available)
+              settingsSliderTile(
+                title: Text(context.translate('Nominal PFD (PAR)')),
+                value: widget.vm.nominalPfdSetting.value.clamp(0, 10000).toDouble(),
+                min: 0,
+                max: 10000,
+                divisions: 10000,
+                showStepButtons: true,
+                label: widget.vm.nominalPfdSetting.value.toString(),
+                trailing: Selector<ControllerSettingsViewModel, int>(
+                  selector: (context, vm) => vm.nominalPfdSetting.value,
+                  builder: (context, nominalPfd, child) => Text(
+                    '$nominalPfd μmol/㎡/s',
+                    style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+                  ),
+                ),
+                onChanged: (value) => widget.vm.nominalPfdSetting.setValue(value.round()),
+              ),
+            if (widget.vm.nominalPowerSetting.available)
+              settingsSliderTile(
+                title: Text(context.translate('Nominal power')),
+                value: widget.vm.nominalPowerSetting.value.clamp(0, 10000).toDouble(),
+                min: 0,
+                max: 10000,
+                divisions: 10000,
+                showStepButtons: true,
+                label: widget.vm.nominalPowerSetting.value.toString(),
+                trailing: Selector<ControllerSettingsViewModel, int>(
+                  selector: (context, vm) => vm.nominalPowerSetting.value,
+                  builder: (context, nominalPower, child) =>
+                      Text('$nominalPower W', style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()])),
+                ),
+                onChanged: (value) => widget.vm.nominalPowerSetting.setValue(value.round()),
+              ),
             if (widget.vm.pwmFreq.available)
               SettingsTile.navigation(
                 title: Text(context.translate('PWM frequency')),
@@ -309,7 +346,7 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
   String _formatPwmFreq(int? freq) {
     if (freq == null) return '';
     if (freq >= 1000) {
-      return '${(freq / 1000).round()} kHz';
+      return '${(freq / 1000.0)} kHz';
     } else {
       return '$freq Hz';
     }

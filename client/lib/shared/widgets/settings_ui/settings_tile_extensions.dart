@@ -39,6 +39,7 @@ AbstractSettingsTile settingsSliderTile({
   Widget? trailing,
   Color? backgroundColor,
   bool enabled = true,
+  bool showStepButtons = false,
   Key? key,
 }) {
   return SettingsTileSlider(
@@ -57,5 +58,6 @@ AbstractSettingsTile settingsSliderTile({
     trailing: trailing,
     backgroundColor: backgroundColor,
     enabled: enabled,
+    showStepButtons: showStepButtons,
   );
 }

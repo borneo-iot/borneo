@@ -28,7 +28,7 @@ final class LyfiChannelInfo {
 }
 
 final class LyfiDeviceInfo {
-  final double? nominalPar;
+  final double? nominalPfd;
   final double? nominalPower;
   final int channelCountMax;
   final int channelCount;
@@ -36,7 +36,7 @@ final class LyfiDeviceInfo {
 
   const LyfiDeviceInfo({
     required this.channelCountMax,
-    this.nominalPar,
+    this.nominalPfd,
     this.nominalPower,
     required this.channelCount,
     required this.channels,
@@ -44,7 +44,7 @@ final class LyfiDeviceInfo {
 
   factory LyfiDeviceInfo.fromMap(Map map) {
     return LyfiDeviceInfo(
-      nominalPar: map['nominalPar']?.toDouble(),
+      nominalPfd: map['nominalPfd']?.toDouble(),
       nominalPower: map['nominalPower']?.toDouble(),
       channelCountMax: map['channelCountMax'],
       channelCount: map['channelCount'],
