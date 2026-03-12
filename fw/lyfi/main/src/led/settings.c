@@ -33,6 +33,8 @@
 #define LED_NVS_KEY_SCHEDULER "sch"
 #define LED_NVS_KEY_TEMPORARY_DURATION "tmpdur"
 #define LED_NVS_KEY_CORRECTION_METHOD "corrmtd"
+#define LED_NVS_KEY_NOMINAL_PAR "npar"
+#define LED_NVS_KEY_NOMINAL_POWER "npower"
 #define LED_NVS_KEY_PWM_FREQ "pwmfreq"
 #define LED_NVS_KEY_CHANNEL_COUNT "chcount"
 #define LED_NVS_KEY_LOC "loc"
@@ -196,11 +198,18 @@ int led_load_factory_settings()
 
     bool changed = false;
 
+    BO_TRY(bo_nvs_get_or_set_u32(handle, LED_NVS_KEY_NOMINAL_PAR, &s_factory_settings.nominal_par,
+                                 CONFIG_LYFI_LED_NOMINAL_PAR_DEFAULT, &changed));
+
+    BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_NOMINAL_POWER, &s_factory_settings.nominal_power,
+                                 CONFIG_LYFI_LED_NOMINAL_POWER_DEFAULT, &changed));
+
     BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_PWM_FREQ, &s_factory_settings.pwm_freq,
                                  CONFIG_LYFI_DEFAULT_PWM_FREQ, &changed));
 
     BO_TRY(bo_nvs_get_or_set_u8(handle, LED_NVS_KEY_CHANNEL_COUNT, &s_factory_settings.channel_count,
                                 CONFIG_LYFI_LED_CHANNEL_COUNT, &changed));
+
     // Load channel names and colors from NVS with Kconfig defaults
     for (uint8_t ch = 0; ch < CONFIG_LYFI_LED_CHANNEL_COUNT; ch++) {
         const struct led_channel_defaults* defaults = &LED_DEFAULT_CHANNELS[ch];

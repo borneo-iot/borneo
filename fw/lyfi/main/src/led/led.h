@@ -95,6 +95,8 @@ struct led_channel_settings {
 };
 
 struct led_factory_settings {
+    uint32_t nominal_par; ///< Nominal par
+    uint16_t nominal_power; ///< Nominal power in Watts
     uint8_t channel_count; ///< PWM channel count
     uint16_t pwm_freq; ///< The frequency of PWM signals
     struct led_channel_settings channels[CONFIG_LYFI_LED_CHANNEL_COUNT]; ///< Channel settings (name, color)

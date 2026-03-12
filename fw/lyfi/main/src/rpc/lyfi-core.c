@@ -219,12 +219,16 @@ int bo_rpc_borneo_lyfi_info_get(const CborValue* args, CborEncoder* retvals)
     CborEncoder root_map;
     BO_TRY(cbor_encoder_create_map(retvals, &root_map, CborIndefiniteLength));
 
-#if CONFIG_LYFI_LED_NOMINAL_POWER
-    {
-        BO_TRY(cbor_encode_text_stringz(&root_map, "nominalPower"));
-        BO_TRY(cbor_encode_uint(&root_map, CONFIG_LYFI_LED_NOMINAL_POWER));
+    const struct led_factory_settings* factory = led_get_factory_settings();
+    if (factory->nominal_par > 0) {
+        BO_TRY(cbor_encode_text_stringz(&root_map, "nominalPar"));
+        BO_TRY(cbor_encode_uint(&root_map, factory->nominal_par));
     }
-#endif // CONFIG_LYFI_LED_NOMINAL_POWER
+
+    if (factory->nominal_power > 0) {
+        BO_TRY(cbor_encode_text_stringz(&root_map, "nominalPower"));
+        BO_TRY(cbor_encode_uint(&root_map, factory->nominal_power));
+    }
 
     {
         BO_TRY(cbor_encode_text_stringz(&root_map, "channelCountMax"));

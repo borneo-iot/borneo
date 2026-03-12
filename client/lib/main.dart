@@ -19,7 +19,6 @@ import 'core/models/platform_device_info.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_gettext/gettext/gettext.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:borneo_app/core/services/platform_service.dart';
 import 'package:provider/single_child_widget.dart';
