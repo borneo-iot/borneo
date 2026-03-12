@@ -33,7 +33,7 @@
 #define LED_NVS_KEY_SCHEDULER "sch"
 #define LED_NVS_KEY_TEMPORARY_DURATION "tmpdur"
 #define LED_NVS_KEY_CORRECTION_METHOD "corrmtd"
-#define LED_NVS_KEY_NOMINAL_PAR "npar"
+#define LED_NVS_KEY_NOMINAL_PFD "npfd"
 #define LED_NVS_KEY_NOMINAL_POWER "npower"
 #define LED_NVS_KEY_PWM_FREQ "pwmfreq"
 #define LED_NVS_KEY_CHANNEL_COUNT "chcount"
@@ -198,8 +198,8 @@ int led_load_factory_settings()
 
     bool changed = false;
 
-    BO_TRY(bo_nvs_get_or_set_u32(handle, LED_NVS_KEY_NOMINAL_PAR, &s_factory_settings.nominal_par,
-                                 CONFIG_LYFI_LED_NOMINAL_PAR_DEFAULT, &changed));
+    BO_TRY(bo_nvs_get_or_set_u32(handle, LED_NVS_KEY_NOMINAL_PFD, &s_factory_settings.nominal_pfd,
+                                 CONFIG_LYFI_LED_NOMINAL_PFD_DEFAULT, &changed));
 
     BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_NOMINAL_POWER, &s_factory_settings.nominal_power,
                                  CONFIG_LYFI_LED_NOMINAL_POWER_DEFAULT, &changed));
