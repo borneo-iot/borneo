@@ -287,7 +287,7 @@ class SettingsScreen extends StatelessWidget {
       context,
       screen: DeviceOtaScreen(otaVm),
       withNavBar: false,
-      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
     );
   }
 

@@ -30,7 +30,7 @@ class MyScreen extends StatelessWidget {
                   context,
                   screen: AppSettingsScreen(),
                   withNavBar: false,
-                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  pageTransitionAnimation: PageTransitionAnimation.platform,
                 );
               },
             ),
@@ -42,7 +42,7 @@ class MyScreen extends StatelessWidget {
                   context,
                   screen: AboutScreen(),
                   withNavBar: false,
-                  pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                  pageTransitionAnimation: PageTransitionAnimation.platform,
                 );
               },
             ),

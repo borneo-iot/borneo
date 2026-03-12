@@ -96,7 +96,7 @@ class DashboardMoonTile extends StatelessWidget {
                         child: MoonScreen(deviceID: deviceID),
                       ),
                       withNavBar: false,
-                      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                      pageTransitionAnimation: PageTransitionAnimation.platform,
                     );
                   }
                 }

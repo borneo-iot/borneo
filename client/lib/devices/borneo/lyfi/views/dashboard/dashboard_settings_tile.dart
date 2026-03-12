@@ -74,7 +74,7 @@ class DashboardSettingsTile extends StatelessWidget {
           context,
           screen: ChangeNotifierProvider.value(value: vm, child: SettingsScreen(vm)),
           withNavBar: false,
-          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+          pageTransitionAnimation: PageTransitionAnimation.platform,
         );
       }
     } catch (e, st) {

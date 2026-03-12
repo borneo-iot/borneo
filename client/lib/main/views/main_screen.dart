@@ -52,7 +52,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       context,
       screen: const DeviceDiscoveryScreen(),
       withNavBar: false,
-      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
     );
   }
 
@@ -61,7 +61,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       context,
       screen: const GroupEditScreen(args: GroupEditArguments(isCreation: true)),
       withNavBar: false,
-      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
     );
     // Refresh the device list when a group was successfully created.
     if (result == true && context.mounted) {
@@ -74,7 +74,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
       context,
       screen: SceneEditScreen(args: SceneEditArguments(isCreation: true)),
       withNavBar: false,
-      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
     );
   }
 

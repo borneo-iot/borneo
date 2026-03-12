@@ -86,7 +86,7 @@ class DashboardDimmingTile extends StatelessWidget {
           context,
           screen: ChangeNotifierProvider.value(value: vm, child: const DimmingScreen()),
           withNavBar: false,
-          pageTransitionAnimation: PageTransitionAnimation.cupertino,
+          pageTransitionAnimation: PageTransitionAnimation.platform,
         );
       }
     } catch (error, stackTrace) {

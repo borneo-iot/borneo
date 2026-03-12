@@ -82,7 +82,7 @@ class DashboardAcclimationTile extends StatelessWidget {
                         child: AcclimationScreen(deviceID: deviceID),
                       ),
                       withNavBar: false,
-                      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                      pageTransitionAnimation: PageTransitionAnimation.platform,
                     );
                   }
                 }

@@ -130,7 +130,7 @@ class DashboardTemporaryTile extends StatelessWidget {
         context,
         screen: ChangeNotifierProvider.value(value: vm, child: const DiscoPage()),
         withNavBar: false,
-        pageTransitionAnimation: PageTransitionAnimation.cupertino,
+        pageTransitionAnimation: PageTransitionAnimation.platform,
       );
     }
   }

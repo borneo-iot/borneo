@@ -76,7 +76,7 @@ class NoDataHintView extends StatelessWidget {
             context,
             screen: const DeviceDiscoveryScreen(),
             withNavBar: false,
-            pageTransitionAnimation: PageTransitionAnimation.cupertino,
+            pageTransitionAnimation: PageTransitionAnimation.platform,
           );
           // Refresh after adding devices
           if (context.mounted) {
@@ -98,7 +98,7 @@ class DevicesScreen extends StatelessWidget {
       context,
       screen: const DeviceDiscoveryScreen(),
       withNavBar: false,
-      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
     );
   }
 
@@ -107,7 +107,7 @@ class DevicesScreen extends StatelessWidget {
       context,
       screen: const GroupEditScreen(args: GroupEditArguments(isCreation: true)),
       withNavBar: false,
-      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
     );
 
     // Refresh if group was created
@@ -368,7 +368,7 @@ class DevicesScreen extends StatelessWidget {
       context,
       screen: GroupEditScreen(args: GroupEditArguments(isCreation: false, model: group)),
       withNavBar: false,
-      pageTransitionAnimation: PageTransitionAnimation.cupertino,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
     );
 
     // Refresh if group was deleted or updated
