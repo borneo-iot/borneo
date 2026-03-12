@@ -1,5 +1,3 @@
-import 'dart:ui' show FontFeature;
-
 import 'package:borneo_app/devices/borneo/lyfi/view_models/controller_settings_view_model.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
 import 'package:borneo_app/shared/widgets/app_bar_apply_button.dart';

@@ -33,6 +33,11 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
     final isSwitchEnabled = !state.isBusy && applicableDeviceCount > 0;
     final bgColor = isActive ? colorScheme.primaryContainer : colorScheme.surfaceContainer;
     final fgColor = isActive ? colorScheme.onPrimaryContainer : colorScheme.onSurface;
+    final effectiveFgColor = isSwitchEnabled ? fgColor : fgColor.withValues(alpha: 0.45);
+    final effectiveSecondaryFgColor = isSwitchEnabled
+        ? fgColor.withValues(alpha: 0.7)
+        : fgColor.withValues(alpha: 0.35);
+    final iconOpacity = isSwitchEnabled ? 1.0 : 0.4;
     const kAnimateDuration = Duration(milliseconds: 300);
     final textTheme = Theme.of(context).textTheme;
     return ClipRRect(
@@ -54,7 +59,10 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
                         final iconSize = (constraints.maxHeight - 16.0).clamp(0.0, double.infinity);
                         return Align(
                           alignment: Alignment.centerLeft,
-                          child: _buildIcon(widget.chore.iconAssetPath, iconSize, fgColor),
+                          child: Opacity(
+                            opacity: iconOpacity,
+                            child: _buildIcon(widget.chore.iconAssetPath, iconSize, effectiveFgColor),
+                          ),
                         );
                       },
                     ),
@@ -62,9 +70,9 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
                   Text(
                     widget.chore.name,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: textTheme.labelLarge?.fontSize, color: fgColor),
+                    style: TextStyle(fontSize: textTheme.labelLarge?.fontSize, color: effectiveFgColor),
                   ),
-                  Divider(height: 16, thickness: 1.5, color: fgColor.withValues(alpha: 0.2)),
+                  Divider(height: 16, thickness: 1.5, color: effectiveSecondaryFgColor.withValues(alpha: 0.3)),
                   Row(
                     children: [
                       AnimatedSwitcher(
@@ -78,7 +86,7 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
                             key: ValueKey(isActive),
                             style: TextStyle(
                               fontSize: textTheme.labelSmall?.fontSize,
-                              color: fgColor.withValues(alpha: 0.7),
+                              color: effectiveSecondaryFgColor,
                             ),
                           ),
                         ),

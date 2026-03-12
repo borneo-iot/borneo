@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+// ignore: implementation_imports
 import 'package:flutter_settings_ui/src/tiles/platforms/ios_settings_tile.dart' show IOSSettingsTileAdditionalInfo;
 
 import '../adaptive_slider.dart';
