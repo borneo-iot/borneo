@@ -71,16 +71,12 @@ static int _borneo_net_init(const struct drvfx_device* dev)
 {
     ESP_LOGI(TAG, "Initializing Borneo networking...");
 
-    ESP_LOGI(TAG, "Initializing ESP-NETIF...");
     BO_TRY(esp_netif_init());
 
-    ESP_LOGI(TAG, "Initializing Wi-Fi...");
     BO_TRY(bo_wifi_init());
 
-    ESP_LOGI(TAG, "Initializing mDNS...");
     BO_TRY(bo_mdns_init());
 
-    ESP_LOGI(TAG, "Initializing SNTP...");
     BO_TRY(bo_sntp_init());
 
     ESP_LOGI(TAG, "Borneo networking has been initialized successfully.");
