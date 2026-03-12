@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:provider/provider.dart';
+
+import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
+
 import '../../view_models/lyfi_view_model.dart';
 import '../widgets/manual_running_chart.dart';
 import '../widgets/schedule_running_chart.dart';
 import '../widgets/sun_running_chart.dart';
-import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 
 class DashboardChart extends StatelessWidget {
   const DashboardChart({super.key});
@@ -49,19 +51,10 @@ class DashboardChart extends StatelessWidget {
           );
         } else {
           // device is online, show charts with finer selectors
-          return Selector<
-            LyfiViewModel,
-            ({bool isOnline, LyfiMode mode, LyfiState? state, bool isOn, bool cloudActivated})
-          >(
-            selector: (_, vm) => (
-              isOnline: vm.isOnline && !vm.isSuspectedOffline,
-              mode: vm.mode,
-              state: vm.state,
-              isOn: vm.isOn,
-              cloudActivated: vm.lyfiThing.getProperty<bool>('cloudActivated')!,
-            ),
-            builder: (context, props, _) {
-              final chartWidget = switch (props.mode) {
+          return Selector<LyfiViewModel, LyfiMode>(
+            selector: (_, vm) => vm.mode,
+            builder: (context, mode, _) {
+              final chartWidget = switch (mode) {
                 LyfiMode.manual => ManualRunningChart(),
                 LyfiMode.scheduled => ScheduleRunningChart(),
                 LyfiMode.sun => Selector<LyfiViewModel, ({List<LyfiChannelInfo> channels, ScheduleTable instants})>(
@@ -82,33 +75,7 @@ class DashboardChart extends StatelessWidget {
                     child: child,
                   );
                 },
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: 200),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return Stack(
-                        children: [
-                          Positioned.fill(child: chartWidget),
-                          Positioned(
-                            right: 8,
-                            top: 24,
-                            child: AnimatedOpacity(
-                              opacity: props.cloudActivated ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                              child: Icon(
-                                Icons.cloud,
-                                size: 24,
-                                color: Theme.of(context).colorScheme.secondary,
-                                shadows: const [Shadow(color: Colors.black26, blurRadius: 2, offset: Offset(1, 1))],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
+                child: ConstrainedBox(constraints: const BoxConstraints(minHeight: 200), child: chartWidget),
               );
             },
           );

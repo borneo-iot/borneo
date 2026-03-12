@@ -34,6 +34,23 @@ class LyfiAppBar extends StatelessWidget {
             IconButton(icon: const Icon(Icons.arrow_back), onPressed: isBusy ? null : onBack),
       ),
       actions: [
+        Selector<LyfiViewModel, bool>(
+          selector: (_, vm) => vm.cloudActivated,
+          builder: (context, cloudActivated, _) => Center(
+            child: AnimatedOpacity(
+              opacity: cloudActivated ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: Icon(
+                Icons.cloud,
+                size: 24,
+                color: Theme.of(context).colorScheme.secondary,
+                shadows: const [Shadow(color: Colors.black26, blurRadius: 2, offset: Offset(1, 1))],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
         Selector<LyfiViewModel, RssiLevel?>(
           selector: (_, vm) => vm.rssiLevel,
           builder: (content, rssi, _) => Center(
