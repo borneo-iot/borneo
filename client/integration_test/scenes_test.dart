@@ -85,7 +85,8 @@ void scenesTests() {
 
     // add a new scene
     await tester.tap(find.byKey(const Key('btn_add_scene')));
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await _waitFor(tester, find.byKey(const Key('field_scene_name')));
 
     await tester.enterText(find.byKey(const Key('field_scene_name')), 'Test Scene');
     await tester.pump();
@@ -101,6 +102,7 @@ void scenesTests() {
     // Switch back to the original scene.  After the new scene is created it
     // becomes selected and may push the old card off-screen.
     const targetKey = Key('scene_card_My Home');
+    final visibleTargetFinder = find.byKey(targetKey).hitTestable();
     // Scroll the horizontal list back until the 'My Home' card is built and
     // visible.  scrollUntilVisible / dragUntilVisible call element(finder)
     // immediately, which throws when the card hasn't been built yet by the
@@ -110,11 +112,11 @@ void scenesTests() {
       matching: find.byType(Scrollable),
     );
     for (int i = 0; i < 10; i++) {
-      if (tester.any(find.byKey(targetKey))) break;
+      if (tester.any(visibleTargetFinder)) break;
       await tester.drag(scrollableFinder, const Offset(300, 0));
       await tester.pumpAndSettle();
     }
-    await tester.tap(find.byKey(targetKey));
+    await tester.tap(visibleTargetFinder);
     for (int i = 0; i < 10; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
