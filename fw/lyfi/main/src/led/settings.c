@@ -102,6 +102,11 @@ int led_load_factory_settings()
         snprintf(key, sizeof(key), "ch%u.wl2", ch);
         BO_TRY(bo_nvs_get_or_set_u16(handle, key, (uint16_t*)&s_factory_settings.channels[ch].wavelength2,
                                      defaults->wavelength2, &changed));
+
+        snprintf(key, sizeof(key), "ch%u.f", ch);
+        len = sizeof(float);
+        BO_TRY(bo_nvs_get_or_set_blob(handle, key, &s_factory_settings.channels[ch].factor, &len,
+                                      &defaults->wavelength2, sizeof(float), &changed));
     }
 
     if (changed) {
