@@ -10,9 +10,7 @@ void main() {
     test('requires at least one channel and all wavelengths >= 380', () {
       expect(canRenderSpectrumChart(const []), isFalse);
       expect(
-        canRenderSpectrumChart(const [
-          LyfiChannelInfo(name: 'UV', color: '#ffffff', wavelength: 370, factor: 1.0),
-        ]),
+        canRenderSpectrumChart(const [LyfiChannelInfo(name: 'UV', color: '#ffffff', wavelength: 370, factor: 1.0)]),
         isFalse,
       );
       expect(

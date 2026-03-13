@@ -10,12 +10,7 @@ final class LyfiChannelInfo {
   final int wavelength;
   final double factor;
 
-  const LyfiChannelInfo({
-    required this.name,
-    required this.color,
-    required this.wavelength,
-    required this.factor,
-  });
+  const LyfiChannelInfo({required this.name, required this.color, required this.wavelength, required this.factor});
 
   factory LyfiChannelInfo.fromMap(dynamic map) {
     return LyfiChannelInfo(
