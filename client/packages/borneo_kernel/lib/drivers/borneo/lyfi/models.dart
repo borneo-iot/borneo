@@ -2,6 +2,8 @@ import 'package:borneo_common/exceptions.dart';
 import 'package:borneo_common/utils/float.dart';
 import 'package:cbor/cbor.dart';
 
+enum LedUsage { general, freshwater, marine, terra, cinema, home }
+
 typedef ScheduleTable = List<ScheduledInstant>;
 
 final class LyfiChannelInfo {
@@ -31,6 +33,7 @@ final class LyfiChannelInfo {
 }
 
 final class LyfiDeviceInfo {
+  final LedUsage usage;
   final double? nominalPfd;
   final double? nominalPower;
   final int channelCountMax;
@@ -43,10 +46,12 @@ final class LyfiDeviceInfo {
     this.nominalPower,
     required this.channelCount,
     required this.channels,
+    this.usage = LedUsage.general,
   });
 
   factory LyfiDeviceInfo.fromMap(Map map) {
     return LyfiDeviceInfo(
+      usage: LedUsage.values[(map['usage'] ?? 0)],
       nominalPfd: map['nominalPfd']?.toDouble(),
       nominalPower: map['nominalPower']?.toDouble(),
       channelCountMax: map['channelCountMax'],
