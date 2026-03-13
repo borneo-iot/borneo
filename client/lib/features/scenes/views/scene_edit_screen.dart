@@ -57,6 +57,8 @@ class _SceneEditBody extends ConsumerStatefulWidget {
 }
 
 class _SceneEditBodyState extends ConsumerState<_SceneEditBody> {
+  static const _sceneImageAspectRatio = 16.0 / 9.0;
+
   final _formKey = GlobalKey<FormState>();
 
   // ---------------------------------------------------------------------------
@@ -113,20 +115,22 @@ class _SceneEditBodyState extends ConsumerState<_SceneEditBody> {
             InkWell(
               borderRadius: BorderRadius.circular(8),
               onTap: () => _pickImage(Theme.of(context)),
-              child: Container(
-                width: double.infinity,
-                height: 120,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).dividerColor),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: AspectRatio(
+                aspectRatio: _sceneImageAspectRatio,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Theme.of(context).dividerColor),
+                    borderRadius: BorderRadius.circular(8),
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  ),
+                  child: imagePath != null && imagePath.isNotEmpty && File(imagePath).existsSync()
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(File(imagePath), fit: BoxFit.cover, width: double.infinity),
+                        )
+                      : Center(child: Icon(Icons.add_a_photo_outlined, size: 40, color: Theme.of(context).hintColor)),
                 ),
-                child: imagePath != null && imagePath.isNotEmpty && File(imagePath).existsSync()
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.file(File(imagePath), fit: BoxFit.cover, width: double.infinity, height: 120),
-                      )
-                    : Center(child: Icon(Icons.add_a_photo_outlined, size: 40, color: Theme.of(context).hintColor)),
               ),
             ),
             if (imagePath != null && imagePath.isNotEmpty && File(imagePath).existsSync())

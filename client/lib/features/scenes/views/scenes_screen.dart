@@ -115,6 +115,11 @@ class _SceneList extends ConsumerStatefulWidget {
 }
 
 class _SceneListState extends ConsumerState<_SceneList> {
+  static const _horizontalPadding = 16.0;
+  static const _separatorWidth = 16.0;
+  static const _peekFraction = 0.05;
+  static const _cardVerticalMargin = 8.0;
+
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -123,16 +128,11 @@ class _SceneListState extends ConsumerState<_SceneList> {
     super.dispose();
   }
 
-  void _scrollToSelected(int index) {
+  void _scrollToSelected(int index, {required double viewportWidth, required double cardWidth}) {
     if (!_scrollController.hasClients) return;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final cardHeight = screenHeight / 4.0;
-    final cardWidth = cardHeight * (16.0 / 9.0);
-    const separatorWidth = 16.0;
-    final itemWidth = cardWidth + separatorWidth;
-    final centerOffset = screenWidth / 2 - cardWidth / 2;
-    final targetOffset = index * itemWidth - centerOffset;
+    final itemWidth = cardWidth + _separatorWidth;
+    final centerOffset = viewportWidth / 2 - cardWidth / 2;
+    final targetOffset = _horizontalPadding + index * itemWidth - centerOffset;
     _scrollController.animateTo(
       targetOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
       duration: const Duration(milliseconds: 300),
@@ -143,39 +143,57 @@ class _SceneListState extends ConsumerState<_SceneList> {
   @override
   Widget build(BuildContext context) {
     final scenes = ref.watch(scenesProvider.select((s) => s.scenes));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedIndex = scenes.indexWhere((s) => s.isSelected);
-      if (selectedIndex != -1) {
-        _scrollToSelected(selectedIndex);
-      }
-    });
-    final screenHeight = MediaQuery.of(context).size.height;
     return SliverToBoxAdapter(
-      child: SizedBox(
-        height: screenHeight / 4.0,
-        child: ScrollConfiguration(
-          behavior: const MaterialScrollBehavior().copyWith(
-            dragDevices: {
-              PointerDeviceKind.touch,
-              PointerDeviceKind.mouse,
-              PointerDeviceKind.stylus,
-              PointerDeviceKind.unknown,
-            },
-          ),
-          child: ListView.separated(
-            key: const Key('scene_list'),
-            controller: _scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            separatorBuilder: (_, _) => const SizedBox(width: 16),
-            scrollDirection: Axis.horizontal,
-            itemCount: scenes.length,
-            itemBuilder: (_, index) {
-              final scene = scenes[index];
-              // Width now driven purely by card's internal AspectRatio (16:9) and list height
-              return SceneCard(scene, onCentered: () => _scrollToSelected(index));
-            },
-          ),
-        ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final availableWidth = (constraints.maxWidth - (_horizontalPadding * 2)).clamp(0.0, double.infinity);
+          final peekWidth = availableWidth * _peekFraction;
+          final cardWidth = availableWidth <= 220.0
+              ? availableWidth
+              : (availableWidth - peekWidth).clamp(220.0, availableWidth).toDouble();
+          final cardHeight = cardWidth * 9.0 / 16.0;
+          final listHeight = cardHeight + (_cardVerticalMargin * 2);
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final selectedIndex = scenes.indexWhere((s) => s.isSelected);
+            if (selectedIndex != -1) {
+              _scrollToSelected(selectedIndex, viewportWidth: constraints.maxWidth, cardWidth: cardWidth);
+            }
+          });
+
+          return SizedBox(
+            height: listHeight,
+            child: ScrollConfiguration(
+              behavior: const MaterialScrollBehavior().copyWith(
+                dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.stylus,
+                  PointerDeviceKind.unknown,
+                },
+              ),
+              child: ListView.separated(
+                key: const Key('scene_list'),
+                controller: _scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: _horizontalPadding),
+                separatorBuilder: (_, _) => const SizedBox(width: _separatorWidth),
+                scrollDirection: Axis.horizontal,
+                itemCount: scenes.length,
+                itemBuilder: (_, index) {
+                  final scene = scenes[index];
+                  return SizedBox(
+                    width: cardWidth,
+                    child: SceneCard(
+                      scene,
+                      onCentered: () =>
+                          _scrollToSelected(index, viewportWidth: constraints.maxWidth, cardWidth: cardWidth),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }
