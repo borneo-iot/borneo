@@ -26,396 +26,57 @@ menu "Borneo LyFi"
     endmenu
 
     menu "LED PWM settings"
-
-        config LYFI_LED_NOMINAL_PFD_DEFAULT
-            int "LED norminal PFD"
-            default 0
-            range 0 10000
-
-        config LYFI_LED_NOMINAL_POWER_DEFAULT
-            int "LED norminal power"
-            default 0
-            range 0 10000
-
-        config LYFI_DEFAULT_PWM_FREQ
-            int "LED PWM frequency"
-            default 19530
-            range 500 19530
-
         config LYFI_DIMMING_TIMEOUT
             int "DIMMING mode timeout (seconds)"
             default 900
             range 0 3600
-
     endmenu
 
     menu "LED channels"
-
-        config LYFI_LED_CH0_ENABLED
-            bool "LED channel 0 enabled"
-
-        config LYFI_LED_CH1_ENABLED
-            bool "LED channel 1 enabled"
-
-        config LYFI_LED_CH2_ENABLED
-            bool "LED channel 2 enabled"
-
-        config LYFI_LED_CH3_ENABLED
-            bool "LED channel 3 enabled"
-
-        config LYFI_LED_CH4_ENABLED
-            bool "LED channel 4 enabled"
-
-        config LYFI_LED_CH5_ENABLED
-            bool "LED channel 5 enabled"
-
-        config LYFI_LED_CH6_ENABLED
-            bool "LED channel 6 enabled"
-
-        config LYFI_LED_CH7_ENABLED
-            bool "LED channel 7 enabled"
-
-        config LYFI_LED_CH8_ENABLED
-            bool "LED channel 8 enabled"
-
-        config LYFI_LED_CH9_ENABLED
-            bool "LED channel 9 enabled"
-
-
         config LYFI_LED_CHANNEL_COUNT
-            int
+            int "LED physical channel count"
             range 1 10
-            default 10 if LYFI_LED_CH9_ENABLED
-            default 9 if LYFI_LED_CH8_ENABLED
-            default 8 if LYFI_LED_CH7_ENABLED
-            default 7 if LYFI_LED_CH6_ENABLED
-            default 6 if LYFI_LED_CH5_ENABLED
-            default 5 if LYFI_LED_CH4_ENABLED
-            default 4 if LYFI_LED_CH3_ENABLED
-            default 3 if LYFI_LED_CH2_ENABLED
-            default 2 if LYFI_LED_CH1_ENABLED
-            default 1 if LYFI_LED_CH0_ENABLED
-            depends on LYFI_LED_CH9_ENABLED || LYFI_LED_CH8_ENABLED || LYFI_LED_CH7_ENABLED || LYFI_LED_CH6_ENABLED || LYFI_LED_CH5_ENABLED || LYFI_LED_CH4_ENABLED || LYFI_LED_CH3_ENABLED || LYFI_LED_CH2_ENABLED || LYFI_LED_CH1_ENABLED || LYFI_LED_CH0_ENABLED
 
-        menu "LED channel 0 configuration"
-            depends on LYFI_LED_CH0_ENABLED && LYFI_LED_CHANNEL_COUNT >= 1
+        config LYFI_LED_CH0_GPIO
+            int "GPIO for LED channel 0"
+            default -1
 
-            config LYFI_LED_CH0_GPIO
-                int "GPIO for LED channel 0"
-                depends on LYFI_LED_CH0_ENABLED
+        config LYFI_LED_CH1_GPIO
+            int "GPIO for LED channel 1"
+            default -1
 
-            config LYFI_LED_CH0_NAME
-                string "Name for LED channel 0"
-                default "CH0"
-                depends on LYFI_LED_CH0_ENABLED
+        config LYFI_LED_CH2_GPIO
+            int "GPIO for LED channel 2"
+            default -1
 
-            config LYFI_LED_CH0_COLOR
-                string "Color for LED channel 0"
-                depends on LYFI_LED_CH0_ENABLED
+        config LYFI_LED_CH3_GPIO
+            int "GPIO for LED channel 3"
+            default -1
 
-            config LYFI_LED_CH0_WAVELENGTH
-                int "Wavelength for LED channel 0"
-                default 0
-                depends on LYFI_LED_CH0_ENABLED
+        config LYFI_LED_CH4_GPIO
+            int "GPIO for LED channel 4"
+            default -1
 
-            config LYFI_LED_CH0_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 0"
-                default 0
-                depends on LYFI_LED_CH0_ENABLED
+        config LYFI_LED_CH5_GPIO
+            int "GPIO for LED channel 5"
+            default -1
 
-            config LYFI_LED_CH0_POWER
-                int "Power (in mW) for LED channel 0"
-                default 0
-                depends on LYFI_LED_CH0_ENABLED
-        endmenu
+        config LYFI_LED_CH6_GPIO
+            int "GPIO for LED channel 6"
+            default -1
 
-        menu "LED channel 1 configuration"
-            depends on LYFI_LED_CH1_ENABLED && LYFI_LED_CHANNEL_COUNT >= 2
+        config LYFI_LED_CH7_GPIO
+            int "GPIO for LED channel 7"
+            default -1
 
-            config LYFI_LED_CH1_GPIO
-                int "GPIO for LED channel 1"
-                depends on LYFI_LED_CH1_ENABLED
-
-            config LYFI_LED_CH1_NAME
-                string "Name for LED channel 1"
-                default "CH1"
-                depends on LYFI_LED_CH1_ENABLED
-            config LYFI_LED_CH1_COLOR
-                string "Color for LED channel 1"
-                depends on LYFI_LED_CH1_ENABLED
-
-            config LYFI_LED_CH1_WAVELENGTH
-                int "Wavelength for LED channel 1"
-                default 0
-                depends on LYFI_LED_CH1_ENABLED
-
-            config LYFI_LED_CH1_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 1"
-                default 0
-                depends on LYFI_LED_CH1_ENABLED
-
-            config LYFI_LED_CH1_POWER
-                int "Power (in mW) for LED channel 1"
-                default 0
-                depends on LYFI_LED_CH1_ENABLED
-
-        endmenu
-
-        menu "LED channel 2 configuration"
-            depends on LYFI_LED_CH2_ENABLED && LYFI_LED_CHANNEL_COUNT >= 3
-
-            config LYFI_LED_CH2_GPIO
-                int "GPIO for LED channel 2"
-                depends on LYFI_LED_CH2_ENABLED
-
-            config LYFI_LED_CH2_NAME
-                string "Name for LED channel 2"
-                default "CH2"
-                depends on LYFI_LED_CH2_ENABLED
-
-            config LYFI_LED_CH2_COLOR
-                string "Color for LED channel 2"
-                depends on LYFI_LED_CH2_ENABLED
-
-            config LYFI_LED_CH2_WAVELENGTH
-                int "Wavelength for LED channel 2"
-                default 0
-                depends on LYFI_LED_CH2_ENABLED
-
-            config LYFI_LED_CH2_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 2"
-                default 0
-                depends on LYFI_LED_CH2_ENABLED
-
-            config LYFI_LED_CH2_POWER
-                int "Power (in mW) for LED channel 2"
-                default 0
-                depends on LYFI_LED_CH2_ENABLED
-        endmenu
-
-        menu "LED channel 3 configuration"
-            depends on LYFI_LED_CH3_ENABLED && LYFI_LED_CHANNEL_COUNT >= 4
-
-            config LYFI_LED_CH3_GPIO
-                int "GPIO for LED channel 3"
-                depends on LYFI_LED_CH3_ENABLED
-
-            config LYFI_LED_CH3_NAME
-                string "Name for LED channel 3"
-                default "CH3"
-                depends on LYFI_LED_CH3_ENABLED
-
-            config LYFI_LED_CH3_COLOR
-                string "Color for LED channel 3"
-                depends on LYFI_LED_CH3_ENABLED
-
-            config LYFI_LED_CH3_WAVELENGTH
-                int "Wavelength for LED channel 3"
-                default 0
-                depends on LYFI_LED_CH3_ENABLED
-
-            config LYFI_LED_CH3_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 3"
-                default 0
-                depends on LYFI_LED_CH3_ENABLED
-
-            config LYFI_LED_CH3_POWER
-                int "Power (in mW) for LED channel 3"
-                default 0
-                depends on LYFI_LED_CH3_ENABLED
-        endmenu
-
-        menu "LED channel 4 configuration"
-            depends on LYFI_LED_CH4_ENABLED && LYFI_LED_CHANNEL_COUNT >= 5
-
-            config LYFI_LED_CH4_GPIO
-                int "GPIO for LED channel 4"
-                depends on LYFI_LED_CH4_ENABLED
-
-            config LYFI_LED_CH4_NAME
-                string "Name for LED channel 4"
-                default "CH4"
-                depends on LYFI_LED_CH4_ENABLED
-
-            config LYFI_LED_CH4_COLOR
-                string "Color for LED channel 4"
-                depends on LYFI_LED_CH4_ENABLED
-
-            config LYFI_LED_CH4_WAVELENGTH
-                int "Wavelength for LED channel 4"
-                default 0
-                depends on LYFI_LED_CH4_ENABLED
-
-            config LYFI_LED_CH4_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 4"
-                default 0
-                depends on LYFI_LED_CH4_ENABLED
-
-            config LYFI_LED_CH4_POWER
-                int "Power (in mW) for LED channel 4"
-                default 0
-                depends on LYFI_LED_CH4_ENABLED
-        endmenu
-
-        menu "LED channel 5 configuration"
-            depends on LYFI_LED_CH5_ENABLED && LYFI_LED_CHANNEL_COUNT >= 6
-
-            config LYFI_LED_CH5_GPIO
-                int "GPIO for LED channel 5"
-                depends on LYFI_LED_CH5_ENABLED
-
-            config LYFI_LED_CH5_NAME
-                string "Name for LED channel 5"
-                default "CH5"
-                depends on LYFI_LED_CH5_ENABLED
-
-            config LYFI_LED_CH5_COLOR
-                string "Color for LED channel 5"
-                depends on LYFI_LED_CH5_ENABLED
-
-            config LYFI_LED_CH5_WAVELENGTH
-                int "Wavelength for LED channel 5"
-                default 0
-                depends on LYFI_LED_CH5_ENABLED
-
-            config LYFI_LED_CH5_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 5"
-                default 0
-                depends on LYFI_LED_CH5_ENABLED
-
-            config LYFI_LED_CH5_POWER
-                int "Power (in mW) for LED channel 5"
-                default 0
-                depends on LYFI_LED_CH5_ENABLED
-        endmenu
-
-        menu "LED channel 6 configuration"
-            depends on LYFI_LED_CH6_ENABLED && LYFI_LED_CHANNEL_COUNT >= 7
-
-            config LYFI_LED_CH6_GPIO
-                int "GPIO for LED channel 6"
-                depends on LYFI_LED_CH6_ENABLED
-
-            config LYFI_LED_CH6_NAME
-                string "Name for LED channel 6"
-                default "CH6"
-                depends on LYFI_LED_CH6_ENABLED
-
-            config LYFI_LED_CH6_COLOR
-                string "Color for LED channel 6"
-                depends on LYFI_LED_CH6_ENABLED
-
-            config LYFI_LED_CH6_WAVELENGTH
-                int "Wavelength for LED channel 6"
-                default 0
-                depends on LYFI_LED_CH6_ENABLED
-
-            config LYFI_LED_CH6_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 6"
-                default 0
-                depends on LYFI_LED_CH6_ENABLED
-
-            config LYFI_LED_CH6_POWER
-                int "Power (in mW) for LED channel 6"
-                default 0
-                depends on LYFI_LED_CH6_ENABLED
-        endmenu
-
-        menu "LED channel 7 configuration"
-            depends on LYFI_LED_CH7_ENABLED && LYFI_LED_CHANNEL_COUNT >= 8
-
-            config LYFI_LED_CH7_GPIO
-                int "GPIO for LED channel 7"
-                depends on LYFI_LED_CH7_ENABLED
-
-            config LYFI_LED_CH7_NAME
-                string "Name for LED channel 7"
-                default "CH7"
-                depends on LYFI_LED_CH7_ENABLED
-
-            config LYFI_LED_CH7_COLOR
-                string "Color for LED channel 7"
-                depends on LYFI_LED_CH7_ENABLED
-
-            config LYFI_LED_CH7_WAVELENGTH
-                int "Wavelength for LED channel 7"
-                default 0
-                depends on LYFI_LED_CH7_ENABLED
-
-            config LYFI_LED_CH7_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 7"
-                default 0
-                depends on LYFI_LED_CH7_ENABLED
-
-            config LYFI_LED_CH7_POWER
-                int "Power (in mW) for LED channel 7"
-                default 0
-                depends on LYFI_LED_CH7_ENABLED
-        endmenu
-
-        menu "LED channel 8 configuration"
-            depends on LYFI_LED_CH8_ENABLED && LYFI_LED_CHANNEL_COUNT >= 9
-
-            config LYFI_LED_CH8_GPIO
-                int "GPIO for LED channel 8"
-                depends on LYFI_LED_CH8_ENABLED
-
-            config LYFI_LED_CH8_NAME
-                string "Name for LED channel 8"
-                default "CH8"
-                depends on LYFI_LED_CH8_ENABLED
-
-            config LYFI_LED_CH8_COLOR
-                string "Color for LED channel 8"
-                depends on LYFI_LED_CH8_ENABLED
-
-            config LYFI_LED_CH8_WAVELENGTH
-                int "Wavelength for LED channel 8"
-                default 0
-                depends on LYFI_LED_CH8_ENABLED
-
-            config LYFI_LED_CH8_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 8"
-                default 0
-                depends on LYFI_LED_CH8_ENABLED
-
-            config LYFI_LED_CH8_POWER
-                int "Power (in mW) for LED channel 8"
-                default 0
-                depends on LYFI_LED_CH8_ENABLED
-        endmenu
-
-        menu "LED channel 9 configuration"
-            depends on LYFI_LED_CH9_ENABLED && LYFI_LED_CHANNEL_COUNT >= 10
+        config LYFI_LED_CH8_GPIO
+            int "GPIO for LED channel 8"
+            default -1
 
         config LYFI_LED_CH9_GPIO
             int "GPIO for LED channel 9"
-            depends on LYFI_LED_CH9_ENABLED
+            default -1
 
-            config LYFI_LED_CH9_NAME
-                string "Name for LED channel 9"
-                default "CH9"
-                depends on LYFI_LED_CH9_ENABLED
-
-            config LYFI_LED_CH9_COLOR
-                string "Color for LED channel 9"
-                depends on LYFI_LED_CH9_ENABLED
-
-            config LYFI_LED_CH9_WAVELENGTH
-                int "Wavelength for LED channel 9"
-                default 0
-                depends on LYFI_LED_CH9_ENABLED
-
-            config LYFI_LED_CH9_BRIGHTNESS_PERCENT
-                int "Brightness percent for LED channel 9"
-                default 0
-                depends on LYFI_LED_CH9_ENABLED
-
-            config LYFI_LED_CH9_POWER
-                int "Power (in mW) for LED channel 9"
-                default 0
-                depends on LYFI_LED_CH9_ENABLED
-        endmenu
 
     endmenu
 

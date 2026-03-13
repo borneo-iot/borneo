@@ -49,144 +49,8 @@
 
 #define TAG "led.settings"
 
-static const struct led_user_settings LED_DEFAULT_SETTINGS = {
-    .mode = LED_MODE_MANUAL,
-    .temporary_duration = 20,
-    .manual_color = {
-// From kconfig
-#if CONFIG_LYFI_LED_CH0_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH1_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH2_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH3_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH4_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH5_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH6_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH7_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH8_ENABLED
-        205,
-#endif
-#if CONFIG_LYFI_LED_CH9_ENABLED
-        205,
-#endif
-    },
-
-    .correction_method = LED_CORRECTION_CIE1931,
-
-    .sun_color = { 0 },
-    .moon_color = { 0 },
-    .scheduler = { 0 },
-
-    .location = { // Kunming, China
-        .lat = 25.0430f,
-        .lng = 102.7062f,
-    },
-    .tz_offset = 8 * 3600, // UTC+8
-
-    .flags = 0ULL,
-
-    .acclimation = {
-        .start_utc = 0,
-        .duration = 30,
-        .start_percent = 30,
-    },
-};
-
-struct led_channel_defaults {
-    const char* name;
-    const char* color;
-    int16_t wavelength;
-    // uint8_t percent;
-};
-
-static const struct led_channel_defaults LED_DEFAULT_CHANNELS[CONFIG_LYFI_LED_CHANNEL_COUNT] = {
-#if CONFIG_LYFI_LED_CH0_ENABLED
-    [0] = {
-            .name = CONFIG_LYFI_LED_CH0_NAME,
-            .color = CONFIG_LYFI_LED_CH0_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH0_WAVELENGTH,
-            // .percent = 0,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH1_ENABLED
-    [1] = {
-            .name = CONFIG_LYFI_LED_CH1_NAME,
-            .color = CONFIG_LYFI_LED_CH1_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH1_WAVELENGTH,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH2_ENABLED
-    [2] = { 
-            .name = CONFIG_LYFI_LED_CH2_NAME,
-            .color = CONFIG_LYFI_LED_CH2_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH2_WAVELENGTH,
-         },
-#endif
-#if CONFIG_LYFI_LED_CH3_ENABLED
-    [3] = {
-            .name = CONFIG_LYFI_LED_CH3_NAME,
-            .color = CONFIG_LYFI_LED_CH3_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH3_WAVELENGTH,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH4_ENABLED
-    [4] = {
-            .name = CONFIG_LYFI_LED_CH4_NAME,
-            .color = CONFIG_LYFI_LED_CH4_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH4_WAVELENGTH,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH5_ENABLED
-    [5] = {
-            .name = CONFIG_LYFI_LED_CH5_NAME,
-            .color = CONFIG_LYFI_LED_CH5_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH5_WAVELENGTH,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH6_ENABLED
-    [6] = {
-            .name = CONFIG_LYFI_LED_CH6_NAME,
-            .color = CONFIG_LYFI_LED_CH6_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH6_WAVELENGTH,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH7_ENABLED
-    [7] = {
-            .name = CONFIG_LYFI_LED_CH7_NAME,
-            .color = CONFIG_LYFI_LED_CH7_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH7_WAVELENGTH,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH8_ENABLED
-    [8] = {
-            .name = CONFIG_LYFI_LED_CH8_NAME,
-            .color = CONFIG_LYFI_LED_CH8_COLOR,
-            .wavelength = CONFIG_LYFI_LED_CH8_WAVELENGTH,
-        },
-#endif
-#if CONFIG_LYFI_LED_CH9_ENABLED
-    [9] = {
-        .name = CONFIG_LYFI_LED_CH9_NAME,
-        .color = CONFIG_LYFI_LED_CH9_COLOR,
-        .wavelength = CONFIG_LYFI_LED_CH9_WAVELENGTH,
-    },
-#endif
-};
+extern const struct led_user_settings LED_USER_DEFAULT_SETTINGS;
+extern const struct led_factory_settings LED_FACTORY_DEFAULT_SETTINGS;
 
 static struct led_factory_settings s_factory_settings;
 
@@ -201,21 +65,21 @@ int led_load_factory_settings()
     bool changed = false;
 
     BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_NOMINAL_PFD, &s_factory_settings.nominal_pfd,
-                                 CONFIG_LYFI_LED_NOMINAL_PFD_DEFAULT, &changed));
+                                 LED_FACTORY_DEFAULT_SETTINGS.nominal_pfd, &changed));
 
     BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_NOMINAL_POWER, &s_factory_settings.nominal_power,
-                                 CONFIG_LYFI_LED_NOMINAL_POWER_DEFAULT, &changed));
+                                 LED_FACTORY_DEFAULT_SETTINGS.nominal_power, &changed));
 
     BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_PWM_FREQ, &s_factory_settings.pwm_freq,
-                                 CONFIG_LYFI_DEFAULT_PWM_FREQ, &changed));
+                                 LED_FACTORY_DEFAULT_SETTINGS.pwm_freq, &changed));
 
     BO_TRY(bo_nvs_get_or_set_u8(handle, LED_NVS_KEY_CHANNEL_COUNT, &s_factory_settings.channel_count,
                                 CONFIG_LYFI_LED_CHANNEL_COUNT, &changed));
 
     // Load channel names and colors from NVS with Kconfig defaults
     for (uint8_t ch = 0; ch < CONFIG_LYFI_LED_CHANNEL_COUNT; ch++) {
-        const struct led_channel_defaults* defaults = &LED_DEFAULT_CHANNELS[ch];
-        if (defaults->name == NULL || defaults->color == NULL) {
+        const struct led_channel_settings* defaults = &LED_FACTORY_DEFAULT_SETTINGS.channels[ch];
+        if (strlen(defaults->name) == 0 || strlen(defaults->color) == 0) {
             continue;
         }
 
@@ -257,7 +121,7 @@ int led_load_user_settings()
     {
         rc = nvs_get_u8(handle, LED_NVS_KEY_RUNNING_MODE, &settings->mode);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            settings->mode = LED_DEFAULT_SETTINGS.mode;
+            settings->mode = LED_USER_DEFAULT_SETTINGS.mode;
             rc = 0;
         }
         if (rc) {
@@ -268,7 +132,7 @@ int led_load_user_settings()
     {
         rc = nvs_get_u32(handle, LED_NVS_KEY_TEMPORARY_DURATION, &settings->temporary_duration);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            settings->temporary_duration = LED_DEFAULT_SETTINGS.temporary_duration;
+            settings->temporary_duration = LED_USER_DEFAULT_SETTINGS.temporary_duration;
             rc = 0;
         }
         if (rc) {
@@ -280,7 +144,7 @@ int led_load_user_settings()
         size = sizeof(struct led_scheduler);
         rc = nvs_get_blob(handle, LED_NVS_KEY_SCHEDULER, &settings->scheduler, &size);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            memcpy(&settings->scheduler, &LED_DEFAULT_SETTINGS.scheduler, sizeof(struct led_scheduler));
+            memcpy(&settings->scheduler, &LED_USER_DEFAULT_SETTINGS.scheduler, sizeof(struct led_scheduler));
             rc = 0;
         }
         if (rc) {
@@ -292,7 +156,7 @@ int led_load_user_settings()
         size = sizeof(led_color_t);
         rc = nvs_get_blob(handle, LED_NVS_KEY_MANUAL_COLOR, &settings->manual_color, &size);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            memcpy(&settings->manual_color, &LED_DEFAULT_SETTINGS.manual_color, sizeof(led_color_t));
+            memcpy(&settings->manual_color, &LED_USER_DEFAULT_SETTINGS.manual_color, sizeof(led_color_t));
             rc = 0;
         }
         if (rc) {
@@ -327,7 +191,7 @@ int led_load_user_settings()
     {
         rc = nvs_get_u8(handle, LED_NVS_KEY_CORRECTION_METHOD, &settings->correction_method);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            settings->correction_method = LED_DEFAULT_SETTINGS.correction_method;
+            settings->correction_method = LED_USER_DEFAULT_SETTINGS.correction_method;
             rc = 0;
         }
         if (rc) {
@@ -372,7 +236,7 @@ int led_load_user_settings()
     {
         rc = nvs_get_i32(handle, LED_NVS_KEY_TZ_OFFSET, &settings->tz_offset);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            settings->tz_offset = LED_DEFAULT_SETTINGS.tz_offset;
+            settings->tz_offset = LED_USER_DEFAULT_SETTINGS.tz_offset;
         }
         else if (rc) {
             return rc;
@@ -401,7 +265,7 @@ int led_load_user_settings()
     {
         rc = nvs_get_i64(handle, LED_NVS_KEY_ACCLIMATION_START, &settings->acclimation.start_utc);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            settings->acclimation.start_utc = LED_DEFAULT_SETTINGS.acclimation.start_utc;
+            settings->acclimation.start_utc = LED_USER_DEFAULT_SETTINGS.acclimation.start_utc;
         }
         else if (rc) {
             return rc;
@@ -411,7 +275,7 @@ int led_load_user_settings()
     {
         rc = nvs_get_u8(handle, LED_NVS_KEY_ACCLIMATION_DURATION, &settings->acclimation.duration);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            settings->acclimation.duration = LED_DEFAULT_SETTINGS.acclimation.duration;
+            settings->acclimation.duration = LED_USER_DEFAULT_SETTINGS.acclimation.duration;
             rc = 0;
         }
         else if (rc) {
@@ -420,14 +284,14 @@ int led_load_user_settings()
         // Validate loaded value
         if (settings->acclimation.duration < LED_ACCLIMATION_DAYS_MIN
             || settings->acclimation.duration > LED_ACCLIMATION_DAYS_MAX) {
-            settings->acclimation.duration = LED_DEFAULT_SETTINGS.acclimation.duration;
+            settings->acclimation.duration = LED_USER_DEFAULT_SETTINGS.acclimation.duration;
         }
     }
 
     {
         rc = nvs_get_u8(handle, LED_NVS_KEY_ACCLIMATION_START_PERCENT, &settings->acclimation.start_percent);
         if (rc == ESP_ERR_NVS_NOT_FOUND) {
-            settings->acclimation.start_percent = LED_DEFAULT_SETTINGS.acclimation.start_percent;
+            settings->acclimation.start_percent = LED_USER_DEFAULT_SETTINGS.acclimation.start_percent;
             rc = 0;
         }
         else if (rc) {
@@ -435,7 +299,7 @@ int led_load_user_settings()
         }
         // Validate loaded value
         if (settings->acclimation.start_percent < 10 || settings->acclimation.start_percent > 90) {
-            settings->acclimation.start_percent = LED_DEFAULT_SETTINGS.acclimation.start_percent;
+            settings->acclimation.start_percent = LED_USER_DEFAULT_SETTINGS.acclimation.start_percent;
         }
     }
 

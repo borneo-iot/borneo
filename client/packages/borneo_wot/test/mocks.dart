@@ -363,10 +363,10 @@ class MockLyfiDeviceApi implements ILyfiDeviceApi {
       channelCountMax: 4,
       channelCount: 4,
       channels: [
-        LyfiChannelInfo(name: 'Red', color: 'red', wavelength: 650, brightnessRatio: 1.0),
-        LyfiChannelInfo(name: 'Green', color: 'green', wavelength: 520, brightnessRatio: 1.0),
-        LyfiChannelInfo(name: 'Blue', color: 'blue', wavelength: 450, brightnessRatio: 1.0),
-        LyfiChannelInfo(name: 'White', color: 'white', wavelength: 4000, brightnessRatio: 1.0),
+        LyfiChannelInfo(name: 'Red', color: 'red', wavelength: 650, factor: 1.0),
+        LyfiChannelInfo(name: 'Green', color: 'green', wavelength: 520, factor: 1.0),
+        LyfiChannelInfo(name: 'Blue', color: 'blue', wavelength: 450, factor: 1.0),
+        LyfiChannelInfo(name: 'White', color: 'white', wavelength: 4000, factor: 1.0),
       ],
     );
   }

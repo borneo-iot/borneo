@@ -5,6 +5,7 @@
 #include <time.h>
 #include <smf/smf.h>
 #include <stdatomic.h>
+#include <freertos/FreeRTOS.h>
 
 #include <borneo/algo/astronomy.h>
 #include <freertos/portmacro.h>
@@ -92,6 +93,8 @@ struct led_channel_settings {
     char name[16]; ///< Channel name (15 chars + \0)
     char color[8]; ///< Channel color in hex format (e.g., "#F44336")
     int16_t wavelength; ///< Channel wavelength in nm (0 = unknown)
+    int16_t wavelength2; ///< Channel wavelength2 in nm (0 = unknown)
+    float factor; ///< Power factor
 };
 
 struct led_factory_settings {

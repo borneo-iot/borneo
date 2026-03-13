@@ -11,14 +11,14 @@ void main() {
       expect(canRenderSpectrumChart(const []), isFalse);
       expect(
         canRenderSpectrumChart(const [
-          LyfiChannelInfo(name: 'UV', color: '#ffffff', wavelength: 370, brightnessRatio: 1.0),
+          LyfiChannelInfo(name: 'UV', color: '#ffffff', wavelength: 370, factor: 1.0),
         ]),
         isFalse,
       );
       expect(
         canRenderSpectrumChart(const [
-          LyfiChannelInfo(name: 'Blue', color: '#0000ff', wavelength: 450, brightnessRatio: 1.0),
-          LyfiChannelInfo(name: 'White', color: '#ffffff', wavelength: 4000, brightnessRatio: 1.0),
+          LyfiChannelInfo(name: 'Blue', color: '#0000ff', wavelength: 450, factor: 1.0),
+          LyfiChannelInfo(name: 'White', color: '#ffffff', wavelength: 4000, factor: 1.0),
         ]),
         isTrue,
       );
@@ -28,7 +28,7 @@ void main() {
   group('buildSpectrumSpots', () {
     test('adds white-light contribution for color temperature channels', () {
       final spots = buildSpectrumSpots(
-        channels: const [LyfiChannelInfo(name: 'White', color: '#ffffff', wavelength: 4000, brightnessRatio: 1.0)],
+        channels: const [LyfiChannelInfo(name: 'White', color: '#ffffff', wavelength: 4000, factor: 1.0)],
         brightnessValues: const [kLyfiBrightnessMax],
       );
 
@@ -49,8 +49,8 @@ void main() {
             height: 150,
             child: LyfiSpectrumChart(
               channels: const [
-                LyfiChannelInfo(name: 'Blue', color: '#0000ff', wavelength: 450, brightnessRatio: 1.0),
-                LyfiChannelInfo(name: 'White', color: '#ffffff', wavelength: 5600, brightnessRatio: 1.0),
+                LyfiChannelInfo(name: 'Blue', color: '#0000ff', wavelength: 450, factor: 1.0),
+                LyfiChannelInfo(name: 'White', color: '#ffffff', wavelength: 5600, factor: 1.0),
               ],
               brightnessValues: brightnessValues,
             ),

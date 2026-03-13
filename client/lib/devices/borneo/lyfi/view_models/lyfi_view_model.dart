@@ -758,7 +758,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     final metaChannels = lyfiThing.getProperty<LyfiDeviceInfo>('lyfiDeviceInfo')!;
     for (int i = 0; i < currentColor.length; i++) {
       _channels.add(ValueNotifier<int>(currentColor[i]));
-      ob += metaChannels.channels[i].brightnessRatio * _channels[i].value / kLyfiBrightnessMax;
+      ob += metaChannels.channels[i].factor * _channels[i].value / kLyfiBrightnessMax;
     }
     _overallBrightness = ob;
   }
@@ -774,7 +774,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     double ob = 0;
     for (int i = 0; i < color.length; i++) {
       _channels[i].value = color[i];
-      ob += metaChannels.channels[i].brightnessRatio * color[i] / kLyfiBrightnessMax;
+      ob += metaChannels.channels[i].factor * color[i] / kLyfiBrightnessMax;
     }
     _overallBrightness = ob;
     notifyListeners();

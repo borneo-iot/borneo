@@ -135,43 +135,43 @@ static const struct smf_state LED_STATE_TABLE[] = {
 
 static const uint8_t LED_GPIOS[CONFIG_LYFI_LED_CHANNEL_COUNT] = {
 
-#if CONFIG_LYFI_LED_CH0_ENABLED
+#if CONFIG_LYFI_LED_CH0_GPIO >= 0
     CONFIG_LYFI_LED_CH0_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH1_ENABLED
+#if CONFIG_LYFI_LED_CH1_GPIO >= 0
     CONFIG_LYFI_LED_CH1_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH2_ENABLED
+#if CONFIG_LYFI_LED_CH2_GPIO >= 0
     CONFIG_LYFI_LED_CH2_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH3_ENABLED
+#if CONFIG_LYFI_LED_CH3_GPIO >= 0
     CONFIG_LYFI_LED_CH3_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH4_ENABLED
+#if CONFIG_LYFI_LED_CH4_GPIO >= 0
     CONFIG_LYFI_LED_CH4_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH5_ENABLED
+#if CONFIG_LYFI_LED_CH5_GPIO >= 0
     CONFIG_LYFI_LED_CH5_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH6_ENABLED
+#if CONFIG_LYFI_LED_CH6_GPIO >= 0
     CONFIG_LYFI_LED_CH6_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH7_ENABLED
+#if CONFIG_LYFI_LED_CH7_GPIO >= 0
     CONFIG_LYFI_LED_CH7_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH8_ENABLED
+#if CONFIG_LYFI_LED_CH8_GPIO >= 0
     CONFIG_LYFI_LED_CH8_GPIO,
 #endif
 
-#if CONFIG_LYFI_LED_CH9_ENABLED
+#if CONFIG_LYFI_LED_CH9_GPIO >= 0
     CONFIG_LYFI_LED_CH9_GPIO,
 #endif
 };
@@ -212,6 +212,8 @@ int led_init()
     BO_TRY(led_load_user_settings());
 
     ESP_LOGI(TAG, "Initializing PWM timer for LEDC....");
+    ESP_LOGI(TAG, "Total channel count: %u", CONFIG_LYFI_LED_CHANNEL_COUNT);
+    ESP_LOGI(TAG, "Enabled channel count: %u", factory_settings->channel_count);
 
     // Initialize the first timer
     // TODO allow set the freq in product definition
