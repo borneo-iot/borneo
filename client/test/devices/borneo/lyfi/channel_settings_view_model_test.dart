@@ -22,8 +22,8 @@ void main() {
     });
 
     test('draft exposes the same validation rules used by the parent model', () {
-      const draft = ChannelSettingsDraft(name: 'foo', color: '#112233', wavelength: 450);
-      const invalidDraft = ChannelSettingsDraft(name: '', color: '#112233', wavelength: 70000);
+      const draft = ChannelSettingsDraft(name: 'foo', color: '#112233', wavelength: 450, wavelength2: 450);
+      const invalidDraft = ChannelSettingsDraft(name: '', color: '#112233', wavelength: 70000, wavelength2: 70000);
 
       expect(draft.nameValid, isTrue);
       expect(draft.wavelengthValid, isTrue);
