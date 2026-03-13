@@ -101,7 +101,7 @@ abstract class BaseLyfiDeviceViewModel extends BaseBorneoDeviceViewModel {
     _statusSubscription = null;
   }
 
-  LyfiMode get mode => LyfiMode.fromString(lyfiThing.getProperty<String>('mode')!);
+  LyfiMode get mode => LyfiMode.fromString(lyfiThing.getProperty<String>('mode') ?? 'manual');
 
   void setMode(LyfiMode newMode) {
     if (newMode == this.mode) {
@@ -110,7 +110,7 @@ abstract class BaseLyfiDeviceViewModel extends BaseBorneoDeviceViewModel {
     lyfiThing.performAction('switchMode', {'mode': newMode.name})!.start();
   }
 
-  LyfiState get state => LyfiState.fromString(lyfiThing.getProperty<String>('state')!);
+  LyfiState get state => LyfiState.fromString(lyfiThing.getProperty<String>('state') ?? 'normal');
 
   void setState(LyfiState newState) {
     if (newState == this.state) {

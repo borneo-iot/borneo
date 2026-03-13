@@ -8,18 +8,30 @@ import 'package:borneo_app/routes/app_routes.dart';
 import 'package:borneo_app/shared/widgets/confirmation_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:provider/provider.dart';
 
 class DeviceCard extends StatelessWidget {
   const DeviceCard({super.key});
 
-  void _openDevicePage(BuildContext context, DeviceEntity device) {
+  Future<void> _openDevicePage(BuildContext context, DeviceEntity device) async {
     final vm = context.read<AbstractDeviceSummaryViewModel>();
-    Navigator.of(context).pushNamed(AppRoutes.makeDeviceScreenRoute(device.driverID), arguments: device).then((_) {
-      if (!vm.isDisposed) {
-        vm.notifyListeners();
-      }
-    });
+    final moduleMeta = context.read<IDeviceModuleRegistry>().metaModules[device.driverID];
+    if (moduleMeta == null) {
+      return;
+    }
+
+    await pushScreen(
+      context,
+      screen: moduleMeta.detailsViewBuilder(context),
+      withNavBar: false,
+      pageTransitionAnimation: PageTransitionAnimation.platform,
+      settings: RouteSettings(name: AppRoutes.makeDeviceScreenRoute(device.driverID), arguments: device),
+    );
+
+    if (!vm.isDisposed) {
+      vm.notifyListeners();
+    }
   }
 
   @override
