@@ -15,7 +15,7 @@ final class LyfiChannelInfo {
     required this.name,
     required this.color,
     required this.wavelength,
-    required this.wavelength2,
+    this.wavelength2 = 0,
     required this.factor,
   });
 
