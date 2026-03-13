@@ -17,11 +17,13 @@ class DimmerChannelView extends StatefulWidget {
 class _DimmerChannelViewState extends State<DimmerChannelView> {
   late final TextEditingController _nameController;
   late final TextEditingController _wavelengthController;
+  late final TextEditingController _wavelength2Controller;
   late String _color;
 
   String get _name => _nameController.text;
 
   int? get _wavelength => int.tryParse(_wavelengthController.text);
+  int? get _wavelength2 => int.tryParse(_wavelength2Controller.text);
 
   bool get _nameValid => isValidChannelName(_name);
 
@@ -30,19 +32,26 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
     return wavelength != null && isValidChannelWavelength(wavelength);
   }
 
+  bool get _wavelength2Valid {
+    final wavelength2 = _wavelength2;
+    return wavelength2 != null && isValidChannelWavelength(wavelength2);
+  }
+
   bool get _hasChanges {
     return _name != widget.initialValue.name ||
         _color != widget.initialValue.color ||
-        _wavelength != widget.initialValue.wavelength;
+        _wavelength != widget.initialValue.wavelength ||
+        _wavelength2 != widget.initialValue.wavelength2;
   }
 
-  bool get _canSave => _hasChanges && _nameValid && _wavelengthValid;
+  bool get _canSave => _hasChanges && _nameValid && _wavelengthValid && _wavelength2Valid;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.initialValue.name);
     _wavelengthController = TextEditingController(text: widget.initialValue.wavelength.toString());
+    _wavelength2Controller = TextEditingController(text: widget.initialValue.wavelength2.toString());
     _color = widget.initialValue.color;
   }
 
@@ -50,11 +59,17 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
   void dispose() {
     _nameController.dispose();
     _wavelengthController.dispose();
+    _wavelength2Controller.dispose();
     super.dispose();
   }
 
   ChannelSettingsDraft _buildResult() {
-    return ChannelSettingsDraft(name: _name, color: _color, wavelength: _wavelength ?? widget.initialValue.wavelength);
+    return ChannelSettingsDraft(
+      name: _name,
+      color: _color,
+      wavelength: _wavelength ?? widget.initialValue.wavelength,
+      wavelength2: _wavelength2 ?? widget.initialValue.wavelength2,
+    );
   }
 
   @override
@@ -96,6 +111,17 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
                   labelText: context.translate('Wavelength'),
                   hintText: '0 - 65535',
                   errorText: _wavelengthValid ? null : context.translate('Invalid wavelength'),
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+              TextField(
+                controller: _wavelength2Controller,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  labelText: context.translate('Wavelength 2'),
+                  hintText: '0 - 65535',
+                  errorText: _wavelength2Valid ? null : context.translate('Invalid wavelength'),
                 ),
                 onChanged: (_) => setState(() {}),
               ),

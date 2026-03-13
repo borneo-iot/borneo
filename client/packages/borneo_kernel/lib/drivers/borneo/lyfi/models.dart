@@ -8,15 +8,23 @@ final class LyfiChannelInfo {
   final String name;
   final String color;
   final int wavelength;
+  final int wavelength2;
   final double factor;
 
-  const LyfiChannelInfo({required this.name, required this.color, required this.wavelength, required this.factor});
+  const LyfiChannelInfo({
+    required this.name,
+    required this.color,
+    required this.wavelength,
+    required this.wavelength2,
+    required this.factor,
+  });
 
   factory LyfiChannelInfo.fromMap(dynamic map) {
     return LyfiChannelInfo(
       name: map['n'] ?? 'N/A',
       color: map['c'] ?? '#FF00FF',
       wavelength: map['w'] ?? 0,
+      wavelength2: map['w2'] ?? 0,
       factor: (map['f'] ?? 0.0) / 100.0,
     );
   }

@@ -22,11 +22,18 @@ class ChannelSettingsDraft {
   final String name;
   final String color;
   final int wavelength;
+  final int wavelength2;
 
-  const ChannelSettingsDraft({required this.name, required this.color, required this.wavelength});
+  const ChannelSettingsDraft({
+    required this.name,
+    required this.color,
+    required this.wavelength,
+    required this.wavelength2,
+  });
 
   bool get nameValid => isValidChannelName(name);
   bool get wavelengthValid => isValidChannelWavelength(wavelength);
+  bool get wavelength2Valid => isValidChannelWavelength(wavelength2);
 }
 
 class NvsSettingEntry<T> {
@@ -69,25 +76,31 @@ class ChannelSettingsEntry {
   String _initialColor;
   int _initialWavelength;
   int _wavelength;
+  int _initialWavelength2;
+  int _wavelength2;
 
   String get name => _name;
   String get color => _color;
   int get wavelength => _wavelength;
+  int get wavelength2 => _wavelength2;
 
   bool get nameChanged => _name != _initialName;
   bool get colorChanged => _color != _initialColor;
   bool get wavelengthChanged => _wavelength != _initialWavelength;
+  bool get wavelength2Changed => _wavelength2 != _initialWavelength2;
 
-  bool get changed => nameChanged || colorChanged || wavelengthChanged;
+  bool get changed => nameChanged || colorChanged || wavelengthChanged || wavelength2Changed;
 
   bool get nameValid => isValidChannelName(_name);
   bool get wavelengthValid => isValidChannelWavelength(_wavelength);
+  bool get wavelength2Valid => isValidChannelWavelength(_wavelength2);
 
   ChannelSettingsEntry({
     required this.index,
     required String name,
     required String color,
     required int wavelength,
+    required int wavelength2,
     required void Function() notifyListeners,
   }) : _name = name,
        _initialName = name,
@@ -95,6 +108,8 @@ class ChannelSettingsEntry {
        _initialColor = color,
        _wavelength = wavelength,
        _initialWavelength = wavelength,
+       _wavelength2 = wavelength2,
+       _initialWavelength2 = wavelength2,
        _notifyListeners = notifyListeners;
 
   void setName(String value) {
@@ -118,18 +133,29 @@ class ChannelSettingsEntry {
     }
   }
 
+  void setWavelength2(int value) {
+    if (_wavelength2 != value) {
+      _wavelength2 = value;
+      _notifyListeners();
+    }
+  }
+
   ChannelSettingsDraft toDraft() {
-    return ChannelSettingsDraft(name: _name, color: _color, wavelength: _wavelength);
+    return ChannelSettingsDraft(name: _name, color: _color, wavelength: _wavelength, wavelength2: _wavelength2);
   }
 
   void applyDraft(ChannelSettingsDraft draft) {
-    if (_name == draft.name && _color == draft.color && _wavelength == draft.wavelength) {
+    if (_name == draft.name &&
+        _color == draft.color &&
+        _wavelength == draft.wavelength &&
+        _wavelength2 == draft.wavelength2) {
       return;
     }
 
     _name = draft.name;
     _color = draft.color;
     _wavelength = draft.wavelength;
+    _wavelength2 = draft.wavelength2;
     _notifyListeners();
   }
 
@@ -137,6 +163,7 @@ class ChannelSettingsEntry {
     _initialName = _name;
     _initialColor = _color;
     _initialWavelength = _wavelength;
+    _initialWavelength2 = _wavelength2;
   }
 }
 
@@ -168,7 +195,9 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
     return basicChanged || channelChanged;
   }
 
-  bool get canSubmit => hasChanges && _channels.every((channel) => channel.nameValid && channel.wavelengthValid);
+  bool get canSubmit =>
+      hasChanges &&
+      _channels.every((channel) => channel.nameValid && channel.wavelengthValid && channel.wavelength2Valid);
 
   ChannelSettingsDraft getChannelDraft(int index) => _channels[index].toDraft();
 
@@ -271,10 +300,12 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
       final channelNames = List<String>.filled(maxChannelCount, '', growable: false);
       final channelColors = List<String>.filled(maxChannelCount, '#FFFFFF', growable: false);
       final channelWavelengths = List<int>.filled(maxChannelCount, 0, growable: false);
+      final channelWavelengths2 = List<int>.filled(maxChannelCount, 0, growable: false);
       for (int channel = 0; channel < maxChannelCount; channel++) {
         channelNames[channel] = await _loadChannelNameFromNvs(channel);
         channelColors[channel] = await _loadChannelColorFromNvs(channel);
         channelWavelengths[channel] = await _loadChannelWavelengthFromNvs(channel);
+        channelWavelengths2[channel] = await _loadChannelWavelength2FromNvs(channel);
       }
 
       _channels = List<ChannelSettingsEntry>.generate(
@@ -284,6 +315,7 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
           name: channelNames[i],
           color: channelColors[i],
           wavelength: channelWavelengths[i],
+          wavelength2: channelWavelengths2[i],
           notifyListeners: notifyListeners,
         ),
         growable: false,
@@ -332,6 +364,17 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
 
   Future<int> _loadChannelWavelengthFromNvs(int channel) async {
     final key = 'ch$channel.wl';
+    const fallback = 0;
+    final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
+    if (!exists) {
+      return fallback;
+    }
+
+    return await this.borneoDeviceApi.getFactoryNvsU16(boundDevice!.device, 'led', key);
+  }
+
+  Future<int> _loadChannelWavelength2FromNvs(int channel) async {
+    final key = 'ch$channel.wl2';
     const fallback = 0;
     final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
     if (!exists) {
@@ -463,6 +506,15 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
           "led",
           "ch${channel.index}.wl",
           channel.wavelength,
+        );
+      }
+
+      if (channel.wavelength2Changed) {
+        await this.borneoDeviceApi.setFactoryNvsU16(
+          boundDevice!.device,
+          "led",
+          "ch${channel.index}.wl2",
+          channel.wavelength2,
         );
       }
       if (channel.changed) {
