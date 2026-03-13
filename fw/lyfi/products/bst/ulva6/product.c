@@ -29,11 +29,11 @@ const struct led_factory_settings LED_FACTORY_DEFAULT_SETTINGS = {
     .pwm_freq = 19530,
     .channel_count = CONFIG_LYFI_LED_CHANNEL_COUNT,
     .channels = {
-        { .name = "CW", .color = "#78909C", .wavelength = 15000, .factor = 0.16666 },
-        { .name = "RB", .color = "#5C6BC0", .wavelength = 450, .factor = 0.25 },
-        { .name = "B", .color = "#42A5F5", .wavelength = 470, .factor = 0.25 },
-        { .name = "R", .color = "#EF5350", .wavelength = 620, .factor = 0.08333 },
-        { .name = "G", .color = "#66BB6A", .wavelength = 520, .factor = 0.08333 },
-        { .name = "VUV", .color = "#AB47BC", .wavelength = 415, .factor = 0.16666 },
+        { .name = "CW", .color = "#78909C", .wavelength = 15000, .wavelength2 = 0, .factor = 0.16666 },
+        { .name = "RB", .color = "#5C6BC0", .wavelength = 450, .wavelength2 = 0, .factor = 0.25 },
+        { .name = "B", .color = "#42A5F5", .wavelength = 470, .wavelength2 = 0, .factor = 0.25 },
+        { .name = "R", .color = "#EF5350", .wavelength = 620, .wavelength2 = 0, .factor = 0.08333 },
+        { .name = "G", .color = "#66BB6A", .wavelength = 520, .wavelength2 = 0, .factor = 0.08333 },
+        { .name = "VUV", .color = "#AB47BC", .wavelength = 415, .wavelength2 = 395, .factor = 0.16666 },
     },
 };

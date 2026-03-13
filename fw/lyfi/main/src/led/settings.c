@@ -98,6 +98,10 @@ int led_load_factory_settings()
         snprintf(key, sizeof(key), "ch%u.wl", ch);
         BO_TRY(bo_nvs_get_or_set_u16(handle, key, (uint16_t*)&s_factory_settings.channels[ch].wavelength,
                                      defaults->wavelength, &changed));
+
+        snprintf(key, sizeof(key), "ch%u.wl2", ch);
+        BO_TRY(bo_nvs_get_or_set_u16(handle, key, (uint16_t*)&s_factory_settings.channels[ch].wavelength2,
+                                     defaults->wavelength2, &changed));
     }
 
     if (changed) {

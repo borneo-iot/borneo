@@ -36,6 +36,9 @@ static int _encode_channel_info_entry(CborEncoder* parent, const struct led_chan
     BO_TRY(cbor_encode_text_stringz(&ch_map, "w"));
     BO_TRY(cbor_encode_int(&ch_map, channel->wavelength));
 
+    BO_TRY(cbor_encode_text_stringz(&ch_map, "w2"));
+    BO_TRY(cbor_encode_int(&ch_map, channel->wavelength2));
+
     BO_TRY(cbor_encode_text_stringz(&ch_map, "f"));
     BO_TRY(cbor_encode_float(&ch_map, channel->factor));
 
