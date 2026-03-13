@@ -24,6 +24,7 @@ const struct led_user_settings LED_USER_DEFAULT_SETTINGS = {
 };
 
 const struct led_factory_settings LED_FACTORY_DEFAULT_SETTINGS = {
+    .usage = LED_USAGE_GENERAL,
     .nominal_pfd = 0,
     .nominal_power = 0,
     .pwm_freq = 19530,

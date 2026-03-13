@@ -27,20 +27,17 @@ typedef led_virtual_brightness_t led_virtual_color_t[CONFIG_LYFI_LED_CHANNEL_COU
 #define LED_BRIGHTNESS_MAX ((led_brightness_t)4095)
 #define LED_VIRTUAL_BRIGHTNESS_MAX ((led_virtual_brightness_t)65535)
 
-static inline led_virtual_brightness_t led_brightness_to_virtual(led_brightness_t brightness)
-{
-    return (led_virtual_brightness_t)(((uint32_t)brightness * LED_VIRTUAL_BRIGHTNESS_MAX + (LED_BRIGHTNESS_MAX / 2))
-                                      / LED_BRIGHTNESS_MAX);
-}
-
-static inline led_brightness_t led_virtual_to_brightness(led_virtual_brightness_t brightness)
-{
-    return (led_brightness_t)(((uint32_t)brightness * LED_BRIGHTNESS_MAX + (LED_VIRTUAL_BRIGHTNESS_MAX / 2))
-                              / LED_VIRTUAL_BRIGHTNESS_MAX);
-}
-
 #define LED_ACCLIMATION_DAYS_MAX 100
 #define LED_ACCLIMATION_DAYS_MIN 5
+
+enum led_usage_enum {
+    LED_USAGE_GENERAL = 0,
+    LED_USAGE_FRESHWATER = 1,
+    LED_USAGE_MARINE = 2,
+    LED_USAGE_TERRA = 3,
+    LED_USAGE_CINEMA = 4,
+    LED_USAGE_HOME = 4,
+};
 
 enum led_correction_methods {
     LED_CORRECTION_LOG = 0,
@@ -98,6 +95,7 @@ struct led_channel_settings {
 };
 
 struct led_factory_settings {
+    uint8_t usage; ///< Usage
     uint16_t nominal_pfd; ///< Nominal pfd
     uint16_t nominal_power; ///< Nominal power in Watts
     uint8_t channel_count; ///< PWM channel count
@@ -273,6 +271,18 @@ void led_cloud_drive(led_color_t color);
 // Disco mode functions
 int led_disco_init();
 void led_disco_drive(time_t utc_now, led_color_t color);
+
+static inline led_virtual_brightness_t led_brightness_to_virtual(led_brightness_t brightness)
+{
+    return (led_virtual_brightness_t)(((uint32_t)brightness * LED_VIRTUAL_BRIGHTNESS_MAX + (LED_BRIGHTNESS_MAX / 2))
+                                      / LED_BRIGHTNESS_MAX);
+}
+
+static inline led_brightness_t led_virtual_to_brightness(led_virtual_brightness_t brightness)
+{
+    return (led_brightness_t)(((uint32_t)brightness * LED_BRIGHTNESS_MAX + (LED_VIRTUAL_BRIGHTNESS_MAX / 2))
+                              / LED_VIRTUAL_BRIGHTNESS_MAX);
+}
 
 #ifdef __cplusplus
 }

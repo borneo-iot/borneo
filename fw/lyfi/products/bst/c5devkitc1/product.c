@@ -24,8 +24,9 @@ const struct led_user_settings LED_USER_DEFAULT_SETTINGS = {
 };
 
 const struct led_factory_settings LED_FACTORY_DEFAULT_SETTINGS = {
-    .nominal_pfd = 450,
-    .nominal_power = 60,
+    .usage = LED_USAGE_GENERAL,
+    .nominal_pfd = 0,
+    .nominal_power = 0,
     .pwm_freq = 19530,
     .channel_count = CONFIG_LYFI_LED_CHANNEL_COUNT,
     .channels = {

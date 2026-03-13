@@ -146,6 +146,10 @@ int bo_rpc_borneo_lyfi_info_get(const CborValue* args, CborEncoder* retvals)
     BO_TRY(cbor_encoder_create_map(retvals, &root_map, CborIndefiniteLength));
 
     const struct led_factory_settings* factory = led_get_factory_settings();
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "usage"));
+    BO_TRY(cbor_encode_uint(&root_map, factory->usage));
+
     if (factory->nominal_pfd > 0) {
         BO_TRY(cbor_encode_text_stringz(&root_map, "nominalPfd"));
         BO_TRY(cbor_encode_uint(&root_map, factory->nominal_pfd));

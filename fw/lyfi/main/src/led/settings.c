@@ -26,6 +26,7 @@
 #include "led.h"
 
 #define LED_NVS_NS "led"
+#define LED_NVS_KEY_USAGE "usage"
 #define LED_NVS_KEY_RUNNING_MODE "mode"
 #define LED_NVS_KEY_MANUAL_COLOR "mcolor"
 #define LED_NVS_KEY_SUN_COLOR "suncolor"
@@ -63,6 +64,9 @@ int led_load_factory_settings()
     BO_NVS_AUTO_CLOSE(handle);
 
     bool changed = false;
+
+    BO_TRY(bo_nvs_get_or_set_u8(handle, LED_NVS_KEY_USAGE, &s_factory_settings.usage,
+                                LED_FACTORY_DEFAULT_SETTINGS.usage, &changed));
 
     BO_TRY(bo_nvs_get_or_set_u16(handle, LED_NVS_KEY_NOMINAL_PFD, &s_factory_settings.nominal_pfd,
                                  LED_FACTORY_DEFAULT_SETTINGS.nominal_pfd, &changed));
