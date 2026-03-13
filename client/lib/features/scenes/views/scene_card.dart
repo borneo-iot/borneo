@@ -13,6 +13,28 @@ class SceneCard extends ConsumerWidget {
   final SceneSummaryModel scene;
   final VoidCallback? onCentered;
   static const _smallShadow = Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Color.fromARGB(128, 0, 0, 0));
+  static const _unselectedImageMatrix = <double>[
+    0.48,
+    0.35,
+    0.07,
+    0,
+    0,
+    0.18,
+    0.65,
+    0.07,
+    0,
+    0,
+    0.18,
+    0.35,
+    0.37,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ];
 
   const SceneCard(this.scene, {super.key, this.onCentered});
 
@@ -66,81 +88,18 @@ class SceneCard extends ConsumerWidget {
         children: [
           _buildSceneImage(context),
           _buildSceneInfo(context),
-          Positioned.fill(
-            child: ShaderMask(
-              shaderCallback: (Rect bounds) {
-                return RadialGradient(
-                  center: Alignment.center,
-                  radius: 0.5,
-                  colors: [Colors.white.withAlpha(200), Colors.white],
-                  stops: const [0.0, 1.0],
-                  tileMode: TileMode.clamp,
-                ).createShader(bounds);
-              },
-              blendMode: BlendMode.srcATop,
-              child: Container(color: Colors.transparent),
-            ),
-          ),
           Positioned(top: 0.0, right: 0.0, child: editWidget),
         ],
       );
     }
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: scene.isSelected ? 0.0 : 1.0, end: scene.isSelected ? 0.0 : 1.0),
-      duration: const Duration(milliseconds: 300),
-      builder: (context, value, child) {
-        final double s = 1.0 - 0.1 * value;
-        final double b = 1.0 - 0.1 * value;
-        final matrix = <double>[
-          s * b,
-          (1 - s) * b,
-          (1 - s) * b,
-          0,
-          0,
-          (1 - s) * b,
-          s * b,
-          (1 - s) * b,
-          0,
-          0,
-          (1 - s) * b,
-          (1 - s) * b,
-          s * b,
-          0,
-          0,
-          0,
-          0,
-          0,
-          1,
-          0,
-        ];
-        return ColorFiltered(
-          colorFilter: ColorFilter.matrix(matrix),
-          child: Stack(
-            alignment: Alignment.topRight,
-            children: [
-              _buildSceneImage(context),
-              _buildSceneInfo(context),
-              if (scene.isSelected)
-                Positioned.fill(
-                  child: ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return RadialGradient(
-                        center: Alignment.center,
-                        radius: 0.5,
-                        colors: [Colors.white.withAlpha(200), Colors.white],
-                        stops: const [0.0, 1.0],
-                        tileMode: TileMode.clamp,
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.srcATop,
-                    child: Container(color: Colors.transparent),
-                  ),
-                ),
-              Positioned(top: 0.0, right: 0.0, child: editWidget),
-            ],
-          ),
-        );
-      },
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        ColorFiltered(colorFilter: const ColorFilter.matrix(_unselectedImageMatrix), child: _buildSceneImage(context)),
+        Positioned.fill(child: _buildUnselectedOverlay()),
+        _buildSceneInfo(context),
+        Positioned(top: 0.0, right: 0.0, child: editWidget),
+      ],
     );
   }
 
@@ -176,25 +135,26 @@ class SceneCard extends ConsumerWidget {
   }
 
   Widget _buildSceneImage(BuildContext context) {
-    if (scene.isSelected && scene.scene.imagePath == null) {
+    if (scene.scene.imagePath == null) {
       return Image.asset('assets/images/scenes/scene-default-noimage.jpg', fit: BoxFit.cover, width: double.infinity);
     }
-    if (!scene.isSelected && scene.scene.imagePath == null) {
-      return ColorFiltered(
-        colorFilter: ColorFilter.mode(Colors.black.withAlpha(128), BlendMode.srcATop),
-        child: Image.asset('assets/images/scenes/scene-default-noimage.jpg', fit: BoxFit.cover, width: double.infinity),
-      );
-    }
-    if (scene.isSelected && scene.scene.imagePath != null) {
+    if (scene.scene.imagePath != null) {
       return Image.file(File(scene.scene.imagePath!), fit: BoxFit.cover, width: double.infinity);
     }
-    if (!scene.isSelected && scene.scene.imagePath != null) {
-      return ColorFiltered(
-        colorFilter: ColorFilter.mode(Colors.black.withAlpha(97), BlendMode.srcATop),
-        child: Image.file(File(scene.scene.imagePath!), fit: BoxFit.cover, width: double.infinity),
-      );
-    }
     return const SizedBox.shrink();
+  }
+
+  Widget _buildUnselectedOverlay() {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.black.withAlpha(28), Colors.black.withAlpha(58), Colors.black.withAlpha(92)],
+          stops: const [0.0, 0.55, 1.0],
+        ),
+      ),
+    );
   }
 
   Widget _buildSceneInfo(BuildContext context) {
