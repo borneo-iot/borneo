@@ -77,6 +77,13 @@ menu "Borneo LyFi"
             int "GPIO for LED channel 9"
             default -1
 
+        config LYFI_LED_CH10_GPIO
+            int "GPIO for LED channel 10"
+            default -1
+
+        config LYFI_LED_CH11_GPIO
+            int "GPIO for LED channel 11"
+            default -1
 
     endmenu
 
