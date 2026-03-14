@@ -1,4 +1,73 @@
 menu "Drvfx Configuration"
+    menu "Bus Controllers"
+
+        menu "I2C"
+            config DRVFX_I2C_IDF
+                bool "Enable ESP-IDF I2C controller driver"
+
+            config DRVFX_I2C0_NAME
+                string "I2C controller device name"
+                default "i2c0"
+                depends on DRVFX_I2C_IDF
+
+            config DRVFX_I2C0_PORT
+                int "I2C controller port"
+                default 0
+                depends on DRVFX_I2C_IDF
+
+            config DRVFX_I2C0_SDA_GPIO
+                int "I2C SDA GPIO number"
+                depends on DRVFX_I2C_IDF
+
+            config DRVFX_I2C0_SCL_GPIO
+                int "I2C SCL GPIO number"
+                depends on DRVFX_I2C_IDF
+
+            config DRVFX_I2C0_FREQ_HZ
+                int "I2C clock frequency (Hz)"
+                default 100000
+                depends on DRVFX_I2C_IDF
+
+            config DRVFX_I2C0_PULLUP
+                bool "Enable internal pull-ups"
+                default y
+                depends on DRVFX_I2C_IDF
+        endmenu
+
+        menu "SPI"
+            config DRVFX_SPI_IDF
+                bool "Enable ESP-IDF SPI controller driver"
+
+            config DRVFX_SPI0_NAME
+                string "SPI controller device name"
+                default "spi0"
+                depends on DRVFX_SPI_IDF
+
+            config DRVFX_SPI0_HOST
+                int "SPI host id"
+                default 2
+                depends on DRVFX_SPI_IDF
+
+            config DRVFX_SPI0_MOSI_GPIO
+                int "SPI MOSI GPIO number"
+                depends on DRVFX_SPI_IDF
+
+            config DRVFX_SPI0_MISO_GPIO
+                int "SPI MISO GPIO number"
+                depends on DRVFX_SPI_IDF
+
+            config DRVFX_SPI0_SCLK_GPIO
+                int "SPI SCLK GPIO number"
+                depends on DRVFX_SPI_IDF
+
+            config DRVFX_SPI0_MAX_TRANSFER_SZ
+                int "SPI max transfer size"
+                default 64
+                depends on DRVFX_SPI_IDF
+        endmenu
+
+    endmenu
+
     menu "Drivers"
 
         menu "RTC (Real-Time Clock)"
@@ -17,6 +86,7 @@ menu "Drvfx Configuration"
 
                 config DRIVER_RTC_PCF8563
                     bool "PCF8563"
+                    depends on DRVFX_I2C_IDF
             endchoice
 
             config DRIVER_RTC_DS1302_CE_GPIO
@@ -40,16 +110,14 @@ menu "Drvfx Configuration"
                 default 0x51
                 depends on DRIVER_RTC_PCF8563
 
-            config DRIVER_RTC_PCF8563_I2C_PORT
-                int "PCF8563 I2C port"
+            config DRIVER_RTC_PCF8563_BUS_NAME
+                string "PCF8563 bus device name"
+                default "i2c0"
                 depends on DRIVER_RTC_PCF8563
 
-            config DRIVER_RTC_PCF8563_SDA_GPIO
-                int "PCF8563 I2C SDA GPIO number"
-                depends on DRIVER_RTC_PCF8563
-
-            config DRIVER_RTC_PCF8563_SCL_GPIO
-                int "PCF8563 I2C SCL GPIO number"
+            config DRIVER_RTC_PCF8563_TIMEOUT_MS
+                int "PCF8563 transaction timeout (ms)"
+                default 1000
                 depends on DRIVER_RTC_PCF8563
 
         endmenu

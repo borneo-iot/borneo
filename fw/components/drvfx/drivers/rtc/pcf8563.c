@@ -6,8 +6,6 @@
 #include <assert.h>
 #include <time.h>
 
-#include <driver/gpio.h>
-#include <driver/i2c.h>
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
@@ -15,6 +13,7 @@
 #include <freertos/task.h>
 
 #include "drvfx/drvfx.h"
+#include "drvfx/drivers/i2c.h"
 #include "drvfx/drivers/rtc.h"
 
 #ifdef CONFIG_DRIVER_RTC_PCF8563
@@ -23,17 +22,16 @@
 #define BCD2DEC(bcd) ((bcd / 16 * 10) + (bcd % 16))
 
 struct pcf8563_config {
-    // TODO: configurable I2C port and address
+    const char* bus_name;
+    uint16_t addr;
+    TickType_t timeout;
 };
 
 struct pcf8563_data {
+    const struct drvfx_device* bus;
     SemaphoreHandle_t lock;
     StaticSemaphore_t lock_buf;
 };
-
-// TODO: make configurable
-#define PCF8563_I2C_PORT CONFIG_DRIVER_RTC_PCF8563_I2C_PORT
-#define PCF8563_I2C_ADDR CONFIG_DRIVER_RTC_PCF8563_ADDR
 
 enum {
     PCF8563_REG_CONTROL_STATUS_1 = 0x00,
@@ -47,11 +45,18 @@ enum {
     PCF8563_REG_YEARS = 0x08,
 };
 
-static int pcf8563_read_reg(uint8_t reg, uint8_t* value);
-static int pcf8563_write_reg(uint8_t reg, uint8_t value);
+static int pcf8563_read_reg(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t reg,
+                            uint8_t* value);
+static int pcf8563_write_reg(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t reg,
+                             uint8_t value);
+static int pcf8563_read_regs(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t start_reg,
+                             uint8_t* buf, size_t len);
+static int pcf8563_write_regs(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t start_reg,
+                              const uint8_t* buf, size_t len);
 
 static int pcf8563_init(const struct drvfx_device* dev)
 {
+    const struct pcf8563_config* config = (const struct pcf8563_config*)dev->config;
     struct pcf8563_data* rt = (struct pcf8563_data*)dev->data;
 
     rt->lock = xSemaphoreCreateBinaryStatic(&rt->lock_buf);
@@ -63,24 +68,10 @@ static int pcf8563_init(const struct drvfx_device* dev)
         return -1;
     }
 
-    // Initialize I2C
-    i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = CONFIG_DRIVER_RTC_PCF8563_SDA_GPIO,
-        .scl_io_num = CONFIG_DRIVER_RTC_PCF8563_SCL_GPIO,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = 100000, // 100kHz
-    };
-    esp_err_t ret = i2c_param_config(PCF8563_I2C_PORT, &conf);
-    if (ret != ESP_OK) {
+    rt->bus = k_device_get_binding(config->bus_name);
+    if (rt->bus == NULL) {
         xSemaphoreGive(rt->lock);
-        return -1;
-    }
-    ret = i2c_driver_install(PCF8563_I2C_PORT, conf.mode, 0, 0, 0);
-    if (ret != ESP_OK) {
-        xSemaphoreGive(rt->lock);
-        return -1;
+        return -ENODEV;
     }
 
     xSemaphoreGive(rt->lock);
@@ -89,13 +80,14 @@ static int pcf8563_init(const struct drvfx_device* dev)
 
 static int pcf8563_is_halted(const struct drvfx_device* dev, bool* halted)
 {
+    const struct pcf8563_config* config = (const struct pcf8563_config*)dev->config;
     struct pcf8563_data* rt = (struct pcf8563_data*)dev->data;
     if (xSemaphoreTake(rt->lock, portMAX_DELAY) != pdTRUE) {
         return -1;
     }
 
     uint8_t seconds;
-    int ret = pcf8563_read_reg(PCF8563_REG_VL_SECONDS, &seconds);
+    int ret = pcf8563_read_reg(config, rt, PCF8563_REG_VL_SECONDS, &seconds);
     if (ret == 0) {
         *halted = (seconds & 0x80) != 0;
     }
@@ -106,19 +98,17 @@ static int pcf8563_is_halted(const struct drvfx_device* dev, bool* halted)
 
 static int pcf8563_now(const struct drvfx_device* dev, struct tm* now)
 {
+    const struct pcf8563_config* config = (const struct pcf8563_config*)dev->config;
     struct pcf8563_data* rt = (struct pcf8563_data*)dev->data;
     if (xSemaphoreTake(rt->lock, portMAX_DELAY) != pdTRUE) {
         return -1;
     }
 
     uint8_t buf[7];
-    // Read from VL_SECONDS to YEARS
-    for (int i = 0; i < 7; i++) {
-        int ret = pcf8563_read_reg(PCF8563_REG_VL_SECONDS + i, &buf[i]);
-        if (ret != 0) {
-            xSemaphoreGive(rt->lock);
-            return ret;
-        }
+    int ret = pcf8563_read_regs(config, rt, PCF8563_REG_VL_SECONDS, buf, sizeof(buf));
+    if (ret != 0) {
+        xSemaphoreGive(rt->lock);
+        return ret;
     }
 
     now->tm_sec = BCD2DEC(buf[0] & 0x7F);
@@ -136,6 +126,7 @@ static int pcf8563_now(const struct drvfx_device* dev, struct tm* now)
 
 static int pcf8563_set_datetime(const struct drvfx_device* dev, const struct tm* dt)
 {
+    const struct pcf8563_config* config = (const struct pcf8563_config*)dev->config;
     struct pcf8563_data* rt = (struct pcf8563_data*)dev->data;
     if (xSemaphoreTake(rt->lock, portMAX_DELAY) != pdTRUE) {
         return -1;
@@ -150,12 +141,10 @@ static int pcf8563_set_datetime(const struct drvfx_device* dev, const struct tm*
     buf[5] = DEC2BCD((dt->tm_mon + 1) % 13);
     buf[6] = DEC2BCD(dt->tm_year % 100);
 
-    for (int i = 0; i < 7; i++) {
-        int ret = pcf8563_write_reg(PCF8563_REG_VL_SECONDS + i, buf[i]);
-        if (ret != 0) {
-            xSemaphoreGive(rt->lock);
-            return ret;
-        }
+    int ret = pcf8563_write_regs(config, rt, PCF8563_REG_VL_SECONDS, buf, sizeof(buf));
+    if (ret != 0) {
+        xSemaphoreGive(rt->lock);
+        return ret;
     }
 
     xSemaphoreGive(rt->lock);
@@ -164,39 +153,69 @@ static int pcf8563_set_datetime(const struct drvfx_device* dev, const struct tm*
 
 static int pcf8563_halt(const struct drvfx_device* dev)
 {
+    const struct pcf8563_config* config = (const struct pcf8563_config*)dev->config;
     struct pcf8563_data* rt = (struct pcf8563_data*)dev->data;
     if (xSemaphoreTake(rt->lock, portMAX_DELAY) != pdTRUE) {
         return -1;
     }
 
     uint8_t seconds;
-    int ret = pcf8563_read_reg(PCF8563_REG_VL_SECONDS, &seconds);
+    int ret = pcf8563_read_reg(config, rt, PCF8563_REG_VL_SECONDS, &seconds);
     if (ret != 0) {
         xSemaphoreGive(rt->lock);
         return ret;
     }
 
     seconds |= 0x80;
-    ret = pcf8563_write_reg(PCF8563_REG_VL_SECONDS, seconds);
+    ret = pcf8563_write_reg(config, rt, PCF8563_REG_VL_SECONDS, seconds);
 
     xSemaphoreGive(rt->lock);
     return ret;
 }
 
-static int pcf8563_read_reg(uint8_t reg, uint8_t* value)
+static int pcf8563_read_reg(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t reg,
+                            uint8_t* value)
 {
-    return i2c_master_write_read_device(PCF8563_I2C_PORT, PCF8563_I2C_ADDR, &reg, 1, value, 1, pdMS_TO_TICKS(1000));
+    return drvfx_i2c_write_read(data->bus, config->addr, &reg, 1, value, 1, config->timeout);
 }
 
-static int pcf8563_write_reg(uint8_t reg, uint8_t value)
+static int pcf8563_write_reg(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t reg,
+                             uint8_t value)
 {
     uint8_t buf[2] = { reg, value };
-    return i2c_master_write_to_device(PCF8563_I2C_PORT, PCF8563_I2C_ADDR, buf, 2, pdMS_TO_TICKS(1000));
+    return drvfx_i2c_write(data->bus, config->addr, buf, sizeof(buf), config->timeout);
 }
 
-static const struct pcf8563_config _pcf8563_config = {};
+static int pcf8563_read_regs(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t start_reg,
+                             uint8_t* buf, size_t len)
+{
+    return drvfx_i2c_write_read(data->bus, config->addr, &start_reg, 1, buf, len, config->timeout);
+}
+
+static int pcf8563_write_regs(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t start_reg,
+                              const uint8_t* buf, size_t len)
+{
+    uint8_t tx_buf[8];
+    if (len > (sizeof(tx_buf) - 1)) {
+        return -EINVAL;
+    }
+
+    tx_buf[0] = start_reg;
+    memcpy(&tx_buf[1], buf, len);
+    return drvfx_i2c_write(data->bus, config->addr, tx_buf, len + 1, config->timeout);
+}
+
+static const struct pcf8563_config _pcf8563_config = {
+    .bus_name = CONFIG_DRIVER_RTC_PCF8563_BUS_NAME,
+    .addr = CONFIG_DRIVER_RTC_PCF8563_ADDR,
+    .timeout = pdMS_TO_TICKS(CONFIG_DRIVER_RTC_PCF8563_TIMEOUT_MS),
+};
 
 static struct pcf8563_data _pcf8563_data = { 0 };
+
+static const char* const _pcf8563_required_devices[] = {
+    CONFIG_DRIVER_RTC_PCF8563_BUS_NAME,
+};
 
 static const struct rtc_driver_api _pcf8563_api = {
     .now = &pcf8563_now,
@@ -205,7 +224,7 @@ static const struct rtc_driver_api _pcf8563_api = {
     .halt = &pcf8563_halt,
 };
 
-DRVFX_DEVICE_DEFINE("rtc_dev", pcf8563_init, &_pcf8563_data, &_pcf8563_config, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY,
-                    &_pcf8563_api);
+DRVFX_DEVICE_DEFINE_WITH_DEPS("rtc_dev", pcf8563_init, &_pcf8563_data, &_pcf8563_config,
+                              DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY, &_pcf8563_api, _pcf8563_required_devices, 1);
 
 #endif // CONFIG_DRIVER_RTC_PCF8563

@@ -8,6 +8,11 @@ Borrowed from Zephyr RTOS: an ESP-IDF modular device driver framework.
 
 This component provides a small, modular driver/kernel abstraction for device drivers used by the project. It centralizes device registration, initialization, and driver interfaces so platform drivers can be developed and reused consistently.
 
+It is not a hardware abstraction layer for every ESP-IDF peripheral. The intended split is:
+
+- bus controller drivers own shared resources such as I2C and SPI hosts;
+- peripheral drivers bind to those bus devices by name and only implement device-specific behavior.
+
 ## Layout
 
 - `include/drvfx/`: public headers for the framework and drivers.
@@ -51,7 +56,24 @@ DRVFX_SUBSYS_INIT(my_subsys_init, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY);
 Notes:
 
 - Use `DRVFX_SYS_INIT` / `DRVFX_SYS_INIT_NAMED` when you need a system init entry associated with the init function name.
-- Subsystem inits run automatically during kernel initialization (e.g., when `k_init()` is invoked). After init, use `k_device_get_binding()` and `k_device_is_ready()` to access devices.
+- Subsystem inits run automatically as part of the `drvfx` startup path. `k_init()` initializes kernel state, and the framework then runs EARLY/PRE_KERNEL/POST_KERNEL/APPLICATION entries in order.
+- After init, use `k_device_get_binding()` and `k_device_is_ready()` to access devices.
+
+### Device dependencies
+
+When a device depends on another registered device, declare the dependency names with `DRVFX_DEVICE_DEFINE_WITH_DEPS` or `DRVFX_NAMED_DEVICE_DEFINE_WITH_DEPS`.
+
+If any dependency is missing or not ready at init time, the framework now fails that device initialization with an explicit log instead of silently continuing.
+
+This is intentionally lightweight: ordering is still controlled by init priority, but the dependency list makes failures obvious and keeps child devices from probing a bus/controller that never came up.
+
+### Bus drivers
+
+`drvfx` now exposes dedicated bus APIs in `include/drvfx/drivers/i2c.h` and `include/drvfx/drivers/spi.h`.
+
+- I2C controllers own controller setup, locking, and transfers.
+- SPI controllers own host setup and per-device attachment handles.
+- Peripheral drivers such as RTCs should depend on the bus device and use the bus API instead of directly installing the underlying ESP-IDF driver.
 
 ## Driver development example — foo
 

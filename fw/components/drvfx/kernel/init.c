@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include <esp_log.h>
 #include <esp_private/startup_internal.h>
@@ -28,6 +29,27 @@ enum init_level {
     DRVFX_INIT_LEVEL_APPLICATION,
 };
 
+static int drvfx_device_check_dependencies(const struct drvfx_device* dev)
+{
+    if ((dev == NULL) || (dev->required_devices == NULL)) {
+        return 0;
+    }
+
+    for (size_t index = 0; index < dev->required_device_count; index++) {
+        const char* dep_name = dev->required_devices[index];
+        if ((dep_name == NULL) || (dep_name[0] == '\0')) {
+            continue;
+        }
+
+        if (k_device_get_binding(dep_name) == NULL) {
+            ESP_LOGE(TAG, "Dependency not ready: %s requires %s", dev->name, dep_name);
+            return -ENODEV;
+        }
+    }
+
+    return 0;
+}
+
 static void drvfx_sys_init_run_level(enum init_level level)
 {
     static const struct drvfx_init_entry* levels[] = {
@@ -55,17 +77,30 @@ static void drvfx_sys_init_run_level(enum init_level level)
     int pos = level * 2;
     for (const struct drvfx_init_entry* entry = levels[pos]; entry != levels[pos + 1]; entry++) {
         const struct drvfx_device* dev = entry->dev;
-        int rc = entry->init(dev);
+        int rc = 0;
+
+        if (dev != NULL) {
+            rc = drvfx_device_check_dependencies(dev);
+            if (rc == 0) {
+                rc = entry->init(dev);
+            }
+        }
+        else {
+            rc = entry->init(dev);
+        }
 
         if (dev != NULL) {
             /* Mark device initialized.  If initialization
              * failed, record the error condition.
              */
+            dev->state->init_res = rc;
             if (rc != 0) {
-                dev->state->init_res = rc;
-                ESP_LOGE(TAG, "Failed to initialize: %s", dev->name);
+                ESP_LOGE(TAG, "Failed to initialize: %s (rc=%d)", dev->name, rc);
             }
             dev->state->initialized = true;
+        }
+        else if (rc != 0) {
+            ESP_LOGE(TAG, "Subsystem init failed (rc=%d)", rc);
         }
     }
 }
