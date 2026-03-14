@@ -1,4 +1,5 @@
 #include <driver/i2c_master.h>
+#include <esp_err.h>
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
@@ -89,6 +90,27 @@ static int drvfx_i2c_idf_detach_device_impl(const struct drvfx_device* dev, void
     return rc;
 }
 
+static int drvfx_i2c_idf_probe_impl(const struct drvfx_device* dev, uint16_t addr, TickType_t timeout)
+{
+    struct drvfx_i2c_idf_data* data = (struct drvfx_i2c_idf_data*)dev->data;
+
+    if (xSemaphoreTake(data->lock, portMAX_DELAY) != pdTRUE) {
+        return -1;
+    }
+
+    esp_err_t rc = i2c_master_probe(data->bus_handle, addr, drvfx_i2c_timeout_ms(timeout));
+    xSemaphoreGive(data->lock);
+
+    if (rc == ESP_OK) {
+        ESP_LOGI(TAG, "Probe ok bus=%s addr=0x%02x", dev->name, addr);
+    }
+    else {
+        ESP_LOGE(TAG, "Probe failed bus=%s addr=0x%02x err=%s", dev->name, addr, esp_err_to_name(rc));
+    }
+
+    return rc;
+}
+
 static int drvfx_i2c_idf_transmit_receive_impl(const struct drvfx_device* dev, void* handle, const void* tx_buf,
                                                size_t tx_len, void* rx_buf, size_t rx_len, TickType_t timeout)
 {
@@ -170,6 +192,7 @@ static struct drvfx_i2c_idf_data s_i2c0_data = { 0 };
 static const struct drvfx_i2c_driver_api s_i2c_api = {
     .attach_device = drvfx_i2c_idf_attach_device_impl,
     .detach_device = drvfx_i2c_idf_detach_device_impl,
+    .probe = drvfx_i2c_idf_probe_impl,
     .transmit_receive = drvfx_i2c_idf_transmit_receive_impl,
     .transmit = drvfx_i2c_idf_transmit_impl,
     .receive = drvfx_i2c_idf_receive_impl,

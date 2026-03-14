@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <time.h>
 
+#include <esp_err.h>
 #include <esp_log.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
@@ -17,6 +18,8 @@
 #include "drvfx/drivers/rtc.h"
 
 #ifdef CONFIG_DRIVER_RTC_PCF8563
+
+#define TAG "pcf8563"
 
 #define DEC2BCD(dec) ((dec / 10 * 16) + (dec % 10))
 #define BCD2DEC(bcd) ((bcd / 16 * 10) + (bcd % 16))
@@ -71,6 +74,7 @@ static int pcf8563_init(const struct drvfx_device* dev)
 
     rt->bus = k_device_get_binding(config->bus_name);
     if (rt->bus == NULL) {
+        ESP_LOGE(TAG, "Bus device not found: %s", config->bus_name);
         xSemaphoreGive(rt->lock);
         return -ENODEV;
     }
@@ -83,11 +87,23 @@ static int pcf8563_init(const struct drvfx_device* dev)
         .disable_ack_check = false,
     };
 
+    ESP_LOGI(TAG, "Attaching PCF8563 bus=%s addr=0x%02x", config->bus_name, config->addr);
+
     int ret = drvfx_i2c_attach_device(rt->bus, &bus_device_config, &rt->bus_device);
     if (ret != 0) {
+        ESP_LOGE(TAG, "Attach failed addr=0x%02x err=%s", config->addr, esp_err_to_name((esp_err_t)ret));
         xSemaphoreGive(rt->lock);
         return ret;
     }
+
+    ret = drvfx_i2c_probe(rt->bus, config->addr, config->timeout);
+    if (ret != 0) {
+        ESP_LOGE(TAG, "Probe failed addr=0x%02x err=%s", config->addr, esp_err_to_name((esp_err_t)ret));
+        xSemaphoreGive(rt->lock);
+        return ret;
+    }
+
+    ESP_LOGI(TAG, "Probe ok addr=0x%02x", config->addr);
 
     xSemaphoreGive(rt->lock);
     return 0;
