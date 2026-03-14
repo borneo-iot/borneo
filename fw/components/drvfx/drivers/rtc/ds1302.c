@@ -254,7 +254,6 @@ static int next_bit()
     return 0;
 }
 
-
 static const struct ds1302_config _ds1302_config = {};
 
 static struct ds1302_data _ds1302_data = { 0 };
@@ -266,8 +265,7 @@ static const struct rtc_driver_api _ds1302_api = {
     .halt = &ds1302_halt,
 };
 
-
-DRVFX_DEVICE_DEFINE("ds1302", ds1302_init, &_ds1302_data, &_ds1302_config, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY,
+DRVFX_DEVICE_DEFINE("rtc_dev", ds1302_init, &_ds1302_data, &_ds1302_config, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY,
                     &_ds1302_api);
 
 #endif // CONFIG_DRIVER_RTC_DS1302

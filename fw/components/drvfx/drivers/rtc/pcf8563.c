@@ -205,7 +205,7 @@ static const struct rtc_driver_api _pcf8563_api = {
     .halt = &pcf8563_halt,
 };
 
-DRVFX_DEVICE_DEFINE("pcf8563", pcf8563_init, &_pcf8563_data, &_pcf8563_config, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY,
+DRVFX_DEVICE_DEFINE("rtc_dev", pcf8563_init, &_pcf8563_data, &_pcf8563_config, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY,
                     &_pcf8563_api);
 
 #endif // CONFIG_DRIVER_RTC_PCF8563
