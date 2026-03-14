@@ -5,26 +5,53 @@ import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class MoonRunningChart extends StatelessWidget {
+class MoonRunningChart extends StatefulWidget {
   final ScheduleTable moonInstants;
   final List<LyfiChannelInfo> channelInfoList;
   const MoonRunningChart({required this.moonInstants, required this.channelInfoList, super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-      child: LyfiTimeLineChart(
-        lineBarsData: buildLineData(kLyfiBrightnessMax.toDouble()),
-        minX: moonInstants.isNotEmpty ? moonInstants.first.instant.inSeconds.toDouble() : 0,
-        maxX: moonInstants.isNotEmpty ? moonInstants.last.instant.inSeconds.toDouble() : 24 * 3600,
-        minY: 0,
-        maxY: 1.0,
-      ),
-    );
+  State<MoonRunningChart> createState() => _MoonRunningChartState();
+}
+
+class _MoonRunningChartState extends State<MoonRunningChart> {
+  late List<LineChartBarData> _lineData;
+  late int _lineDataSignature;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshLineData();
   }
 
-  List<LineChartBarData> buildLineData(double maxBrightness) {
+  @override
+  void didUpdateWidget(covariant MoonRunningChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final signature = _buildLineDataSignature(widget.moonInstants, widget.channelInfoList);
+    if (signature != _lineDataSignature) {
+      _refreshLineData();
+    }
+  }
+
+  void _refreshLineData() {
+    _lineDataSignature = _buildLineDataSignature(widget.moonInstants, widget.channelInfoList);
+    _lineData = _buildLineData(widget.moonInstants, widget.channelInfoList, kLyfiBrightnessMax.toDouble());
+  }
+
+  int _buildLineDataSignature(ScheduleTable moonInstants, List<LyfiChannelInfo> channelInfoList) {
+    return Object.hashAll([
+      channelInfoList.length,
+      for (final channel in channelInfoList) Object.hash(channel.name, channel.color, channel.wavelength),
+      moonInstants.length,
+      for (final instant in moonInstants) Object.hash(instant.instant, Object.hashAll(instant.color)),
+    ]);
+  }
+
+  List<LineChartBarData> _buildLineData(
+    ScheduleTable moonInstants,
+    List<LyfiChannelInfo> channelInfoList,
+    double maxBrightness,
+  ) {
     final series = <LineChartBarData>[];
     for (int channelIndex = 0; channelIndex < channelInfoList.length; channelIndex++) {
       bool allZero = true;
@@ -55,5 +82,19 @@ class MoonRunningChart extends StatelessWidget {
       );
     }
     return series;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+      child: LyfiTimeLineChart(
+        lineBarsData: _lineData,
+        minX: widget.moonInstants.isNotEmpty ? widget.moonInstants.first.instant.inSeconds.toDouble() : 0,
+        maxX: widget.moonInstants.isNotEmpty ? widget.moonInstants.last.instant.inSeconds.toDouble() : 24 * 3600,
+        minY: 0,
+        maxY: 1.0,
+      ),
+    );
   }
 }

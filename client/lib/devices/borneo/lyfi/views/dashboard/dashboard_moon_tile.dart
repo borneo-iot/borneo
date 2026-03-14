@@ -40,9 +40,7 @@ class DashboardMoonTile extends StatelessWidget {
     return Selector<
       LyfiViewModel,
       ({
-        bool isBusy,
-        bool isOnline,
-        bool isOn,
+        bool canChangeMoonSettings,
         bool enabled,
         MoonStatus? moonStatus,
         bool isMoonTime,
@@ -51,9 +49,7 @@ class DashboardMoonTile extends StatelessWidget {
       })
     >(
       selector: (_, vm) => (
-        isBusy: vm.isBusy,
-        isOnline: vm.isOnline,
-        isOn: vm.isOn,
+        canChangeMoonSettings: vm.canChangeMoonSettings,
         enabled: vm.lyfiThing.getProperty<MoonConfig>('moonConfig')?.enabled ?? false,
         moonStatus: vm.lyfiThing.getProperty<MoonStatus>('moonStatus'),
         isMoonTime: vm.isMoonTime,
@@ -64,15 +60,18 @@ class DashboardMoonTile extends StatelessWidget {
         final theme = Theme.of(context);
         final isMoonActive = props.enabled && props.moonStatus != null && props.isMoonTime;
         final moonStatus = props.moonStatus;
-        final isDisabled = props.isBusy || !props.isOnline || !props.isOn;
         final Color bgColor = isMoonActive
             ? theme.colorScheme.primaryContainer
             : theme.colorScheme.surfaceContainerHighest;
         final Color fgColor = isMoonActive ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurface;
         final double disabledAlpha = 0.38;
-        final Color effectiveFgColor = isDisabled ? fgColor.withValues(alpha: disabledAlpha) : fgColor;
+        final Color effectiveFgColor = !props.canChangeMoonSettings
+            ? fgColor.withValues(alpha: disabledAlpha)
+            : fgColor;
         final Color iconColor = isMoonActive ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.primary;
-        final Color effectiveIconColor = isDisabled ? iconColor.withValues(alpha: disabledAlpha) : iconColor;
+        final Color effectiveIconColor = !props.canChangeMoonSettings
+            ? iconColor.withValues(alpha: disabledAlpha)
+            : iconColor;
         final String title = context.translate('Moonlight');
         final IconData iconData = isMoonActive && moonStatus != null
             ? getMoonPhaseIcon(moonStatus.phaseAngle)
@@ -85,8 +84,8 @@ class DashboardMoonTile extends StatelessWidget {
 
         return DashboardTile(
           backgroundColor: bgColor,
-          disabled: isDisabled,
-          onPressed: props.isOnline && props.isOn
+          disabled: !props.canChangeMoonSettings,
+          onPressed: props.canChangeMoonSettings
               ? () async {
                   final vm = context.read<LyfiViewModel>();
                   final deviceID = vm.deviceID;

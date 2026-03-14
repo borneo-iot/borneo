@@ -13,21 +13,19 @@ class SunEditorView extends StatelessWidget {
   const SunEditorView({super.key, required this.viewModel});
 
   Widget buildSliders(BuildContext context) {
-    return Consumer<SunEditorViewModel>(
-      builder: (context, vm, _) {
-        if (vm.isInitialized) {
-          return Selector<SunEditorViewModel, bool>(
-            selector: (_, editor) => editor.canChangeColor,
-            builder: (_, canChangeColor, _) => SafeArea(
-              top: false,
-              child: SingleChildScrollView(
-                child: BrightnessSliderList(context.read<SunEditorViewModel>(), disabled: !canChangeColor),
-              ),
-            ),
-          );
-        } else {
+    return Selector<SunEditorViewModel, ({bool isInitialized, bool canChangeColor})>(
+      selector: (_, editor) => (isInitialized: editor.isInitialized, canChangeColor: editor.canChangeColor),
+      builder: (context, editor, _) {
+        if (!editor.isInitialized) {
           return const SizedBox.shrink();
         }
+
+        return SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            child: BrightnessSliderList(context.read<SunEditorViewModel>(), disabled: !editor.canChangeColor),
+          ),
+        );
       },
     );
   }
@@ -45,8 +43,9 @@ class SunEditorView extends StatelessWidget {
   Widget buildGraph(BuildContext context) {
     return Selector<SunEditorViewModel, ({List<LyfiChannelInfo> channels, ScheduleTable instants})>(
       selector: (context, vm) => (channels: vm.parent.lyfiDeviceInfo.channels, instants: vm.sunInstants),
-      builder: (context, selected, _) =>
-          SunRunningChart(sunInstants: selected.instants, channelInfoList: selected.channels),
+      builder: (context, selected, _) => RepaintBoundary(
+        child: SunRunningChart(sunInstants: selected.instants, channelInfoList: selected.channels),
+      ),
     );
   }
 
@@ -60,10 +59,7 @@ class SunEditorView extends StatelessWidget {
           Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             padding: const EdgeInsets.all(0),
-            child: SizedBox(
-              height: 150,
-              child: Consumer<SunEditorViewModel>(builder: (conterxt, vm, _) => buildGraph(context)),
-            ),
+            child: SizedBox(height: 150, child: buildGraph(context)),
           ),
           Expanded(child: buildSliders(context)),
         ],

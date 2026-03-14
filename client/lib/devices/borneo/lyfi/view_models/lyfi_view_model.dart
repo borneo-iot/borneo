@@ -182,11 +182,8 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   final List<ValueNotifier<int>> _channels = [];
   List<ValueNotifier<int>> get channels => _channels;
 
-  Future<void> updateChannelValue(int index, int value) async {
-    if (index >= 0 && index < _channels.length) {
-      _channels[index].value = value;
-    }
-  }
+  bool get canChangeMoonSettings => !isBusy && isOnline && isOn && !isSuspectedOffline && isLocked;
+  bool get canChangeAcclimationSettings => !isBusy && isOnline && isOn && !isSuspectedOffline && isLocked;
 
   LyfiViewModel({
     required super.deviceManager,
@@ -197,6 +194,12 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     required super.gt,
     super.logger,
   });
+
+  Future<void> updateChannelValue(int index, int value) async {
+    if (index >= 0 && index < _channels.length) {
+      _channels[index].value = value;
+    }
+  }
 
   Future<T> executeLyfiCommand<T>(
     Future<T> Function() action, {
@@ -506,6 +509,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   bool get canSwitchTemporaryState =>
       !isBusy &&
       !isSuspectedOffline &&
+      isOnline &&
       super.isOn &&
       (super.mode == LyfiMode.scheduled || super.mode == LyfiMode.sun) &&
       (super.state == LyfiState.temporary || super.state == LyfiState.normal);

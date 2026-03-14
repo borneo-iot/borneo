@@ -93,11 +93,18 @@ class ManualEditorView extends StatelessWidget {
   }
 
   Widget buildGraph(BuildContext context) {
-    return Consumer<ManualEditorViewModel>(
-      builder: (context, vm, _) {
-        if (canRenderSpectrumChart(vm.deviceInfo.channels)) {
-          return LyfiSpectrumChart(channels: vm.deviceInfo.channels, brightnessValues: vm.channels);
+    return Selector<ManualEditorViewModel, ({bool isInitialized, List<LyfiChannelInfo> channels})>(
+      selector: (_, vm) => (isInitialized: vm.isInitialized, channels: vm.deviceInfo.channels),
+      builder: (context, graph, _) {
+        if (!graph.isInitialized) {
+          return const SizedBox.shrink();
         }
+
+        final vm = context.read<ManualEditorViewModel>();
+        if (canRenderSpectrumChart(graph.channels)) {
+          return LyfiSpectrumChart(channels: graph.channels, brightnessValues: vm.channels);
+        }
+
         return MultiValueListenableBuilder<int>(
           valueNotifiers: vm.channels,
           builder: (context, values, _) => LyfiColorChart(

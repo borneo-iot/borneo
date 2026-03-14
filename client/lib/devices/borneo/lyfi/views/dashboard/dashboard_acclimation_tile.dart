@@ -14,14 +14,9 @@ class DashboardAcclimationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<
-      LyfiViewModel,
-      ({bool isBusy, bool isOnline, bool isOn, bool enabled, bool activated, AcclimationSettings? acclimation})
-    >(
+    return Selector<LyfiViewModel, ({bool canOpen, bool enabled, bool activated, AcclimationSettings? acclimation})>(
       selector: (_, vm) => (
-        isBusy: vm.isBusy,
-        isOnline: vm.isOnline,
-        isOn: vm.isOn,
+        canOpen: vm.canChangeAcclimationSettings,
         enabled: vm.acclimationEnabled,
         activated: vm.acclimationActivated,
         acclimation: vm.acclimationSettings,
@@ -30,13 +25,12 @@ class DashboardAcclimationTile extends StatelessWidget {
         final theme = Theme.of(context);
         final acclimation = props.acclimation;
         final isActive = props.enabled || props.activated;
-        final isDisabled = props.isBusy || !props.isOnline || !props.isOn;
         final Color bgColor = isActive ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest;
         final Color fgColor = isActive ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurface;
         final double disabledAlpha = 0.38;
-        final Color effectiveFgColor = isDisabled ? fgColor.withValues(alpha: disabledAlpha) : fgColor;
+        final Color effectiveFgColor = !props.canOpen ? fgColor.withValues(alpha: disabledAlpha) : fgColor;
         final Color iconColor = isActive ? theme.colorScheme.onPrimary : theme.colorScheme.primary;
-        final Color effectiveIconColor = isDisabled ? iconColor.withValues(alpha: disabledAlpha) : iconColor;
+        final Color effectiveIconColor = !props.canOpen ? iconColor.withValues(alpha: disabledAlpha) : iconColor;
 
         // Calculate progress and remaining time
         double progress = 0.0;
@@ -70,8 +64,8 @@ class DashboardAcclimationTile extends StatelessWidget {
 
         return DashboardTile(
           backgroundColor: bgColor,
-          disabled: !props.isOnline || !props.isOn,
-          onPressed: props.isOnline && props.isOn
+          disabled: !props.canOpen,
+          onPressed: props.canOpen
               ? () async {
                   if (context.mounted) {
                     final vm = context.read<LyfiViewModel>();

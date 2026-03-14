@@ -15,12 +15,8 @@ class DashboardTemporaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<
-      LyfiViewModel,
-      ({LyfiState? state, bool canSwitch, Duration total, Duration remain, bool isOnline})
-    >(
+    return Selector<LyfiViewModel, ({LyfiState? state, bool canSwitch, Duration total, Duration remain})>(
       selector: (context, vm) => (
-        isOnline: vm.isOnline,
         state: vm.state,
         canSwitch: vm.canSwitchTemporaryState,
         total: vm.temporaryDuration,
@@ -36,16 +32,15 @@ class DashboardTemporaryTile extends StatelessWidget {
           final sec = (remainSeconds % 60).toString().padLeft(2, '0');
           remainText = '$min:$sec';
         }
-        final isDisabled = !props.canSwitch || !props.isOnline;
         final Color bgColor = isActive ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest;
         final Color fgColor = isActive ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurface;
         final double disabledAlpha = 0.38;
-        final Color effectiveFgColor = isDisabled ? fgColor.withValues(alpha: disabledAlpha) : fgColor;
+        final Color effectiveFgColor = !props.canSwitch ? fgColor.withValues(alpha: disabledAlpha) : fgColor;
         final Color iconColor = isActive ? theme.colorScheme.onPrimary : theme.colorScheme.primary;
-        final Color effectiveIconColor = isDisabled ? iconColor.withValues(alpha: disabledAlpha) : iconColor;
+        final Color effectiveIconColor = props.canSwitch ? iconColor.withValues(alpha: disabledAlpha) : iconColor;
         return DashboardTile(
           backgroundColor: bgColor,
-          disabled: !props.canSwitch || !props.isOnline,
+          disabled: !props.canSwitch,
           onPressed: props.canSwitch ? () => _switchTemporary(context) : null,
           onLongPressed: props.canSwitch ? () => _gotoDiscoScreen(context) : null,
           child: Stack(

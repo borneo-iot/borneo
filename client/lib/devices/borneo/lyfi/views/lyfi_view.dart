@@ -202,10 +202,9 @@ class _DashboardRouteVisibilityGate extends StatelessWidget {
 
     return AnimatedBuilder(
       animation: Listenable.merge(animations),
+      child: const DashboardView(key: ValueKey('dashboard')),
       builder: (context, child) {
-        return route.isCurrent
-            ? const DashboardView(key: ValueKey('dashboard'))
-            : const SizedBox.shrink(key: ValueKey('dashboard-paused'));
+        return route.isCurrent ? child! : const SizedBox.shrink(key: ValueKey('dashboard-paused'));
       },
     );
   }

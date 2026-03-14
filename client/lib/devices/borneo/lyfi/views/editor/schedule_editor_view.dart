@@ -17,9 +17,103 @@ import '../widgets/lyfi_time_line_chart.dart';
 
 const Duration _kScheduleChartAnimationDuration = Duration(milliseconds: 20);
 
+@immutable
+class _ScheduleChartState {
+  final List<ScheduleEntryViewModel> entries;
+  final List<LyfiChannelInfo> channelInfo;
+  final Duration? currentTime;
+  final double minX;
+  final double maxX;
+  final double maxScale;
+  final int signature;
+
+  const _ScheduleChartState({
+    required this.entries,
+    required this.channelInfo,
+    required this.currentTime,
+    required this.minX,
+    required this.maxX,
+    required this.maxScale,
+    required this.signature,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is _ScheduleChartState &&
+        other.signature == signature &&
+        other.currentTime == currentTime &&
+        other.minX == minX &&
+        other.maxX == maxX &&
+        other.maxScale == maxScale;
+  }
+
+  @override
+  int get hashCode => Object.hash(signature, currentTime, minX, maxX, maxScale);
+}
+
 class ScheduleEditorView extends StatelessWidget {
   final ScheduleEditorViewModel viewModel;
   const ScheduleEditorView({super.key, required this.viewModel});
+
+  _ScheduleChartState _buildChartState(ScheduleEditorViewModel vm) {
+    const minSpanSeconds = 3 * 3600.0;
+    final entries = vm.entries.toList(growable: false);
+    final sortedEntries = entries.toList()..sort((a, b) => a.instant.compareTo(b.instant));
+    double minX = 0.0;
+    double maxX = 24 * 3600.0;
+    if (sortedEntries.isNotEmpty) {
+      final hasCrossDay = sortedEntries.any((e) => e.instant.inHours >= 24);
+      if (hasCrossDay) {
+        minX = sortedEntries.first.instant.inSeconds.toDouble();
+        maxX = sortedEntries.last.instant.inSeconds.toDouble();
+        if (maxX - minX < minSpanSeconds) {
+          maxX = minX + minSpanSeconds;
+        }
+      }
+    }
+    final maxScale = ((maxX - minX) / minSpanSeconds).clamp(1.0, double.infinity);
+    final signature = Object.hashAll([
+      vm.deviceInfo.channels.length,
+      for (final channel in vm.deviceInfo.channels) Object.hash(channel.name, channel.color, channel.wavelength),
+      entries.length,
+      for (final entry in entries) Object.hash(entry.instant, Object.hashAll(entry.channels)),
+      vm.currentEntry?.instant,
+      minX,
+      maxX,
+      maxScale,
+    ]);
+    return _ScheduleChartState(
+      entries: entries,
+      channelInfo: vm.deviceInfo.channels,
+      currentTime: vm.currentEntry?.instant,
+      minX: minX,
+      maxX: maxX,
+      maxScale: maxScale,
+      signature: signature,
+    );
+  }
+
+  ({
+    bool canAddInstant,
+    bool canRemoveCurrentInstant,
+    bool canClearInstants,
+    bool canPrevInstant,
+    bool canNextInstant,
+    Duration? currentInstant,
+  })
+  _buildBottomActionsState(ScheduleEditorViewModel vm) {
+    return (
+      canAddInstant: vm.canAddInstant,
+      canRemoveCurrentInstant: vm.canRemoveCurrentInstant,
+      canClearInstants: vm.canClearInstants,
+      canPrevInstant: vm.canPrevInstant,
+      canNextInstant: vm.canNextInstant,
+      currentInstant: vm.currentEntry?.instant,
+    );
+  }
 
   Future<Duration?> showNewInstantDialog(BuildContext context, TimeOfDay initialTime) async {
     // bool isNextDay = false;
@@ -71,30 +165,17 @@ class ScheduleEditorView extends StatelessWidget {
                 child: Container(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   padding: EdgeInsets.fromLTRB(8, 24, 8, 0),
-                  child: Consumer<ScheduleEditorViewModel>(
-                    builder: (context, vm, child) {
-                      const minSpanSeconds = 3 * 3600.0;
-                      final sortedEntries = _sortedEntries(vm);
-                      double minX = 0.0;
-                      double maxX = 24 * 3600.0;
-                      if (sortedEntries.isNotEmpty) {
-                        final hasCrossDay = sortedEntries.any((e) => e.instant.inHours >= 24);
-                        if (hasCrossDay) {
-                          minX = sortedEntries.first.instant.inSeconds.toDouble();
-                          maxX = sortedEntries.last.instant.inSeconds.toDouble();
-                          if (maxX - minX < minSpanSeconds) {
-                            maxX = minX + minSpanSeconds;
-                          }
-                        }
-                      }
-                      final maxScale = ((maxX - minX) / minSpanSeconds).clamp(1.0, double.infinity);
+                  child: Selector<ScheduleEditorViewModel, _ScheduleChartState>(
+                    selector: (_, vm) => _buildChartState(vm),
+                    builder: (context, chart, child) {
+                      final vm = context.read<ScheduleEditorViewModel>();
                       return _ScheduleRunningChart(
-                        entries: vm.entries,
-                        channelInfo: vm.deviceInfo.channels,
-                        minX: minX,
-                        maxX: maxX,
-                        currentTime: vm.currentEntry?.instant,
-                        maxScale: maxScale,
+                        entries: chart.entries,
+                        channelInfo: chart.channelInfo,
+                        minX: chart.minX,
+                        maxX: chart.maxX,
+                        currentTime: chart.currentTime,
+                        maxScale: chart.maxScale,
                         lineTouchData: LineTouchData(
                           handleBuiltInTouches: true,
                           touchTooltipData: LineTouchTooltipData(getTooltipItems: (_) => []),
@@ -132,111 +213,119 @@ class ScheduleEditorView extends StatelessWidget {
               ),
 
               // Bottom buttons
-              Consumer<ScheduleEditorViewModel>(
-                builder: (context, vm, child) => Card(
-                  margin: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                  elevation: 1,
-                  color: Theme.of(context).colorScheme.surfaceContainer,
-                  child: Padding(
-                    padding: EdgeInsetsGeometry.fromLTRB(8, 16, 8, 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // Easy Setup
-                        _BottomActionButton(
-                          icon: Icons.auto_fix_high_outlined,
-                          label: context.translate('Easy'),
-                          color: Theme.of(context).colorScheme.primary,
-                          onPressed: () async {
-                            await vm.easySetupEnter();
-                            if (context.mounted) {
-                              final route = platformPageRoute(builder: (context) => EasySetupScreen(vm));
-                              final applied = await Navigator.push(context, route);
-                              if (applied == true) {
-                                await vm.easySetupFinish();
-                                // stay on the Dimming screen (do not pop the parent route)
-                              }
-                            }
-                          },
-                        ),
-                        // Add
-                        _BottomActionButton(
-                          icon: Icons.add_outlined,
-                          label: context.translate('Add'),
-                          color: vm.canAddInstant
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).disabledColor,
-                          onPressed: vm.canAddInstant
-                              ? () async {
-                                  final initialTime =
-                                      (vm.currentEntry?.instant ?? Duration(hours: 6, minutes: 30)) +
-                                      ScheduleEditorViewModel.defaultInstantSpan;
-                                  final safeInitialTime = Duration(
-                                    hours: initialTime.inHours % 24,
-                                    minutes: initialTime.inMinutes % 60,
-                                  );
-                                  final selectedTime = await showNewInstantDialog(
-                                    context,
-                                    safeInitialTime.toTimeOfDay(),
-                                  );
-                                  if (selectedTime != null) {
-                                    vm.addInstant(selectedTime);
-                                  }
+              Selector<
+                ScheduleEditorViewModel,
+                ({
+                  bool canAddInstant,
+                  bool canRemoveCurrentInstant,
+                  bool canClearInstants,
+                  bool canPrevInstant,
+                  bool canNextInstant,
+                  Duration? currentInstant,
+                })
+              >(
+                selector: (_, vm) => _buildBottomActionsState(vm),
+                builder: (context, actions, child) {
+                  final vm = context.read<ScheduleEditorViewModel>();
+                  return Card(
+                    margin: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                    elevation: 1,
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    child: Padding(
+                      padding: EdgeInsetsGeometry.fromLTRB(8, 16, 8, 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // Easy Setup
+                          _BottomActionButton(
+                            icon: Icons.auto_fix_high_outlined,
+                            label: context.translate('Easy'),
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () async {
+                              await vm.easySetupEnter();
+                              if (context.mounted) {
+                                final route = platformPageRoute(builder: (context) => EasySetupScreen(vm));
+                                final applied = await Navigator.push(context, route);
+                                if (applied == true) {
+                                  await vm.easySetupFinish();
+                                  // stay on the Dimming screen (do not pop the parent route)
                                 }
-                              : null,
-                        ),
-                        // Remove
-                        _BottomActionButton(
-                          icon: Icons.remove,
-                          label: context.translate('Remove'),
-                          color: vm.canRemoveCurrentInstant
-                              ? Theme.of(context).colorScheme.secondary
-                              : Theme.of(context).disabledColor,
-                          onPressed: vm.canRemoveCurrentInstant ? vm.removeCurrentInstant : null,
-                        ),
-                        // Clear
-                        _BottomActionButton(
-                          icon: Icons.clear,
-                          label: context.translate('Clear'),
-                          color: vm.canClearInstants
-                              ? Theme.of(context).colorScheme.error
-                              : Theme.of(context).disabledColor,
-                          onPressed: vm.canClearInstants ? () => _confirmClearEntries(context, vm) : null,
-                        ),
-                        // Prev
-                        _BottomActionButton(
-                          icon: Icons.skip_previous_outlined,
-                          label: context.translate('Prev'),
-                          color: vm.canPrevInstant
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).disabledColor,
-                          onPressed: vm.canPrevInstant ? vm.prevInstant : null,
-                        ),
-                        // Next
-                        _BottomActionButton(
-                          icon: Icons.skip_next_outlined,
-                          label: context.translate('Next'),
-                          color: vm.canNextInstant
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).disabledColor,
-                          onPressed: vm.canNextInstant ? vm.nextInstant : null,
-                        ),
-                      ],
+                              }
+                            },
+                          ),
+                          // Add
+                          _BottomActionButton(
+                            icon: Icons.add_outlined,
+                            label: context.translate('Add'),
+                            color: actions.canAddInstant
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).disabledColor,
+                            onPressed: actions.canAddInstant
+                                ? () async {
+                                    final initialTime =
+                                        (actions.currentInstant ?? Duration(hours: 6, minutes: 30)) +
+                                        ScheduleEditorViewModel.defaultInstantSpan;
+                                    final safeInitialTime = Duration(
+                                      hours: initialTime.inHours % 24,
+                                      minutes: initialTime.inMinutes % 60,
+                                    );
+                                    final selectedTime = await showNewInstantDialog(
+                                      context,
+                                      safeInitialTime.toTimeOfDay(),
+                                    );
+                                    if (selectedTime != null) {
+                                      vm.addInstant(selectedTime);
+                                    }
+                                  }
+                                : null,
+                          ),
+                          // Remove
+                          _BottomActionButton(
+                            icon: Icons.remove,
+                            label: context.translate('Remove'),
+                            color: actions.canRemoveCurrentInstant
+                                ? Theme.of(context).colorScheme.secondary
+                                : Theme.of(context).disabledColor,
+                            onPressed: actions.canRemoveCurrentInstant ? vm.removeCurrentInstant : null,
+                          ),
+                          // Clear
+                          _BottomActionButton(
+                            icon: Icons.clear,
+                            label: context.translate('Clear'),
+                            color: actions.canClearInstants
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(context).disabledColor,
+                            onPressed: actions.canClearInstants ? () => _confirmClearEntries(context, vm) : null,
+                          ),
+                          // Prev
+                          _BottomActionButton(
+                            icon: Icons.skip_previous_outlined,
+                            label: context.translate('Prev'),
+                            color: actions.canPrevInstant
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).disabledColor,
+                            onPressed: actions.canPrevInstant ? vm.prevInstant : null,
+                          ),
+                          // Next
+                          _BottomActionButton(
+                            icon: Icons.skip_next_outlined,
+                            label: context.translate('Next'),
+                            color: actions.canNextInstant
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).disabledColor,
+                            onPressed: actions.canNextInstant ? vm.nextInstant : null,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ],
           ),
         );
       },
     );
-  }
-
-  List<ScheduleEntryViewModel> _sortedEntries(ScheduleEditorViewModel vm) {
-    final sorted = vm.entries.toList();
-    sorted.sort((a, b) => a.instant.compareTo(b.instant));
-    return sorted;
   }
 
   void _confirmClearEntries(BuildContext context, ScheduleEditorViewModel vm) {

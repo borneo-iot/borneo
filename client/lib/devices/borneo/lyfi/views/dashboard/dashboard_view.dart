@@ -77,14 +77,16 @@ class DashboardView extends StatelessWidget {
         children: [
           // Chart
           Expanded(
-            child: Container(
-              color: theme.scaffoldBackgroundColor,
-              margin: const EdgeInsets.all(0),
-              child: const ClipRect(child: DashboardChart()),
+            child: RepaintBoundary(
+              child: Container(
+                color: theme.scaffoldBackgroundColor,
+                margin: const EdgeInsets.all(0),
+                child: const ClipRect(child: DashboardChart()),
+              ),
             ),
           ),
           const SizedBox(height: 16),
-          const _DashboardControlPanel(),
+          const RepaintBoundary(child: _DashboardControlPanel()),
         ],
       ),
     );
