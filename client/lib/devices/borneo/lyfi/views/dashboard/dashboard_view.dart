@@ -11,6 +11,59 @@ import 'dashboard_power_tile.dart';
 import 'dashboard_dimming_tile.dart';
 import 'dashboard_moon_tile.dart';
 
+class _DashboardControlPanel extends StatelessWidget {
+  const _DashboardControlPanel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    return ScreenTopRoundedContainer(
+      color: colorScheme.surfaceContainer,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: const SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(flex: 1, child: DashboardPowerSwitchTile()),
+                SizedBox(width: 16),
+                Expanded(flex: 1, child: DashboardTemporaryTile()),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: DashboardPowerTile()),
+                SizedBox(width: 16),
+                Expanded(child: DashboardTemperatureTile()),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(flex: 1, child: DashboardMoonTile()),
+                SizedBox(width: 16),
+                Expanded(flex: 1, child: DashboardAcclimationTile()),
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(flex: 1, child: DashboardDimmingTile()),
+                SizedBox(width: 16),
+                Expanded(flex: 1, child: DashboardSettingsTile()),
+              ],
+            ),
+            SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
 
@@ -32,46 +85,7 @@ class DashboardView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          ScreenTopRoundedContainer(
-            color: colorScheme.surfaceContainer,
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-            child: const Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(flex: 1, child: DashboardPowerSwitchTile()),
-                    SizedBox(width: 16),
-                    Expanded(flex: 1, child: DashboardTemporaryTile()),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(child: DashboardPowerTile()),
-                    SizedBox(width: 16),
-                    Expanded(child: DashboardTemperatureTile()),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(flex: 1, child: DashboardMoonTile()),
-                    SizedBox(width: 16),
-                    Expanded(flex: 1, child: DashboardAcclimationTile()),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(flex: 1, child: DashboardDimmingTile()),
-                    SizedBox(width: 16),
-                    Expanded(flex: 1, child: DashboardSettingsTile()),
-                  ],
-                ),
-                SizedBox(height: 24),
-              ],
-            ),
-          ),
+          const _DashboardControlPanel(),
         ],
       ),
     );
