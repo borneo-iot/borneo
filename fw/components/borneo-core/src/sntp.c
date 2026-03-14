@@ -182,8 +182,15 @@ static int bo_try_sync_time()
     }
 
     time_t ts = seconds;
-    struct timeval tv_now = { .tv_sec = ts };
-    settimeofday(&tv_now, NULL);
+    BO_TRY(bo_rtc_set_time((int64_t)ts * 1000000LL));
+
+    rc = bo_rtc_ext_update();
+    if (rc != 0) {
+        // System time is already valid here, so an external RTC write failure should not discard this sync result.
+        // TODO: Surface this through a fault/alarm mechanism so users can detect battery or hardware failures.
+        ESP_LOGW(TAG, "SNTP updated system time, but external RTC update failed: %d", rc);
+        rc = 0;
+    }
 
     time_t now = time(NULL);
     struct tm timeinfo = { 0 };
