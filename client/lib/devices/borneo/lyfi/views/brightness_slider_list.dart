@@ -13,12 +13,14 @@ class BrightnessSliderList<TEditor extends IEditor> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dense = editor.availableChannelCount > 6;
     final sliders = <Widget>[];
     for (int index = 0; index < editor.availableChannelCount; index++) {
       final channelInfo = editor.deviceInfo.channels.elementAt(index);
       final slider = ValueListenableBuilder<int>(
         valueListenable: editor.channels[index],
         builder: (context, channelValue, child) => BrightnessSliderListTile(
+          dense: dense,
           channelName: channelInfo.name,
           max: kLyfiBrightnessMax,
           min: 0,

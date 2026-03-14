@@ -16,9 +16,10 @@ class DashboardAcclimationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<
       LyfiViewModel,
-      ({bool isOnline, bool isOn, bool enabled, bool activated, AcclimationSettings? acclimation})
+      ({bool isBusy, bool isOnline, bool isOn, bool enabled, bool activated, AcclimationSettings? acclimation})
     >(
       selector: (_, vm) => (
+        isBusy: vm.isBusy,
         isOnline: vm.isOnline,
         isOn: vm.isOn,
         enabled: vm.acclimationEnabled,
@@ -29,7 +30,7 @@ class DashboardAcclimationTile extends StatelessWidget {
         final theme = Theme.of(context);
         final acclimation = props.acclimation;
         final isActive = props.enabled || props.activated;
-        final isDisabled = !props.isOnline || !props.isOn;
+        final isDisabled = props.isBusy || !props.isOnline || !props.isOn;
         final Color bgColor = isActive ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest;
         final Color fgColor = isActive ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurface;
         final double disabledAlpha = 0.38;

@@ -70,37 +70,27 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
   @override
   Future<void> onInitialize() async {
     await super.onInitialize();
-    _correctionMethod = await api.getCorrectionMethod(boundDevice!.device);
-    _temporaryDuration = await api.getTemporaryDuration(boundDevice!.device);
-    _cloudEnabled = await api.getCloudEnabled(boundDevice!.device);
-    _fanMode = await api.getFanMode(boundDevice!.device);
-    _manualFanPower = await api.getFanManualPower(boundDevice!.device);
+    _correctionMethod = await api.getCorrectionMethod(boundDevice!.device, cancelToken: masterCancellation);
+    _temporaryDuration = await api.getTemporaryDuration(boundDevice!.device, cancelToken: masterCancellation);
+    _cloudEnabled = await api.getCloudEnabled(boundDevice!.device, cancelToken: masterCancellation);
+    _fanMode = await api.getFanMode(boundDevice!.device, cancelToken: masterCancellation);
+    _manualFanPower = await api.getFanManualPower(boundDevice!.device, cancelToken: masterCancellation);
   }
 
-  Future<void> updateGeoLocation(GeoLocation location, {CancellationToken? cancel}) async {
-    try {
-      await super.lyfiDeviceApi.setLocation(super.boundDevice!.device, location, cancelToken: cancel);
-      lyfiThing.findProperty('location')?.value.notifyOfExternalUpdate(location);
-      notification.showSuccess(_gt.translate("Location updated successfully"));
-    } catch (e, st) {
-      notifyAppError(_gt.translate("Failed to update device location"), error: e, stackTrace: st);
-    }
-  }
-
-  Future<Position> getLocation({CancellationToken? cancel}) async {
+  Future<Position> getLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
     // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled().asCancellable(cancel);
+    serviceEnabled = await Geolocator.isLocationServiceEnabled().asCancellable(masterCancellation);
     if (!serviceEnabled) {
       throw bo_ex.InvalidOperationException(message: _gt.translate('Please enable location services'));
     }
 
     // Check permissions
-    permission = await Geolocator.checkPermission().asCancellable(cancel);
+    permission = await Geolocator.checkPermission().asCancellable(masterCancellation);
     if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission().asCancellable(cancel);
+      permission = await Geolocator.requestPermission().asCancellable(masterCancellation);
       if (permission == LocationPermission.denied) {
         throw bo_ex.PermissionDeniedException(message: _gt.translate('Location permissions are denied'));
       }
@@ -118,7 +108,7 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
           timeLimit: Duration(seconds: 30),
           distanceFilter: 100,
         ),
-      ).asCancellable(cancel);
+      ).asCancellable(masterCancellation);
       return position;
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to get location"), error: e, stackTrace: st);
@@ -126,124 +116,147 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
     }
   }
 
-  Future<void> updateTimezone({CancellationToken? cancel}) async {
+  Future<void> updateGeoLocation(GeoLocation location) async {
+    setBusy(true);
+    try {
+      await super.lyfiDeviceApi.setLocation(super.boundDevice!.device, location, cancelToken: masterCancellation);
+      lyfiThing.findProperty('location')?.value.notifyOfExternalUpdate(location);
+      notification.showSuccess(_gt.translate("Location updated successfully"));
+    } catch (e, st) {
+      await lyfiThing.sync(cancelToken: masterCancellation);
+      notifyAppError(_gt.translate("Failed to update device location"), error: e, stackTrace: st);
+    } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
+      setBusy(false);
+    }
+  }
+
+  Future<void> updateTimezone() async {
     isBusy = true;
     notifyListeners();
     try {
       final tzc = TimezoneConverter();
       await tzc.init();
       final posixTZ = await tzc.getLocalPosixTimezone();
-      await api.setTimeZone(boundDevice!.device, posixTZ!, cancelToken: cancel);
+      await api.setTimeZone(boundDevice!.device, posixTZ!, cancelToken: masterCancellation);
       _timezone = posixTZ;
       notification.showSuccess(_gt.translate("Time zone updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update device time zone"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateLedCorrectionMethod(LedCorrectionMethod newMethod, {CancellationToken? cancel}) async {
+  Future<void> updateLedCorrectionMethod(LedCorrectionMethod newMethod) async {
     isBusy = true;
     notifyListeners();
     try {
-      await api.setCorrectionMethod(boundDevice!.device, newMethod, cancelToken: cancel);
+      await api.setCorrectionMethod(boundDevice!.device, newMethod, cancelToken: masterCancellation);
       _correctionMethod = newMethod;
       notification.showSuccess(_gt.translate("LED correction method updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update LED correction method"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateTemporaryDuration(Duration dur, {CancellationToken? cancel}) async {
+  Future<void> updateTemporaryDuration(Duration dur) async {
     isBusy = true;
     notifyListeners();
     try {
-      await api.setTemporaryDuration(boundDevice!.device, dur, cancelToken: cancel);
+      await api.setTemporaryDuration(boundDevice!.device, dur, cancelToken: masterCancellation);
       _temporaryDuration = dur;
       notification.showSuccess(_gt.translate("Temporary duration updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update temporary duration"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateCloudEnabled(bool enabled, {CancellationToken? cancel}) async {
+  Future<void> updateCloudEnabled(bool enabled) async {
     isBusy = true;
     notifyListeners();
     try {
-      await api.setCloudEnabled(boundDevice!.device, enabled, cancelToken: cancel);
+      await api.setCloudEnabled(boundDevice!.device, enabled, cancelToken: masterCancellation);
       _cloudEnabled = enabled;
       notification.showSuccess(_gt.translate("Cloud simulation mode updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update cloud simulation mode"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateFanMode(FanMode mode, {CancellationToken? cancel}) async {
+  Future<void> updateFanMode(FanMode mode) async {
     isBusy = true;
     notifyListeners();
     try {
-      await api.setFanMode(boundDevice!.device, mode, cancelToken: cancel);
+      await api.setFanMode(boundDevice!.device, mode, cancelToken: masterCancellation);
       _fanMode = mode;
       notification.showSuccess(_gt.translate("Fan mode updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update fan modee"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateManualFanPower(int power, {CancellationToken? cancel}) async {
+  Future<void> updateManualFanPower(int power) async {
     isBusy = true;
     notifyListeners();
     try {
-      await api.setFanManualPower(boundDevice!.device, power, cancelToken: cancel);
+      await api.setFanManualPower(boundDevice!.device, power, cancelToken: masterCancellation);
       _manualFanPower = power;
       notification.showSuccess(_gt.translate("Manual fan power updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update manual fan power"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
   }
 
-  Future<void> updatePowerBehavior(PowerBehavior behavior, {CancellationToken? cancel}) async {
+  Future<void> updatePowerBehavior(PowerBehavior behavior) async {
     isBusy = true;
     notifyListeners();
     try {
-      await api.setPowerBehavior(boundDevice!.device, behavior, cancelToken: cancel);
+      await api.setPowerBehavior(boundDevice!.device, behavior, cancelToken: masterCancellation);
       _powerBehavior = behavior;
       notification.showSuccess(_gt.translate("Power behavior updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update power behavior"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
   }
 
-  Future<void> updateName(String newName, {CancellationToken? cancel}) async {
+  Future<void> updateName(String newName) async {
     isBusy = true;
     notifyListeners();
     try {
-      await borneoDeviceApi.setName(boundDevice!.device, newName, cancelToken: cancel);
+      await borneoDeviceApi.setName(boundDevice!.device, newName, cancelToken: masterCancellation);
       await deviceManager.update(deviceID, name: newName);
       notification.showSuccess(_gt.translate("Device name updated successfully"));
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to update device name"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync(cancelToken: masterCancellation);
       isBusy = false;
       notifyListeners();
     }
@@ -259,6 +272,7 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to restore device to factory settings"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync();
       isBusy = false;
       notifyListeners();
     }
@@ -274,6 +288,7 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to reset device network settings"), error: e, stackTrace: st);
     } finally {
+      await lyfiThing.sync();
       isBusy = false;
       notifyListeners();
     }

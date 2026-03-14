@@ -12,7 +12,7 @@ import 'dashboard_dimming_tile.dart';
 import 'dashboard_moon_tile.dart';
 
 class _DashboardControlPanel extends StatelessWidget {
-  const _DashboardControlPanel({super.key});
+  const _DashboardControlPanel();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,6 @@ class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     return Padding(
       padding: EdgeInsets.zero,
       child: Column(

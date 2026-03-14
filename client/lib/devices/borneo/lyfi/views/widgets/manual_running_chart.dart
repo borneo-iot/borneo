@@ -38,15 +38,16 @@ class ManualRunningChart extends StatelessWidget {
       x: x,
       barRods: [
         BarChartRodData(
-          borderRadius: BorderRadius.circular(5),
           toY: y,
+          borderSide: BorderSide(color: primaryColor),
+          borderRadius: BorderRadius.circular(4),
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             // Start from light -> progress toward primary only up to x% to keep small values light.
             colors: [lightStart, currentEndColor],
           ),
-          width: 24,
+          width: 20,
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             fromY: 0,

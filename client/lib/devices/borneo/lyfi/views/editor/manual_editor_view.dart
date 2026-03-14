@@ -57,14 +57,15 @@ class ManualEditorView extends StatelessWidget {
       x: x,
       barRods: [
         BarChartRodData(
-          borderRadius: BorderRadius.circular(5),
           toY: y,
+          borderSide: BorderSide(color: primaryColor),
+          borderRadius: BorderRadius.circular(4),
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
             colors: [lightStart, currentEndColor],
           ),
-          width: 24,
+          width: 20,
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             fromY: 0,

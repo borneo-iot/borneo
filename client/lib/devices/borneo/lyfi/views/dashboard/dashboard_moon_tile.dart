@@ -40,6 +40,7 @@ class DashboardMoonTile extends StatelessWidget {
     return Selector<
       LyfiViewModel,
       ({
+        bool isBusy,
         bool isOnline,
         bool isOn,
         bool enabled,
@@ -50,6 +51,7 @@ class DashboardMoonTile extends StatelessWidget {
       })
     >(
       selector: (_, vm) => (
+        isBusy: vm.isBusy,
         isOnline: vm.isOnline,
         isOn: vm.isOn,
         enabled: vm.lyfiThing.getProperty<MoonConfig>('moonConfig')?.enabled ?? false,
@@ -62,7 +64,7 @@ class DashboardMoonTile extends StatelessWidget {
         final theme = Theme.of(context);
         final isMoonActive = props.enabled && props.moonStatus != null && props.isMoonTime;
         final moonStatus = props.moonStatus;
-        final isDisabled = !props.isOnline || !props.isOn;
+        final isDisabled = props.isBusy || !props.isOnline || !props.isOn;
         final Color bgColor = isMoonActive
             ? theme.colorScheme.primaryContainer
             : theme.colorScheme.surfaceContainerHighest;
@@ -96,7 +98,6 @@ class DashboardMoonTile extends StatelessWidget {
                         child: MoonScreen(deviceID: deviceID),
                       ),
                       withNavBar: false,
-                      pageTransitionAnimation: PageTransitionAnimation.platform,
                     );
                   }
                 }

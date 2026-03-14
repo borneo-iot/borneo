@@ -89,6 +89,7 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
     _syncFromKernel();
     if (isActive && !isOffline) {
       await _bindToHardware(cancelToken: cancelToken);
+      await _lightweightSync();
     }
 
     if (isActive) {

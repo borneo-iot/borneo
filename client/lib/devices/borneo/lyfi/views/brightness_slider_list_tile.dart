@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 
 class BrightnessSliderListTile extends StatelessWidget {
+  final bool dense;
   final Color color;
   final bool disabled;
   final int min;
@@ -17,6 +18,7 @@ class BrightnessSliderListTile extends StatelessWidget {
     required this.channelName,
     required this.value,
     required this.color,
+    required this.dense,
     this.disabled = false,
     this.min = 0,
     this.max = kLyfiBrightnessMax,
@@ -29,9 +31,9 @@ class BrightnessSliderListTile extends StatelessWidget {
     final handlerSize = 24.0;
     final trackBarBorder = Border.all(color: Theme.of(context).colorScheme.surfaceContainerHigh, width: 1);
     return ListTile(
-      dense: true,
+      dense: dense,
       minVerticalPadding: 0,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+      contentPadding: dense ? const EdgeInsets.symmetric(horizontal: 16, vertical: 0) : null,
       title: FlutterSlider(
         selectByTap: true,
         jump: true,

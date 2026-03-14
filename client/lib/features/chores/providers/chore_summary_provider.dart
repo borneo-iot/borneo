@@ -61,9 +61,6 @@ class ChoreSummaryNotifier extends Notifier<ChoreSummaryState> {
       deviceManager.allDeviceEvents.on<DeviceOfflineEvent>().listen((_) {
         unawaited(_syncActiveState());
       }),
-      deviceManager.allDeviceEvents.on<DeviceCommunicationEvent>().listen((_) {
-        unawaited(_syncActiveState());
-      }),
     ];
     ref.onDispose(() {
       for (final sub in subscriptions) {
