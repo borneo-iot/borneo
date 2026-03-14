@@ -61,7 +61,7 @@ static int ds1302_init(const struct drvfx_device* dev)
 {
     struct ds1302_data* rt = (struct ds1302_data*)dev->data;
 
-    rt->lock = xSemaphoreCreateBinaryStatic(&rt->lock_buf);
+    rt->lock = xSemaphoreCreateMutexStatic(&rt->lock_buf);
     if (rt->lock == NULL) {
         return -1;
     }

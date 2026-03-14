@@ -32,7 +32,7 @@ static int idf_init(const struct drvfx_device* dev)
 {
     struct idf_data* rt = (struct idf_data*)dev->data;
 
-    rt->lock = xSemaphoreCreateBinaryStatic(&rt->lock_buf);
+    rt->lock = xSemaphoreCreateMutexStatic(&rt->lock_buf);
     if (rt->lock == NULL) {
         return -1;
     }

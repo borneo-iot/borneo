@@ -60,7 +60,7 @@ static int pcf8563_init(const struct drvfx_device* dev)
     const struct pcf8563_config* config = (const struct pcf8563_config*)dev->config;
     struct pcf8563_data* rt = (struct pcf8563_data*)dev->data;
 
-    rt->lock = xSemaphoreCreateBinaryStatic(&rt->lock_buf);
+    rt->lock = xSemaphoreCreateMutexStatic(&rt->lock_buf);
     if (rt->lock == NULL) {
         return -1;
     }
