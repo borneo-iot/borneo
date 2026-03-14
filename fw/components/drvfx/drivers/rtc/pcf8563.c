@@ -21,8 +21,18 @@
 
 #define TAG "pcf8563"
 
-#define DEC2BCD(dec) ((dec / 10 * 16) + (dec % 10))
-#define BCD2DEC(bcd) ((bcd / 16 * 10) + (bcd % 16))
+#define DEC2BCD(dec) ((((dec) / 10) * 16) + ((dec) % 10))
+#define BCD2DEC(bcd) ((((bcd) / 16) * 10) + ((bcd) % 16))
+
+#define PCF8563_BIT_VL 7
+#define PCF8563_BIT_YEAR_CENTURY 7
+
+#define PCF8563_MASK_SECONDS 0x7F
+#define PCF8563_MASK_MINUTES 0x7F
+#define PCF8563_MASK_HOURS 0x3F
+#define PCF8563_MASK_DAYS 0x3F
+#define PCF8563_MASK_WEEKDAYS 0x07
+#define PCF8563_MASK_MONTHS 0x1F
 
 struct pcf8563_config {
     const char* bus_name;
@@ -57,6 +67,8 @@ static int pcf8563_read_regs(const struct pcf8563_config* config, const struct p
                              uint8_t* buf, size_t len);
 static int pcf8563_write_regs(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t start_reg,
                               const uint8_t* buf, size_t len);
+static void pcf8563_decode_datetime(const uint8_t* buf, struct tm* now);
+static int pcf8563_encode_datetime(const struct tm* dt, uint8_t* buf, size_t len);
 
 static int pcf8563_init(const struct drvfx_device* dev)
 {
@@ -96,14 +108,8 @@ static int pcf8563_init(const struct drvfx_device* dev)
         return ret;
     }
 
-    ret = drvfx_i2c_probe(rt->bus, config->addr, config->timeout);
-    if (ret != 0) {
-        ESP_LOGE(TAG, "Probe failed addr=0x%02x err=%s", config->addr, esp_err_to_name((esp_err_t)ret));
-        xSemaphoreGive(rt->lock);
-        return ret;
-    }
-
-    ESP_LOGI(TAG, "Probe ok addr=0x%02x", config->addr);
+    ESP_LOGI(TAG, "PCF8563 Attached bus=%s addr=0x%02x", config->bus_name, config->addr);
+    ESP_LOGI(TAG, "PCF8563 attach complete; probe deferred until first transaction");
 
     xSemaphoreGive(rt->lock);
     return 0;
@@ -142,14 +148,7 @@ static int pcf8563_now(const struct drvfx_device* dev, struct tm* now)
         return ret;
     }
 
-    now->tm_sec = BCD2DEC(buf[0] & 0x7F);
-    now->tm_min = BCD2DEC(buf[1] & 0x7F);
-    now->tm_hour = BCD2DEC(buf[2] & 0x3F);
-    now->tm_mday = BCD2DEC(buf[3] & 0x3F);
-    now->tm_wday = BCD2DEC(buf[4] & 0x07);
-    now->tm_mon = BCD2DEC(buf[5] & 0x1F) - 1;
-    now->tm_year = BCD2DEC(buf[6]) + 100; // Assuming 2000+
-    now->tm_isdst = -1;
+    pcf8563_decode_datetime(buf, now);
 
     xSemaphoreGive(rt->lock);
     return 0;
@@ -164,15 +163,13 @@ static int pcf8563_set_datetime(const struct drvfx_device* dev, const struct tm*
     }
 
     uint8_t buf[7];
-    buf[0] = DEC2BCD(dt->tm_sec % 60);
-    buf[1] = DEC2BCD(dt->tm_min % 60);
-    buf[2] = DEC2BCD(dt->tm_hour % 24);
-    buf[3] = DEC2BCD(dt->tm_mday % 32);
-    buf[4] = DEC2BCD(dt->tm_wday % 7);
-    buf[5] = DEC2BCD((dt->tm_mon + 1) % 13);
-    buf[6] = DEC2BCD(dt->tm_year % 100);
+    int ret = pcf8563_encode_datetime(dt, buf, sizeof(buf));
+    if (ret != 0) {
+        xSemaphoreGive(rt->lock);
+        return ret;
+    }
 
-    int ret = pcf8563_write_regs(config, rt, PCF8563_REG_VL_SECONDS, buf, sizeof(buf));
+    ret = pcf8563_write_regs(config, rt, PCF8563_REG_VL_SECONDS, buf, sizeof(buf));
     if (ret != 0) {
         xSemaphoreGive(rt->lock);
         return ret;
@@ -234,6 +231,43 @@ static int pcf8563_write_regs(const struct pcf8563_config* config, const struct 
     tx_buf[0] = start_reg;
     memcpy(&tx_buf[1], buf, len);
     return drvfx_i2c_transmit(data->bus, data->bus_device, tx_buf, len + 1, config->timeout);
+}
+
+static void pcf8563_decode_datetime(const uint8_t* buf, struct tm* now)
+{
+    now->tm_sec = BCD2DEC(buf[0] & PCF8563_MASK_SECONDS);
+    now->tm_min = BCD2DEC(buf[1] & PCF8563_MASK_MINUTES);
+    now->tm_hour = BCD2DEC(buf[2] & PCF8563_MASK_HOURS);
+    now->tm_mday = BCD2DEC(buf[3] & PCF8563_MASK_DAYS);
+    now->tm_wday = BCD2DEC(buf[4] & PCF8563_MASK_WEEKDAYS);
+    now->tm_mon = BCD2DEC(buf[5] & PCF8563_MASK_MONTHS) - 1;
+    now->tm_year = BCD2DEC(buf[6]) + ((buf[5] & (1U << PCF8563_BIT_YEAR_CENTURY)) ? 200 : 100);
+    now->tm_isdst = -1;
+}
+
+static int pcf8563_encode_datetime(const struct tm* dt, uint8_t* buf, size_t len)
+{
+    if ((dt == NULL) || (buf == NULL) || (len < 7)) {
+        return -EINVAL;
+    }
+
+    if ((dt->tm_sec < 0) || (dt->tm_sec > 59) || (dt->tm_min < 0) || (dt->tm_min > 59) || (dt->tm_hour < 0)
+        || (dt->tm_hour > 23) || (dt->tm_mday < 1) || (dt->tm_mday > 31) || (dt->tm_wday < 0) || (dt->tm_wday > 6)
+        || (dt->tm_mon < 0) || (dt->tm_mon > 11) || (dt->tm_year < 100) || (dt->tm_year > 299)) {
+        return -EINVAL;
+    }
+
+    bool overflow_century = dt->tm_year >= 200;
+
+    buf[0] = DEC2BCD(dt->tm_sec);
+    buf[1] = DEC2BCD(dt->tm_min);
+    buf[2] = DEC2BCD(dt->tm_hour);
+    buf[3] = DEC2BCD(dt->tm_mday);
+    buf[4] = DEC2BCD(dt->tm_wday);
+    buf[5] = DEC2BCD(dt->tm_mon + 1) | (overflow_century ? (1U << PCF8563_BIT_YEAR_CENTURY) : 0);
+    buf[6] = DEC2BCD(dt->tm_year - (overflow_century ? 200 : 100));
+
+    return 0;
 }
 
 static const struct pcf8563_config _pcf8563_config = {
