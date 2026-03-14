@@ -29,6 +29,7 @@ struct pcf8563_config {
 
 struct pcf8563_data {
     const struct drvfx_device* bus;
+    void* bus_device;
     SemaphoreHandle_t lock;
     StaticSemaphore_t lock_buf;
 };
@@ -72,6 +73,20 @@ static int pcf8563_init(const struct drvfx_device* dev)
     if (rt->bus == NULL) {
         xSemaphoreGive(rt->lock);
         return -ENODEV;
+    }
+
+    const struct drvfx_i2c_device_config bus_device_config = {
+        .device_address = config->addr,
+        .scl_speed_hz = 0,
+        .scl_wait_us = 0,
+        .dev_addr_length = DRVFX_I2C_ADDR_BIT_LEN_7,
+        .disable_ack_check = false,
+    };
+
+    int ret = drvfx_i2c_attach_device(rt->bus, &bus_device_config, &rt->bus_device);
+    if (ret != 0) {
+        xSemaphoreGive(rt->lock);
+        return ret;
     }
 
     xSemaphoreGive(rt->lock);
@@ -176,20 +191,20 @@ static int pcf8563_halt(const struct drvfx_device* dev)
 static int pcf8563_read_reg(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t reg,
                             uint8_t* value)
 {
-    return drvfx_i2c_write_read(data->bus, config->addr, &reg, 1, value, 1, config->timeout);
+    return drvfx_i2c_transmit_receive(data->bus, data->bus_device, &reg, 1, value, 1, config->timeout);
 }
 
 static int pcf8563_write_reg(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t reg,
                              uint8_t value)
 {
     uint8_t buf[2] = { reg, value };
-    return drvfx_i2c_write(data->bus, config->addr, buf, sizeof(buf), config->timeout);
+    return drvfx_i2c_transmit(data->bus, data->bus_device, buf, sizeof(buf), config->timeout);
 }
 
 static int pcf8563_read_regs(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t start_reg,
                              uint8_t* buf, size_t len)
 {
-    return drvfx_i2c_write_read(data->bus, config->addr, &start_reg, 1, buf, len, config->timeout);
+    return drvfx_i2c_transmit_receive(data->bus, data->bus_device, &start_reg, 1, buf, len, config->timeout);
 }
 
 static int pcf8563_write_regs(const struct pcf8563_config* config, const struct pcf8563_data* data, uint8_t start_reg,
@@ -202,7 +217,7 @@ static int pcf8563_write_regs(const struct pcf8563_config* config, const struct 
 
     tx_buf[0] = start_reg;
     memcpy(&tx_buf[1], buf, len);
-    return drvfx_i2c_write(data->bus, config->addr, tx_buf, len + 1, config->timeout);
+    return drvfx_i2c_transmit(data->bus, data->bus_device, tx_buf, len + 1, config->timeout);
 }
 
 static const struct pcf8563_config _pcf8563_config = {
