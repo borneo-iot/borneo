@@ -30,6 +30,9 @@ class MockDriver implements Driver {
   final List<String> _probedDevices = [];
   final List<String> _removedDevices = [];
   final List<String> _heartbeatDevices = [];
+  Duration probeDelay = Duration.zero;
+  int _activeProbeCount = 0;
+  int _maxObservedConcurrentProbes = 0;
 
   MockDriver(this.id);
 
@@ -44,12 +47,24 @@ class MockDriver implements Driver {
   List<String> get probedDevices => List.unmodifiable(_probedDevices);
   List<String> get removedDevices => List.unmodifiable(_removedDevices);
   List<String> get heartbeatDevices => List.unmodifiable(_heartbeatDevices);
+  int get maxObservedConcurrentProbes => _maxObservedConcurrentProbes;
 
   @override
   Future<bool> probe(Device dev, {CancellationToken? cancelToken}) async {
     if (_isDisposed) throw StateError('Driver is disposed');
     _probedDevices.add(dev.id);
-    return _probeResults[dev.id] ?? true;
+    _activeProbeCount++;
+    if (_activeProbeCount > _maxObservedConcurrentProbes) {
+      _maxObservedConcurrentProbes = _activeProbeCount;
+    }
+    try {
+      if (probeDelay > Duration.zero) {
+        await Future.delayed(probeDelay);
+      }
+      return _probeResults[dev.id] ?? true;
+    } finally {
+      _activeProbeCount--;
+    }
   }
 
   @override

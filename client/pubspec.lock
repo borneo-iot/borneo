@@ -384,6 +384,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  dart_debounce_throttle:
+    dependency: transitive
+    description:
+      name: dart_debounce_throttle
+      sha256: "90fdf1fe215ad93273bd0cae0d77c791485c127fb2659a3aea76e48f20861934"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.5"
   dart_style:
     dependency: transitive
     description:
@@ -517,6 +525,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  flutter_debounce_throttle:
+    dependency: "direct main"
+    description:
+      name: flutter_debounce_throttle
+      sha256: c91ea2264518b8dff67bf83f6588272ac531b767ac68111aa70223dadcdcb3f4
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.5"
   flutter_driver:
     dependency: transitive
     description: flutter

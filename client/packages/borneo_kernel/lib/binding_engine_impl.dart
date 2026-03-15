@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:logger/logger.dart';
 import 'package:cancellation_token/cancellation_token.dart';
-import 'package:queue/queue.dart';
+import 'package:synchronized/synchronized.dart';
 
 import 'package:borneo_kernel_abstractions/kernel.dart';
 
@@ -18,25 +19,47 @@ class DefaultBindingEngine implements BindingEngine {
 
   // Configurable timeouts carried over from the kernel constructor.
   final Duration localBindTimeout;
+  final int maxConcurrentProbes;
 
-  DefaultBindingEngine(this._logger, this._driverRegistry, this._events, {Duration? localBindTimeout})
-    : localBindTimeout = localBindTimeout ?? const Duration(seconds: 5);
+  DefaultBindingEngine(
+    this._logger,
+    this._driverRegistry,
+    this._events, {
+    Duration? localBindTimeout,
+    int? maxConcurrentProbes,
+  }) : localBindTimeout = localBindTimeout ?? const Duration(seconds: 5),
+       maxConcurrentProbes = maxConcurrentProbes ?? 4,
+       _probeSemaphore = _ProbeSemaphore(maxConcurrentProbes ?? 4);
 
   final Map<String, BoundDevice> _boundDevices = {};
   final Map<String, Driver> _activatedDrivers = {};
   final Map<String, StreamSubscription> _deviceEventRouters = {};
+  final Map<String, Lock> _deviceLocks = {};
+  final _ProbeSemaphore _probeSemaphore;
 
-  // serializes all bind/unbind work so we don’t need manual locks per device
-  final Queue _queue = Queue();
+  int _activeOperations = 0;
 
   @override
-  bool get isBusy => _queue.remainingItemCount > 0;
+  bool get isBusy => _activeOperations > 0;
 
   @override
   Iterable<BoundDevice> get boundDevices => List.unmodifiable(_boundDevices.values);
 
   @override
   BoundDevice? getBoundDevice(String deviceID) => _boundDevices[deviceID];
+
+  Lock _lockForDevice(String deviceID) => _deviceLocks.putIfAbsent(deviceID, Lock.new);
+
+  Future<T> _runDeviceOperation<T>(String deviceID, Future<T> Function() operation) {
+    return _lockForDevice(deviceID).synchronized(() async {
+      _activeOperations++;
+      try {
+        return await operation();
+      } finally {
+        _activeOperations--;
+      }
+    });
+  }
 
   Driver _ensureDriverActivated(String driverID) {
     return _activatedDrivers.putIfAbsent(driverID, () {
@@ -68,7 +91,10 @@ class DefaultBindingEngine implements BindingEngine {
     if (getBoundDevice(device.id) != null) {
       return Future.value(true);
     }
-    return _queue.add<bool>(() async {
+    return _runDeviceOperation<bool>(device.id, () async {
+      if (getBoundDevice(device.id) != null) {
+        return true;
+      }
       try {
         await _bindUnlocked(device, driverID, cancelToken: cancelToken);
         return true;
@@ -93,12 +119,17 @@ class DefaultBindingEngine implements BindingEngine {
 
   @override
   Future<void> bind(Device device, String driverID, {CancellationToken? cancelToken}) {
-    return _queue.add(() => _bindUnlocked(device, driverID, cancelToken: cancelToken));
+    return _runDeviceOperation<void>(device.id, () async {
+      if (getBoundDevice(device.id) != null) {
+        return;
+      }
+      await _bindUnlocked(device, driverID, cancelToken: cancelToken);
+    });
   }
 
   @override
   Future<void> unbind(String deviceID, {CancellationToken? cancelToken}) {
-    return _queue.add(() async {
+    return _runDeviceOperation<void>(deviceID, () async {
       final boundDevice = _boundDevices[deviceID];
       if (boundDevice != null) {
         await boundDevice.driver.remove(boundDevice.device, cancelToken: cancelToken);
@@ -117,25 +148,8 @@ class DefaultBindingEngine implements BindingEngine {
 
   @override
   Future<void> unbindAll({CancellationToken? cancelToken}) {
-    // perform all unbinds within the same queue task to avoid deadlock
-    return _queue.add(() async {
-      final ids = List<String>.from(_boundDevices.keys);
-      for (final id in ids) {
-        final boundDevice = _boundDevices[id];
-        if (boundDevice != null) {
-          await boundDevice.driver.remove(boundDevice.device, cancelToken: cancelToken);
-          boundDevice.dispose();
-
-          _boundDevices.remove(id);
-          _deviceEventRouters[id]?.cancel();
-          _deviceEventRouters.remove(id);
-
-          _purgeUnusedDriver();
-
-          _events.fire(DeviceRemovedEvent(boundDevice.device));
-        }
-      }
-    });
+    final ids = List<String>.from(_boundDevices.keys);
+    return Future.wait(ids.map((id) => unbind(id, cancelToken: cancelToken)));
   }
 
   @override
@@ -150,7 +164,7 @@ class DefaultBindingEngine implements BindingEngine {
     }
     _activatedDrivers.clear();
     _boundDevices.clear();
-    _queue.dispose();
+    _deviceLocks.clear();
   }
 
   /// Internal helper that performs the binding logic without enqueuing.
@@ -167,7 +181,10 @@ class DefaultBindingEngine implements BindingEngine {
     }
     final driver = _ensureDriverActivated(driverID);
 
-    final driverInitialized = await driver.probe(device, cancelToken: cancelToken);
+    final driverInitialized = await _probeSemaphore.withPermit(
+      () => driver.probe(device, cancelToken: cancelToken).timeout(localBindTimeout),
+      cancelToken: cancelToken,
+    );
 
     if (driverInitialized) {
       final bound = BoundDevice(driverID, device, driver);
@@ -182,5 +199,42 @@ class DefaultBindingEngine implements BindingEngine {
     } else {
       throw DeviceProbeError("Failed to probe $device", device);
     }
+  }
+}
+
+final class _ProbeSemaphore {
+  int _availablePermits;
+  final ListQueue<Completer<void>> _waiters = ListQueue<Completer<void>>();
+
+  _ProbeSemaphore(int maxConcurrentProbes) : assert(maxConcurrentProbes > 0), _availablePermits = maxConcurrentProbes;
+
+  Future<T> withPermit<T>(Future<T> Function() action, {CancellationToken? cancelToken}) async {
+    await _acquire();
+    try {
+      cancelToken?.throwIfCancelled();
+      return await action();
+    } finally {
+      _release();
+    }
+  }
+
+  Future<void> _acquire() {
+    if (_availablePermits > 0) {
+      _availablePermits--;
+      return Future.value();
+    }
+
+    final completer = Completer<void>();
+    _waiters.addLast(completer);
+    return completer.future;
+  }
+
+  void _release() {
+    if (_waiters.isNotEmpty) {
+      _waiters.removeFirst().complete();
+      return;
+    }
+
+    _availablePermits++;
   }
 }

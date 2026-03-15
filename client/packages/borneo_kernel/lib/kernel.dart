@@ -21,6 +21,7 @@ final class DefaultKernel implements IKernel {
   // disconnects faster while remaining conservative for flaky networks.
   final Duration localProbeTimeout;
   final Duration localBindTimeout;
+  final int maxConcurrentProbes;
   final Duration heartbeatPollingInterval;
   final int maxMissedObservations;
   final int consecutiveFailureThreshold;
@@ -78,6 +79,7 @@ final class DefaultKernel implements IKernel {
   static const int _defaultConsecutiveFailureThreshold = 2;
   static const int _defaultHeartbeatRetryMaxAttempts = 1;
   static const int _defaultObservationTimeoutMultiplier = 2;
+  static const int _defaultMaxConcurrentProbes = 4;
 
   @override
   bool get isInitialized => _isInitialized;
@@ -108,6 +110,7 @@ final class DefaultKernel implements IKernel {
     // allow overriding heartbeat/probe parameters for faster detection
     Duration? localProbeTimeout,
     Duration? localBindTimeout,
+    int? maxConcurrentProbes,
     Duration? heartbeatPollingInterval,
     int? maxMissedObservations,
     int? consecutiveFailureThreshold,
@@ -117,6 +120,7 @@ final class DefaultKernel implements IKernel {
     Duration? networkRestartDebounce,
   }) : localProbeTimeout = localProbeTimeout ?? const Duration(seconds: 1),
        localBindTimeout = localBindTimeout ?? const Duration(seconds: 5),
+       maxConcurrentProbes = maxConcurrentProbes ?? _defaultMaxConcurrentProbes,
        heartbeatPollingInterval = heartbeatPollingInterval ?? const Duration(seconds: 5),
        maxMissedObservations = maxMissedObservations ?? _defaultMaxMissedObservations,
        consecutiveFailureThreshold = consecutiveFailureThreshold ?? _defaultConsecutiveFailureThreshold,
@@ -130,7 +134,14 @@ final class DefaultKernel implements IKernel {
 
     // binding engine initialization
     _bindingEngine =
-        bindingEngine ?? DefaultBindingEngine(_logger, _driverRegistry, _events, localBindTimeout: localBindTimeout);
+        bindingEngine ??
+        DefaultBindingEngine(
+          _logger,
+          _driverRegistry,
+          _events,
+          localBindTimeout: localBindTimeout,
+          maxConcurrentProbes: this.maxConcurrentProbes,
+        );
 
     _logger.i('Loading the kernel...');
 

@@ -1,18 +1,15 @@
 import 'package:borneo_app/devices/borneo/lyfi/view_models/constants.dart';
 import 'package:borneo_app/devices/borneo/lyfi/view_models/editor/ieditor.dart';
 import 'package:borneo_app/devices/borneo/lyfi/view_models/lyfi_view_model.dart';
-import 'package:borneo_common/async/async_rate_limiter.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:borneo_wot/borneo/lyfi/wot_thing.dart';
 import 'package:cancellation_token/cancellation_token.dart';
+import 'package:flutter_debounce_throttle/flutter_debounce_throttle.dart';
 import 'package:flutter/material.dart';
 
 abstract class BaseEditorViewModel extends ChangeNotifier implements IEditor {
-  final AsyncRateLimiter _colorChangeRateLimiter = AsyncRateLimiter(
-    interval: kLocalDimmingTrackingInterval,
-    keepLatest: true,
-  );
-  AsyncRateLimiter get colorChangeRateLimiter => _colorChangeRateLimiter;
+  final ThrottleDebouncer _colorChangeRateLimiter = ThrottleDebouncer(duration: kLocalDimmingTrackingInterval);
+  ThrottleDebouncer get colorChangeRateLimiter => _colorChangeRateLimiter;
   bool _isDisposed = false;
 
   final List<ValueNotifier<int>> _channels;
@@ -55,10 +52,10 @@ abstract class BaseEditorViewModel extends ChangeNotifier implements IEditor {
 
   @override
   void dispose() {
-    if (_isDisposed) {
+    if (!_isDisposed) {
       colorChangeRateLimiter.dispose();
-      super.dispose();
       _isDisposed = true;
+      super.dispose();
     }
   }
 
@@ -71,7 +68,7 @@ abstract class BaseEditorViewModel extends ChangeNotifier implements IEditor {
   Future<void> syncDimmingColor(bool isLimited, {CancellationToken? cancelToken}) async {
     final color = _channels.map((x) => x.value).toList(growable: false);
     if (isLimited) {
-      _colorChangeRateLimiter.add(() async {
+      _colorChangeRateLimiter.call(() {
         if (parent.isSuspectedOffline || parent.boundDevice == null) {
           return;
         }

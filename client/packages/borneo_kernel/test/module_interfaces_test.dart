@@ -102,6 +102,44 @@ void main() {
       await sub.cancel();
     });
 
+    test('DefaultBindingEngine limits concurrent probes across devices', () async {
+      final logger = MockLogger();
+      final registry = MockDriverRegistry();
+      final events = DefaultEventDispatcher();
+      final drv = MockDriver('drv')..probeDelay = Duration(milliseconds: 40);
+      registry.addDriver('drv', createTestDriverDescriptor('drv', drv));
+
+      final eng = DefaultBindingEngine(logger, registry, events, maxConcurrentProbes: 2);
+      final devices = [
+        TestDevice('a', 'http://a'),
+        TestDevice('b', 'http://b'),
+        TestDevice('c', 'http://c'),
+        TestDevice('d', 'http://d'),
+      ];
+
+      await Future.wait(devices.map((device) => eng.bind(device, 'drv')));
+
+      expect(eng.boundDevices.length, equals(4));
+      expect(drv.maxObservedConcurrentProbes, lessThanOrEqualTo(2));
+    });
+
+    test('DefaultBindingEngine serializes work for the same device', () async {
+      final logger = MockLogger();
+      final registry = MockDriverRegistry();
+      final events = DefaultEventDispatcher();
+      final drv = MockDriver('drv')..probeDelay = Duration(milliseconds: 40);
+      registry.addDriver('drv', createTestDriverDescriptor('drv', drv));
+
+      final eng = DefaultBindingEngine(logger, registry, events, maxConcurrentProbes: 4);
+      final device = TestDevice('a', 'http://a');
+
+      final results = await Future.wait([eng.tryBind(device, 'drv'), eng.tryBind(device, 'drv')]);
+
+      expect(results, everyElement(isTrue));
+      expect(eng.boundDevices.length, equals(1));
+      expect(drv.probedDevices.where((id) => id == 'a').length, equals(1));
+    });
+
     test('HeartbeatService start/batch/suspend/resume', () async {
       final svc = MockHeartbeatService();
       expect(svc.isActive, isFalse);
