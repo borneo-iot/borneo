@@ -1,0 +1,32 @@
+menu "SPI"
+    config DRVFX_SPI_IDF
+        bool "Enable ESP-IDF SPI controller driver"
+
+    config DRVFX_SPI0_NAME
+        string "SPI controller device name"
+        default "spi0"
+        depends on DRVFX_SPI_IDF
+
+    config DRVFX_SPI0_HOST
+        int "SPI host id"
+        default 2
+        depends on DRVFX_SPI_IDF
+
+    config DRVFX_SPI0_MOSI_GPIO
+        int "SPI MOSI GPIO number"
+        depends on DRVFX_SPI_IDF
+
+    config DRVFX_SPI0_MISO_GPIO
+        int "SPI MISO GPIO number"
+        depends on DRVFX_SPI_IDF
+
+    config DRVFX_SPI0_SCLK_GPIO
+        int "SPI SCLK GPIO number"
+        depends on DRVFX_SPI_IDF
+
+    config DRVFX_SPI0_MAX_TRANSFER_SZ
+        int "SPI max transfer size"
+        default 64
+        depends on DRVFX_SPI_IDF
+endmenu
+

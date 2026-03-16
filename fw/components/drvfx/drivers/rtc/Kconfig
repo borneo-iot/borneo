@@ -1,0 +1,52 @@
+
+menu "RTC (Real-Time Clock)"
+    choice
+        prompt "RTC device"
+        default DRIVER_RTC_NONE
+
+        config DRIVER_RTC_NONE
+            bool "No RTC"
+
+        config DRIVER_RTC_IDF
+            bool "SoC internal RTC"
+
+        config DRIVER_RTC_DS1302
+            bool "DS1302"
+
+        config DRIVER_RTC_PCF8563
+            bool "PCF8563"
+            depends on DRVFX_I2C_IDF
+    endchoice
+
+    config DRIVER_RTC_DS1302_CE_GPIO
+        int "DS1302 CE GPIO number"
+        depends on DRIVER_RTC_DS1302
+
+    config DRIVER_RTC_DS1302_IO_GPIO
+        int "DS1302 I/O GPIO number"
+        depends on DRIVER_RTC_DS1302
+
+    config DRIVER_RTC_DS1302_SCLK_GPIO
+        int "DS1302 SCLK GPIO number"
+        depends on DRIVER_RTC_DS1302
+
+    config DRIVER_RTC_DS1302_RST_GPIO
+        int "DS1302 RST GPIO number"
+        depends on DRIVER_RTC_DS1302
+
+    config DRIVER_RTC_PCF8563_ADDR
+        hex "The I2C address of PCF8563"
+        default 0x51
+        depends on DRIVER_RTC_PCF8563
+
+    config DRIVER_RTC_PCF8563_BUS_NAME
+        string "PCF8563 bus device name"
+        default "i2c0"
+        depends on DRIVER_RTC_PCF8563
+
+    config DRIVER_RTC_PCF8563_TIMEOUT_MS
+        int "PCF8563 transaction timeout (ms)"
+        default 1000
+        depends on DRIVER_RTC_PCF8563
+
+endmenu

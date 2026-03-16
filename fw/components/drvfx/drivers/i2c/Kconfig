@@ -1,0 +1,33 @@
+menu "I2C"
+    config DRVFX_I2C_IDF
+        bool "Enable ESP-IDF I2C controller driver"
+
+    config DRVFX_I2C0_NAME
+        string "I2C controller device name"
+        default "i2c0"
+        depends on DRVFX_I2C_IDF
+
+    config DRVFX_I2C0_PORT
+        int "I2C controller port"
+        default 0
+        depends on DRVFX_I2C_IDF
+
+    config DRVFX_I2C0_SDA_GPIO
+        int "I2C SDA GPIO number"
+        depends on DRVFX_I2C_IDF
+
+    config DRVFX_I2C0_SCL_GPIO
+        int "I2C SCL GPIO number"
+        depends on DRVFX_I2C_IDF
+
+    config DRVFX_I2C0_FREQ_HZ
+        int "I2C clock frequency (Hz)"
+        default 100000
+        depends on DRVFX_I2C_IDF
+
+    config DRVFX_I2C0_PULLUP
+        bool "Enable internal pull-ups"
+        default y
+        depends on DRVFX_I2C_IDF
+endmenu
+
