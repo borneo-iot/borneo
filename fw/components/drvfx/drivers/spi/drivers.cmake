@@ -1,0 +1,5 @@
+
+
+if(CONFIG_DRVFX_SPI_IDF)
+    set_property(GLOBAL APPEND PROPERTY DRVFX_DRIVERS_SOURCES "idf.c")
+endif()
