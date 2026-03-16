@@ -17,8 +17,6 @@
 #include "drvfx/drivers/i2c.h"
 #include "drvfx/drivers/rtc.h"
 
-#ifdef CONFIG_DRIVER_RTC_PCF8563
-
 #define TAG "pcf8563"
 
 #define DEC2BCD(dec) ((((dec) / 10) * 16) + ((dec) % 10))
@@ -291,5 +289,3 @@ static const struct rtc_driver_api _pcf8563_api = {
 
 DRVFX_DEVICE_DEFINE_WITH_DEPS("rtc_dev", pcf8563_init, &_pcf8563_data, &_pcf8563_config,
                               DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY, &_pcf8563_api, _pcf8563_required_devices, 1);
-
-#endif // CONFIG_DRIVER_RTC_PCF8563

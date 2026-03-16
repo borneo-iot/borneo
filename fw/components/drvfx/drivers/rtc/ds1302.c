@@ -16,8 +16,6 @@
 #include "drvfx/drvfx.h"
 #include "drvfx/drivers/rtc.h"
 
-#ifdef CONFIG_DRIVER_RTC_DS1302
-
 #define DEC2BCD(dec) ((dec / 10 * 16) + (dec % 10))
 
 #define BCD2DEC(bcd) ((bcd / 16 * 10) + (bcd % 16))
@@ -267,5 +265,3 @@ static const struct rtc_driver_api _ds1302_api = {
 
 DRVFX_DEVICE_DEFINE("rtc_dev", ds1302_init, &_ds1302_data, &_ds1302_config, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY,
                     &_ds1302_api);
-
-#endif // CONFIG_DRIVER_RTC_DS1302

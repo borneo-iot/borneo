@@ -8,8 +8,6 @@
 #include "drvfx/drivers/i2c.h"
 #include "drvfx/drvfx.h"
 
-#ifdef CONFIG_DRVFX_I2C_IDF
-
 #define TAG "drvfx.i2c"
 
 struct drvfx_i2c_idf_config {
@@ -200,5 +198,3 @@ static const struct drvfx_i2c_driver_api s_i2c_api = {
 
 DRVFX_NAMED_DEVICE_DEFINE(i2c0, CONFIG_DRVFX_I2C0_NAME, drvfx_i2c_idf_init, &s_i2c0_data, &s_i2c0_config,
                           DRVFX_INIT_POST_KERNEL_HIGH_PRIORITY, &s_i2c_api);
-
-#endif

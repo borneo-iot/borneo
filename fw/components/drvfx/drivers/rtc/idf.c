@@ -17,8 +17,6 @@
 #include "drvfx/drvfx.h"
 #include "drvfx/drivers/rtc.h"
 
-#ifdef CONFIG_DRIVER_RTC_IDF
-
 struct idf_config {
     // No configuration needed for software RTC
 };
@@ -130,5 +128,3 @@ static const struct rtc_driver_api _idf_api = {
 };
 
 DRVFX_DEVICE_DEFINE("idf", idf_init, &_idf_data, &_idf_config, DRVFX_INIT_POST_KERNEL_DEFAULT_PRIORITY, &_idf_api);
-
-#endif // CONFIG_DRIVER_RTC_IDF

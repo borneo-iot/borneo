@@ -6,8 +6,6 @@
 #include "drvfx/drivers/spi.h"
 #include "drvfx/drvfx.h"
 
-#ifdef CONFIG_DRVFX_SPI_IDF
-
 #define TAG "drvfx.spi"
 
 struct drvfx_spi_idf_config {
@@ -141,5 +139,3 @@ static const struct drvfx_spi_driver_api s_spi_api = {
 
 DRVFX_NAMED_DEVICE_DEFINE(spi0, CONFIG_DRVFX_SPI0_NAME, drvfx_spi_idf_init, &s_spi0_data, &s_spi0_config,
                           DRVFX_INIT_POST_KERNEL_HIGH_PRIORITY, &s_spi_api);
-
-#endif
