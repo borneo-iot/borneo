@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Automatically generated, 2024.
 #
-#: features\settings\views\app_settings_screen.dart:99
+#: features\settings\views\app_settings_screen.dart:98
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-10 17:39+0800\n"
+"POT-Creation-Date: 2026-03-17 23:00+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -52,17 +52,17 @@ msgstr "探测设备时超时。"
 msgid "Unable to connect to this device."
 msgstr "无法连接到该设备。"
 
-#: core\services\devices\ota\coap_ota_service.dart:29
+#: core\services\devices\ota\coap_ota_service.dart:55
 #, python-brace-format
 msgid "Failed to fetch firmware manifest: HTTP code `{code}`"
 msgstr "获取固件信息失败：HTTP 错误码 `{code}`"
 
-#: core\services\devices\ota\coap_ota_service.dart:57
+#: core\services\devices\ota\coap_ota_service.dart:83
 #, python-brace-format
 msgid "No firmware entry found for product ID `{pid}`"
 msgstr "找不到产品 ID `{pid}` 对应的固件条目"
 
-#: core\services\devices\ota\coap_ota_service.dart:107
+#: core\services\devices\ota\coap_ota_service.dart:138
 msgid "Firmware hash mismatch"
 msgstr "固件哈希不匹配"
 
@@ -115,8 +115,8 @@ msgid "Start strength must be between 10% and 90%."
 msgstr "开始强度必须在 10% 到 90% 之间。"
 
 #: devices\borneo\lyfi\view_models\acclimation_view_model.dart:135
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:500
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:613
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:503
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:617
 #: devices\borneo\lyfi\view_models\moon_view_model.dart:83
 msgid "Device is offline. Please retry after reconnection."
 msgstr "设备离线，请重新连接后重试。"
@@ -125,31 +125,36 @@ msgstr "设备离线，请重新连接后重试。"
 msgid "Failed to update acclimation settings."
 msgstr "更新适应设置失败。"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:516
+#: devices\borneo\lyfi\view_models\controller_settings_view_model.dart:325
+#, python-brace-format
+msgid "Failed to load controller settings: {msg}"
+msgstr ""
+
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:520
 msgid "Bad device state"
 msgstr "设备状态异常"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:526
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:530
 msgid "Failed to switch to temporary state"
 msgstr "切换临时开灯状态失败"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:596
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:600
 msgid "Failed to save changes. Please try again."
 msgstr "保存更改失败，请重试。"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:627
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:631
 msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
 msgstr "无法切换到太阳模拟模式：时区未设置。"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:632
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:636
 msgid "Unable to switch to Sun Simulation mode: the location is not set."
 msgstr "无法切换到太阳模拟模式：位置未设置。"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:638
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:642
 msgid "Failed to switch mode"
 msgstr "切换模式失败"
 
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:722
+#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:726
 msgid "Device is not reachable at the moment."
 msgstr "设备当前不可达"
 
@@ -157,8 +162,7 @@ msgstr "设备当前不可达"
 msgid ""
 "Unable to update Moon mode: configure at least one channel with brightness "
 "greater than 0."
-msgstr ""
-"无法更新月亮模式：至少配置一个亮度大于0的通道。"
+msgstr "无法更新月亮模式：至少配置一个亮度大于0的通道。"
 
 #: devices\borneo\lyfi\view_models\moon_view_model.dart:70
 msgid "Unable to update Moon mode: the location is not set."
@@ -172,167 +176,159 @@ msgstr "无法更新月亮模式：时区未设置。"
 msgid "Failed to update moon settings."
 msgstr "更新月亮设置失败。"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:84
-msgid "Location updated successfully"
-msgstr "定位更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:86
-msgid "Failed to update device location"
-msgstr "更新设备位置失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:97
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:87
 msgid "Please enable location services"
 msgstr "请开启定位服务"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:105
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:95
 msgid "Location permissions are denied"
 msgstr "已拒绝给予定位权限"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:110
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:100
 msgid "Location permissions are permanently denied"
 msgstr "已永久拒绝给予定位权限"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:124
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:114
 msgid "Failed to get location"
 msgstr "获取位置失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:138
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:124
+msgid "Location updated successfully"
+msgstr "定位更新成功"
+
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:127
+msgid "Failed to update device location"
+msgstr "更新设备位置失败"
+
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:143
 msgid "Time zone updated successfully"
 msgstr "时区已成功更新"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:140
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:145
 msgid "Failed to update device time zone"
 msgstr "更新设备时区失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:153
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:159
 msgid "LED correction method updated successfully"
 msgstr "LED 矫正方法已成功更新"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:155
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:161
 msgid "Failed to update LED correction method"
 msgstr "更新 LED 校正方法失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:168
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:175
 msgid "Temporary duration updated successfully"
 msgstr "临时持续时间更新成功"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:170
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:177
 msgid "Failed to update temporary duration"
 msgstr "更新临时持续时间失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:183
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:191
 msgid "Cloud simulation mode updated successfully"
 msgstr "云模拟模式更新成功"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:185
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:193
 msgid "Failed to update cloud simulation mode"
 msgstr "更新云模拟模式失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:198
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:207
 msgid "Fan mode updated successfully"
 msgstr "风扇模式更新成功"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:200
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:209
 msgid "Failed to update fan modee"
 msgstr "更新风扇模式失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:213
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:223
 msgid "Manual fan power updated successfully"
 msgstr "手动风扇功率更新成功"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:215
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:225
 msgid "Failed to update manual fan power"
 msgstr "更新手动风扇功率失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:228
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:239
 msgid "Power behavior updated successfully"
 msgstr "电源行为更新成功"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:230
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:241
 msgid "Failed to update power behavior"
 msgstr "更新电源行为失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:243
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:255
 msgid "Device name updated successfully"
 msgstr "设备名更新成功"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:245
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:257
 msgid "Failed to update device name"
 msgstr "更新设备名称失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:260
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:273
 msgid "Failed to restore device to factory settings"
 msgstr "将设备恢复到出厂设置失败"
 
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:275
+#: devices\borneo\lyfi\view_models\settings_view_model.dart:289
 msgid "Failed to reset device network settings"
 msgstr "重置设备网络设置失败"
 
 #: devices\borneo\lyfi\views\acclimation_screen.dart:48
 #: devices\borneo\lyfi\views\acclimation_screen.dart:56
 #: devices\borneo\lyfi\views\acclimation_screen.dart:63
-#: devices\borneo\lyfi\views\dashboard\dashboard_acclimation_tile.dart:126
+#: devices\borneo\lyfi\views\dashboard\dashboard_acclimation_tile.dart:122
 msgid "Acclimation"
 msgstr "适应模式"
 
 #: devices\borneo\lyfi\views\acclimation_screen.dart:68
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:92
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:93
 #: devices\borneo\lyfi\views\easy_setup_screen.dart:43
-#: devices\borneo\lyfi\views\moon_screen.dart:57
+#: devices\borneo\lyfi\views\moon_screen.dart:133
 #: shared\widgets\map_location_picker.dart:145
 msgid "Apply"
 msgstr "应用"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:91
+#: devices\borneo\lyfi\views\acclimation_screen.dart:90
 msgid "SETTINGS"
 msgstr "设置"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:94
+#: devices\borneo\lyfi\views\acclimation_screen.dart:93
 msgid "Enable acclimation"
 msgstr "启用适应模式"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:99
+#: devices\borneo\lyfi\views\acclimation_screen.dart:98
 msgid "Start date"
 msgstr "开始"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:105
+#: devices\borneo\lyfi\views\acclimation_screen.dart:104
 msgid "Not set"
 msgstr "未设置"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:127
+#: devices\borneo\lyfi\views\acclimation_screen.dart:126
 msgid "Duration"
 msgstr "持续时间"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:129
-#: devices\borneo\lyfi\views\acclimation_screen.dart:143
+#: devices\borneo\lyfi\views\acclimation_screen.dart:131
+#: devices\borneo\lyfi\views\acclimation_screen.dart:133
 #, python-brace-format
 msgid "{d} days"
 msgstr "{d}天"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:138
-msgid "Select Duration"
-msgstr "选择时长"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:154
+#: devices\borneo\lyfi\views\acclimation_screen.dart:143
 msgid "Start strength"
 msgstr "起始强度"
 
-#: devices\borneo\lyfi\views\acclimation_screen.dart:165
-msgid "Select Start strength"
-msgstr "选择起始强度"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:187
+#: devices\borneo\lyfi\views\acclimation_screen.dart:171
 msgid "Update acclimation settings succeed."
 msgstr "适应模式设置已更新。"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:52
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:62
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:70
-#: devices\borneo\lyfi\views\settings_screen.dart:121
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:53
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:63
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:71
+#: devices\borneo\lyfi\views\settings_screen.dart:247
 msgid "Controller Settings"
 msgstr "控制器设置"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:63
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:64
 msgid "Initialization failed"
 msgstr "初始化失败"
 
@@ -341,42 +337,50 @@ msgid "LED CONFIGURATION"
 msgstr "LED 配置"
 
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:108
+msgid "Nominal PFD (PAR)"
+msgstr ""
+
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:126
+msgid "Nominal power"
+msgstr ""
+
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:142
 msgid "PWM frequency"
 msgstr "PWM 频率"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:119
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:153
 msgid "LED CHANNELS"
 msgstr "LED 通道"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:123
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:157
 msgid "Enabled channel count"
 msgstr "启用通道数量"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:159
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:193
 msgid "POWER & PROTECTION"
 msgstr "电源与保护"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:166
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:200
 msgid "Overpower enabled"
 msgstr "过功率保护"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:170
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:204
 msgid "Overpower cut-off"
 msgstr "过功率切断"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:201
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:235
 msgid "Overtemperature enabled"
 msgstr "过温保护"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:206
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:240
 msgid "Overtemperature cut-off"
 msgstr "过温切断"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:250
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:284
 msgid "Confirm Submit"
 msgstr "确认提交"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:253
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:287
 msgid ""
 "Please carefully check the configuration. Incorrect configuration may cause "
 "hardware damage or other dangerous situations. Submitting will reboot the "
@@ -386,43 +390,43 @@ msgstr ""
 "请仔细检查配置。错误的配置可能导致硬件损坏或其他危险情况。提交将重启设备。\n"
 "您要继续吗？"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:257
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:286
-#: devices\borneo\lyfi\views\settings_screen.dart:328
-#: devices\borneo\lyfi\views\settings_screen.dart:414
-#: devices\borneo\lyfi\views\settings_screen.dart:476
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:291
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:351
+#: devices\borneo\lyfi\views\settings_screen.dart:344
+#: devices\borneo\lyfi\views\settings_screen.dart:430
+#: devices\borneo\lyfi\views\settings_screen.dart:492
 #: devices\views\device_ota_screen.dart:92
 #: devices\views\device_ota_screen.dart:435
 #: features\devices\views\provisioning_screen.dart:72
-#: features\scenes\views\scene_edit_screen.dart:355
-#: main\views\main_screen.dart:233 shared\widgets\confirmation_sheet.dart:39
+#: features\scenes\views\scene_edit_screen.dart:368
+#: main\views\main_screen.dart:252 shared\widgets\confirmation_sheet.dart:39
 #: shared\widgets\confirmation_sheet.dart:78
 #: shared\widgets\generic_settings_screen.dart:72
 msgid "Cancel"
 msgstr "取消"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:268
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:292
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:300
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:357
 msgid "Confirm"
 msgstr "确认"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:305
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:336
 msgid "Select channel count"
 msgstr "选择通道数量"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:339
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:371
 msgid "Select PWM frequency"
 msgstr "选择 PWM 频率"
 
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:363
+#: devices\borneo\lyfi\views\controller_settings_screen.dart:395
 msgid "Select overtemperature cut-off"
 msgstr "选择过温关机阈值"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_chart.dart:36
+#: devices\borneo\lyfi\views\dashboard\dashboard_chart.dart:38
 msgid "Device Offline"
 msgstr "设备离线"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_chart.dart:42
+#: devices\borneo\lyfi\views\dashboard\dashboard_chart.dart:44
 msgid "Please check device connection"
 msgstr "请检查设备连接"
 
@@ -432,8 +436,8 @@ msgstr "调光"
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:61
 #: devices\borneo\lyfi\views\dashboard\dashboard_fan_tile.dart:15
-#: devices\borneo\lyfi\views\settings_screen.dart:599
-#: devices\borneo\lyfi\views\settings_screen.dart:606
+#: devices\borneo\lyfi\views\settings_screen.dart:615
+#: devices\borneo\lyfi\views\settings_screen.dart:622
 msgid "Manual"
 msgstr "手动模式"
 
@@ -445,7 +449,7 @@ msgstr "编程模式"
 msgid "Sun Simulation"
 msgstr "日出日落"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:94
+#: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:95
 #, python-brace-format
 msgid "Failed to open dimming page: {msg}"
 msgstr "打开调光页面失败：{msg}"
@@ -462,8 +466,8 @@ msgstr "风扇"
 #: devices\borneo\lyfi\views\dashboard\dashboard_power_tile.dart:93
 #: devices\borneo\lyfi\views\dashboard\dashboard_temperature_tile.dart:86
 #: devices\borneo\lyfi\views\dashboard\dashboard_temperature_tile.dart:118
-#: devices\borneo\lyfi\views\editor\sun_editor_view.dart:41
-#: devices\borneo\lyfi\views\settings_screen.dart:157
+#: devices\borneo\lyfi\views\editor\sun_editor_view.dart:39
+#: devices\borneo\lyfi\views\settings_screen.dart:167
 msgid "N/A"
 msgstr "无"
 
@@ -499,26 +503,26 @@ msgstr "下弦月"
 msgid "Waning Crescent"
 msgstr "残月"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:74
-#: devices\borneo\lyfi\views\moon_screen.dart:47
+#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:75
+#: devices\borneo\lyfi\views\moon_screen.dart:116
 msgid "Moonlight"
 msgstr "月光"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:81
+#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:82
 #, python-brace-format
 msgid "Rises at {t}"
 msgstr "在 {t} 升起"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:82
-msgid "Daytime"
-msgstr "日间"
+#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:83
+msgid "No Moon"
+msgstr ""
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_power_switch_tile.dart:74
 msgid "ON"
 msgstr "电源开"
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_power_switch_tile.dart:74
-#: features\devices\views\device_card.dart:158
+#: features\devices\views\device_card.dart:170
 msgid "OFF"
 msgstr "电源关"
 
@@ -527,12 +531,12 @@ msgid "LED Power"
 msgstr "LED 功率"
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:52
-#: devices\borneo\lyfi\views\settings_screen.dart:38
-#: features\my\views\my_screen.dart:28
+#: devices\borneo\lyfi\views\settings_screen.dart:39
+#: features\my\views\my_screen.dart:27
 msgid "Settings"
 msgstr "设置"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:81
+#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:82
 msgid "Error"
 msgstr "错误"
 
@@ -540,35 +544,48 @@ msgstr "错误"
 msgid "Temperature & Fan"
 msgstr "温度与风扇"
 
-#: devices\borneo\lyfi\views\dashboard\dashboard_temporary_tile.dart:88
+#: devices\borneo\lyfi\views\dashboard\dashboard_temporary_tile.dart:83
 msgid "Temporary"
 msgstr "临时开灯"
 
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:22
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:80
 msgid "Channel Settings"
 msgstr "通道设置"
 
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:31
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:84
 #: shared\widgets\generic_settings_screen.dart:57
 msgid "Save"
 msgstr "保存"
 
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:44
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:100
 #: devices\borneo\lyfi\views\settings_screen.dart:97
 #: features\devices\views\group_edit_screen.dart:82
-#: features\scenes\views\scene_edit_screen.dart:163
+#: features\scenes\views\scene_edit_screen.dart:176
 msgid "Name"
 msgstr "名称"
 
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:45
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:101
 msgid "1-15 characters"
 msgstr "1-15 字符"
 
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:46
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:102
 msgid "Invalid name"
 msgstr "名称无效"
 
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:51
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:111
+msgid "Wavelength"
+msgstr ""
+
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:113
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:124
+msgid "Invalid wavelength"
+msgstr ""
+
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:122
+msgid "Wavelength 2"
+msgstr ""
+
+#: devices\borneo\lyfi\views\dimmer_channel_view.dart:128
 msgid "Color"
 msgstr "颜色"
 
@@ -584,24 +601,24 @@ msgstr "计划模式"
 msgid "Sun simulation mode"
 msgstr "日光模拟模式"
 
-#: devices\borneo\lyfi\views\dimming_screen.dart:167
-#: main\views\main_screen.dart:273
+#: devices\borneo\lyfi\views\dimming_screen.dart:171
+#: main\views\main_screen.dart:292
 msgid "Editor initialization failed. Please retry."
 msgstr "编辑器初始化失败，请重试。"
 
-#: devices\borneo\lyfi\views\dimming_screen.dart:231
+#: devices\borneo\lyfi\views\dimming_screen.dart:235
 msgid "Device connection lost. Controls are locked."
 msgstr "设备连接丢失。控制被锁定。"
 
-#: devices\borneo\lyfi\views\dimming_screen.dart:232
+#: devices\borneo\lyfi\views\dimming_screen.dart:236
 msgid "Connection unstable. Trying to reconnect…"
 msgstr "连接不稳定。尝试重新连接…"
 
-#: devices\borneo\lyfi\views\dimming_screen.dart:263
+#: devices\borneo\lyfi\views\dimming_screen.dart:267
 msgid "RETRY"
 msgstr "重试"
 
-#: devices\borneo\lyfi\views\dimming_screen.dart:281
+#: devices\borneo\lyfi\views\dimming_screen.dart:285
 msgid "Back to device"
 msgstr "返回设备"
 
@@ -617,43 +634,43 @@ msgstr "时"
 msgid "Mins"
 msgstr "分"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:25
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:123
 msgid "Add time point"
 msgstr "增加时间点"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:172
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:242
 msgid "Easy"
 msgstr "简易"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:189
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:259
 msgid "Add"
 msgstr "添加"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:215
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:285
 msgid "Remove"
 msgstr "移除"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:224
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:294
 msgid "Clear"
 msgstr "全清"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:233
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:303
 msgid "Prev"
 msgstr "上个时间点"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:242
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:312
 msgid "Next"
 msgstr "下个时间点"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:275
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:340
 msgid "Confirmation"
 msgstr "确认"
 
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:277
+#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:342
 msgid "Are you sure you want to remove all schedule entries?"
 msgstr "您确定要删除所有日程条目吗？"
 
-#: devices\borneo\lyfi\views\moon_screen.dart:119
+#: devices\borneo\lyfi\views\moon_screen.dart:183
 msgid "Update moon settings succeed."
 msgstr "月相设置已更新。"
 
@@ -677,286 +694,290 @@ msgstr "序列号"
 msgid "Device address"
 msgstr "设备地址"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:118
-msgid "STANDALONE CONTROLLER"
-msgstr "独立控制器"
+#: devices\borneo\lyfi\views\settings_screen.dart:117
+msgid "LOCATION & TIME"
+msgstr ""
 
-#: devices\borneo\lyfi\views\settings_screen.dart:128
-msgid "DEVICE STATUS"
-msgstr "设备状态"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:131
-msgid "Time zone"
-msgstr "时区"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:134
-msgid "No time zone"
-msgstr "未设置时区"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:142
-msgid "Timezone mismatch"
-msgstr "时区不匹配"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:150
-msgid "Power status at startup"
-msgstr "上电时电源状态"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:156
-msgid "Last shutdown"
-msgstr "上次关机"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:160
-#, python-brace-format
-msgid "Reason code: {reasonCode}"
-msgstr "关机原因代码：{reasonCode}"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:166
-msgid "LIGHTING"
-msgstr "灯光"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:169
+#: devices\borneo\lyfi\views\settings_screen.dart:120
 msgid "Device Location"
 msgstr "设备位置"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:170
+#: devices\borneo\lyfi\views\settings_screen.dart:121
 msgid "Geographical location"
 msgstr "地理位置"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:174
+#: devices\borneo\lyfi\views\settings_screen.dart:125
 #: devices\views\device_ota_screen.dart:345
 msgid "Unknown"
 msgstr "未知"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:183
+#: devices\borneo\lyfi\views\settings_screen.dart:135
+msgid "Time zone"
+msgstr "时区"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:138
+msgid "No time zone"
+msgstr "未设置时区"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:146
+msgid "Timezone mismatch"
+msgstr "时区不匹配"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:157
+msgid "DEVICE STATUS"
+msgstr "设备状态"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:160
+msgid "Power status at startup"
+msgstr "上电时电源状态"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:166
+msgid "Last shutdown"
+msgstr "上次关机"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:170
+#, python-brace-format
+msgid "Reason code: {reasonCode}"
+msgstr "关机原因代码：{reasonCode}"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:177
+msgid "LIGHTING"
+msgstr "灯光"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:180
 msgid "Correction curve"
 msgstr "矫正曲线"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:189
+#: devices\borneo\lyfi\views\settings_screen.dart:186
 msgid "Temporary light duration"
 msgstr "临时开灯时长"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:195
+#: devices\borneo\lyfi\views\settings_screen.dart:192
 msgid "Cloud simulation"
 msgstr "云模拟"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:196
+#: devices\borneo\lyfi\views\settings_screen.dart:193
 msgid "Simulate cloud shadow effect"
 msgstr "模拟云影效果"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:209
+#: devices\borneo\lyfi\views\settings_screen.dart:207
 msgid "THERMAL MANAGEMENT"
 msgstr "热管理"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:212
+#: devices\borneo\lyfi\views\settings_screen.dart:210
 msgid "Fan mode"
 msgstr "风扇模式"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:218
+#: devices\borneo\lyfi\views\settings_screen.dart:216
 msgid "Manual fan power"
 msgstr "手动风扇功率"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:228
+#: devices\borneo\lyfi\views\settings_screen.dart:227
 msgid "VERSION & UPGRADE"
 msgstr "版本与升级"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:231
+#: devices\borneo\lyfi\views\settings_screen.dart:230
 msgid "Hardware version"
 msgstr "硬件版本"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:235
+#: devices\borneo\lyfi\views\settings_screen.dart:234
 msgid "Firmware version"
 msgstr "固件版本"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:243
+#: devices\borneo\lyfi\views\settings_screen.dart:244
+msgid "STANDALONE CONTROLLER"
+msgstr "独立控制器"
+
+#: devices\borneo\lyfi\views\settings_screen.dart:254
 msgid "DANGER ZONE"
 msgstr "危险区域"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:248
+#: devices\borneo\lyfi\views\settings_screen.dart:259
 msgid "Delete device"
 msgstr "删除设备"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:256
+#: devices\borneo\lyfi\views\settings_screen.dart:267
 msgid "Reset device network settings"
 msgstr "重置设备网络设置"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:263
+#: devices\borneo\lyfi\views\settings_screen.dart:274
 msgid "Restore to factory settings"
 msgstr "恢复出厂设置"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:305
+#: devices\borneo\lyfi\views\settings_screen.dart:321
 msgid "Restore Factory Settings"
 msgstr "恢复出厂设置"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:312
+#: devices\borneo\lyfi\views\settings_screen.dart:328
 msgid "Are you sure you want to restore this device to factory settings?"
 msgstr "你确定要将此设备恢复到出厂设置？"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:314
+#: devices\borneo\lyfi\views\settings_screen.dart:330
 msgid "This action will:"
 msgstr "此操作将造成以下后果："
 
-#: devices\borneo\lyfi\views\settings_screen.dart:316
+#: devices\borneo\lyfi\views\settings_screen.dart:332
 msgid "• Delete all custom settings and configurations"
 msgstr "· 删除所有自定义设置"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:317
+#: devices\borneo\lyfi\views\settings_screen.dart:333
 msgid "• Disconnect the device from your network"
 msgstr "· 设备将从网络中断开"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:318
+#: devices\borneo\lyfi\views\settings_screen.dart:334
 msgid "• Reset all schedules and modes to defaults"
 msgstr "· 所有的调光设置将恢复到默认值"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:321
+#: devices\borneo\lyfi\views\settings_screen.dart:337
 msgid "The device will need to be reconfigured after this operation."
 msgstr "经过此操作以后设备需要重新进行配置。"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:342
+#: devices\borneo\lyfi\views\settings_screen.dart:358
 msgid "Restore"
 msgstr "执行恢复"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:353
+#: devices\borneo\lyfi\views\settings_screen.dart:369
 msgid ""
 "Are you sure you want to reset this device's network settings?\n"
 "The device will be removed and must be provisioned again."
 msgstr "您确定要重置此设备的网络设置吗？"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:372
+#: devices\borneo\lyfi\views\settings_screen.dart:388
 msgid "Are you sure you want to delete this device?"
 msgstr "您确定要删除此设备吗？"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:391
+#: devices\borneo\lyfi\views\settings_screen.dart:407
 msgid "Set Manual Fan Power"
 msgstr "设置手动风扇功率"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:420
-#: devices\borneo\lyfi\views\settings_screen.dart:491
+#: devices\borneo\lyfi\views\settings_screen.dart:436
+#: devices\borneo\lyfi\views\settings_screen.dart:507
 msgid "Set"
 msgstr "设置"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:434
+#: devices\borneo\lyfi\views\settings_screen.dart:450
 msgid "Device name cannot be empty."
 msgstr "设备名不能为空。"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:437
+#: devices\borneo\lyfi\views\settings_screen.dart:453
 msgid "Device name cannot be pure whitespace."
 msgstr "设备名不能只包含空白字符。"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:440
+#: devices\borneo\lyfi\views\settings_screen.dart:456
 msgid "Device name cannot have leading or trailing whitespace."
 msgstr "设备名不能有前导或尾随空格。"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:443
+#: devices\borneo\lyfi\views\settings_screen.dart:459
 msgid ""
 "Device name is too long. Maximum length is 63 bytes when encoded as UTF-8."
 msgstr "设备名太长。UTF-8 编码下最大为 63 字节。"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:452
+#: devices\borneo\lyfi\views\settings_screen.dart:468
 msgid "Set Device Name"
 msgstr "设置设备名称"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:462
+#: devices\borneo\lyfi\views\settings_screen.dart:478
 msgid "Device Name"
 msgstr "设备名称"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:501
-#: devices\borneo\lyfi\views\settings_screen.dart:509
+#: devices\borneo\lyfi\views\settings_screen.dart:517
+#: devices\borneo\lyfi\views\settings_screen.dart:525
 msgid "Keep on"
 msgstr "保持开启"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:502
-#: devices\borneo\lyfi\views\settings_screen.dart:510
+#: devices\borneo\lyfi\views\settings_screen.dart:518
+#: devices\borneo\lyfi\views\settings_screen.dart:526
 msgid "Keep off"
 msgstr "保持关闭"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:503
-#: devices\borneo\lyfi\views\settings_screen.dart:511
+#: devices\borneo\lyfi\views\settings_screen.dart:519
+#: devices\borneo\lyfi\views\settings_screen.dart:527
 msgid "Maintain last"
 msgstr "与之前相同"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:517
+#: devices\borneo\lyfi\views\settings_screen.dart:533
 msgid "Select power status"
 msgstr "选择开机电源状态"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:529
-#: devices\borneo\lyfi\views\settings_screen.dart:539
+#: devices\borneo\lyfi\views\settings_screen.dart:545
+#: devices\borneo\lyfi\views\settings_screen.dart:555
 msgid "Logarithmic"
 msgstr "对数"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:530
-#: devices\borneo\lyfi\views\settings_screen.dart:540
+#: devices\borneo\lyfi\views\settings_screen.dart:546
+#: devices\borneo\lyfi\views\settings_screen.dart:556
 msgid "Linear"
 msgstr "线性"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:531
-#: devices\borneo\lyfi\views\settings_screen.dart:541
+#: devices\borneo\lyfi\views\settings_screen.dart:547
+#: devices\borneo\lyfi\views\settings_screen.dart:557
 msgid "Exponential"
 msgstr "指数"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:532
-#: devices\borneo\lyfi\views\settings_screen.dart:542
+#: devices\borneo\lyfi\views\settings_screen.dart:548
+#: devices\borneo\lyfi\views\settings_screen.dart:558
 msgid "Gamma"
 msgstr "伽马矫正"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:533
-#: devices\borneo\lyfi\views\settings_screen.dart:543
+#: devices\borneo\lyfi\views\settings_screen.dart:549
+#: devices\borneo\lyfi\views\settings_screen.dart:559
 msgid "CIE1931"
 msgstr "CIE1931"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:549
+#: devices\borneo\lyfi\views\settings_screen.dart:565
 msgid "Select correction curve"
 msgstr "选择校正曲线"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:560
-#: devices\borneo\lyfi\views\settings_screen.dart:573
+#: devices\borneo\lyfi\views\settings_screen.dart:576
+#: devices\borneo\lyfi\views\settings_screen.dart:589
 msgid "5 minutes"
 msgstr "5 分钟"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:561
-#: devices\borneo\lyfi\views\settings_screen.dart:574
+#: devices\borneo\lyfi\views\settings_screen.dart:577
+#: devices\borneo\lyfi\views\settings_screen.dart:590
 msgid "10 minutes"
 msgstr "10 分钟"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:562
-#: devices\borneo\lyfi\views\settings_screen.dart:575
+#: devices\borneo\lyfi\views\settings_screen.dart:578
+#: devices\borneo\lyfi\views\settings_screen.dart:591
 msgid "20 minutes"
 msgstr "20 分钟"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:563
-#: devices\borneo\lyfi\views\settings_screen.dart:576
+#: devices\borneo\lyfi\views\settings_screen.dart:579
+#: devices\borneo\lyfi\views\settings_screen.dart:592
 msgid "1 hour"
 msgstr "1 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:564
-#: devices\borneo\lyfi\views\settings_screen.dart:577
+#: devices\borneo\lyfi\views\settings_screen.dart:580
+#: devices\borneo\lyfi\views\settings_screen.dart:593
 msgid "2 hours"
 msgstr "2 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:565
-#: devices\borneo\lyfi\views\settings_screen.dart:578
+#: devices\borneo\lyfi\views\settings_screen.dart:581
+#: devices\borneo\lyfi\views\settings_screen.dart:594
 msgid "4 hours"
 msgstr "4 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:566
-#: devices\borneo\lyfi\views\settings_screen.dart:579
+#: devices\borneo\lyfi\views\settings_screen.dart:582
+#: devices\borneo\lyfi\views\settings_screen.dart:595
 msgid "8 hours"
 msgstr "8 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:567
-#: devices\borneo\lyfi\views\settings_screen.dart:580
+#: devices\borneo\lyfi\views\settings_screen.dart:583
+#: devices\borneo\lyfi\views\settings_screen.dart:596
 msgid "12 hours"
 msgstr "12 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:586
+#: devices\borneo\lyfi\views\settings_screen.dart:602
 msgid "Select duration"
 msgstr "选择持续时间"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:598
-#: devices\borneo\lyfi\views\settings_screen.dart:605
+#: devices\borneo\lyfi\views\settings_screen.dart:614
+#: devices\borneo\lyfi\views\settings_screen.dart:621
 msgid "PID Adaptive"
 msgstr "PID 自适应"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:612
+#: devices\borneo\lyfi\views\settings_screen.dart:628
 msgid "Select fan mode"
 msgstr "选择风扇模式"
 
@@ -985,7 +1006,7 @@ msgid ""
 msgstr "设备离线，请检查网络连接和设备电源。"
 
 #: devices\views\device_offline_view.dart:36
-#: features\devices\views\device_discovery_screen.dart:130
+#: features\devices\views\device_discovery_screen.dart:131
 #: features\devices\views\provisioning_progress_screen.dart:123
 #: features\devices\views\provisioning_screen.dart:546
 msgid "Close"
@@ -1114,7 +1135,7 @@ msgstr ""
 #: devices\views\device_ota_screen.dart:446
 #: features\devices\views\provisioning_screen.dart:128
 #: features\devices\views\provisioning_screen.dart:532
-#: features\scenes\views\scene_edit_screen.dart:354
+#: features\scenes\views\scene_edit_screen.dart:367
 msgid "Done"
 msgstr "完成"
 
@@ -1131,8 +1152,8 @@ msgstr "检查中..."
 #: features\chores\views\chore_list.dart:73
 #: features\chores\views\chore_list.dart:142
 #: features\devices\views\provisioning_screen.dart:551
-#: features\scenes\views\scenes_screen.dart:46
-#: features\scenes\views\scenes_screen.dart:91
+#: features\scenes\views\scenes_screen.dart:47
+#: features\scenes\views\scenes_screen.dart:92
 msgid "Retry"
 msgstr "重试"
 
@@ -1144,11 +1165,11 @@ msgstr "检查更新"
 msgid "[Debug] Force Update"
 msgstr "[调试] 强制更新"
 
-#: features\chores\views\chore_card.dart:77
+#: features\chores\views\chore_card.dart:108
 msgid "ACTIVE"
 msgstr "激活"
 
-#: features\chores\views\chore_card.dart:77
+#: features\chores\views\chore_card.dart:108
 msgid "INACTIVE"
 msgstr "未激活"
 
@@ -1215,76 +1236,76 @@ msgstr "WiFi 扫描已取消。"
 msgid "Failed to scan WiFi networks"
 msgstr "扫描 WiFi 网络失败"
 
-#: features\devices\views\device_card.dart:132
-#: features\devices\views\device_card.dart:145
+#: features\devices\views\device_card.dart:144
+#: features\devices\views\device_card.dart:157
 msgid "OFF-LINE"
 msgstr "离线"
 
-#: features\devices\views\device_card.dart:199
+#: features\devices\views\device_card.dart:211
 #: shared\widgets\device_status_indicator.dart:74
 msgid "Reconnect"
 msgstr "重连"
 
-#: features\devices\views\device_card.dart:204
+#: features\devices\views\device_card.dart:216
 msgid "Change group..."
 msgstr "更改分组..."
 
-#: features\devices\views\device_card.dart:206
+#: features\devices\views\device_card.dart:218
 msgid "Delete..."
 msgstr "删除..."
 
-#: features\devices\views\device_card.dart:220
+#: features\devices\views\device_card.dart:232
 #, python-brace-format
 msgid "Are you sure to delete the device \"{deviceName}\"?"
 msgstr "你确定要删除设备“{deviceName}”？"
 
-#: features\devices\views\device_card.dart:236
+#: features\devices\views\device_card.dart:248
 msgid "Change Device Group"
 msgstr "新建设备组"
 
-#: features\devices\views\device_card.dart:238
+#: features\devices\views\device_card.dart:250
 #, python-brace-format
 msgid "Select the group to which device \"{deviceName}\" belongs:"
 msgstr "选择设备“{deviceName}”所属的分组："
 
-#: features\devices\views\device_discovery_screen.dart:40
+#: features\devices\views\device_discovery_screen.dart:41
 msgid "Add Device"
 msgstr "添加设备"
 
-#: features\devices\views\device_discovery_screen.dart:50
+#: features\devices\views\device_discovery_screen.dart:51
 #: features\devices\views\provisioning_screen.dart:263
 msgid "Refresh"
 msgstr "刷新"
 
-#: features\devices\views\device_discovery_screen.dart:103
+#: features\devices\views\device_discovery_screen.dart:104
 msgid ""
 "Bluetooth is not supported on this system; device WiFi provisioning is "
 "unavailable."
 msgstr "此系统不支持蓝牙；设备 WiFi 配置不可用。"
 
-#: features\devices\views\device_discovery_screen.dart:163
+#: features\devices\views\device_discovery_screen.dart:164
 msgid "No devices found"
 msgstr "未找到设备"
 
-#: features\devices\views\device_discovery_screen.dart:197
+#: features\devices\views\device_discovery_screen.dart:198
 msgid "Searching for devices..."
 msgstr "正在搜索设备..."
 
-#: features\devices\views\device_discovery_screen.dart:202
+#: features\devices\views\device_discovery_screen.dart:203
 #, python-brace-format
 msgid "{0} seconds remaining"
 msgstr "还剩 {0} 秒"
 
-#: features\devices\views\device_discovery_screen.dart:210
+#: features\devices\views\device_discovery_screen.dart:211
 #: features\devices\views\provisioning_progress_screen.dart:41
 msgid "Stop"
 msgstr "停止"
 
-#: features\devices\views\device_discovery_screen.dart:245
+#: features\devices\views\device_discovery_screen.dart:246
 msgid "Detected on network"
 msgstr "在网络上检测到"
 
-#: features\devices\views\device_discovery_screen.dart:282
+#: features\devices\views\device_discovery_screen.dart:283
 msgid "Ready to provision"
 msgstr "准备配置"
 
@@ -1302,52 +1323,52 @@ msgstr "确定"
 msgid "No group"
 msgstr "未指定分组"
 
-#: features\devices\views\devices_screen.dart:123
-#: features\scenes\views\scenes_screen.dart:42
+#: features\devices\views\devices_screen.dart:129
+#: features\scenes\views\scenes_screen.dart:43
 #, python-brace-format
 msgid "Error: {errMsg}"
 msgstr "错误：{errMsg}"
 
-#: features\devices\views\devices_screen.dart:202
+#: features\devices\views\devices_screen.dart:208
 msgid "Add New Devices"
 msgstr "添加新设备"
 
-#: features\devices\views\devices_screen.dart:207
+#: features\devices\views\devices_screen.dart:213
 msgid "Add Devices Group"
 msgstr "新建设备组"
 
-#: features\devices\views\devices_screen.dart:221
+#: features\devices\views\devices_screen.dart:227
 #, python-brace-format
 msgid "Devices in {currentScene}"
 msgstr "{currentScene}中的设备"
 
 #: features\devices\views\group_edit_screen.dart:84
-#: features\scenes\views\scene_edit_screen.dart:165
+#: features\scenes\views\scene_edit_screen.dart:178
 msgid "Enter the required scene name"
 msgstr "输入必须的场景名称"
 
 #: features\devices\views\group_edit_screen.dart:88
-#: features\scenes\views\scene_edit_screen.dart:170
+#: features\scenes\views\scene_edit_screen.dart:183
 msgid "Please enter the scene name"
 msgstr "请输入场景名称"
 
 #: features\devices\views\group_edit_screen.dart:100
-#: features\scenes\views\scene_edit_screen.dart:187
+#: features\scenes\views\scene_edit_screen.dart:200
 msgid "Enter the optional notes for this scene"
 msgstr "输入该场景的备注文字（可选）"
 
 #: features\devices\views\group_edit_screen.dart:101
-#: features\scenes\views\scene_edit_screen.dart:188
+#: features\scenes\views\scene_edit_screen.dart:201
 msgid "Notes"
 msgstr "备注"
 
 #: features\devices\views\group_edit_screen.dart:113
-#: features\scenes\views\scene_edit_screen.dart:210
+#: features\scenes\views\scene_edit_screen.dart:223
 msgid "Submit"
 msgstr "提交"
 
 #: features\devices\views\group_edit_screen.dart:172
-#: features\scenes\views\scene_edit_screen.dart:221
+#: features\scenes\views\scene_edit_screen.dart:234
 msgid "Operation failed"
 msgstr "操作失败"
 
@@ -1367,7 +1388,7 @@ msgid "Group deleted"
 msgstr "分组已删除"
 
 #: features\devices\views\group_edit_screen.dart:233
-#: features\scenes\views\scene_edit_screen.dart:311
+#: features\scenes\views\scene_edit_screen.dart:324
 msgid "Delete failed"
 msgstr "删除失败"
 
@@ -1467,16 +1488,16 @@ msgstr "添加设备以开始使用"
 msgid "Add Devices"
 msgstr "添加设备"
 
-#: features\my\views\about_screen.dart:94
+#: features\my\views\about_screen.dart:95
 msgid "Error loading document"
 msgstr "加载文档错误"
 
-#: features\my\views\about_screen.dart:144
+#: features\my\views\about_screen.dart:145
 #, python-brace-format
 msgid "Version {verText}+{buildNumberText}"
 msgstr "版本 {verText}+{buildNumberText}"
 
-#: features\my\views\about_screen.dart:160
+#: features\my\views\about_screen.dart:161
 msgid ""
 "This mobile application is free software licensed under GNU General Public "
 "License version 3 or later, with no warranty.\n"
@@ -1486,88 +1507,88 @@ msgstr ""
 "此移动端应用程序是基于 GPL 3 或更新版本协议授权的自由软件，不提供任何担保。\n"
 "作者不对使用此软件造成的任何直接和间接后果负责。"
 
-#: features\my\views\about_screen.dart:169
+#: features\my\views\about_screen.dart:170
 msgid "Website"
 msgstr "网站"
 
-#: features\my\views\about_screen.dart:171
+#: features\my\views\about_screen.dart:172
 msgid "Documentation"
 msgstr "文档"
 
-#: features\my\views\about_screen.dart:173
+#: features\my\views\about_screen.dart:174
 msgid "Term of Services."
 msgstr "服务条款"
 
-#: features\my\views\about_screen.dart:175
+#: features\my\views\about_screen.dart:176
 msgid "Privacy Policy"
 msgstr "隐私政策"
 
-#: features\my\views\about_screen.dart:179
+#: features\my\views\about_screen.dart:180
 msgid "License"
 msgstr "许可"
 
-#: features\my\views\about_screen.dart:200
+#: features\my\views\about_screen.dart:201
 msgid ""
 "Copyright © Yunnan BinaryStars Technologies, Co., Ltd. All rights reserved."
 msgstr "版权所有 © 云南伴星科技有限公司。保留所有权利。"
 
-#: features\my\views\my_screen.dart:35
+#: features\my\views\my_screen.dart:39
 msgid "About"
 msgstr "关于"
 
-#: features\scenes\views\scene_card.dart:219
+#: features\scenes\views\scene_card.dart:180
 #, python-brace-format
 msgid "{0} devices"
 msgstr "{0} 个设备"
 
-#: features\scenes\views\scene_card.dart:228
+#: features\scenes\views\scene_card.dart:189
 #, python-brace-format
 msgid "{0} active"
 msgstr "{0} 个活跃中"
 
-#: features\scenes\views\scene_edit_screen.dart:71
+#: features\scenes\views\scene_edit_screen.dart:74
 msgid "New Scene"
 msgstr "新建场景"
 
-#: features\scenes\views\scene_edit_screen.dart:71
+#: features\scenes\views\scene_edit_screen.dart:74
 msgid "Edit Scene"
 msgstr "新建场景"
 
-#: features\scenes\views\scene_edit_screen.dart:109
+#: features\scenes\views\scene_edit_screen.dart:112
 msgid "Scene Image"
 msgstr "场景图片"
 
-#: features\scenes\views\scene_edit_screen.dart:266
+#: features\scenes\views\scene_edit_screen.dart:279
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete \"{0}\" scene? This action cannot be undone."
 msgstr "您确定要删除 \"{0}\" 场景吗？此操作无法撤销。"
 
-#: features\scenes\views\scene_edit_screen.dart:288
+#: features\scenes\views\scene_edit_screen.dart:301
 msgid "Scene deleted"
 msgstr "场景已删除"
 
-#: features\scenes\views\scene_edit_screen.dart:294
-#: features\scenes\views\scene_edit_screen.dart:302
+#: features\scenes\views\scene_edit_screen.dart:307
+#: features\scenes\views\scene_edit_screen.dart:315
 msgid "Cannot Delete Scene"
 msgstr "无法删除场景"
 
-#: features\scenes\views\scene_edit_screen.dart:295
+#: features\scenes\views\scene_edit_screen.dart:308
 msgid "Cannot delete the last remaining scene."
 msgstr "无法删除最后剩下的场景。"
 
-#: features\scenes\views\scene_edit_screen.dart:304
+#: features\scenes\views\scene_edit_screen.dart:317
 msgid ""
 "This scene contains devices or device groups. Please remove all devices and "
 "groups from this scene before deleting it."
 msgstr "此场景包含设备或设备组。请在删除之前从此场景中移除所有设备和组。"
 
-#: features\scenes\views\scene_edit_screen.dart:341
+#: features\scenes\views\scene_edit_screen.dart:354
 msgid "Crop Image"
 msgstr "裁剪图像"
 
-#: features\scenes\views\scenes_screen.dart:57 main\views\main_screen.dart:44
-#: main\views\main_screen.dart:155
+#: features\scenes\views\scenes_screen.dart:58 main\views\main_screen.dart:44
+#: main\views\main_screen.dart:156
 msgid "Scenes"
 msgstr "场景"
 
@@ -1575,74 +1596,74 @@ msgstr "场景"
 msgid "App Settings"
 msgstr "设置"
 
-#: features\settings\views\app_settings_screen.dart:47
+#: features\settings\views\app_settings_screen.dart:46
 msgid "APPEARANCE"
 msgstr "外观"
 
-#: features\settings\views\app_settings_screen.dart:51
+#: features\settings\views\app_settings_screen.dart:50
 msgid "Theme"
 msgstr "主题"
 
-#: features\settings\views\app_settings_screen.dart:53
-#: features\settings\views\app_settings_screen.dart:62
+#: features\settings\views\app_settings_screen.dart:52
+#: features\settings\views\app_settings_screen.dart:61
 msgid "System"
 msgstr "系统"
 
-#: features\settings\views\app_settings_screen.dart:54
-#: features\settings\views\app_settings_screen.dart:63
+#: features\settings\views\app_settings_screen.dart:53
+#: features\settings\views\app_settings_screen.dart:62
 msgid "Light"
 msgstr "亮色"
 
-#: features\settings\views\app_settings_screen.dart:55
-#: features\settings\views\app_settings_screen.dart:64
+#: features\settings\views\app_settings_screen.dart:54
+#: features\settings\views\app_settings_screen.dart:63
 msgid "Dark"
 msgstr "暗色"
 
-#: features\settings\views\app_settings_screen.dart:60
+#: features\settings\views\app_settings_screen.dart:59
 msgid "Select Theme"
 msgstr "选择主题"
 
-#: features\settings\views\app_settings_screen.dart:73
+#: features\settings\views\app_settings_screen.dart:72
 msgid "Language"
 msgstr "语言"
 
-#: features\settings\views\app_settings_screen.dart:79
+#: features\settings\views\app_settings_screen.dart:78
 msgid "Select Language"
 msgstr "选择语言"
 
-#: features\settings\views\app_settings_screen.dart:95
+#: features\settings\views\app_settings_screen.dart:94
 msgid "Temperature Unit"
 msgstr "温度单位"
 
-#: features\settings\views\app_settings_screen.dart:97
+#: features\settings\views\app_settings_screen.dart:96
 msgid "℃"
 msgstr "℃"
 
-#: features\settings\views\app_settings_screen.dart:98
+#: features\settings\views\app_settings_screen.dart:97
 msgid "℉"
 msgstr "℉"
 
-#: features\settings\views\app_settings_screen.dart:104
+#: features\settings\views\app_settings_screen.dart:103
 msgid "Select Temperature Unit"
 msgstr "选择温度单位"
 
-#: features\settings\views\app_settings_screen.dart:106
+#: features\settings\views\app_settings_screen.dart:105
 msgid "℃ (Celsius)"
 msgstr "℃（摄氏度）"
 
-#: features\settings\views\app_settings_screen.dart:107
+#: features\settings\views\app_settings_screen.dart:106
 msgid "℉ (Fahrenheit)"
 msgstr "℉（华氏度）"
 
-#: features\settings\views\app_settings_screen.dart:118
+#: features\settings\views\app_settings_screen.dart:117
 msgid "FEEDBACK"
 msgstr "反馈"
 
-#: features\settings\views\app_settings_screen.dart:123
+#: features\settings\views\app_settings_screen.dart:122
 msgid "Rate in application store"
 msgstr "在应用商店里给我评分"
 
-#: features\settings\views\app_settings_screen.dart:128
+#: features\settings\views\app_settings_screen.dart:127
 msgid "Feedback via Email"
 msgstr "通过邮件反馈"
 
@@ -1650,19 +1671,19 @@ msgstr "通过邮件反馈"
 msgid "ERROR"
 msgstr "错误"
 
-#: main\views\main_screen.dart:46 main\views\main_screen.dart:171
+#: main\views\main_screen.dart:46 main\views\main_screen.dart:178
 msgid "My"
 msgstr "我的"
 
-#: main\views\main_screen.dart:163
+#: main\views\main_screen.dart:167
 msgid "Devices"
 msgstr "设备"
 
-#: main\views\main_screen.dart:226
+#: main\views\main_screen.dart:245
 msgid "Loading..."
 msgstr "载入中..."
 
-#: main\views\main_screen.dart:306
+#: main\views\main_screen.dart:325
 msgid "Press back again to exit"
 msgstr "再次按下后退将退出软件"
 
@@ -1681,6 +1702,15 @@ msgstr "当前位置"
 #: shared\widgets\map_location_picker.dart:220
 msgid "Tap globe to select location"
 msgstr "点击地球以选择位置"
+
+#~ msgid "Select Duration"
+#~ msgstr "选择时长"
+
+#~ msgid "Select Start strength"
+#~ msgstr "选择起始强度"
+
+#~ msgid "Daytime"
+#~ msgstr "日间"
 
 #~ msgid ""
 #~ "Unable to switch to Sun Simulation mode, the device's timezone is not set."

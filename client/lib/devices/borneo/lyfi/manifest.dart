@@ -222,8 +222,6 @@ class _LyfiBrightnessChart extends StatelessWidget {
                 ? 10.0
                 : 7.0)
             .toDouble();
-    final barRadius = (barWidth * 0.22).clamp(2.0, 4.0).toDouble();
-
     final groups = <BarChartGroupData>[];
     for (int i = 0; i < channelCount; i++) {
       final ch = deviceInfo.channels[i];
@@ -235,7 +233,7 @@ class _LyfiBrightnessChart extends StatelessWidget {
       final hslColor = HSLColor.fromColor(primaryColor);
       final mutedColor = hslColor
           .withSaturation((hslColor.saturation * 0.25).clamp(0.0, 1.0))
-          .withLightness(isDark ? 0.15 : 0.85)
+          .withLightness(isDark ? 0.25 : 0.75)
           .toColor();
       // Blend with surface for a softer look
       final barBackColor = Color.lerp(colorScheme.surfaceContainerLow, mutedColor, 0.65)!;
@@ -246,7 +244,7 @@ class _LyfiBrightnessChart extends StatelessWidget {
           barRods: [
             BarChartRodData(
               toY: value,
-              borderRadius: BorderRadius.circular(barRadius),
+              borderRadius: BorderRadius.zero,
               color: primaryColor,
               width: barWidth,
               backDrawRodData: BackgroundBarChartRodData(

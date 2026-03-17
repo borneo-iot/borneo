@@ -15,6 +15,29 @@ class ChoreCard extends ConsumerStatefulWidget {
 }
 
 class _ChoreCardState extends ConsumerState<ChoreCard> {
+  static const _disabledGrayscaleMatrix = <double>[
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -61,7 +84,7 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
                           alignment: Alignment.centerLeft,
                           child: Opacity(
                             opacity: iconOpacity,
-                            child: _buildIcon(widget.chore.iconAssetPath, iconSize, effectiveFgColor),
+                            child: _buildIcon(widget.chore.iconAssetPath, iconSize, isEnabled: isSwitchEnabled),
                           ),
                         );
                       },
@@ -158,11 +181,15 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
     );
   }
 
-  Widget _buildIcon(String iconAssetPath, double iconSize, Color iconColor) {
-    if (iconAssetPath.endsWith('.svg')) {
-      return SvgPicture.asset(iconAssetPath, height: iconSize, width: iconSize);
-    } else {
-      return Image.asset(iconAssetPath, height: iconSize, width: iconSize);
+  Widget _buildIcon(String iconAssetPath, double iconSize, {required bool isEnabled}) {
+    final icon = iconAssetPath.endsWith('.svg')
+        ? SvgPicture.asset(iconAssetPath, height: iconSize, width: iconSize)
+        : Image.asset(iconAssetPath, height: iconSize, width: iconSize);
+
+    if (isEnabled) {
+      return icon;
     }
+
+    return ColorFiltered(colorFilter: const ColorFilter.matrix(_disabledGrayscaleMatrix), child: icon);
   }
 }

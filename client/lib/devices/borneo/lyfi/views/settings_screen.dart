@@ -113,20 +113,24 @@ class SettingsScreen extends StatelessWidget {
           ],
         ),
 
-        if (lvm.isControllerSettingsAvailable)
-          SettingsSection(
-            title: Text(context.translate('STANDALONE CONTROLLER')),
-            tiles: [
-              SettingsTile.navigation(
-                title: Text(context.translate('Controller Settings')),
-                onPressed: (bc) => _goControllerSettings(bc, vm),
-              ),
-            ],
-          ),
-
         SettingsSection(
-          title: Text(context.translate('DEVICE STATUS')),
+          title: Text(context.translate('LOCATION & TIME')),
           tiles: [
+            SettingsTile.navigation(
+              title: Text(context.translate('Device Location')),
+              description: Text(context.translate('Geographical location')),
+              descriptionInlineIos: true,
+              value: lvm.location != null
+                  ? Text("(${lvm.location!.lat.toStringAsFixed(0)}, ${lvm.location!.lng.toStringAsFixed(0)})")
+                  : Text(context.translate('Unknown'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              enabled: lvm.canUpdateGeoLocation,
+              onPressed: (bc) async {
+                if (bc.mounted) {
+                  await _pickLocation(bc, vm);
+                }
+              },
+            ),
+
             SettingsTile.navigation(
               title: Text(context.translate('Time zone')),
               descriptionInlineIos: true,
@@ -146,6 +150,12 @@ class SettingsScreen extends StatelessWidget {
               enabled: lvm.canUpdateTimezone,
               onPressed: (bc) => vm.updateTimezone(),
             ),
+          ],
+        ),
+
+        SettingsSection(
+          title: Text(context.translate('DEVICE STATUS')),
+          tiles: [
             SettingsTile.navigation(
               title: Text(context.translate('Power status at startup')),
               value: Text(_formatPowerBehavior(context, lvm.powerBehavior)),
@@ -162,23 +172,10 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
+
         SettingsSection(
           title: Text(context.translate('LIGHTING')),
           tiles: [
-            SettingsTile.navigation(
-              title: Text(context.translate('Device Location')),
-              description: Text(context.translate('Geographical location')),
-              descriptionInlineIos: true,
-              value: lvm.location != null
-                  ? Text("(${lvm.location!.lat.toStringAsFixed(0)}, ${lvm.location!.lng.toStringAsFixed(0)})")
-                  : Text(context.translate('Unknown'), style: TextStyle(color: Theme.of(context).colorScheme.error)),
-              enabled: lvm.canUpdateGeoLocation,
-              onPressed: (bc) async {
-                if (bc.mounted) {
-                  await _pickLocation(bc, vm);
-                }
-              },
-            ),
             SettingsTile.navigation(
               title: Text(context.translate('Correction curve')),
               value: Text(_formatCorrectionMethod(context, lvm.correctionMethod)),
@@ -205,6 +202,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
+
         SettingsSection(
           title: Text(context.translate('THERMAL MANAGEMENT')),
           tiles: [
@@ -224,6 +222,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
+
         SettingsSection(
           title: Text(context.translate('VERSION & UPGRADE')),
           tiles: [
@@ -239,6 +238,18 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
+
+        if (lvm.isControllerSettingsAvailable)
+          SettingsSection(
+            title: Text(context.translate('STANDALONE CONTROLLER')),
+            tiles: [
+              SettingsTile.navigation(
+                title: Text(context.translate('Controller Settings')),
+                onPressed: (bc) => _goControllerSettings(bc, vm),
+              ),
+            ],
+          ),
+
         SettingsSection(
           title: Text(context.translate('DANGER ZONE')),
           tiles: [

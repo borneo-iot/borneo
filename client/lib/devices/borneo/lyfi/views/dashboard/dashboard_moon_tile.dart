@@ -80,7 +80,7 @@ class DashboardMoonTile extends StatelessWidget {
             ? '${moonStatus.illumination.toStringAsFixed(0)}%'
             : props.nextMoonTime != null
             ? context.translate('Rises at {t}', nArgs: {'t': props.nextMoonTime!.toString()})
-            : context.translate('Daytime');
+            : context.translate('No Moon');
 
         return DashboardTile(
           backgroundColor: bgColor,

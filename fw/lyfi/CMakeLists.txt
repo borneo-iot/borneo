@@ -32,4 +32,7 @@ FILE(GLOB_RECURSE ALL_HEADERS
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
+
 project("${BORNEO_PROJECT_ID}")
+
+message(STATUS "Firmware Version: ${PROJECT_VER}")

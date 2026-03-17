@@ -47,7 +47,7 @@ class ManualEditorView extends StatelessWidget {
 
   BarChartGroupData makeGroupData(BuildContext context, LyfiChannelInfo ch, int x, double y) {
     final primaryColor = HexColor.fromHex(ch.color);
-    final barBackColor = Theme.of(context).colorScheme.surfaceContainerHighest;
+    final barBackColor = LyfiColorChart.computeBarBackColor(context, primaryColor);
     // Use a compressed gradient where small values remain light.
     // Full gradient (100%) is lightStart -> primaryColor; for x%, show only 0..x%.
     final lightStart = Color.lerp(primaryColor, Colors.white, 0.7)!;
@@ -58,8 +58,7 @@ class ManualEditorView extends StatelessWidget {
       barRods: [
         BarChartRodData(
           toY: y,
-          borderSide: BorderSide(color: primaryColor),
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.zero,
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
