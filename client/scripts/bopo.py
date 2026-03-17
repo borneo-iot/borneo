@@ -80,7 +80,7 @@ def generate_pot(project_path):
             # Disable fuzzy matching so only exact matches are merged
             print(f"Updating .po file for {lang}...")
             update_command = (
-                f"msgmerge --backup=off --previous --no-fuzzy-matching --update {po_file} {pot_output_path}"
+                f"msgmerge --no-location --backup=off --previous --no-fuzzy-matching --update {po_file} {pot_output_path}"
             )
             run_command(update_command)
 

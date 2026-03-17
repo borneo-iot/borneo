@@ -1,0 +1,2 @@
+*.po  merge=gettext
+*.pot merge=gettext
