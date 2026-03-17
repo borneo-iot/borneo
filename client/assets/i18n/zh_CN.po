@@ -128,7 +128,7 @@ msgstr "更新适应设置失败。"
 #: devices\borneo\lyfi\view_models\controller_settings_view_model.dart:325
 #, python-brace-format
 msgid "Failed to load controller settings: {msg}"
-msgstr ""
+msgstr "加载控制器设置失败：{msg}"
 
 #: devices\borneo\lyfi\view_models\lyfi_view_model.dart:520
 msgid "Bad device state"
@@ -338,11 +338,11 @@ msgstr "LED 配置"
 
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:108
 msgid "Nominal PFD (PAR)"
-msgstr ""
+msgstr "标称 PFD（PAR）"
 
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:126
 msgid "Nominal power"
-msgstr ""
+msgstr "标称功率"
 
 #: devices\borneo\lyfi\views\controller_settings_screen.dart:142
 msgid "PWM frequency"
@@ -515,7 +515,7 @@ msgstr "在 {t} 升起"
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:83
 msgid "No Moon"
-msgstr ""
+msgstr "无月"
 
 #: devices\borneo\lyfi\views\dashboard\dashboard_power_switch_tile.dart:74
 msgid "ON"
@@ -574,16 +574,16 @@ msgstr "名称无效"
 
 #: devices\borneo\lyfi\views\dimmer_channel_view.dart:111
 msgid "Wavelength"
-msgstr ""
+msgstr "波长"
 
 #: devices\borneo\lyfi\views\dimmer_channel_view.dart:113
 #: devices\borneo\lyfi\views\dimmer_channel_view.dart:124
 msgid "Invalid wavelength"
-msgstr ""
+msgstr "无效波长"
 
 #: devices\borneo\lyfi\views\dimmer_channel_view.dart:122
 msgid "Wavelength 2"
-msgstr ""
+msgstr "波长 2"
 
 #: devices\borneo\lyfi\views\dimmer_channel_view.dart:128
 msgid "Color"
@@ -696,7 +696,7 @@ msgstr "设备地址"
 
 #: devices\borneo\lyfi\views\settings_screen.dart:117
 msgid "LOCATION & TIME"
-msgstr ""
+msgstr "位置与时间"
 
 #: devices\borneo\lyfi\views\settings_screen.dart:120
 msgid "Device Location"
