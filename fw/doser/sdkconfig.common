@@ -18,6 +18,4 @@ CONFIG_LWIP_DHCP_MAX_NTP_SERVERS=3
 
 ######################## OTA ###############################
 
-CONFIG_ESP_HTTP_CLIENT_ENABLE_HTTPS=y
-
 CONFIG_LWIP_IPV6=y

@@ -9,7 +9,6 @@
 #include <esp_mac.h>
 #include <nvs_flash.h>
 #include <esp_ota_ops.h>
-#include <esp_http_client.h>
 #include <esp_flash_partitions.h>
 #include <esp_partition.h>
 
@@ -31,7 +30,7 @@
 
 #if CONFIG_BORNEO_EDITION_CE
 
-#define TAG "borneo-coap-ota"
+#define TAG "ota.coap"
 
 #define OTA_COAP_UPDATE_TIMEOUT 5000
 #define OTA_BUFFER_SIZE 1024

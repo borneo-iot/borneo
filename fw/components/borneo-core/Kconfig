@@ -137,11 +137,6 @@ menu "Borneo Core"
             depends on BORNEO_INDICATOR_ADDRESSABLE_ENABLED
     endmenu
 
-    menu "OTA"
-        config BORNEO_OTA_FIRMWARE_UPGRADE_URL
-            string "OTA firmware upgrade URL"
-    endmenu
-
     menu "Power Supply Voltage Measurement"
         config BORNEO_MEAS_VOLTAGE_SUPPORT
             bool "Power supply voltage measurement enabled"

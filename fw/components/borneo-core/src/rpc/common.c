@@ -3,11 +3,11 @@
 #include <esp_log.h>
 #include <sys/socket.h>
 
-#include <esp_ota_ops.h>
 #include <esp_mac.h>
 #include <esp_timer.h>
 #include <nvs_flash.h>
 #include <cbor.h>
+#include <esp_app_desc.h>
 
 #include <drvfx/drvfx.h>
 #include <borneo/system.h>
