@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Automatically generated, 2024.
 #
-#: features\settings\views\app_settings_screen.dart:98
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 23:00+0800\n"
+"POT-Creation-Date: 2026-03-18 00:03+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -17,1362 +16,85 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: core\services\chore_manager_impl.dart:45
-msgid "Power Off All"
-msgstr "关闭全部电源"
-
-#: core\services\chore_manager_impl.dart:46
-msgid "Feed Mode"
-msgstr "喂食模式"
-
-#: core\services\chore_manager_impl.dart:47
-msgid "Water Change Mode"
-msgstr "换水模式"
-
-#: core\services\chore_manager_impl.dart:48
-msgid "Dry Scape Mode"
-msgstr "无水造景模式"
-
-#: core\services\devices\device_manager_impl.dart:409
-#, python-brace-format
-msgid ""
-"Device firmware version {currentVersion} is not supported. Required: "
-"{requiredVersion}."
-msgstr "设备固件版本 {currentVersion} 不受支持。需要版本：{requiredVersion}。"
-
-#: core\services\devices\device_manager_impl.dart:418
-msgid "This device is not compatible with the selected driver."
-msgstr "该设备与所选驱动不兼容。"
-
-#: core\services\devices\device_manager_impl.dart:422
-msgid "Timed out while probing the device."
-msgstr "探测设备时超时。"
-
-#: core\services\devices\device_manager_impl.dart:434
-msgid "Unable to connect to this device."
-msgstr "无法连接到该设备。"
-
-#: core\services\devices\ota\coap_ota_service.dart:55
-#, python-brace-format
-msgid "Failed to fetch firmware manifest: HTTP code `{code}`"
-msgstr "获取固件信息失败：HTTP 错误码 `{code}`"
-
-#: core\services\devices\ota\coap_ota_service.dart:83
-#, python-brace-format
-msgid "No firmware entry found for product ID `{pid}`"
-msgstr "找不到产品 ID `{pid}` 对应的固件条目"
-
-#: core\services\devices\ota\coap_ota_service.dart:138
-msgid "Firmware hash mismatch"
-msgstr "固件哈希不匹配"
-
-#: core\services\scene_manager_impl.dart:73
-msgid "My Home"
-msgstr "我的家"
-
-#: core\services\scene_manager_impl.dart:82
-msgid "My Office"
-msgstr "我的办公室"
-
-#: devices\borneo\lyfi\manifest.dart:116
-msgid "MANU"
-msgstr "手动"
-
-#: devices\borneo\lyfi\manifest.dart:118
-msgid "SCHED"
-msgstr "编程"
-
-#: devices\borneo\lyfi\manifest.dart:120
-msgid "SUN"
-msgstr "日出日落"
-
-#: devices\borneo\lyfi\manifest.dart:127
-msgid "NORM"
-msgstr "常规"
-
-#: devices\borneo\lyfi\manifest.dart:128
-msgid "DIMM"
-msgstr "调光"
-
-#: devices\borneo\lyfi\manifest.dart:129
-msgid "TEMP"
-msgstr "温度"
-
-#: devices\borneo\lyfi\manifest.dart:130
-msgid "PREV"
-msgstr "之前"
-
-#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:109
-msgid "Start date is invalid."
-msgstr "开始日期无效。"
-
-#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:111
-msgid "Duration must be between 5 and 100 days."
-msgstr "持续时间必须在 5 到 100 天之间。"
-
-#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:113
-msgid "Start strength must be between 10% and 90%."
-msgstr "开始强度必须在 10% 到 90% 之间。"
-
-#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:135
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:503
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:617
-#: devices\borneo\lyfi\view_models\moon_view_model.dart:83
-msgid "Device is offline. Please retry after reconnection."
-msgstr "设备离线，请重新连接后重试。"
-
-#: devices\borneo\lyfi\view_models\acclimation_view_model.dart:158
-msgid "Failed to update acclimation settings."
-msgstr "更新适应设置失败。"
-
-#: devices\borneo\lyfi\view_models\controller_settings_view_model.dart:325
-#, python-brace-format
-msgid "Failed to load controller settings: {msg}"
-msgstr "加载控制器设置失败：{msg}"
-
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:520
-msgid "Bad device state"
-msgstr "设备状态异常"
-
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:530
-msgid "Failed to switch to temporary state"
-msgstr "切换临时开灯状态失败"
-
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:600
-msgid "Failed to save changes. Please try again."
-msgstr "保存更改失败，请重试。"
-
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:631
-msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
-msgstr "无法切换到太阳模拟模式：时区未设置。"
-
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:636
-msgid "Unable to switch to Sun Simulation mode: the location is not set."
-msgstr "无法切换到太阳模拟模式：位置未设置。"
-
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:642
-msgid "Failed to switch mode"
-msgstr "切换模式失败"
-
-#: devices\borneo\lyfi\view_models\lyfi_view_model.dart:726
-msgid "Device is not reachable at the moment."
-msgstr "设备当前不可达"
-
-#: devices\borneo\lyfi\view_models\moon_view_model.dart:65
-msgid ""
-"Unable to update Moon mode: configure at least one channel with brightness "
-"greater than 0."
-msgstr "无法更新月亮模式：至少配置一个亮度大于0的通道。"
-
-#: devices\borneo\lyfi\view_models\moon_view_model.dart:70
-msgid "Unable to update Moon mode: the location is not set."
-msgstr "无法更新月亮模式：位置未设置。"
-
-#: devices\borneo\lyfi\view_models\moon_view_model.dart:75
-msgid "Unable to update Moon mode: the timezone is not set."
-msgstr "无法更新月亮模式：时区未设置。"
-
-#: devices\borneo\lyfi\view_models\moon_view_model.dart:103
-msgid "Failed to update moon settings."
-msgstr "更新月亮设置失败。"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:87
-msgid "Please enable location services"
-msgstr "请开启定位服务"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:95
-msgid "Location permissions are denied"
-msgstr "已拒绝给予定位权限"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:100
-msgid "Location permissions are permanently denied"
-msgstr "已永久拒绝给予定位权限"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:114
-msgid "Failed to get location"
-msgstr "获取位置失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:124
-msgid "Location updated successfully"
-msgstr "定位更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:127
-msgid "Failed to update device location"
-msgstr "更新设备位置失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:143
-msgid "Time zone updated successfully"
-msgstr "时区已成功更新"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:145
-msgid "Failed to update device time zone"
-msgstr "更新设备时区失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:159
-msgid "LED correction method updated successfully"
-msgstr "LED 矫正方法已成功更新"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:161
-msgid "Failed to update LED correction method"
-msgstr "更新 LED 校正方法失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:175
-msgid "Temporary duration updated successfully"
-msgstr "临时持续时间更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:177
-msgid "Failed to update temporary duration"
-msgstr "更新临时持续时间失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:191
-msgid "Cloud simulation mode updated successfully"
-msgstr "云模拟模式更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:193
-msgid "Failed to update cloud simulation mode"
-msgstr "更新云模拟模式失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:207
-msgid "Fan mode updated successfully"
-msgstr "风扇模式更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:209
-msgid "Failed to update fan modee"
-msgstr "更新风扇模式失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:223
-msgid "Manual fan power updated successfully"
-msgstr "手动风扇功率更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:225
-msgid "Failed to update manual fan power"
-msgstr "更新手动风扇功率失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:239
-msgid "Power behavior updated successfully"
-msgstr "电源行为更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:241
-msgid "Failed to update power behavior"
-msgstr "更新电源行为失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:255
-msgid "Device name updated successfully"
-msgstr "设备名更新成功"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:257
-msgid "Failed to update device name"
-msgstr "更新设备名称失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:273
-msgid "Failed to restore device to factory settings"
-msgstr "将设备恢复到出厂设置失败"
-
-#: devices\borneo\lyfi\view_models\settings_view_model.dart:289
-msgid "Failed to reset device network settings"
-msgstr "重置设备网络设置失败"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:48
-#: devices\borneo\lyfi\views\acclimation_screen.dart:56
-#: devices\borneo\lyfi\views\acclimation_screen.dart:63
-#: devices\borneo\lyfi\views\dashboard\dashboard_acclimation_tile.dart:122
-msgid "Acclimation"
-msgstr "适应模式"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:68
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:93
-#: devices\borneo\lyfi\views\easy_setup_screen.dart:43
-#: devices\borneo\lyfi\views\moon_screen.dart:133
-#: shared\widgets\map_location_picker.dart:145
-msgid "Apply"
-msgstr "应用"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:90
-msgid "SETTINGS"
-msgstr "设置"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:93
-msgid "Enable acclimation"
-msgstr "启用适应模式"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:98
-msgid "Start date"
-msgstr "开始"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:104
-msgid "Not set"
-msgstr "未设置"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:126
-msgid "Duration"
-msgstr "持续时间"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:131
-#: devices\borneo\lyfi\views\acclimation_screen.dart:133
-#, python-brace-format
-msgid "{d} days"
-msgstr "{d}天"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:143
-msgid "Start strength"
-msgstr "起始强度"
-
-#: devices\borneo\lyfi\views\acclimation_screen.dart:171
-msgid "Update acclimation settings succeed."
-msgstr "适应模式设置已更新。"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:53
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:63
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:71
-#: devices\borneo\lyfi\views\settings_screen.dart:247
-msgid "Controller Settings"
-msgstr "控制器设置"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:64
-msgid "Initialization failed"
-msgstr "初始化失败"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:104
-msgid "LED CONFIGURATION"
-msgstr "LED 配置"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:108
-msgid "Nominal PFD (PAR)"
-msgstr "标称 PFD（PAR）"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:126
-msgid "Nominal power"
-msgstr "标称功率"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:142
-msgid "PWM frequency"
-msgstr "PWM 频率"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:153
-msgid "LED CHANNELS"
-msgstr "LED 通道"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:157
-msgid "Enabled channel count"
-msgstr "启用通道数量"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:193
-msgid "POWER & PROTECTION"
-msgstr "电源与保护"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:200
-msgid "Overpower enabled"
-msgstr "过功率保护"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:204
-msgid "Overpower cut-off"
-msgstr "过功率切断"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:235
-msgid "Overtemperature enabled"
-msgstr "过温保护"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:240
-msgid "Overtemperature cut-off"
-msgstr "过温切断"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:284
-msgid "Confirm Submit"
-msgstr "确认提交"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:287
-msgid ""
-"Please carefully check the configuration. Incorrect configuration may cause "
-"hardware damage or other dangerous situations. Submitting will reboot the "
-"device.\n"
-"Do you want to proceed?"
-msgstr ""
-"请仔细检查配置。错误的配置可能导致硬件损坏或其他危险情况。提交将重启设备。\n"
-"您要继续吗？"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:291
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:351
-#: devices\borneo\lyfi\views\settings_screen.dart:344
-#: devices\borneo\lyfi\views\settings_screen.dart:430
-#: devices\borneo\lyfi\views\settings_screen.dart:492
-#: devices\views\device_ota_screen.dart:92
-#: devices\views\device_ota_screen.dart:435
-#: features\devices\views\provisioning_screen.dart:72
-#: features\scenes\views\scene_edit_screen.dart:368
-#: main\views\main_screen.dart:252 shared\widgets\confirmation_sheet.dart:39
-#: shared\widgets\confirmation_sheet.dart:78
-#: shared\widgets\generic_settings_screen.dart:72
-msgid "Cancel"
-msgstr "取消"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:300
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:357
-msgid "Confirm"
-msgstr "确认"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:336
-msgid "Select channel count"
-msgstr "选择通道数量"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:371
-msgid "Select PWM frequency"
-msgstr "选择 PWM 频率"
-
-#: devices\borneo\lyfi\views\controller_settings_screen.dart:395
-msgid "Select overtemperature cut-off"
-msgstr "选择过温关机阈值"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_chart.dart:38
-msgid "Device Offline"
-msgstr "设备离线"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_chart.dart:44
-msgid "Please check device connection"
-msgstr "请检查设备连接"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:54
-msgid "Dimming"
-msgstr "调光"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:61
-#: devices\borneo\lyfi\views\dashboard\dashboard_fan_tile.dart:15
-#: devices\borneo\lyfi\views\settings_screen.dart:615
-#: devices\borneo\lyfi\views\settings_screen.dart:622
-msgid "Manual"
-msgstr "手动模式"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:62
-msgid "Scheduled"
-msgstr "编程模式"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:63
-msgid "Sun Simulation"
-msgstr "日出日落"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_dimming_tile.dart:95
-#, python-brace-format
-msgid "Failed to open dimming page: {msg}"
-msgstr "打开调光页面失败：{msg}"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_fan_tile.dart:14
-msgid "Adaptive"
-msgstr "智能自适应"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_fan_tile.dart:25
-msgid "Fan"
-msgstr "风扇"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_fan_tile.dart:80
-#: devices\borneo\lyfi\views\dashboard\dashboard_power_tile.dart:93
-#: devices\borneo\lyfi\views\dashboard\dashboard_temperature_tile.dart:86
-#: devices\borneo\lyfi\views\dashboard\dashboard_temperature_tile.dart:118
-#: devices\borneo\lyfi\views\editor\sun_editor_view.dart:39
-#: devices\borneo\lyfi\views\settings_screen.dart:167
-msgid "N/A"
-msgstr "无"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:14
-msgid "New Moon"
-msgstr "新月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:15
-msgid "Waxing Crescent"
-msgstr "峨眉月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:16
-msgid "First Quarter"
-msgstr "上弦月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:17
-msgid "Waxing Gibbous"
-msgstr "盈凸月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:18
-msgid "Full Moon"
-msgstr "满月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:19
-msgid "Waning Gibbous"
-msgstr "亏凸月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:20
-msgid "Last Quarter"
-msgstr "下弦月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:21
-msgid "Waning Crescent"
-msgstr "残月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:75
-#: devices\borneo\lyfi\views\moon_screen.dart:116
-msgid "Moonlight"
-msgstr "月光"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:82
-#, python-brace-format
-msgid "Rises at {t}"
-msgstr "在 {t} 升起"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_moon_tile.dart:83
-msgid "No Moon"
-msgstr "无月"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_power_switch_tile.dart:74
-msgid "ON"
-msgstr "电源开"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_power_switch_tile.dart:74
-#: features\devices\views\device_card.dart:170
-msgid "OFF"
-msgstr "电源关"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_power_tile.dart:38
-msgid "LED Power"
-msgstr "LED 功率"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:52
-#: devices\borneo\lyfi\views\settings_screen.dart:39
-#: features\my\views\my_screen.dart:27
-msgid "Settings"
-msgstr "设置"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_settings_tile.dart:82
-msgid "Error"
-msgstr "错误"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_temperature_tile.dart:44
-msgid "Temperature & Fan"
-msgstr "温度与风扇"
-
-#: devices\borneo\lyfi\views\dashboard\dashboard_temporary_tile.dart:83
-msgid "Temporary"
-msgstr "临时开灯"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:80
-msgid "Channel Settings"
-msgstr "通道设置"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:84
-#: shared\widgets\generic_settings_screen.dart:57
-msgid "Save"
-msgstr "保存"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:100
-#: devices\borneo\lyfi\views\settings_screen.dart:97
-#: features\devices\views\group_edit_screen.dart:82
-#: features\scenes\views\scene_edit_screen.dart:176
-msgid "Name"
-msgstr "名称"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:101
-msgid "1-15 characters"
-msgstr "1-15 字符"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:102
-msgid "Invalid name"
-msgstr "名称无效"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:111
-msgid "Wavelength"
-msgstr "波长"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:113
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:124
-msgid "Invalid wavelength"
-msgstr "无效波长"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:122
-msgid "Wavelength 2"
-msgstr "波长 2"
-
-#: devices\borneo\lyfi\views\dimmer_channel_view.dart:128
-msgid "Color"
-msgstr "颜色"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:49
-msgid "Manual mode"
-msgstr "手动模式"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:54
-msgid "Scheduled mode"
-msgstr "计划模式"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:59
-msgid "Sun simulation mode"
-msgstr "日光模拟模式"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:171
-#: main\views\main_screen.dart:292
-msgid "Editor initialization failed. Please retry."
-msgstr "编辑器初始化失败，请重试。"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:235
-msgid "Device connection lost. Controls are locked."
-msgstr "设备连接丢失。控制被锁定。"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:236
-msgid "Connection unstable. Trying to reconnect…"
-msgstr "连接不稳定。尝试重新连接…"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:267
-msgid "RETRY"
-msgstr "重试"
-
-#: devices\borneo\lyfi\views\dimming_screen.dart:285
-msgid "Back to device"
-msgstr "返回设备"
-
-#: devices\borneo\lyfi\views\easy_setup_screen.dart:40
-msgid "Easy Setup"
-msgstr "简易设置"
-
-#: devices\borneo\lyfi\views\easy_setup_screen.dart:153
-msgid "Hrs"
-msgstr "时"
-
-#: devices\borneo\lyfi\views\easy_setup_screen.dart:170
-msgid "Mins"
-msgstr "分"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:123
-msgid "Add time point"
-msgstr "增加时间点"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:242
-msgid "Easy"
-msgstr "简易"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:259
-msgid "Add"
-msgstr "添加"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:285
-msgid "Remove"
-msgstr "移除"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:294
-msgid "Clear"
-msgstr "全清"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:303
-msgid "Prev"
-msgstr "上个时间点"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:312
-msgid "Next"
-msgstr "下个时间点"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:340
-msgid "Confirmation"
-msgstr "确认"
-
-#: devices\borneo\lyfi\views\editor\schedule_editor_view.dart:342
-msgid "Are you sure you want to remove all schedule entries?"
-msgstr "您确定要删除所有日程条目吗？"
-
-#: devices\borneo\lyfi\views\moon_screen.dart:183
-msgid "Update moon settings succeed."
-msgstr "月相设置已更新。"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:94
-msgid "DEVICE INFORMATION"
-msgstr "设备信息"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:101
-msgid "Manufacturer"
-msgstr "制造商"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:102
-msgid "Model"
-msgstr "型号"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:104
-msgid "Serial Number"
-msgstr "序列号"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:108
-msgid "Device address"
-msgstr "设备地址"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:117
-msgid "LOCATION & TIME"
-msgstr "位置与时间"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:120
-msgid "Device Location"
-msgstr "设备位置"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:121
-msgid "Geographical location"
-msgstr "地理位置"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:125
-#: devices\views\device_ota_screen.dart:345
-msgid "Unknown"
-msgstr "未知"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:135
-msgid "Time zone"
-msgstr "时区"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:138
-msgid "No time zone"
-msgstr "未设置时区"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:146
-msgid "Timezone mismatch"
-msgstr "时区不匹配"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:157
-msgid "DEVICE STATUS"
-msgstr "设备状态"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:160
-msgid "Power status at startup"
-msgstr "上电时电源状态"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:166
-msgid "Last shutdown"
-msgstr "上次关机"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:170
-#, python-brace-format
-msgid "Reason code: {reasonCode}"
-msgstr "关机原因代码：{reasonCode}"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:177
-msgid "LIGHTING"
-msgstr "灯光"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:180
-msgid "Correction curve"
-msgstr "矫正曲线"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:186
-msgid "Temporary light duration"
-msgstr "临时开灯时长"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:192
-msgid "Cloud simulation"
-msgstr "云模拟"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:193
-msgid "Simulate cloud shadow effect"
-msgstr "模拟云影效果"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:207
-msgid "THERMAL MANAGEMENT"
-msgstr "热管理"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:210
-msgid "Fan mode"
-msgstr "风扇模式"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:216
-msgid "Manual fan power"
-msgstr "手动风扇功率"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:227
-msgid "VERSION & UPGRADE"
-msgstr "版本与升级"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:230
-msgid "Hardware version"
-msgstr "硬件版本"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:234
-msgid "Firmware version"
-msgstr "固件版本"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:244
-msgid "STANDALONE CONTROLLER"
-msgstr "独立控制器"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:254
-msgid "DANGER ZONE"
-msgstr "危险区域"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:259
-msgid "Delete device"
-msgstr "删除设备"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:267
-msgid "Reset device network settings"
-msgstr "重置设备网络设置"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:274
-msgid "Restore to factory settings"
-msgstr "恢复出厂设置"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:321
-msgid "Restore Factory Settings"
-msgstr "恢复出厂设置"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:328
-msgid "Are you sure you want to restore this device to factory settings?"
-msgstr "你确定要将此设备恢复到出厂设置？"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:330
-msgid "This action will:"
-msgstr "此操作将造成以下后果："
-
-#: devices\borneo\lyfi\views\settings_screen.dart:332
-msgid "• Delete all custom settings and configurations"
-msgstr "· 删除所有自定义设置"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:333
-msgid "• Disconnect the device from your network"
-msgstr "· 设备将从网络中断开"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:334
-msgid "• Reset all schedules and modes to defaults"
-msgstr "· 所有的调光设置将恢复到默认值"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:337
-msgid "The device will need to be reconfigured after this operation."
-msgstr "经过此操作以后设备需要重新进行配置。"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:358
-msgid "Restore"
-msgstr "执行恢复"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:369
-msgid ""
-"Are you sure you want to reset this device's network settings?\n"
-"The device will be removed and must be provisioned again."
-msgstr "您确定要重置此设备的网络设置吗？"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:388
-msgid "Are you sure you want to delete this device?"
-msgstr "您确定要删除此设备吗？"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:407
-msgid "Set Manual Fan Power"
-msgstr "设置手动风扇功率"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:436
-#: devices\borneo\lyfi\views\settings_screen.dart:507
-msgid "Set"
-msgstr "设置"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:450
-msgid "Device name cannot be empty."
-msgstr "设备名不能为空。"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:453
-msgid "Device name cannot be pure whitespace."
-msgstr "设备名不能只包含空白字符。"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:456
-msgid "Device name cannot have leading or trailing whitespace."
-msgstr "设备名不能有前导或尾随空格。"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:459
-msgid ""
-"Device name is too long. Maximum length is 63 bytes when encoded as UTF-8."
-msgstr "设备名太长。UTF-8 编码下最大为 63 字节。"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:468
-msgid "Set Device Name"
-msgstr "设置设备名称"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:478
-msgid "Device Name"
-msgstr "设备名称"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:517
-#: devices\borneo\lyfi\views\settings_screen.dart:525
-msgid "Keep on"
-msgstr "保持开启"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:518
-#: devices\borneo\lyfi\views\settings_screen.dart:526
-msgid "Keep off"
-msgstr "保持关闭"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:519
-#: devices\borneo\lyfi\views\settings_screen.dart:527
-msgid "Maintain last"
-msgstr "与之前相同"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:533
-msgid "Select power status"
-msgstr "选择开机电源状态"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:545
-#: devices\borneo\lyfi\views\settings_screen.dart:555
-msgid "Logarithmic"
-msgstr "对数"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:546
-#: devices\borneo\lyfi\views\settings_screen.dart:556
-msgid "Linear"
-msgstr "线性"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:547
-#: devices\borneo\lyfi\views\settings_screen.dart:557
-msgid "Exponential"
-msgstr "指数"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:548
-#: devices\borneo\lyfi\views\settings_screen.dart:558
-msgid "Gamma"
-msgstr "伽马矫正"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:549
-#: devices\borneo\lyfi\views\settings_screen.dart:559
-msgid "CIE1931"
-msgstr "CIE1931"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:565
-msgid "Select correction curve"
-msgstr "选择校正曲线"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:576
-#: devices\borneo\lyfi\views\settings_screen.dart:589
-msgid "5 minutes"
-msgstr "5 分钟"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:577
-#: devices\borneo\lyfi\views\settings_screen.dart:590
-msgid "10 minutes"
-msgstr "10 分钟"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:578
-#: devices\borneo\lyfi\views\settings_screen.dart:591
-msgid "20 minutes"
-msgstr "20 分钟"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:579
-#: devices\borneo\lyfi\views\settings_screen.dart:592
 msgid "1 hour"
 msgstr "1 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:580
-#: devices\borneo\lyfi\views\settings_screen.dart:593
-msgid "2 hours"
-msgstr "2 小时"
+msgid "1-15 characters"
+msgstr "1-15 字符"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:581
-#: devices\borneo\lyfi\views\settings_screen.dart:594
-msgid "4 hours"
-msgstr "4 小时"
+msgid "10 minutes"
+msgstr "10 分钟"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:582
-#: devices\borneo\lyfi\views\settings_screen.dart:595
-msgid "8 hours"
-msgstr "8 小时"
-
-#: devices\borneo\lyfi\views\settings_screen.dart:583
-#: devices\borneo\lyfi\views\settings_screen.dart:596
 msgid "12 hours"
 msgstr "12 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:602
-msgid "Select duration"
-msgstr "选择持续时间"
+msgid "2 hours"
+msgstr "2 小时"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:614
-#: devices\borneo\lyfi\views\settings_screen.dart:621
-msgid "PID Adaptive"
-msgstr "PID 自适应"
+msgid "20 minutes"
+msgstr "20 分钟"
 
-#: devices\borneo\lyfi\views\settings_screen.dart:628
-msgid "Select fan mode"
-msgstr "选择风扇模式"
+msgid "4 hours"
+msgstr "4 小时"
 
-#: devices\borneo\view_models\base_borneo_device_view_model.dart:82
-#, python-brace-format
-msgid "Failed to initialize local timezone: {msg}"
-msgstr "初始化本地时区失败：{msg}"
+msgid "5 minutes"
+msgstr "5 分钟"
 
-#: devices\borneo\view_models\base_borneo_device_view_model.dart:111
-msgid "Timezone synchronized successfully"
-msgstr "时区同步成功"
+msgid "8 hours"
+msgstr "8 小时"
 
-#: devices\borneo\view_models\base_borneo_device_view_model.dart:127
-#, python-brace-format
-msgid "Failed to sync timezone: {msg}"
-msgstr "同步时区失败：{msg}"
-
-#: devices\views\device_offline_view.dart:21
-msgid "Device is offline"
-msgstr "设备离线"
-
-#: devices\views\device_offline_view.dart:26
-msgid ""
-"The device is currently offline. Please check the network or power "
-"connection."
-msgstr "设备离线，请检查网络连接和设备电源。"
-
-#: devices\views\device_offline_view.dart:36
-#: features\devices\views\device_discovery_screen.dart:131
-#: features\devices\views\provisioning_progress_screen.dart:123
-#: features\devices\views\provisioning_screen.dart:546
-msgid "Close"
-msgstr "关闭"
-
-#: devices\views\device_ota_screen.dart:51
-#: devices\views\device_ota_screen.dart:126
-#: devices\views\device_ota_screen.dart:280
-msgid "Firmware Update"
-msgstr "固件更新"
-
-#: devices\views\device_ota_screen.dart:58
-msgid "Before proceeding, please read the following warnings carefully:"
-msgstr "在继续之前，请仔细阅读以下警告："
-
-#: devices\views\device_ota_screen.dart:65
-msgid ""
-"Do NOT power off the device during the update. Interrupting power may "
-"permanently damage the device."
-msgstr "更新期间请勿关闭设备电源。断电可能会对设备造成永久性损坏。"
-
-#: devices\views\device_ota_screen.dart:71
-msgid "Keep the device connected to your network throughout the update."
-msgstr "在整个更新过程中保持设备连接到您的网络。"
-
-#: devices\views\device_ota_screen.dart:76
-msgid "The update may take several minutes. Do not close this app."
-msgstr "更新可能需要几分钟时间。请勿关闭此应用。"
-
-#: devices\views\device_ota_screen.dart:81
-msgid "The device will restart automatically after the update is complete."
-msgstr "更新完成后设备将自动重启。"
-
-#: devices\views\device_ota_screen.dart:85
-msgid "Do you want to start the firmware update now?"
-msgstr "您现在要开始固件更新吗？"
-
-#: devices\views\device_ota_screen.dart:93
-msgid "Update Now"
-msgstr "立即更新"
-
-#: devices\views\device_ota_screen.dart:117
-msgid ""
-"Firmware update is in progress. Interrupting the update may permanently "
-"damage the device. Are you sure you want to abort?"
-msgstr ""
-"固件更新正在进行中。中断更新可能会对设备造成永久性损坏。您确定要放弃吗？"
-
-#: devices\views\device_ota_screen.dart:283
-msgid "Checking for updates..."
-msgstr "检查更新中..."
-
-#: devices\views\device_ota_screen.dart:284
-msgid "Fetching the latest firmware information from the server."
-msgstr "正在从服务器获取最新的固件信息。"
-
-#: devices\views\device_ota_screen.dart:286
-msgid "Your firmware is up to date"
-msgstr "您的固件已是最新版本"
-
-#: devices\views\device_ota_screen.dart:288
-#, python-brace-format
-msgid "Version {0} is the latest version."
-msgstr "版本 {0} 是最新版本。"
-
-#: devices\views\device_ota_screen.dart:291
-msgid "New firmware available"
-msgstr "有新的固件可用"
-
-#: devices\views\device_ota_screen.dart:294
-#, python-brace-format
-msgid "Version {0} is available. Tap the button below to update."
-msgstr "版本 {0} 可用。点击下方按钮进行更新。"
-
-#: devices\views\device_ota_screen.dart:299
-msgid "Updating firmware..."
-msgstr "正在更新固件..."
-
-#: devices\views\device_ota_screen.dart:300
-msgid "Please keep the device powered on and connected to the network."
-msgstr "请保持设备电源开启并连接到网络。"
-
-#: devices\views\device_ota_screen.dart:302
-msgid "Update successful!"
-msgstr "更新成功！"
-
-#: devices\views\device_ota_screen.dart:303
-msgid "The device has been updated and will restart shortly."
-msgstr "设备已更新并即将重启。"
-
-#: devices\views\device_ota_screen.dart:305
-msgid "Update failed"
-msgstr "更新失败"
-
-#: devices\views\device_ota_screen.dart:306
-msgid "An error occurred. Please retry or contact support."
-msgstr "发生错误。请重试或联系支持人员。"
-
-#: devices\views\device_ota_screen.dart:344
-msgid "Current version"
-msgstr "当前版本"
-
-#: devices\views\device_ota_screen.dart:353
-msgid "New version"
-msgstr "新版本"
-
-#: devices\views\device_ota_screen.dart:359
-msgid "Release date"
-msgstr "发布日期"
-
-#: devices\views\device_ota_screen.dart:389
-msgid "Do not power off the device or close this app."
-msgstr "请勿关闭设备电源或关闭此应用。"
-
-#: devices\views\device_ota_screen.dart:404
-msgid "Unknown error"
-msgstr "未知错误"
-
-#: devices\views\device_ota_screen.dart:428
-msgid ""
-"Firmware update is in progress. Interrupting the update may permanently "
-"damage the device. Are you sure you want to cancel?"
-msgstr ""
-"固件更新正在进行中。中断更新可能会对设备造成永久性损坏。您确定要取消吗？"
-
-#: devices\views\device_ota_screen.dart:446
-#: features\devices\views\provisioning_screen.dart:128
-#: features\devices\views\provisioning_screen.dart:532
-#: features\scenes\views\scene_edit_screen.dart:367
-msgid "Done"
-msgstr "完成"
-
-#: devices\views\device_ota_screen.dart:462
-#, python-brace-format
-msgid "Upgrade to {0}"
-msgstr "升级到 {0}"
-
-#: devices\views\device_ota_screen.dart:478
-msgid "Checking..."
-msgstr "检查中..."
-
-#: devices\views\device_ota_screen.dart:480
-#: features\chores\views\chore_list.dart:73
-#: features\chores\views\chore_list.dart:142
-#: features\devices\views\provisioning_screen.dart:551
-#: features\scenes\views\scenes_screen.dart:47
-#: features\scenes\views\scenes_screen.dart:92
-msgid "Retry"
-msgstr "重试"
-
-#: devices\views\device_ota_screen.dart:481
-msgid "Check for updates"
-msgstr "检查更新"
-
-#: devices\views\device_ota_screen.dart:501
-msgid "[Debug] Force Update"
-msgstr "[调试] 强制更新"
-
-#: features\chores\views\chore_card.dart:108
 msgid "ACTIVE"
 msgstr "激活"
 
-#: features\chores\views\chore_card.dart:108
-msgid "INACTIVE"
-msgstr "未激活"
+msgid "APPEARANCE"
+msgstr "外观"
 
-#: features\chores\views\chore_list.dart:42
-msgid "Chores"
-msgstr "日常维护"
+msgid "About"
+msgstr "关于"
 
-#: features\chores\views\chore_list.dart:69
-msgid "Error loading chores"
-msgstr "加载日常维护条目错误"
+msgid "Acclimation"
+msgstr "适应模式"
 
-#: features\chores\views\chore_list.dart:92
-msgid "No chores"
-msgstr "无日常维护条目"
+msgid "Adaptive"
+msgstr "智能自适应"
 
-#: features\chores\views\chore_list.dart:100
-msgid "No chores available for devices in the current scene."
-msgstr "当前场景无可用日常维护条目"
+msgid "Add"
+msgstr "添加"
 
-#: features\devices\view_models\base_device_view_model.dart:139
-#: features\devices\view_models\base_device_view_model.dart:146
-#, python-brace-format
-msgid "Failed to initialize device: {msg}"
-msgstr "初始化设备失败：{msg}"
+msgid "Add Device"
+msgstr "添加设备"
 
-#: features\devices\view_models\base_device_view_model.dart:416
-#: features\devices\view_models\grouped_devices_view_model.dart:300
-msgid "Failed to delete device"
-msgstr "删除设备失败"
+msgid "Add Devices"
+msgstr "添加设备"
 
-#: features\devices\view_models\device_discovery_view_model.dart:182
-#: features\devices\view_models\device_discovery_view_model.dart:240
-#: features\devices\view_models\device_discovery_view_model.dart:277
-msgid "Bluetooth scan error, please check if Bluetooth device is enabled."
-msgstr "蓝牙扫描错误，请检查蓝牙设备是否已启用。"
+msgid "Add Devices Group"
+msgstr "新建设备组"
 
-#: features\devices\view_models\device_discovery_view_model.dart:231
-#: features\devices\view_models\device_discovery_view_model.dart:275
-msgid "Bluetooth permissions are required to discover devices."
-msgstr "发现设备需要蓝牙权限。"
+msgid "Add New Devices"
+msgstr "添加新设备"
 
-#: features\devices\view_models\grouped_devices_view_model.dart:141
-msgid "Failed to refresh discovery"
-msgstr "刷新发现失败"
+msgid "Add devices to get started"
+msgstr "添加设备以开始使用"
 
-#: features\devices\view_models\grouped_devices_view_model.dart:177
-msgid "Ungrouped devices"
-msgstr "未分组设备"
+msgid "Add time point"
+msgstr "增加时间点"
 
-#: features\devices\view_models\grouped_devices_view_model.dart:231
-#, python-brace-format
-msgid "Failed to change the group for device '{deviceName}'"
-msgstr "更改设备 '{deviceName}' 的组失败"
+msgid "Adding device to your list..."
+msgstr "正在将设备添加到您的列表..."
 
-#: features\devices\view_models\provisioning_wizard_view_model.dart:92
-msgid "Failed to scan  WiFi networks"
-msgstr "扫描 WiFi 网络失败"
+msgid "An error occurred. Please retry or contact support."
+msgstr "发生错误。请重试或联系支持人员。"
 
-#: features\devices\view_models\wifi_selection_view_model.dart:44
-msgid "The WiFi scanning has been cancelled."
-msgstr "WiFi 扫描已取消。"
+msgid "App Settings"
+msgstr "设置"
 
-#: features\devices\view_models\wifi_selection_view_model.dart:46
-msgid "Failed to scan WiFi networks"
-msgstr "扫描 WiFi 网络失败"
+msgid "Apply"
+msgstr "应用"
 
-#: features\devices\views\device_card.dart:144
-#: features\devices\views\device_card.dart:157
-msgid "OFF-LINE"
-msgstr "离线"
-
-#: features\devices\views\device_card.dart:211
-#: shared\widgets\device_status_indicator.dart:74
-msgid "Reconnect"
-msgstr "重连"
-
-#: features\devices\views\device_card.dart:216
-msgid "Change group..."
-msgstr "更改分组..."
-
-#: features\devices\views\device_card.dart:218
-msgid "Delete..."
-msgstr "删除..."
-
-#: features\devices\views\device_card.dart:232
 #, python-brace-format
 msgid "Are you sure to delete the device \"{deviceName}\"?"
 msgstr "你确定要删除设备“{deviceName}”？"
 
-#: features\devices\views\device_card.dart:248
-msgid "Change Device Group"
-msgstr "新建设备组"
-
-#: features\devices\views\device_card.dart:250
-#, python-brace-format
-msgid "Select the group to which device \"{deviceName}\" belongs:"
-msgstr "选择设备“{deviceName}”所属的分组："
-
-#: features\devices\views\device_discovery_screen.dart:41
-msgid "Add Device"
-msgstr "添加设备"
-
-#: features\devices\views\device_discovery_screen.dart:51
-#: features\devices\views\provisioning_screen.dart:263
-msgid "Refresh"
-msgstr "刷新"
-
-#: features\devices\views\device_discovery_screen.dart:104
-msgid ""
-"Bluetooth is not supported on this system; device WiFi provisioning is "
-"unavailable."
-msgstr "此系统不支持蓝牙；设备 WiFi 配置不可用。"
-
-#: features\devices\views\device_discovery_screen.dart:164
-msgid "No devices found"
-msgstr "未找到设备"
-
-#: features\devices\views\device_discovery_screen.dart:198
-msgid "Searching for devices..."
-msgstr "正在搜索设备..."
-
-#: features\devices\views\device_discovery_screen.dart:203
-#, python-brace-format
-msgid "{0} seconds remaining"
-msgstr "还剩 {0} 秒"
-
-#: features\devices\views\device_discovery_screen.dart:211
-#: features\devices\views\provisioning_progress_screen.dart:41
-msgid "Stop"
-msgstr "停止"
-
-#: features\devices\views\device_discovery_screen.dart:246
-msgid "Detected on network"
-msgstr "在网络上检测到"
-
-#: features\devices\views\device_discovery_screen.dart:283
-msgid "Ready to provision"
-msgstr "准备配置"
-
-#: features\devices\views\device_error_dialog.dart:13
-msgid "Device Error"
-msgstr "设备错误"
-
-#: features\devices\views\device_error_dialog.dart:17
-#: shared\widgets\confirmation_sheet.dart:47
-#: shared\widgets\confirmation_sheet.dart:85
-msgid "OK"
-msgstr "确定"
-
-#: features\devices\views\device_group_selection_sheet.dart:32
-msgid "No group"
-msgstr "未指定分组"
-
-#: features\devices\views\devices_screen.dart:129
-#: features\scenes\views\scenes_screen.dart:43
-#, python-brace-format
-msgid "Error: {errMsg}"
-msgstr "错误：{errMsg}"
-
-#: features\devices\views\devices_screen.dart:208
-msgid "Add New Devices"
-msgstr "添加新设备"
-
-#: features\devices\views\devices_screen.dart:213
-msgid "Add Devices Group"
-msgstr "新建设备组"
-
-#: features\devices\views\devices_screen.dart:227
-#, python-brace-format
-msgid "Devices in {currentScene}"
-msgstr "{currentScene}中的设备"
-
-#: features\devices\views\group_edit_screen.dart:84
-#: features\scenes\views\scene_edit_screen.dart:178
-msgid "Enter the required scene name"
-msgstr "输入必须的场景名称"
-
-#: features\devices\views\group_edit_screen.dart:88
-#: features\scenes\views\scene_edit_screen.dart:183
-msgid "Please enter the scene name"
-msgstr "请输入场景名称"
-
-#: features\devices\views\group_edit_screen.dart:100
-#: features\scenes\views\scene_edit_screen.dart:200
-msgid "Enter the optional notes for this scene"
-msgstr "输入该场景的备注文字（可选）"
-
-#: features\devices\views\group_edit_screen.dart:101
-#: features\scenes\views\scene_edit_screen.dart:201
-msgid "Notes"
-msgstr "备注"
-
-#: features\devices\views\group_edit_screen.dart:113
-#: features\scenes\views\scene_edit_screen.dart:223
-msgid "Submit"
-msgstr "提交"
-
-#: features\devices\views\group_edit_screen.dart:172
-#: features\scenes\views\scene_edit_screen.dart:234
-msgid "Operation failed"
-msgstr "操作失败"
-
-#: features\devices\views\group_edit_screen.dart:205
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete \"{0}\" group?\n"
@@ -1383,121 +105,946 @@ msgstr ""
 "\n"
 "该分组中的设备将被移动到“未分组”区域。"
 
-#: features\devices\views\group_edit_screen.dart:228
-msgid "Group deleted"
-msgstr "分组已删除"
+#, python-brace-format
+msgid ""
+"Are you sure you want to delete \"{0}\" scene? This action cannot be undone."
+msgstr "您确定要删除 \"{0}\" 场景吗？此操作无法撤销。"
 
-#: features\devices\views\group_edit_screen.dart:233
-#: features\scenes\views\scene_edit_screen.dart:324
-msgid "Delete failed"
-msgstr "删除失败"
+msgid "Are you sure you want to delete this device?"
+msgstr "您确定要删除此设备吗？"
 
-#: features\devices\views\group_edit_screen.dart:251
-msgid "New Device Group"
-msgstr "新建设备组"
+msgid "Are you sure you want to remove all schedule entries?"
+msgstr "您确定要删除所有日程条目吗？"
 
-#: features\devices\views\group_edit_screen.dart:251
-msgid "Edit Device Group"
-msgstr "新建设备组"
+msgid ""
+"Are you sure you want to reset this device's network settings?\n"
+"The device will be removed and must be provisioned again."
+msgstr "您确定要重置此设备的网络设置吗？"
 
-#: features\devices\views\provisioning_progress_screen.dart:35
-#: features\devices\views\provisioning_screen.dart:127
-msgid "Provisioning"
-msgstr "配置"
+msgid "Are you sure you want to restore this device to factory settings?"
+msgstr "你确定要将此设备恢复到出厂设置？"
 
-#: features\devices\views\provisioning_progress_screen.dart:63
-msgid "Sending Credentials"
-msgstr "发送凭据"
-
-#: features\devices\views\provisioning_progress_screen.dart:69
-msgid "Connecting to WiFi"
-msgstr "连接到 WiFi"
-
-#: features\devices\views\provisioning_progress_screen.dart:76
-msgid "Registering Device"
-msgstr "注册设备"
-
-#: features\devices\views\provisioning_progress_screen.dart:89
-#: features\devices\views\provisioning_screen.dart:504
-msgid "Provisioning Successful!"
-msgstr "配置成功！"
-
-#: features\devices\views\provisioning_progress_screen.dart:117
-#: features\devices\views\provisioning_screen.dart:505
-msgid "Unknown Error"
-msgstr "未知错误"
-
-#: features\devices\views\provisioning_screen.dart:67
-msgid "Device Setup"
-msgstr "设备设置"
-
-#: features\devices\views\provisioning_screen.dart:125
-msgid "Select WiFi"
-msgstr "选择 WiFi"
-
-#: features\devices\views\provisioning_screen.dart:126
-msgid "Enter Password"
-msgstr "输入密码"
-
-#: features\devices\views\provisioning_screen.dart:257
-msgid "No WiFi networks found"
-msgstr "未找到 WiFi 网络"
-
-#: features\devices\views\provisioning_screen.dart:344
-msgid "Password"
-msgstr "密码"
-
-#: features\devices\views\provisioning_screen.dart:355
-msgid "Please enter a password"
-msgstr "请输入密码"
-
-#: features\devices\views\provisioning_screen.dart:367
 msgid "Back"
 msgstr "返回"
 
-#: features\devices\views\provisioning_screen.dart:372
-msgid "Provision"
-msgstr "配置"
+msgid "Back to device"
+msgstr "返回设备"
 
-#: features\devices\views\provisioning_screen.dart:419
+msgid "Bad device state"
+msgstr "设备状态异常"
+
+msgid "Before proceeding, please read the following warnings carefully:"
+msgstr "在继续之前，请仔细阅读以下警告："
+
+msgid ""
+"Bluetooth is not supported on this system; device WiFi provisioning is "
+"unavailable."
+msgstr "此系统不支持蓝牙；设备 WiFi 配置不可用。"
+
+msgid "Bluetooth permissions are required to discover devices."
+msgstr "发现设备需要蓝牙权限。"
+
+msgid "Bluetooth scan error, please check if Bluetooth device is enabled."
+msgstr "蓝牙扫描错误，请检查蓝牙设备是否已启用。"
+
+msgid "CIE1931"
+msgstr "CIE1931"
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Cannot Delete Scene"
+msgstr "无法删除场景"
+
+msgid "Cannot delete the last remaining scene."
+msgstr "无法删除最后剩下的场景。"
+
+msgid "Change Device Group"
+msgstr "新建设备组"
+
+msgid "Change group..."
+msgstr "更改分组..."
+
+msgid "Channel Settings"
+msgstr "通道设置"
+
+msgid "Check for updates"
+msgstr "检查更新"
+
+msgid "Checking for updates..."
+msgstr "检查更新中..."
+
+msgid "Checking..."
+msgstr "检查中..."
+
+msgid "Chores"
+msgstr "日常维护"
+
+msgid "Clear"
+msgstr "全清"
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "Cloud simulation"
+msgstr "云模拟"
+
+msgid "Cloud simulation mode updated successfully"
+msgstr "云模拟模式更新成功"
+
+msgid "Color"
+msgstr "颜色"
+
+msgid "Confirm"
+msgstr "确认"
+
+msgid "Confirm Submit"
+msgstr "确认提交"
+
+msgid "Confirmation"
+msgstr "确认"
+
+msgid "Connecting to WiFi"
+msgstr "连接到 WiFi"
+
+msgid "Connection unstable. Trying to reconnect…"
+msgstr "连接不稳定。尝试重新连接…"
+
+msgid "Controller Settings"
+msgstr "控制器设置"
+
+msgid ""
+"Copyright © Yunnan BinaryStars Technologies, Co., Ltd. All rights reserved."
+msgstr "版权所有 © 云南伴星科技有限公司。保留所有权利。"
+
+msgid "Correction curve"
+msgstr "矫正曲线"
+
+msgid "Crop Image"
+msgstr "裁剪图像"
+
+msgid "Current location"
+msgstr "当前位置"
+
+msgid "Current version"
+msgstr "当前版本"
+
+msgid "DANGER ZONE"
+msgstr "危险区域"
+
+msgid "DEVICE INFORMATION"
+msgstr "设备信息"
+
+msgid "DEVICE STATUS"
+msgstr "设备状态"
+
+msgid "DIMM"
+msgstr "调光"
+
+msgid "Dark"
+msgstr "暗色"
+
+msgid "Delete device"
+msgstr "删除设备"
+
+msgid "Delete failed"
+msgstr "删除失败"
+
+msgid "Delete..."
+msgstr "删除..."
+
+msgid "Detected on network"
+msgstr "在网络上检测到"
+
+msgid "Device Error"
+msgstr "设备错误"
+
+msgid "Device Location"
+msgstr "设备位置"
+
+msgid "Device Name"
+msgstr "设备名称"
+
+msgid "Device Offline"
+msgstr "设备离线"
+
+msgid "Device Setup"
+msgstr "设备设置"
+
+msgid "Device address"
+msgstr "设备地址"
+
+msgid "Device connection lost. Controls are locked."
+msgstr "设备连接丢失。控制被锁定。"
+
 #, python-brace-format
-msgid "Time remaining: {0} seconds"
-msgstr "剩余时间：{0} 秒"
+msgid ""
+"Device firmware version {currentVersion} is not supported. Required: "
+"{requiredVersion}."
+msgstr "设备固件版本 {currentVersion} 不受支持。需要版本：{requiredVersion}。"
 
-#: features\devices\views\provisioning_screen.dart:420
-msgid "Waiting for device to join network"
-msgstr "正在等待设备加入网络"
+msgid "Device is not reachable at the moment."
+msgstr "设备当前不可达"
 
-#: features\devices\views\provisioning_screen.dart:517
-msgid "Adding device to your list..."
-msgstr "正在将设备添加到您的列表..."
+msgid "Device is offline"
+msgstr "设备离线"
 
-#: features\devices\views\provisioning_screen.dart:538
-msgid "You can finish now without waiting."
-msgstr "您现在可以完成，无需等待。"
+msgid "Device is offline. Please retry after reconnection."
+msgstr "设备离线，请重新连接后重试。"
 
-#: features\devices\widgets\empty_groups_widget.dart:20
-msgid "No Devices"
-msgstr "暂无设备"
+msgid "Device name cannot be empty."
+msgstr "设备名不能为空。"
 
-#: features\devices\widgets\empty_groups_widget.dart:23
-msgid "Add devices to get started"
-msgstr "添加设备以开始使用"
+msgid "Device name cannot be pure whitespace."
+msgstr "设备名不能只包含空白字符。"
 
-#: features\devices\widgets\empty_groups_widget.dart:31
-msgid "Add Devices"
-msgstr "添加设备"
+msgid "Device name cannot have leading or trailing whitespace."
+msgstr "设备名不能有前导或尾随空格。"
 
-#: features\my\views\about_screen.dart:95
+msgid ""
+"Device name is too long. Maximum length is 63 bytes when encoded as UTF-8."
+msgstr "设备名太长。UTF-8 编码下最大为 63 字节。"
+
+msgid "Device name updated successfully"
+msgstr "设备名更新成功"
+
+msgid "Device offline"
+msgstr "设备离线"
+
+msgid "Devices"
+msgstr "设备"
+
+#, python-brace-format
+msgid "Devices in {currentScene}"
+msgstr "{currentScene}中的设备"
+
+msgid "Dimming"
+msgstr "调光"
+
+msgid ""
+"Do NOT power off the device during the update. Interrupting power may "
+"permanently damage the device."
+msgstr "更新期间请勿关闭设备电源。断电可能会对设备造成永久性损坏。"
+
+msgid "Do not power off the device or close this app."
+msgstr "请勿关闭设备电源或关闭此应用。"
+
+msgid "Do you want to start the firmware update now?"
+msgstr "您现在要开始固件更新吗？"
+
+msgid "Documentation"
+msgstr "文档"
+
+msgid "Done"
+msgstr "完成"
+
+msgid "Dry Scape Mode"
+msgstr "无水造景模式"
+
+msgid "Duration"
+msgstr "持续时间"
+
+msgid "Duration must be between 5 and 100 days."
+msgstr "持续时间必须在 5 到 100 天之间。"
+
+msgid "ERROR"
+msgstr "错误"
+
+msgid "Easy"
+msgstr "简易"
+
+msgid "Easy Setup"
+msgstr "简易设置"
+
+msgid "Edit Device Group"
+msgstr "新建设备组"
+
+msgid "Edit Scene"
+msgstr "新建场景"
+
+msgid "Editor initialization failed. Please retry."
+msgstr "编辑器初始化失败，请重试。"
+
+msgid "Enable acclimation"
+msgstr "启用适应模式"
+
+msgid "Enabled channel count"
+msgstr "启用通道数量"
+
+msgid "Enter Password"
+msgstr "输入密码"
+
+msgid "Enter the optional notes for this scene"
+msgstr "输入该场景的备注文字（可选）"
+
+msgid "Enter the required scene name"
+msgstr "输入必须的场景名称"
+
+msgid "Error"
+msgstr "错误"
+
+msgid "Error loading chores"
+msgstr "加载日常维护条目错误"
+
 msgid "Error loading document"
 msgstr "加载文档错误"
 
-#: features\my\views\about_screen.dart:145
 #, python-brace-format
-msgid "Version {verText}+{buildNumberText}"
-msgstr "版本 {verText}+{buildNumberText}"
+msgid "Error: {errMsg}"
+msgstr "错误：{errMsg}"
 
-#: features\my\views\about_screen.dart:161
+msgid "Exponential"
+msgstr "指数"
+
+msgid "FEEDBACK"
+msgstr "反馈"
+
+#, python-brace-format
+msgid "Failed to change the group for device '{deviceName}'"
+msgstr "更改设备 '{deviceName}' 的组失败"
+
+msgid "Failed to delete device"
+msgstr "删除设备失败"
+
+#, python-brace-format
+msgid "Failed to fetch firmware manifest: HTTP code `{code}`"
+msgstr "获取固件信息失败：HTTP 错误码 `{code}`"
+
+msgid "Failed to get location"
+msgstr "获取位置失败"
+
+#, python-brace-format
+msgid "Failed to initialize device: {msg}"
+msgstr "初始化设备失败：{msg}"
+
+#, python-brace-format
+msgid "Failed to initialize local timezone: {msg}"
+msgstr "初始化本地时区失败：{msg}"
+
+#, python-brace-format
+msgid "Failed to load controller settings: {msg}"
+msgstr "加载控制器设置失败：{msg}"
+
+#, python-brace-format
+msgid "Failed to open dimming page: {msg}"
+msgstr "打开调光页面失败：{msg}"
+
+msgid "Failed to refresh discovery"
+msgstr "刷新发现失败"
+
+msgid "Failed to reset device network settings"
+msgstr "重置设备网络设置失败"
+
+msgid "Failed to restore device to factory settings"
+msgstr "将设备恢复到出厂设置失败"
+
+msgid "Failed to save changes. Please try again."
+msgstr "保存更改失败，请重试。"
+
+msgid "Failed to scan  WiFi networks"
+msgstr "扫描 WiFi 网络失败"
+
+msgid "Failed to scan WiFi networks"
+msgstr "扫描 WiFi 网络失败"
+
+msgid "Failed to switch mode"
+msgstr "切换模式失败"
+
+msgid "Failed to switch to temporary state"
+msgstr "切换临时开灯状态失败"
+
+#, python-brace-format
+msgid "Failed to sync timezone: {msg}"
+msgstr "同步时区失败：{msg}"
+
+msgid "Failed to update LED correction method"
+msgstr "更新 LED 校正方法失败"
+
+msgid "Failed to update acclimation settings."
+msgstr "更新适应设置失败。"
+
+msgid "Failed to update cloud simulation mode"
+msgstr "更新云模拟模式失败"
+
+msgid "Failed to update device location"
+msgstr "更新设备位置失败"
+
+msgid "Failed to update device name"
+msgstr "更新设备名称失败"
+
+msgid "Failed to update device time zone"
+msgstr "更新设备时区失败"
+
+msgid "Failed to update fan modee"
+msgstr "更新风扇模式失败"
+
+msgid "Failed to update manual fan power"
+msgstr "更新手动风扇功率失败"
+
+msgid "Failed to update moon settings."
+msgstr "更新月亮设置失败。"
+
+msgid "Failed to update power behavior"
+msgstr "更新电源行为失败"
+
+msgid "Failed to update temporary duration"
+msgstr "更新临时持续时间失败"
+
+msgid "Fan"
+msgstr "风扇"
+
+msgid "Fan mode"
+msgstr "风扇模式"
+
+msgid "Fan mode updated successfully"
+msgstr "风扇模式更新成功"
+
+msgid "Feed Mode"
+msgstr "喂食模式"
+
+msgid "Feedback via Email"
+msgstr "通过邮件反馈"
+
+msgid "Fetching the latest firmware information from the server."
+msgstr "正在从服务器获取最新的固件信息。"
+
+msgid "Firmware Update"
+msgstr "固件更新"
+
+msgid "Firmware hash mismatch"
+msgstr "固件哈希不匹配"
+
+msgid ""
+"Firmware update is in progress. Interrupting the update may permanently "
+"damage the device. Are you sure you want to abort?"
+msgstr ""
+"固件更新正在进行中。中断更新可能会对设备造成永久性损坏。您确定要放弃吗？"
+
+msgid ""
+"Firmware update is in progress. Interrupting the update may permanently "
+"damage the device. Are you sure you want to cancel?"
+msgstr ""
+"固件更新正在进行中。中断更新可能会对设备造成永久性损坏。您确定要取消吗？"
+
+msgid "Firmware version"
+msgstr "固件版本"
+
+msgid "First Quarter"
+msgstr "上弦月"
+
+msgid "Full Moon"
+msgstr "满月"
+
+msgid "Gamma"
+msgstr "伽马矫正"
+
+msgid "Geographical location"
+msgstr "地理位置"
+
+msgid "Group deleted"
+msgstr "分组已删除"
+
+msgid "Hardware version"
+msgstr "硬件版本"
+
+msgid "Hrs"
+msgstr "时"
+
+msgid "INACTIVE"
+msgstr "未激活"
+
+msgid "Initialization failed"
+msgstr "初始化失败"
+
+msgid "Invalid name"
+msgstr "名称无效"
+
+msgid "Invalid wavelength"
+msgstr "无效波长"
+
+msgid "Keep off"
+msgstr "保持关闭"
+
+msgid "Keep on"
+msgstr "保持开启"
+
+msgid "Keep the device connected to your network throughout the update."
+msgstr "在整个更新过程中保持设备连接到您的网络。"
+
+msgid "LED CHANNELS"
+msgstr "LED 通道"
+
+msgid "LED CONFIGURATION"
+msgstr "LED 配置"
+
+msgid "LED Power"
+msgstr "LED 功率"
+
+msgid "LED correction method updated successfully"
+msgstr "LED 矫正方法已成功更新"
+
+msgid "LIGHTING"
+msgstr "灯光"
+
+msgid "LOCATION & TIME"
+msgstr "位置与时间"
+
+msgid "Language"
+msgstr "语言"
+
+msgid "Last Quarter"
+msgstr "下弦月"
+
+msgid "Last shutdown"
+msgstr "上次关机"
+
+msgid "License"
+msgstr "许可"
+
+msgid "Light"
+msgstr "亮色"
+
+msgid "Linear"
+msgstr "线性"
+
+msgid "Loading..."
+msgstr "载入中..."
+
+msgid "Location permissions are denied"
+msgstr "已拒绝给予定位权限"
+
+msgid "Location permissions are permanently denied"
+msgstr "已永久拒绝给予定位权限"
+
+msgid "Location updated successfully"
+msgstr "定位更新成功"
+
+msgid "Logarithmic"
+msgstr "对数"
+
+msgid "MANU"
+msgstr "手动"
+
+msgid "Maintain last"
+msgstr "与之前相同"
+
+msgid "Manual"
+msgstr "手动模式"
+
+msgid "Manual fan power"
+msgstr "手动风扇功率"
+
+msgid "Manual fan power updated successfully"
+msgstr "手动风扇功率更新成功"
+
+msgid "Manual mode"
+msgstr "手动模式"
+
+msgid "Manufacturer"
+msgstr "制造商"
+
+msgid "Mins"
+msgstr "分"
+
+msgid "Model"
+msgstr "型号"
+
+msgid "Moonlight"
+msgstr "月光"
+
+msgid "My"
+msgstr "我的"
+
+msgid "My Home"
+msgstr "我的家"
+
+msgid "My Office"
+msgstr "我的办公室"
+
+msgid "N/A"
+msgstr "无"
+
+msgid "NORM"
+msgstr "常规"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "New Device Group"
+msgstr "新建设备组"
+
+msgid "New Moon"
+msgstr "新月"
+
+msgid "New Scene"
+msgstr "新建场景"
+
+msgid "New firmware available"
+msgstr "有新的固件可用"
+
+msgid "New version"
+msgstr "新版本"
+
+msgid "Next"
+msgstr "下个时间点"
+
+msgid "No Devices"
+msgstr "暂无设备"
+
+msgid "No Moon"
+msgstr "无月"
+
+msgid "No WiFi networks found"
+msgstr "未找到 WiFi 网络"
+
+msgid "No chores"
+msgstr "无日常维护条目"
+
+msgid "No chores available for devices in the current scene."
+msgstr "当前场景无可用日常维护条目"
+
+msgid "No devices found"
+msgstr "未找到设备"
+
+#, python-brace-format
+msgid "No firmware entry found for product ID `{pid}`"
+msgstr "找不到产品 ID `{pid}` 对应的固件条目"
+
+msgid "No group"
+msgstr "未指定分组"
+
+msgid "No time zone"
+msgstr "未设置时区"
+
+msgid "Nominal PFD (PAR)"
+msgstr "标称 PFD（PAR）"
+
+msgid "Nominal power"
+msgstr "标称功率"
+
+msgid "Not set"
+msgstr "未设置"
+
+msgid "Notes"
+msgstr "备注"
+
+msgid "OFF"
+msgstr "电源关"
+
+msgid "OFF-LINE"
+msgstr "离线"
+
+msgid "OK"
+msgstr "确定"
+
+msgid "ON"
+msgstr "电源开"
+
+msgid "Operation failed"
+msgstr "操作失败"
+
+msgid "Overpower cut-off"
+msgstr "过功率切断"
+
+msgid "Overpower enabled"
+msgstr "过功率保护"
+
+msgid "Overtemperature cut-off"
+msgstr "过温切断"
+
+msgid "Overtemperature enabled"
+msgstr "过温保护"
+
+msgid "PID Adaptive"
+msgstr "PID 自适应"
+
+msgid "POWER & PROTECTION"
+msgstr "电源与保护"
+
+msgid "PREV"
+msgstr "之前"
+
+msgid "PWM frequency"
+msgstr "PWM 频率"
+
+msgid "Password"
+msgstr "密码"
+
+msgid ""
+"Please carefully check the configuration. Incorrect configuration may cause "
+"hardware damage or other dangerous situations. Submitting will reboot the "
+"device.\n"
+"Do you want to proceed?"
+msgstr ""
+"请仔细检查配置。错误的配置可能导致硬件损坏或其他危险情况。提交将重启设备。\n"
+"您要继续吗？"
+
+msgid "Please check device connection"
+msgstr "请检查设备连接"
+
+msgid "Please enable location services"
+msgstr "请开启定位服务"
+
+msgid "Please enter a password"
+msgstr "请输入密码"
+
+msgid "Please enter the scene name"
+msgstr "请输入场景名称"
+
+msgid "Please keep the device powered on and connected to the network."
+msgstr "请保持设备电源开启并连接到网络。"
+
+msgid "Power Off All"
+msgstr "关闭全部电源"
+
+msgid "Power behavior updated successfully"
+msgstr "电源行为更新成功"
+
+msgid "Power status at startup"
+msgstr "上电时电源状态"
+
+msgid "Press back again to exit"
+msgstr "再次按下后退将退出软件"
+
+msgid "Prev"
+msgstr "上个时间点"
+
+msgid "Privacy Policy"
+msgstr "隐私政策"
+
+msgid "Provision"
+msgstr "配置"
+
+msgid "Provisioning"
+msgstr "配置"
+
+msgid "Provisioning Successful!"
+msgstr "配置成功！"
+
+msgid "RETRY"
+msgstr "重试"
+
+msgid "Rate in application store"
+msgstr "在应用商店里给我评分"
+
+msgid "Ready to provision"
+msgstr "准备配置"
+
+#, python-brace-format
+msgid "Reason code: {reasonCode}"
+msgstr "关机原因代码：{reasonCode}"
+
+msgid "Reconnect"
+msgstr "重连"
+
+msgid "Refresh"
+msgstr "刷新"
+
+msgid "Registering Device"
+msgstr "注册设备"
+
+msgid "Release date"
+msgstr "发布日期"
+
+msgid "Remove"
+msgstr "移除"
+
+msgid "Reset device network settings"
+msgstr "重置设备网络设置"
+
+msgid "Restore"
+msgstr "执行恢复"
+
+msgid "Restore Factory Settings"
+msgstr "恢复出厂设置"
+
+msgid "Restore to factory settings"
+msgstr "恢复出厂设置"
+
+msgid "Retry"
+msgstr "重试"
+
+#, python-brace-format
+msgid "Rises at {t}"
+msgstr "在 {t} 升起"
+
+msgid "SCHED"
+msgstr "编程"
+
+msgid "SETTINGS"
+msgstr "设置"
+
+msgid "STANDALONE CONTROLLER"
+msgstr "独立控制器"
+
+msgid "SUN"
+msgstr "日出日落"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Scene Image"
+msgstr "场景图片"
+
+msgid "Scene deleted"
+msgstr "场景已删除"
+
+msgid "Scenes"
+msgstr "场景"
+
+msgid "Scheduled"
+msgstr "编程模式"
+
+msgid "Scheduled mode"
+msgstr "计划模式"
+
+msgid "Searching for devices..."
+msgstr "正在搜索设备..."
+
+msgid "Select Language"
+msgstr "选择语言"
+
+msgid "Select Location"
+msgstr "选择位置"
+
+msgid "Select PWM frequency"
+msgstr "选择 PWM 频率"
+
+msgid "Select Temperature Unit"
+msgstr "选择温度单位"
+
+msgid "Select Theme"
+msgstr "选择主题"
+
+msgid "Select WiFi"
+msgstr "选择 WiFi"
+
+msgid "Select channel count"
+msgstr "选择通道数量"
+
+msgid "Select correction curve"
+msgstr "选择校正曲线"
+
+msgid "Select duration"
+msgstr "选择持续时间"
+
+msgid "Select fan mode"
+msgstr "选择风扇模式"
+
+msgid "Select overtemperature cut-off"
+msgstr "选择过温关机阈值"
+
+msgid "Select power status"
+msgstr "选择开机电源状态"
+
+#, python-brace-format
+msgid "Select the group to which device \"{deviceName}\" belongs:"
+msgstr "选择设备“{deviceName}”所属的分组："
+
+msgid "Sending Credentials"
+msgstr "发送凭据"
+
+msgid "Serial Number"
+msgstr "序列号"
+
+msgid "Set"
+msgstr "设置"
+
+msgid "Set Device Name"
+msgstr "设置设备名称"
+
+msgid "Set Manual Fan Power"
+msgstr "设置手动风扇功率"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Simulate cloud shadow effect"
+msgstr "模拟云影效果"
+
+msgid "Start date"
+msgstr "开始"
+
+msgid "Start date is invalid."
+msgstr "开始日期无效。"
+
+msgid "Start strength"
+msgstr "起始强度"
+
+msgid "Start strength must be between 10% and 90%."
+msgstr "开始强度必须在 10% 到 90% 之间。"
+
+msgid "Stop"
+msgstr "停止"
+
+msgid "Submit"
+msgstr "提交"
+
+msgid "Sun Simulation"
+msgstr "日出日落"
+
+msgid "Sun simulation mode"
+msgstr "日光模拟模式"
+
+msgid "System"
+msgstr "系统"
+
+msgid "TEMP"
+msgstr "温度"
+
+msgid "THERMAL MANAGEMENT"
+msgstr "热管理"
+
+msgid "Tap globe to select location"
+msgstr "点击地球以选择位置"
+
+msgid "Temperature & Fan"
+msgstr "温度与风扇"
+
+msgid "Temperature Unit"
+msgstr "温度单位"
+
+msgid "Temporary"
+msgstr "临时开灯"
+
+msgid "Temporary duration updated successfully"
+msgstr "临时持续时间更新成功"
+
+msgid "Temporary light duration"
+msgstr "临时开灯时长"
+
+msgid "Term of Services."
+msgstr "服务条款"
+
+msgid "The WiFi scanning has been cancelled."
+msgstr "WiFi 扫描已取消。"
+
+msgid "The device has been updated and will restart shortly."
+msgstr "设备已更新并即将重启。"
+
+msgid ""
+"The device is currently offline. Please check the network or power "
+"connection."
+msgstr "设备离线，请检查网络连接和设备电源。"
+
+msgid "The device will need to be reconfigured after this operation."
+msgstr "经过此操作以后设备需要重新进行配置。"
+
+msgid "The device will restart automatically after the update is complete."
+msgstr "更新完成后设备将自动重启。"
+
+msgid "The update may take several minutes. Do not close this app."
+msgstr "更新可能需要几分钟时间。请勿关闭此应用。"
+
+msgid "Theme"
+msgstr "主题"
+
+msgid "This action will:"
+msgstr "此操作将造成以下后果："
+
+msgid "This device is not compatible with the selected driver."
+msgstr "该设备与所选驱动不兼容。"
+
 msgid ""
 "This mobile application is free software licensed under GNU General Public "
 "License version 3 or later, with no warranty.\n"
@@ -1507,397 +1054,168 @@ msgstr ""
 "此移动端应用程序是基于 GPL 3 或更新版本协议授权的自由软件，不提供任何担保。\n"
 "作者不对使用此软件造成的任何直接和间接后果负责。"
 
-#: features\my\views\about_screen.dart:170
-msgid "Website"
-msgstr "网站"
-
-#: features\my\views\about_screen.dart:172
-msgid "Documentation"
-msgstr "文档"
-
-#: features\my\views\about_screen.dart:174
-msgid "Term of Services."
-msgstr "服务条款"
-
-#: features\my\views\about_screen.dart:176
-msgid "Privacy Policy"
-msgstr "隐私政策"
-
-#: features\my\views\about_screen.dart:180
-msgid "License"
-msgstr "许可"
-
-#: features\my\views\about_screen.dart:201
-msgid ""
-"Copyright © Yunnan BinaryStars Technologies, Co., Ltd. All rights reserved."
-msgstr "版权所有 © 云南伴星科技有限公司。保留所有权利。"
-
-#: features\my\views\my_screen.dart:39
-msgid "About"
-msgstr "关于"
-
-#: features\scenes\views\scene_card.dart:180
-#, python-brace-format
-msgid "{0} devices"
-msgstr "{0} 个设备"
-
-#: features\scenes\views\scene_card.dart:189
-#, python-brace-format
-msgid "{0} active"
-msgstr "{0} 个活跃中"
-
-#: features\scenes\views\scene_edit_screen.dart:74
-msgid "New Scene"
-msgstr "新建场景"
-
-#: features\scenes\views\scene_edit_screen.dart:74
-msgid "Edit Scene"
-msgstr "新建场景"
-
-#: features\scenes\views\scene_edit_screen.dart:112
-msgid "Scene Image"
-msgstr "场景图片"
-
-#: features\scenes\views\scene_edit_screen.dart:279
-#, python-brace-format
-msgid ""
-"Are you sure you want to delete \"{0}\" scene? This action cannot be undone."
-msgstr "您确定要删除 \"{0}\" 场景吗？此操作无法撤销。"
-
-#: features\scenes\views\scene_edit_screen.dart:301
-msgid "Scene deleted"
-msgstr "场景已删除"
-
-#: features\scenes\views\scene_edit_screen.dart:307
-#: features\scenes\views\scene_edit_screen.dart:315
-msgid "Cannot Delete Scene"
-msgstr "无法删除场景"
-
-#: features\scenes\views\scene_edit_screen.dart:308
-msgid "Cannot delete the last remaining scene."
-msgstr "无法删除最后剩下的场景。"
-
-#: features\scenes\views\scene_edit_screen.dart:317
 msgid ""
 "This scene contains devices or device groups. Please remove all devices and "
 "groups from this scene before deleting it."
 msgstr "此场景包含设备或设备组。请在删除之前从此场景中移除所有设备和组。"
 
-#: features\scenes\views\scene_edit_screen.dart:354
-msgid "Crop Image"
-msgstr "裁剪图像"
+#, python-brace-format
+msgid "Time remaining: {0} seconds"
+msgstr "剩余时间：{0} 秒"
 
-#: features\scenes\views\scenes_screen.dart:58 main\views\main_screen.dart:44
-#: main\views\main_screen.dart:156
-msgid "Scenes"
-msgstr "场景"
+msgid "Time zone"
+msgstr "时区"
 
-#: features\settings\views\app_settings_screen.dart:36
-msgid "App Settings"
-msgstr "设置"
+msgid "Time zone updated successfully"
+msgstr "时区已成功更新"
 
-#: features\settings\views\app_settings_screen.dart:46
-msgid "APPEARANCE"
-msgstr "外观"
+msgid "Timed out while probing the device."
+msgstr "探测设备时超时。"
 
-#: features\settings\views\app_settings_screen.dart:50
-msgid "Theme"
-msgstr "主题"
+msgid "Timezone mismatch"
+msgstr "时区不匹配"
 
-#: features\settings\views\app_settings_screen.dart:52
-#: features\settings\views\app_settings_screen.dart:61
-msgid "System"
-msgstr "系统"
+msgid "Timezone synchronized successfully"
+msgstr "时区同步成功"
 
-#: features\settings\views\app_settings_screen.dart:53
-#: features\settings\views\app_settings_screen.dart:62
-msgid "Light"
-msgstr "亮色"
+msgid "Unable to connect to this device."
+msgstr "无法连接到该设备。"
 
-#: features\settings\views\app_settings_screen.dart:54
-#: features\settings\views\app_settings_screen.dart:63
-msgid "Dark"
-msgstr "暗色"
+msgid "Unable to switch to Sun Simulation mode: the location is not set."
+msgstr "无法切换到太阳模拟模式：位置未设置。"
 
-#: features\settings\views\app_settings_screen.dart:59
-msgid "Select Theme"
-msgstr "选择主题"
+msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
+msgstr "无法切换到太阳模拟模式：时区未设置。"
 
-#: features\settings\views\app_settings_screen.dart:72
-msgid "Language"
-msgstr "语言"
+msgid ""
+"Unable to update Moon mode: configure at least one channel with brightness "
+"greater than 0."
+msgstr "无法更新月亮模式：至少配置一个亮度大于0的通道。"
 
-#: features\settings\views\app_settings_screen.dart:78
-msgid "Select Language"
-msgstr "选择语言"
+msgid "Unable to update Moon mode: the location is not set."
+msgstr "无法更新月亮模式：位置未设置。"
 
-#: features\settings\views\app_settings_screen.dart:94
-msgid "Temperature Unit"
-msgstr "温度单位"
+msgid "Unable to update Moon mode: the timezone is not set."
+msgstr "无法更新月亮模式：时区未设置。"
 
-#: features\settings\views\app_settings_screen.dart:96
+msgid "Ungrouped devices"
+msgstr "未分组设备"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "Unknown Error"
+msgstr "未知错误"
+
+msgid "Unknown error"
+msgstr "未知错误"
+
+msgid "Update Now"
+msgstr "立即更新"
+
+msgid "Update acclimation settings succeed."
+msgstr "适应模式设置已更新。"
+
+msgid "Update failed"
+msgstr "更新失败"
+
+msgid "Update moon settings succeed."
+msgstr "月相设置已更新。"
+
+msgid "Update successful!"
+msgstr "更新成功！"
+
+msgid "Updating firmware..."
+msgstr "正在更新固件..."
+
+#, python-brace-format
+msgid "Upgrade to {0}"
+msgstr "升级到 {0}"
+
+msgid "VERSION & UPGRADE"
+msgstr "版本与升级"
+
+#, python-brace-format
+msgid "Version {0} is available. Tap the button below to update."
+msgstr "版本 {0} 可用。点击下方按钮进行更新。"
+
+#, python-brace-format
+msgid "Version {0} is the latest version."
+msgstr "版本 {0} 是最新版本。"
+
+#, python-brace-format
+msgid "Version {verText}+{buildNumberText}"
+msgstr "版本 {verText}+{buildNumberText}"
+
+msgid "Waiting for device to join network"
+msgstr "正在等待设备加入网络"
+
+msgid "Waning Crescent"
+msgstr "残月"
+
+msgid "Waning Gibbous"
+msgstr "亏凸月"
+
+msgid "Water Change Mode"
+msgstr "换水模式"
+
+msgid "Wavelength"
+msgstr "波长"
+
+msgid "Wavelength 2"
+msgstr "波长 2"
+
+msgid "Waxing Crescent"
+msgstr "峨眉月"
+
+msgid "Waxing Gibbous"
+msgstr "盈凸月"
+
+msgid "Website"
+msgstr "网站"
+
+msgid "You can finish now without waiting."
+msgstr "您现在可以完成，无需等待。"
+
+msgid "Your firmware is up to date"
+msgstr "您的固件已是最新版本"
+
+msgid "[Debug] Force Update"
+msgstr "[调试] 强制更新"
+
+#, python-brace-format
+msgid "{0} active"
+msgstr "{0} 个活跃中"
+
+#, python-brace-format
+msgid "{0} devices"
+msgstr "{0} 个设备"
+
+#, python-brace-format
+msgid "{0} seconds remaining"
+msgstr "还剩 {0} 秒"
+
+#, python-brace-format
+msgid "{d} days"
+msgstr "{d}天"
+
+msgid "• Delete all custom settings and configurations"
+msgstr "· 删除所有自定义设置"
+
+msgid "• Disconnect the device from your network"
+msgstr "· 设备将从网络中断开"
+
+msgid "• Reset all schedules and modes to defaults"
+msgstr "· 所有的调光设置将恢复到默认值"
+
 msgid "℃"
 msgstr "℃"
 
-#: features\settings\views\app_settings_screen.dart:97
-msgid "℉"
-msgstr "℉"
-
-#: features\settings\views\app_settings_screen.dart:103
-msgid "Select Temperature Unit"
-msgstr "选择温度单位"
-
-#: features\settings\views\app_settings_screen.dart:105
 msgid "℃ (Celsius)"
 msgstr "℃（摄氏度）"
 
-#: features\settings\views\app_settings_screen.dart:106
+msgid "℉"
+msgstr "℉"
+
 msgid "℉ (Fahrenheit)"
 msgstr "℉（华氏度）"
-
-#: features\settings\views\app_settings_screen.dart:117
-msgid "FEEDBACK"
-msgstr "反馈"
-
-#: features\settings\views\app_settings_screen.dart:122
-msgid "Rate in application store"
-msgstr "在应用商店里给我评分"
-
-#: features\settings\views\app_settings_screen.dart:127
-msgid "Feedback via Email"
-msgstr "通过邮件反馈"
-
-#: main\view_models\main_view_model.dart:143
-msgid "ERROR"
-msgstr "错误"
-
-#: main\views\main_screen.dart:46 main\views\main_screen.dart:178
-msgid "My"
-msgstr "我的"
-
-#: main\views\main_screen.dart:167
-msgid "Devices"
-msgstr "设备"
-
-#: main\views\main_screen.dart:245
-msgid "Loading..."
-msgstr "载入中..."
-
-#: main\views\main_screen.dart:325
-msgid "Press back again to exit"
-msgstr "再次按下后退将退出软件"
-
-#: shared\widgets\device_status_indicator.dart:39
-msgid "Device offline"
-msgstr "设备离线"
-
-#: shared\widgets\map_location_picker.dart:140
-msgid "Select Location"
-msgstr "选择位置"
-
-#: shared\widgets\map_location_picker.dart:186
-msgid "Current location"
-msgstr "当前位置"
-
-#: shared\widgets\map_location_picker.dart:220
-msgid "Tap globe to select location"
-msgstr "点击地球以选择位置"
-
-#~ msgid "Select Duration"
-#~ msgstr "选择时长"
-
-#~ msgid "Select Start strength"
-#~ msgstr "选择起始强度"
-
-#~ msgid "Daytime"
-#~ msgstr "日间"
-
-#~ msgid ""
-#~ "Unable to switch to Sun Simulation mode, the device's timezone is not set."
-#~ msgstr "无法切换到日光模拟模式，设备的时区未设置。"
-
-#~ msgid ""
-#~ "Unable to switch to Sun Simulation mode, the device's geographic location "
-#~ "is not set."
-#~ msgstr "无法切换到日光模拟模式，设备的地理位置未设置。"
-
-#~ msgid "Failed to update device location: $e"
-#~ msgstr "更新设备位置失败：$e"
-
-#~ msgid "Failed to get location: $e"
-#~ msgstr "获取位置失败：$e"
-
-#~ msgid "Failed to update device time zone: $e"
-#~ msgstr "更新设备时区失败：$e"
-
-#~ msgid "Failed to update LED correction method: $e"
-#~ msgstr "更新 LED 矫正方法失败：$e"
-
-#~ msgid "Failed to update temporary duration: $e"
-#~ msgstr "更新临时持续时间失败：$e"
-
-#~ msgid "Failed to update cloud simulation mode: $e"
-#~ msgstr "更新云模拟模式失败：$e"
-
-#~ msgid "Failed to update fan mode: $e"
-#~ msgstr "更新风扇模式失败：$e"
-
-#~ msgid "Failed to update manual fan power: $e"
-#~ msgstr "更新手动风扇功率失败：$e"
-
-#~ msgid "Failed to update power behavior: $e"
-#~ msgstr "更新电源行为失败：$e"
-
-#~ msgid "Failed to update device name: $e"
-#~ msgstr "更新设备名称失败：$e"
-
-#~ msgid "Failed to restore device to factory settings: $e"
-#~ msgstr "恢复设备到出厂设置失败：$e"
-
-#~ msgid "Failed to reset device network settings: $e"
-#~ msgstr "重置设备网络设置失败：$e"
-
-#~ msgid "Device restored to factory settings"
-#~ msgstr "设备已恢复到出厂设置"
-
-#~ msgid "Device network settings reset"
-#~ msgstr "设备网络设置已重置"
-
-#, python-brace-format
-#~ msgid "Update to {0}"
-#~ msgstr "更新至 {0}"
-
-#~ msgid "Add Scene"
-#~ msgstr "新建场景"
-
-#~ msgid "Ok"
-#~ msgstr "确定"
-
-#~ msgid "Device time & time zone"
-#~ msgstr "设备时间与时区"
-
-#~ msgid "Unknown time zone"
-#~ msgstr "未知时区"
-
-#~ msgid "Geo location"
-#~ msgstr "地理位置"
-
-#~ msgid "Sync Timezone"
-#~ msgstr "同步时区"
-
-#, python-format
-#~ msgid "Enter Password for %s"
-#~ msgstr "输入 %s 的密码"
-
-#, python-brace-format
-#~ msgid "Version: {verText} Build: {buildNumberText}"
-#~ msgstr "版本：{verText} 构建号：{buildNumberText}"
-
-#~ msgid "Copyright © Yunnan BinaryStars Technologies, Co., Ltd."
-#~ msgstr "版权所有 © 云南伴星科技有限公司"
-
-#~ msgid "All rights reserved."
-#~ msgstr "保留所有权利。"
-
-#~ msgid "Report an issue on GitHub"
-#~ msgstr "在 GitHub 上报告问题"
-
-#~ msgid "Pick color"
-#~ msgstr "选择颜色"
-
-#~ msgid "Null"
-#~ msgstr "空"
-
-#~ msgid "Manufacturer & Model"
-#~ msgstr "制造商与型号"
-
-#~ msgid "Device provisioning is only available on iOS and Android."
-#~ msgstr "设备配置仅在 iOS 和 Android 上可用。"
-
-#~ msgid "Select the group to which the new device belongs:"
-#~ msgstr "请选择该设备所属的分组："
-
-#~ msgid ""
-#~ "Are you sure you want to delete this scene? This action cannot be undone."
-#~ msgstr "你确定要删除此场景？此操作不可撤销。"
-
-#~ msgid "days"
-#~ msgstr "天"
-
-#~ msgid "Serial number"
-#~ msgstr "产品序列号"
-
-#~ msgid "Location for sun & moon simulation"
-#~ msgstr "用于太阳和月亮模拟的地理位置"
-
-#~ msgid "Your device will lose all custom settings."
-#~ msgstr "你的设备将丢失所有自定义设置。"
-
-#~ msgid "Delete"
-#~ msgstr "删除"
-
-#~ msgid "Please select a location"
-#~ msgstr "请选择一个位置"
-
-#~ msgid "Running"
-#~ msgstr "正常运行"
-
-#~ msgid "Preview"
-#~ msgstr "预览"
-
-#~ msgid "Channel count"
-#~ msgstr "通道数量"
-
-#~ msgid ""
-#~ "Using Easy Setup will clear your current dimming settings. Are you sure "
-#~ "you want to proceed?"
-#~ msgstr "使用简易设置将清除当前的调光设置，你确定要继续吗？"
-
-#~ msgid "Loading chores"
-#~ msgstr "正在载入日常维护条目"
-
-#~ msgid "Enabled"
-#~ msgstr "启用"
-
-#~ msgid "Acclimation Mode"
-#~ msgstr "适应模式"
-
-#~ msgid "Temperature"
-#~ msgstr "温度"
-
-#~ msgid "Thermistor enabled"
-#~ msgstr "热敏电阻启用"
-
-#~ msgid "Disabled"
-#~ msgstr "禁用"
-
-#~ msgid "Internal regulator"
-#~ msgstr "内部调压器"
-
-#~ msgid "PWM Output"
-#~ msgstr "PWM 输出"
-
-#~ msgid "Internal regulator & PWM"
-#~ msgstr "内部调压器与 PWM"
-
-#~ msgid "No Device Groups"
-#~ msgstr "新建设备组"
-
-#~ msgid "Create groups to better organize your devices"
-#~ msgstr "创建分组以更好地组织您的设备"
-
-#~ msgid "Create First Group"
-#~ msgstr "创建首个分组"
-
-#~ msgid "Start"
-#~ msgstr "开始"
-
-#~ msgid "A new device has been added."
-#~ msgstr "添加新设备"
-
-#~ msgid "Discovered Devices:"
-#~ msgstr "已发现设备："
-
-#~ msgid ""
-#~ "Copyright © Yunnan BinaryStar Technologies, Co., Ltd. All rights reserved."
-#~ msgstr "版权所有 © 云南伴星科技有限公司。保留所有权利。"

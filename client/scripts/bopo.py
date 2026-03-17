@@ -21,6 +21,14 @@ def run_command(command):
         print(f"Error occurred: {result.stderr}", file=sys.stderr)
         exit(result.returncode)
 
+
+def normalize_catalog(file_path, clear_fuzzy=False):
+    command = "msgattrib --no-location --sort-output"
+    if clear_fuzzy:
+        command += " --clear-fuzzy"
+    command += f" -o {file_path} {file_path}"
+    run_command(command)
+
 # Function to find all .dart files and generate messages.pot
 def generate_pot(project_path):
     lib_path = os.path.join(project_path, "lib")  # Dart source code path
@@ -61,10 +69,11 @@ def generate_pot(project_path):
         file_list_path = tf.name
 
     command = (
-        f"xgettext --from-code=UTF-8 -L Python --keyword=translate "
+        f"xgettext --no-location --from-code=UTF-8 -L Python --keyword=translate "
         f"--output={pot_output_path} --directory={lib_path} --files-from={file_list_path}"
     )
     run_command(command)
+    normalize_catalog(pot_output_path)
 
     # Step 4: Use msginit to create .po files for each language
     for lang in languages:
@@ -75,6 +84,7 @@ def generate_pot(project_path):
             print(f"Creating new .po file for {lang} at {po_file}")
             command = f"msginit --no-translator --input={pot_output_path} --locale={lang}.UTF-8 --output={po_file}"
             run_command(command)
+            normalize_catalog(po_file)
         else:
             # Update the .po file with new translations using msgmerge
             # Disable fuzzy matching so only exact matches are merged
@@ -86,8 +96,7 @@ def generate_pot(project_path):
 
             # Optional: clear any existing 'fuzzy' flags that may already be present in the file
             # This keeps only confirmed translations and avoids fuzzy entries lingering around
-            clear_fuzzy_cmd = f"msgattrib --clear-fuzzy -o {po_file} {po_file}"
-            run_command(clear_fuzzy_cmd)
+            normalize_catalog(po_file, clear_fuzzy=True)
 
     # Step 5: Compile .po files to .mo
     # for lang in languages:
