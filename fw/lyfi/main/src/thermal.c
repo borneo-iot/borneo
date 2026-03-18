@@ -21,6 +21,7 @@
 #include "fan.h"
 #include "protect.h"
 #include "thermal.h"
+#include "lyfi-events.h"
 
 #define TEMP_WINDOW_SIZE 8
 
@@ -307,7 +308,16 @@ int update_temp_average(int new_sample)
     if (n == 0) {
         return -1;
     }
+    int old_temp = _thermal.current_temp;
     _thermal.current_temp = (int)((sum + (n / 2)) / n);
+
+    if (_thermal.current_temp != old_temp) {
+        esp_err_t err = esp_event_post(LYFI_EVENTS, LYFI_EVENT_LED_TEMPERATURE_CHANGED, NULL, 0, 0);
+        if (err != ESP_OK) {
+            ESP_LOGW(TAG, "Failed to post temperature change event: %s", esp_err_to_name(err));
+        }
+    }
+
     return 0;
 }
 

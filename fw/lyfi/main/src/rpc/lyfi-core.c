@@ -67,6 +67,19 @@ static int _encode_channel_info_array(CborEncoder* parent)
     return 0;
 }
 
+static int _encode_channels_output_array(CborEncoder* parent, size_t chcount, const led_duties_t duties)
+{
+    CborEncoder channels_array;
+    BO_TRY(cbor_encoder_create_array(parent, &channels_array, chcount));
+    for (size_t ch = 0; ch < chcount; ch++) {
+        led_duty_t duty = duties[ch];
+        BO_TRY(cbor_encode_uint(&channels_array, duty));
+    }
+    BO_TRY(cbor_encoder_close_container(parent, &channels_array));
+
+    return 0;
+}
+
 int bo_rpc_borneo_lyfi_color_get(const CborValue* args, CborEncoder* retvals)
 {
     (void)args;
@@ -254,6 +267,13 @@ int bo_rpc_borneo_lyfi_status_get(const CborValue* args, CborEncoder* retvals)
 #endif // CONFIG_LYFI_FAN_CTRL_SUPPORT
 
     {
+        BO_TRY(cbor_encode_text_stringz(&root_map, "output"));
+        led_duties_t duties;
+        BO_TRY(led_get_duties(duties));
+        BO_TRY(_encode_channels_output_array(&root_map, led_channel_count(), duties));
+    }
+
+    {
         BO_TRY(cbor_encode_text_stringz(&root_map, "currentColor"));
         led_color_t color;
         BO_TRY(led_get_color(color));
@@ -292,6 +312,16 @@ int bo_rpc_borneo_lyfi_status_get(const CborValue* args, CborEncoder* retvals)
 
     BO_TRY(cbor_encoder_close_container(retvals, &root_map));
 
+    return 0;
+}
+
+int bo_rpc_borneo_output_get(const CborValue* args, CborEncoder* retvals)
+{
+    (void)args;
+
+    led_duties_t duties;
+    BO_TRY(led_get_duties(duties));
+    BO_TRY(_encode_channels_output_array(retvals, led_channel_count(), duties));
     return 0;
 }
 

@@ -41,6 +41,12 @@ static void led_event_handler(void* arg, esp_event_base_t event_base, int32_t ev
         BO_MUST(bo_coap_notify_resource_changed(&uri));
     } break;
 
+    case LYFI_EVENT_LED_TEMPERATURE_CHANGED: {
+        coap_str_const_t uri
+            = { .s = (const uint8_t*)LYFI_COAP_PATH_TEMPERATURE, .length = sizeof(LYFI_COAP_PATH_TEMPERATURE) - 1 };
+        BO_MUST(bo_coap_notify_resource_changed(&uri));
+    } break;
+
     default:
         break;
     }

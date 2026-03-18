@@ -34,10 +34,16 @@ static void _bo_event_handler(void* arg, esp_event_base_t event_base, int32_t ev
 
 // Known resources
 
+static TickType_t get_ticks_until_deadline(TickType_t deadline, TickType_t now)
+{
+    return (deadline > now) ? (deadline - now) : 0;
+}
+
 static coap_context_t* _ctx = NULL;
 static coap_address_t _serv_addr;
 static coap_endpoint_t* _ep_udp = NULL;
 static TaskHandle_t _coap_server_task = NULL;
+static TaskHandle_t s_notify_task = NULL;
 static volatile bool _should_stop = false;
 
 static StaticQueue_t s_notify_queue_struct;
@@ -87,6 +93,8 @@ static int _coap_init()
 {
     int rc = 0;
     ESP_LOGI(TAG, "Initializing CoAP server...");
+
+    _should_stop = false;
 
     coap_set_log_level(CONFIG_COAP_LOG_DEFAULT_LEVEL);
 
@@ -148,9 +156,21 @@ _EXIT:
 
 void bo_coap_deinit()
 {
+    _should_stop = true;
+
     // Unregister event handlers
     esp_event_handler_unregister(BO_SNTP_EVENTS, ESP_EVENT_ANY_ID, _bo_event_handler);
     esp_event_handler_unregister(BO_SYSTEM_EVENTS, ESP_EVENT_ANY_ID, _system_event_handler);
+
+    if (s_notify_task != NULL) {
+        xTaskAbortDelay(s_notify_task);
+
+        for (int retries = 0; retries < 10 && s_notify_task != NULL; ++retries) {
+            vTaskDelay(1);
+        }
+    }
+
+    s_notify_queue = NULL;
 
     if (_ctx != NULL) {
         coap_free_context(_ctx);
@@ -190,6 +210,10 @@ static int register_resource(coap_context_t* ctx, const struct coap_resource_des
 
 int bo_coap_notify_resource_changed(const coap_str_const_t* resource_uri)
 {
+    if (s_notify_queue == NULL) {
+        return -EIO;
+    }
+
     BaseType_t rc;
     if (xPortInIsrContext()) {
         rc = xQueueSendToBackFromISR(s_notify_queue, resource_uri, NULL);
@@ -213,8 +237,9 @@ int notify_init()
 
     BO_TRY_ESP(esp_event_handler_register(BO_SYSTEM_EVENTS, ESP_EVENT_ANY_ID, &_system_event_handler, NULL));
 
-    BaseType_t rc = xTaskCreate(&notify_task, "coap.notify", 1024 * 3, NULL, NOTIFY_TASK_PRIO, NULL);
+    BaseType_t rc = xTaskCreate(&notify_task, "coap.notify", 1024 * 3, NULL, NOTIFY_TASK_PRIO, &s_notify_task);
     if (rc != pdPASS) {
+        s_notify_task = NULL;
         return -ENOMEM;
     }
 
@@ -228,21 +253,38 @@ void notify_task()
         .length = sizeof(BO_COAP_PATH_HEARTBEAT) - 1,
     };
     coap_resource_t* res_heartbeat = coap_get_resource_from_uri_path(_ctx, (coap_str_const_t*)&BO_COAP_URI_HEARTBEAT);
+    const TickType_t heartbeat_interval_ticks = pdMS_TO_TICKS(BO_COAP_HEARTBEAT_INTERVAL_MS);
+    TickType_t next_heartbeat_tick = xTaskGetTickCount() + heartbeat_interval_ticks;
 
-    for (;;) {
+    while (!_should_stop) {
         coap_str_const_t path;
-        if (xQueueReceive(s_notify_queue, &path, pdMS_TO_TICKS(BO_COAP_HEARTBEAT_INTERVAL_MS)) == pdTRUE) {
+        TickType_t now = xTaskGetTickCount();
+        TickType_t wait_ticks = get_ticks_until_deadline(next_heartbeat_tick, now);
+
+        if (xQueueReceive(s_notify_queue, &path, wait_ticks) == pdTRUE) {
+            if (_should_stop || _ctx == NULL) {
+                break;
+            }
+
             coap_resource_t* res = coap_get_resource_from_uri_path(_ctx, &path);
             if (res) {
                 coap_resource_notify_observers(res, NULL);
             }
         }
-        else {
-            if (res_heartbeat) {
-                coap_resource_notify_observers(res_heartbeat, NULL);
+
+        now = xTaskGetTickCount();
+        while (res_heartbeat && now >= next_heartbeat_tick) {
+            if (_should_stop || _ctx == NULL) {
+                break;
             }
+
+            coap_resource_notify_observers(res_heartbeat, NULL);
+            next_heartbeat_tick += heartbeat_interval_ticks;
         }
     }
+
+    s_notify_task = NULL;
+    vTaskDelete(NULL);
 }
 
 void _system_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data)

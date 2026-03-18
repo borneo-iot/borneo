@@ -58,6 +58,7 @@ int bo_rpc_borneo_lyfi_schedule_get(const CborValue* args, CborEncoder* retvals)
 int bo_rpc_borneo_lyfi_schedule_put(const CborValue* args, CborEncoder* retvals);
 int bo_rpc_borneo_lyfi_info_get(const CborValue* args, CborEncoder* retvals);
 int bo_rpc_borneo_lyfi_status_get(const CborValue* args, CborEncoder* retvals);
+int bo_rpc_borneo_output_get(const CborValue* args, CborEncoder* retvals);
 int bo_rpc_borneo_lyfi_temp_get(const CborValue* args, CborEncoder* retvals);
 int bo_rpc_borneo_lyfi_state_get(const CborValue* args, CborEncoder* retvals);
 int bo_rpc_borneo_lyfi_state_put(const CborValue* args, CborEncoder* retvals);
