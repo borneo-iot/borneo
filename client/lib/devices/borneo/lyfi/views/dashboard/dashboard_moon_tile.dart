@@ -60,7 +60,7 @@ class DashboardMoonTile extends StatelessWidget {
         final theme = Theme.of(context);
         final isMoonActive = props.enabled && props.moonStatus != null && props.isMoonTime;
         final moonStatus = props.moonStatus;
-        final Color bgColor = isMoonActive
+        final Color bgColor = props.enabled
             ? theme.colorScheme.primaryContainer
             : theme.colorScheme.surfaceContainerHighest;
         final Color fgColor = isMoonActive ? theme.colorScheme.onPrimaryContainer : theme.colorScheme.onSurface;
@@ -116,33 +116,34 @@ class DashboardMoonTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title, style: theme.textTheme.titleMedium?.copyWith(color: effectiveFgColor)),
-                    if (!isMoonActive)
-                      Text(
-                        subtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: effectiveFgColor,
-                          fontFeatures: [FontFeature.tabularFigures()],
-                        ),
-                      )
-                    else
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            getMoonPhaseName(context, moonStatus!.phaseAngle),
-                            style: theme.textTheme.bodySmall?.copyWith(color: effectiveFgColor),
-                            softWrap: false,
+                    if (props.enabled)
+                      if (!isMoonActive)
+                        Text(
+                          subtitle,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: effectiveFgColor,
+                            fontFeatures: [FontFeature.tabularFigures()],
                           ),
-                          Text(
-                            '${(moonStatus.illumination * 100.0).toStringAsFixed(0)}%',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: effectiveFgColor,
-                              fontFeatures: [FontFeature.tabularFigures()],
+                        )
+                      else
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              getMoonPhaseName(context, moonStatus!.phaseAngle),
+                              style: theme.textTheme.bodySmall?.copyWith(color: effectiveFgColor),
+                              softWrap: false,
                             ),
-                          ),
-                        ],
-                      ),
+                            Text(
+                              '${(moonStatus.illumination * 100.0).toStringAsFixed(0)}%',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: effectiveFgColor,
+                                fontFeatures: [FontFeature.tabularFigures()],
+                              ),
+                            ),
+                          ],
+                        ),
                   ],
                 ),
               ),

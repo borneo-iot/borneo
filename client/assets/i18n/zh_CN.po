@@ -1126,7 +1126,7 @@ msgid "Update failed"
 msgstr "更新失败"
 
 msgid "Update moon settings succeed."
-msgstr "月相设置已更新。"
+msgstr "月光设置已更新。"
 
 msgid "Update successful!"
 msgstr "更新成功！"

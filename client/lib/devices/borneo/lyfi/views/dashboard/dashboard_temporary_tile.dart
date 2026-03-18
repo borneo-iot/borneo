@@ -37,7 +37,7 @@ class DashboardTemporaryTile extends StatelessWidget {
         final double disabledAlpha = 0.38;
         final Color effectiveFgColor = !props.canSwitch ? fgColor.withValues(alpha: disabledAlpha) : fgColor;
         final Color iconColor = isActive ? theme.colorScheme.onPrimary : theme.colorScheme.primary;
-        final Color effectiveIconColor = props.canSwitch ? iconColor.withValues(alpha: disabledAlpha) : iconColor;
+        final Color effectiveIconColor = !props.canSwitch ? iconColor.withValues(alpha: disabledAlpha) : iconColor;
         return DashboardTile(
           backgroundColor: bgColor,
           disabled: !props.canSwitch,
