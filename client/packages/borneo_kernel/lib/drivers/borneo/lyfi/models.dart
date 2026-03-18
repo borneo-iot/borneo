@@ -29,7 +29,7 @@ final class LyfiChannelInfo {
       color: map['c'] ?? '#FF00FF',
       wavelength: map['w'] ?? 0,
       wavelength2: map['w2'] ?? 0,
-      factor: (map['f'] ?? 0.0) / 100.0,
+      factor: (map['f'] ?? 0.0),
       ratio: map['r'] ?? 1.0,
     );
   }
@@ -200,6 +200,7 @@ final class LyfiDeviceStatus {
   final bool unscheduled;
   final Duration temporaryRemaining;
   final int? fanPower;
+  final List<int> output;
   final List<int> currentColor;
   final List<int> manualColor;
   final List<int> sunColor;
@@ -218,6 +219,7 @@ final class LyfiDeviceStatus {
     required this.unscheduled,
     required this.temporaryRemaining,
     this.fanPower,
+    required this.output,
     required this.currentColor,
     required this.manualColor,
     required this.sunColor,
@@ -236,6 +238,7 @@ final class LyfiDeviceStatus {
       unscheduled: map['unscheduled'],
       temporaryRemaining: Duration(seconds: map['tempRemain']),
       fanPower: map['fanPower'] == null ? null : (map['fanPower'] as int),
+      output: List<int>.from(map['output'] ?? []),
       currentColor: List<int>.from(map['currentColor']),
       manualColor: List<int>.from(map['manualColor']),
       sunColor: List<int>.from(map['sunColor']),

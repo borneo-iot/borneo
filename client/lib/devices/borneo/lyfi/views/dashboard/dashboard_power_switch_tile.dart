@@ -26,7 +26,7 @@ class DashboardPowerSwitchTile extends StatelessWidget {
       builder: (context, props, _) {
         final theme = Theme.of(context);
         final isOn = props.isOn;
-        final brightness = (props.overallBrightness * 100).clamp(0, 100).toInt();
+        final brightness = (props.overallBrightness * 100).clamp(0, 100).round();
         final isOnline = props.isOnline;
         final isDisabled = !isOnline || props.isBusy || !props.isLocked;
         final disabledColor = theme.colorScheme.onSurface.withValues(alpha: 0.38);

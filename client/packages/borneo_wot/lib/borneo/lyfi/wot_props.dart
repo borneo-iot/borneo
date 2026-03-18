@@ -38,3 +38,20 @@ class MutableLyfiColorProperty extends WotProperty<List<int>> {
          ),
        );
 }
+
+final class LyfiOutputProperty extends WotProperty<List<int>> {
+  LyfiOutputProperty({required super.thing, required super.name, WotPropertyMetadata? metadata})
+    : super(
+        value: WotValue<List<int>>(
+          initialValue: [], // Default all off
+          valueForwarder: (_) => throw UnsupportedError('`$name` is read-only'),
+          equality: (a, b) => a.isEqualTo(b),
+        ),
+        metadata: WotPropertyMetadata(
+          type: 'array',
+          title: metadata?.title ?? name,
+          description: metadata?.description ?? '',
+          readOnly: true,
+        ),
+      );
+}

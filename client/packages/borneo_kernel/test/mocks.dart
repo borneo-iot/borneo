@@ -312,6 +312,7 @@ class MockLyfiDeviceApi implements ILyfiDeviceApi {
       mode: LyfiMode.manual,
       unscheduled: true,
       temporaryRemaining: Duration.zero,
+      output: [0, 0, 0, 0],
       currentColor: [0, 0, 0, 0],
       manualColor: [0, 0, 0, 0],
       sunColor: [0, 0, 0, 0],

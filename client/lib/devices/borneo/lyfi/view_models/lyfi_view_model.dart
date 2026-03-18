@@ -170,6 +170,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   StreamSubscription<Duration>? _temporaryDurationSubscription;
   StreamSubscription<Duration>? _temporaryRemainingSubscription;
   StreamSubscription<List<int>>? _colorSubscription;
+  StreamSubscription<List<int>>? _outputSubscription;
 
   StreamSubscription<String>? _stateSubscription;
   StreamSubscription<String>? _modeSubscription;
@@ -313,6 +314,13 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
             })
             as StreamSubscription<List<int>>?;
 
+    _outputSubscription =
+        super.lyfiThing.findProperty('output')?.value.onUpdate.listen((value) {
+              _recalculateOverallBrightness(value);
+              notifyListeners();
+            })
+            as StreamSubscription<List<int>>?;
+
     _temporaryDurationSubscription =
         super.lyfiThing.findProperty('temporaryDuration')?.value.onUpdate.listen((value) {
               _temporaryDuration = value;
@@ -450,6 +458,12 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     super.onDeviceRemoved();
 
     _rapidProbeTask = null;
+
+    _colorSubscription?.cancel();
+    _colorSubscription = null;
+
+    _outputSubscription?.cancel();
+    _outputSubscription = null;
   }
 
   @override
@@ -464,6 +478,12 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     _overallBrightness = 0.0;
     _fanPowerRatio = 0.0;
     _fanMode = null;
+
+    _colorSubscription?.cancel();
+    _colorSubscription = null;
+
+    _outputSubscription?.cancel();
+    _outputSubscription = null;
 
     if (_editorState.editor != null) {
       _editorState.editor!.dispose();
@@ -757,14 +777,34 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       }
       _channels.clear();
     }
-    double ob = 0;
-    final currentColor = lyfiThing.getProperty<List<int>>('color')!;
-    final metaChannels = lyfiThing.getProperty<LyfiDeviceInfo>('lyfiDeviceInfo')!;
+
+    final currentColor = lyfiThing.getProperty<List<int>>('color') ?? [];
     for (int i = 0; i < currentColor.length; i++) {
       _channels.add(ValueNotifier<int>(currentColor[i]));
-      ob += metaChannels.channels[i].factor * _channels[i].value / kLyfiBrightnessMax;
     }
-    _overallBrightness = ob;
+
+    _recalculateOverallBrightness();
+  }
+
+  void _recalculateOverallBrightness([List<int>? output]) {
+    final metaChannels = lyfiThing.getProperty<LyfiDeviceInfo>('lyfiDeviceInfo');
+    if (metaChannels == null) {
+      _overallBrightness = 0.0;
+      return;
+    }
+
+    output ??= lyfiThing.getProperty<List<int>>('output');
+    if (output == null || output.isEmpty) {
+      // Fallback to using the current color values if output isn't available.
+      output = _channels.map((c) => c.value).toList(growable: false);
+    }
+
+    final count = output.length.clamp(0, metaChannels.channels.length);
+    double ob = 0.0;
+    for (int i = 0; i < count; i++) {
+      ob += metaChannels.channels[i].factor * output[i] / kLyfiBrightnessMax;
+    }
+    _overallBrightness = ob.clamp(0.0, 1.0);
   }
 
   void _applyColorUpdate(List<int> color) {
@@ -775,12 +815,11 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       return;
     }
 
-    double ob = 0;
     for (int i = 0; i < color.length; i++) {
       _channels[i].value = color[i];
-      ob += metaChannels.channels[i].factor * color[i] / kLyfiBrightnessMax;
     }
-    _overallBrightness = ob;
+
+    _recalculateOverallBrightness();
     notifyListeners();
   }
 }

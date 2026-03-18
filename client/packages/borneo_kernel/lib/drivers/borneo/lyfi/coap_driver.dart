@@ -28,6 +28,7 @@ class LyfiPaths {
   static final Uri status = Uri(path: '/borneo/lyfi/status');
   static final Uri state = Uri(path: '/borneo/lyfi/state');
   static final Uri color = Uri(path: '/borneo/lyfi/color');
+  static final Uri output = Uri(path: '/borneo/lyfi/output');
   static final Uri schedule = Uri(path: '/borneo/lyfi/schedule');
   static final Uri mode = Uri(path: '/borneo/lyfi/mode');
   static final Uri correctionMethod = Uri(path: '/borneo/lyfi/correction-method');
@@ -229,6 +230,13 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
     final dd = dev.driverData as LyfiCoapDriverData;
     final payload = await dd.coap.getCbor<Map>(LyfiPaths.status, cancelToken: cancelToken);
     return LyfiDeviceStatus.fromMap(payload);
+  }, cancelToken: cancelToken);
+
+  @override
+  Future<List<int>> getOutput(Device dev, {CancellationToken? cancelToken}) => withQueue(dev, () async {
+    final dd = dev.driverData as LyfiCoapDriverData;
+    final result = await dd.coap.getCbor<List<Object?>>(LyfiPaths.output, cancelToken: cancelToken);
+    return List<int>.from(result, growable: false);
   }, cancelToken: cancelToken);
 
   @override

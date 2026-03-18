@@ -256,6 +256,7 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
       findProperty('state')?.value.notifyOfExternalUpdate(lyfiStatus.state.name);
       findProperty('temperature')?.value.notifyOfExternalUpdate(lyfiStatus.temperature);
       findProperty('color')?.value.notifyOfExternalUpdate(lyfiStatus.currentColor);
+      findProperty('output')?.value.notifyOfExternalUpdate(lyfiStatus.output);
 
       // Sync additional critical properties
       findProperty('currentTemp')?.value.notifyOfExternalUpdate(lyfiStatus.temperature ?? 0);

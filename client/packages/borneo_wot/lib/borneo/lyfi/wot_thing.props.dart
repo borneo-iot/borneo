@@ -579,6 +579,7 @@ extension LyfiThingProperties on LyfiThing {
           mode: LyfiMode.manual,
           unscheduled: false,
           temporaryRemaining: Duration.zero,
+          output: [0, 0, 0, 0],
           currentColor: [0, 0, 0, 0],
           manualColor: [0, 0, 0, 0],
           sunColor: [0, 0, 0, 0],
@@ -666,6 +667,10 @@ extension LyfiThingProperties on LyfiThing {
       ),
     );
     addProperty(unscheduledProperty);
+
+    // Output property (read-only)
+    final outputColorProperty = LyfiOutputProperty(thing: this, name: 'output');
+    addProperty(outputColorProperty);
 
     // Manual color property (read-only)
     final manualColorProperty = ReadonlyLyfiColorProperty(thing: this, name: 'manualColor');

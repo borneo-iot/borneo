@@ -18,6 +18,8 @@ abstract class ILyfiDeviceApi extends IBorneoDeviceApi {
   Future<ScheduleTable> getSchedule(Device dev, {CancellationToken? cancelToken});
   Future<void> setSchedule(Device dev, Iterable<ScheduledInstant> schedule, {CancellationToken? cancelToken});
 
+  Future<List<int>> getOutput(Device dev, {CancellationToken? cancelToken});
+
   Future<List<int>> getColor(Device dev, {CancellationToken? cancelToken});
   Future<void> setColor(Device dev, List<int> color, {CancellationToken? cancelToken});
 
