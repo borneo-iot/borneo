@@ -10,10 +10,10 @@ class LyfiColorChart extends BarChart {
     final hslColor = HSLColor.fromColor(primaryColor);
     final mutedColor = hslColor
         .withSaturation((hslColor.saturation * 0.25).clamp(0.0, 1.0))
-        .withLightness(isDark ? 0.25 : 0.75)
+        .withLightness(isDark ? 0.20 : 0.80)
         .toColor();
     // Blend with surface for a softer look
-    final barBackColor = Color.lerp(theme.colorScheme.surfaceContainerLow, mutedColor, 0.65)!;
+    final barBackColor = Color.lerp(theme.colorScheme.surfaceContainerLow, mutedColor, 0.55)!;
     return barBackColor;
   }
 }

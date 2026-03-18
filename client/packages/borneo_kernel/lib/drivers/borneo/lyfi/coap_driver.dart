@@ -188,13 +188,20 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
         return null;
       }
       if (compatible == lyfiCompatibleString) {
+        final fingerprint = discovered.txt?['serno'];
+        // Reject devices with missing/empty fingerprint to avoid treating them
+        // as the same device and causing collision issues.
+        if (fingerprint == null || fingerprint.isEmpty) {
+          return null;
+        }
+
         final matched = SupportedDeviceDescriptor(
           driverDescriptor: borneoLyfiDriverDescriptor,
           address: Uri(scheme: 'coap', host: discovered.host, port: discovered.port),
           name: discovered.txt?['name'] ?? '',
           compatible: compatible,
           model: discovered.txt?['model'] ?? '',
-          fingerprint: discovered.txt?['serno'] ?? '',
+          fingerprint: fingerprint,
           manuf: discovered.txt?['manuf'] ?? '',
           fwVer: fwVer,
           isCE: discovered.txt?['ce'] == 'true' ? true : false,
