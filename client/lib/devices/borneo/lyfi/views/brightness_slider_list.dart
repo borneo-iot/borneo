@@ -35,7 +35,7 @@ class BrightnessSliderList<TEditor extends IEditor> extends StatelessWidget {
                 channelInfo.name,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: Theme.of(context).hintColor,
-                  fontFeatures: [FontFeature.tabularFigures()],
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
               SizedBox(height: 4),
@@ -43,7 +43,7 @@ class BrightnessSliderList<TEditor extends IEditor> extends StatelessWidget {
                 '${(channelValue / kLyfiBrightnessMax * 100.0).toStringAsFixed(1).padLeft(5, '\u2007')}%',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface,
-                  fontFeatures: [FontFeature.tabularFigures()],
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
             ],

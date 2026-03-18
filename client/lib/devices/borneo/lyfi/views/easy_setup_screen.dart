@@ -23,35 +23,46 @@ extension _DurationExtension on Duration {
 }
 
 class EasySetupScreen extends StatelessWidget {
-  final clockTimeFormat = ClockTimeFormat.twentyFourHours;
-  final clockIncrementTimeFormat = ClockIncrementTimeFormat.thirtyMin;
-
   final ScheduleEditorViewModel editor;
 
   const EasySetupScreen(this.editor, {super.key});
+
+  final clockTimeFormat = ClockTimeFormat.twentyFourHours;
+  final clockIncrementTimeFormat = ClockIncrementTimeFormat.thirtyMin;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: editor,
       builder: (context, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(context.translate('Easy Setup')),
-            actions: [
-              AppBarApplyButton(
-                label: context.translate('Apply'),
-                onPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.of(context).pop(true);
-                  } else {
-                    Navigator.of(context).pop(true);
-                  }
-                },
-              ),
-            ],
+        return PopScope(
+          canPop: true,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (!didPop) {
+              return;
+            }
+            await editor.easySetupViewModel.restoreIfNeeded(editor);
+            editor.easySetupViewModel.endSession();
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(context.translate('Easy Setup')),
+              actions: [
+                AppBarApplyButton(
+                  label: context.translate('Apply'),
+                  onPressed: () {
+                    editor.easySetupViewModel.markApplied();
+                    if (Navigator.canPop(context)) {
+                      Navigator.of(context).pop(true);
+                    } else {
+                      Navigator.of(context).pop(true);
+                    }
+                  },
+                ),
+              ],
+            ),
+            body: Container(color: Theme.of(context).colorScheme.surface, child: child),
           ),
-          body: Container(color: Theme.of(context).colorScheme.surface, child: child),
         );
       },
       child: buildBody(context),
@@ -144,7 +155,7 @@ class EasySetupScreen extends StatelessWidget {
                     builder: (context, child) => Text(
                       (editor.easySetupViewModel.duration.inMinutes ~/ 60).toString().padLeft(2, '0'),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontFeatures: [FontFeature.tabularFigures()],
+                        fontFeatures: const [FontFeature.tabularFigures()],
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
@@ -161,7 +172,7 @@ class EasySetupScreen extends StatelessWidget {
                     builder: (context, child) => Text(
                       (editor.easySetupViewModel.duration.inMinutes % 60).toString().padLeft(2, '0'),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontFeatures: [FontFeature.tabularFigures()],
+                        fontFeatures: const [FontFeature.tabularFigures()],
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
@@ -185,7 +196,7 @@ class EasySetupScreen extends StatelessWidget {
                       return Text(
                         editor.easySetupViewModel.startTime.value.toHHMM(),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontFeatures: [FontFeature.tabularFigures()],
+                          fontFeatures: const [FontFeature.tabularFigures()],
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       );
@@ -200,7 +211,7 @@ class EasySetupScreen extends StatelessWidget {
                       return Text(
                         editor.easySetupViewModel.endTime.value.toHHMM(),
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontFeatures: [FontFeature.tabularFigures()],
+                          fontFeatures: const [FontFeature.tabularFigures()],
                           color: Theme.of(context).colorScheme.secondary,
                         ),
                       );
@@ -225,10 +236,11 @@ class EasySetupScreen extends StatelessWidget {
       Expanded(
         child: Selector<ScheduleEditorViewModel, bool>(
           selector: (_, editor) => editor.canEdit,
-          builder: (_, canEdit, vm) {
+          builder: (context, canEdit, child) {
             // Use a temporary editor adapter so Easy Setup slider changes are
             // local to the EasySetupViewModel until the user taps Apply.
-            final tempEditor = _EasySetupTempEditor(editor);
+            final viewModel = context.read<ScheduleEditorViewModel>();
+            final tempEditor = _EasySetupTempEditor(viewModel);
             return ScreenTopRoundedContainer(
               padding: EdgeInsets.fromLTRB(0, 24, 0, 0),
               color: Theme.of(context).colorScheme.surfaceContainer,
@@ -272,6 +284,16 @@ class _EasySetupTempEditor extends ChangeNotifier implements IEditor {
   Future<void> updateChannelValue(int index, int value) async {
     if (_hasEasyChannels && index >= 0 && index < _parent.easySetupViewModel.channels.length) {
       _parent.easySetupViewModel.channels[index].value = value;
+
+      // Provide a live preview of the new color values while the user adjusts
+      // sliders, without committing the changes to the schedule until Apply.
+      if (!_parent.parent.isSuspectedOffline && _parent.parent.boundDevice != null) {
+        final newColor = _parent.easySetupViewModel.channelValues;
+        _parent.colorChangeRateLimiter.call(() {
+          if (_parent.parent.isSuspectedOffline || _parent.parent.boundDevice == null) return;
+          _parent.lyfiThing.setProperty('color', newColor);
+        });
+      }
     }
   }
 

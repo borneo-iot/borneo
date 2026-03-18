@@ -88,7 +88,7 @@ class DashboardTemporaryTile extends StatelessWidget {
                             remainText,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: effectiveFgColor,
-                              fontFeatures: [const FontFeature.tabularFigures()],
+                              fontFeatures: const [FontFeature.tabularFigures()],
                             ),
                           ),
                       ],

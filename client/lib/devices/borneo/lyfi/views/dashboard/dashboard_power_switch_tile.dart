@@ -82,6 +82,7 @@ class DashboardPowerSwitchTile extends StatelessWidget {
                           '$brightness%',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: isDisabled ? disabledColor : theme.colorScheme.primary,
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
                     ],

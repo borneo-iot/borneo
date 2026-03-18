@@ -127,7 +127,7 @@ class DashboardAcclimationTile extends StatelessWidget {
                             remainingText,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: effectiveFgColor,
-                              fontFeatures: [FontFeature.tabularFigures()],
+                              fontFeatures: const [FontFeature.tabularFigures()],
                             ),
                           ),
                       ],

@@ -133,7 +133,7 @@ class AcclimationScreen extends StatelessWidget {
                 context.translate('{d} days', nArgs: {'d': vm.days.round().toString()}),
                 style: TextStyle(
                   color: _valueColor(context, vm.hasDurationError),
-                  fontFeatures: [FontFeature.tabularFigures()],
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
               enabled: !vm.isBusy && vm.isOnline,
@@ -150,7 +150,7 @@ class AcclimationScreen extends StatelessWidget {
                 '${vm.startPercent.round()}%',
                 style: TextStyle(
                   color: _valueColor(context, vm.hasStartPercentError),
-                  fontFeatures: [FontFeature.tabularFigures()],
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
               enabled: !vm.isBusy && vm.isOnline,

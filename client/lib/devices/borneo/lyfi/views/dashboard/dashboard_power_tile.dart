@@ -71,7 +71,7 @@ class DashboardPowerTile extends StatelessWidget {
                               value: int.parse(digit),
                               textStyle: theme.textTheme.headlineLarge?.copyWith(
                                 color: color,
-                                fontFeatures: [FontFeature.tabularFigures()],
+                                fontFeatures: const [FontFeature.tabularFigures()],
                               ),
                               duration: const Duration(milliseconds: 200),
                             ),
@@ -82,7 +82,7 @@ class DashboardPowerTile extends StatelessWidget {
                           Text(
                             'W',
                             style: theme.textTheme.labelMedium?.copyWith(
-                              fontFeatures: [FontFeature.tabularFigures()],
+                              fontFeatures: const [FontFeature.tabularFigures()],
                               color: textPrimary,
                             ),
                           ),
@@ -93,7 +93,7 @@ class DashboardPowerTile extends StatelessWidget {
                         context.translate("N/A"),
                         style: theme.textTheme.headlineLarge?.copyWith(
                           color: theme.colorScheme.outlineVariant,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
                     ],
@@ -109,7 +109,7 @@ class DashboardPowerTile extends StatelessWidget {
                           '${vm.currentVoltage.value!.toStringAsFixed(1)}V',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: textOnSurface,
-                            fontFeatures: [FontFeature.tabularFigures()],
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
                       if (props.canMeasureCurrent && isOnline) const SizedBox(width: 4),
@@ -121,7 +121,7 @@ class DashboardPowerTile extends StatelessWidget {
                           '${vm.currentCurrent.value!.toStringAsFixed(1)}A',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: textOnSurface,
-                            fontFeatures: [FontFeature.tabularFigures()],
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         ),
                     ],

@@ -309,7 +309,7 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
 
     // Also copy current channel slider values into the EasySetupViewModel so
     // the Easy Setup UI operates on a temporary set of channel values.
-    easySetupViewModel.initChannelsFromList(channels.map((c) => c.value).toList());
+    easySetupViewModel.beginSession(channels.map((c) => c.value).toList());
 
     // Do not clear entries here; Apply in the Easy Setup screen will commit.
   }
@@ -322,5 +322,6 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
     if (effectiveChannelValues.any((v) => v > 0)) {
       await loadCurve(easyInstants);
     }
+    easySetupViewModel.endSession();
   }
 }

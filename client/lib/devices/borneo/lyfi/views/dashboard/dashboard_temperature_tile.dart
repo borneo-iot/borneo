@@ -73,7 +73,7 @@ class DashboardTemperatureTile extends StatelessWidget {
                         value: int.parse(digit),
                         textStyle: theme.textTheme.headlineLarge?.copyWith(
                           color: color,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                         duration: const Duration(milliseconds: 300),
                       ),
@@ -85,7 +85,7 @@ class DashboardTemperatureTile extends StatelessWidget {
                 Text(
                   context.translate("N/A"),
                   style: theme.textTheme.headlineLarge?.copyWith(
-                    fontFeatures: [FontFeature.tabularFigures()],
+                    fontFeatures: const [FontFeature.tabularFigures()],
                     color: theme.colorScheme.outlineVariant,
                   ),
                 ),
@@ -93,7 +93,7 @@ class DashboardTemperatureTile extends StatelessWidget {
                 Text(
                   temperatureUnitText,
                   style: theme.textTheme.labelMedium?.copyWith(
-                    fontFeatures: [FontFeature.tabularFigures()],
+                    fontFeatures: const [FontFeature.tabularFigures()],
                     color: progressColor,
                   ),
                 ),
@@ -110,7 +110,7 @@ class DashboardTemperatureTile extends StatelessWidget {
                   '${fanPowerRatio.toInt().toString().padLeft(3)}%',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.primary,
-                    fontFeatures: [FontFeature.tabularFigures()],
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
               ] else
@@ -118,7 +118,7 @@ class DashboardTemperatureTile extends StatelessWidget {
                   context.translate("N/A"),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.outlineVariant,
-                    fontFeatures: [FontFeature.tabularFigures()],
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
             ],

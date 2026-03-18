@@ -122,7 +122,7 @@ class DashboardMoonTile extends StatelessWidget {
                           subtitle,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: effectiveFgColor,
-                            fontFeatures: [FontFeature.tabularFigures()],
+                            fontFeatures: const [FontFeature.tabularFigures()],
                           ),
                         )
                       else
@@ -139,7 +139,7 @@ class DashboardMoonTile extends StatelessWidget {
                               '${(moonStatus.illumination * 100.0).toStringAsFixed(0)}%',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: effectiveFgColor,
-                                fontFeatures: [FontFeature.tabularFigures()],
+                                fontFeatures: const [FontFeature.tabularFigures()],
                               ),
                             ),
                           ],

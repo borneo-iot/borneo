@@ -19,6 +19,9 @@ class EasySetupViewModel extends ChangeNotifier {
   final List<ValueNotifier<int>> _channels = [];
   List<ValueNotifier<int>> get channels => _channels;
 
+  List<int>? _originalChannelValues;
+  bool _applyRequested = false;
+
   List<int> get channelValues => _channels.map((c) => c.value).toList();
 
   Duration get duration => _endTime.value > _startTime.value
@@ -26,6 +29,33 @@ class EasySetupViewModel extends ChangeNotifier {
       : const Duration(hours: 24) - _startTime.value + _endTime.value;
 
   EasySetupViewModel();
+
+  void beginSession(List<int> values) {
+    _originalChannelValues = List<int>.unmodifiable(values);
+    _applyRequested = false;
+    initChannelsFromList(values);
+  }
+
+  void markApplied() {
+    _applyRequested = true;
+  }
+
+  Future<void> restoreIfNeeded(ScheduleEditorViewModel editor) async {
+    final originalChannelValues = _originalChannelValues;
+    if (_applyRequested || originalChannelValues == null) {
+      return;
+    }
+
+    for (int i = 0; i < originalChannelValues.length && i < editor.channels.length; i++) {
+      editor.channels[i].value = originalChannelValues[i];
+    }
+    await editor.syncDimmingColor(false);
+  }
+
+  void endSession() {
+    _originalChannelValues = null;
+    _applyRequested = false;
+  }
 
   void initChannelsFromList(List<int> values) {
     _channels.clear();

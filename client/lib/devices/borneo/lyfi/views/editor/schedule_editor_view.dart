@@ -129,7 +129,7 @@ class ScheduleEditorView extends StatelessWidget {
 
   Widget bottomTitleWidgets(BuildContext context, double value, TitleMeta meta) {
     final style = Theme.of(context).textTheme.labelSmall?.copyWith(
-      fontFeatures: [FontFeature.tabularFigures()],
+      fontFeatures: const [FontFeature.tabularFigures()],
       color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(97),
     );
 

@@ -58,7 +58,7 @@ class DashboardFanTile extends StatelessWidget {
                             value: int.parse(digit),
                             textStyle: theme.textTheme.headlineLarge?.copyWith(
                               color: color,
-                              fontFeatures: [FontFeature.tabularFigures()],
+                              fontFeatures: const [FontFeature.tabularFigures()],
                             ),
                             duration: const Duration(milliseconds: 300),
                           ),
@@ -69,7 +69,7 @@ class DashboardFanTile extends StatelessWidget {
                         Text(
                           '%',
                           style: theme.textTheme.labelMedium?.copyWith(
-                            fontFeatures: [FontFeature.tabularFigures()],
+                            fontFeatures: const [FontFeature.tabularFigures()],
                             color: theme.colorScheme.primary,
                           ),
                         ),
@@ -80,7 +80,7 @@ class DashboardFanTile extends StatelessWidget {
                         context.translate("N/A"),
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: theme.colorScheme.outlineVariant,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                          fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
                     ],
@@ -94,7 +94,7 @@ class DashboardFanTile extends StatelessWidget {
                     _formatFanMode(context, vm.fanMode!),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface,
-                      fontFeatures: [FontFeature.tabularFigures()],
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
               ],

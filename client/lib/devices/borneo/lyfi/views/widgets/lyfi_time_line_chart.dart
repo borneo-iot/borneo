@@ -42,7 +42,7 @@ class LyfiTimeLineChart extends StatelessWidget {
 
     final labelStyle = Theme.of(
       context,
-    ).textTheme.labelMedium?.copyWith(color: cs.onPrimary, fontFeatures: [FontFeature.tabularFigures()]);
+    ).textTheme.labelMedium?.copyWith(color: cs.onPrimary, fontFeatures: const [FontFeature.tabularFigures()]);
     if (currentTime != null) {
       final labelText = _formatNowLabel(currentTime!.inSeconds.toDouble());
       final textPainter = TextPainter(
@@ -164,7 +164,7 @@ class LyfiTimeLineChart extends StatelessWidget {
       label: VerticalLineLabel(
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
           color: Theme.of(context).colorScheme.primary,
-          fontFeatures: [FontFeature.tabularFigures()],
+          fontFeatures: const [FontFeature.tabularFigures()],
           backgroundColor: Colors.transparent,
         ),
         padding: EdgeInsetsGeometry.fromLTRB(0, -20, 0, 0),
