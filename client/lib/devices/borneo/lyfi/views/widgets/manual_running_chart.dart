@@ -27,7 +27,6 @@ class ManualRunningChart extends StatelessWidget {
   }
 
   BarChartGroupData makeGroupData(BuildContext context, LyfiChannelInfo ch, int x, double y) {
-    final colorScheme = Theme.of(context).colorScheme;
     final primaryColor = HexColor.fromHex(ch.color);
     // Compute a compressed gradient where small values remain light.
     // Define the full (100%) gradient as: lightStart -> primaryColor (darker).

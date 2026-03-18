@@ -20,7 +20,7 @@ final class LyfiChannelInfo {
     required this.wavelength,
     this.wavelength2 = 0,
     required this.factor,
-    required this.ratio,
+    this.ratio = 1.0,
   });
 
   factory LyfiChannelInfo.fromMap(dynamic map) {

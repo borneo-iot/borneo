@@ -42,7 +42,8 @@ class MyScreen extends StatelessWidget {
             ),
           ],
         ),
-        SettingsSection(tiles: [
+        SettingsSection(
+          tiles: [
             SettingsTile.navigation(
               leading: const Icon(Icons.help_center_outlined),
               title: Text(context.translate('Online Documentation')),
@@ -66,7 +67,8 @@ class MyScreen extends StatelessWidget {
                 );
               },
             ),
-        ]),
+          ],
+        ),
       ],
     );
   }

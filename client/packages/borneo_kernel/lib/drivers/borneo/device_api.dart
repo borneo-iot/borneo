@@ -329,12 +329,6 @@ abstract class IBorneoDeviceApi extends IDeviceApi {
   Future<BorneoOtaCoapStatus> getOtaCoapStatus(Device dev, {CancellationToken? cancelToken});
   Future<void> otaCoapEngage(Device dev, final Uint8List firmwareBuffer, {CancellationToken? cancelToken});
 
-  Future<void> beginCheckNewVersion({CancellationToken? cancelToken});
-  Future<bool> isCheckingNewVersionAsync({CancellationToken? cancelToken});
-  Future<BorneoDeviceUpgradeInfo> getNewVersion({CancellationToken? cancelToken});
-  Future<void> beginUpgrade({CancellationToken? cancelToken});
-  Future<bool> isUpgrading({CancellationToken? cancelToken});
-
   Future<int> getFactoryNvsU8(Device dev, String ns, String key, {CancellationToken? cancelToken});
   Future<void> setFactoryNvsU8(Device dev, String ns, String key, int u8, {CancellationToken? cancelToken});
   Future<int> getFactoryNvsU16(Device dev, String ns, String key, {CancellationToken? cancelToken});
@@ -609,36 +603,6 @@ mixin BorneoDeviceCoapApi on Driver implements IBorneoDeviceApi {
         throw DeviceError("Failed to put `${response.location}`", dev);
       }
     }, cancelToken: cancelToken);
-  }
-
-  @override
-  Future<void> beginCheckNewVersion({CancellationToken? cancelToken}) {
-    // TODO: implement beginCheckNewVersion
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> beginUpgrade({CancellationToken? cancelToken}) {
-    // TODO: implement beginUpgrade
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<BorneoDeviceUpgradeInfo> getNewVersion({CancellationToken? cancelToken}) {
-    // TODO: implement getNewVersion
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> isCheckingNewVersionAsync({CancellationToken? cancelToken}) {
-    // TODO: implement isCheckingNewVersionAsync
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> isUpgrading({CancellationToken? cancelToken}) {
-    // TODO: implement isUpgrading
-    throw UnimplementedError();
   }
 
   @override
