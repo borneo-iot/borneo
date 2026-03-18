@@ -12,6 +12,7 @@ final class LyfiChannelInfo {
   final int wavelength;
   final int wavelength2;
   final double factor;
+  final double ratio;
 
   const LyfiChannelInfo({
     required this.name,
@@ -19,6 +20,7 @@ final class LyfiChannelInfo {
     required this.wavelength,
     this.wavelength2 = 0,
     required this.factor,
+    required this.ratio,
   });
 
   factory LyfiChannelInfo.fromMap(dynamic map) {
@@ -28,6 +30,7 @@ final class LyfiChannelInfo {
       wavelength: map['w'] ?? 0,
       wavelength2: map['w2'] ?? 0,
       factor: (map['f'] ?? 0.0) / 100.0,
+      ratio: map['r'] ?? 1.0,
     );
   }
 }

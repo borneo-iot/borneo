@@ -1,3 +1,4 @@
+import 'package:borneo_app/constants.dart';
 import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:borneo_app/core/services/url_launcher_service.dart';
 import 'package:flutter_gettext/flutter_gettext.dart';
@@ -9,10 +10,10 @@ import 'package:borneo_app/routes/platform_page_route.dart';
 
 import 'package:borneo_app/features/my/providers/about_provider.dart';
 
-final Uri _websiteUrl = Uri.parse('https://www.borneoiot.com');
-final Uri _docsUrl = Uri.parse('https://docs.borneoiot.com');
-final Uri _privacyUrl = Uri.parse('https://www.borneoiot.com/app/privacy');
-final Uri _tosUrl = Uri.parse('https://www.borneoiot.com/app/tos');
+final Uri _websiteUrl = Uri.parse(kWebsiteUrl);
+final Uri _docsUrl = Uri.parse(kAboutDocUrl);
+final Uri _privacyUrl = Uri.parse(kPrivacyUrl);
+final Uri _tosUrl = Uri.parse(kTosUrl);
 
 /// A reusable section displayed on the about screen with a title and a link.
 ///
@@ -182,8 +183,8 @@ The author assumes no responsibility or liability for any direct or indirect con
                   onTap: () {
                     Navigator.of(context).push(
                       platformPageRoute(
-                        builder: (_) => const _AssetTextScreen(
-                          title: 'GNU General Public License v3',
+                        builder: (cb) => _AssetTextScreen(
+                          title: cb.translate('GNU General Public License v3'),
                           assetPath: 'assets/docs/license.txt',
                         ),
                       ),

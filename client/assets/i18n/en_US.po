@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 00:03+0800\n"
+"POT-Creation-Date: 2026-03-18 11:10+0800\n"
 "PO-Revision-Date: 2025-06-01 20:57+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,55 +18,55 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "1 hour"
-msgstr ""
+msgstr "1 hour"
 
 msgid "1-15 characters"
-msgstr ""
+msgstr "1-15 characters"
 
 msgid "10 minutes"
-msgstr ""
+msgstr "10 minutes"
 
 msgid "12 hours"
-msgstr ""
+msgstr "12 hours"
 
 msgid "2 hours"
-msgstr ""
+msgstr "2 hours"
 
 msgid "20 minutes"
-msgstr ""
+msgstr "20 minutes"
 
 msgid "4 hours"
-msgstr ""
+msgstr "4 hours"
 
 msgid "5 minutes"
-msgstr ""
+msgstr "5 minutes"
 
 msgid "8 hours"
-msgstr ""
+msgstr "8 hours"
 
 msgid "ACTIVE"
-msgstr ""
+msgstr "ACTIVE"
 
 msgid "APPEARANCE"
 msgstr "APPEARANCE"
 
 msgid "About"
-msgstr ""
+msgstr "About"
 
 msgid "Acclimation"
-msgstr ""
+msgstr "Acclimation"
 
 msgid "Adaptive"
-msgstr ""
+msgstr "Adaptive"
 
 msgid "Add"
-msgstr ""
+msgstr "Add"
 
 msgid "Add Device"
-msgstr ""
+msgstr "Add Device"
 
 msgid "Add Devices"
-msgstr ""
+msgstr "Add Devices"
 
 msgid "Add Devices Group"
 msgstr "Add Devices Group"
@@ -75,26 +75,26 @@ msgid "Add New Devices"
 msgstr "Add New Devices"
 
 msgid "Add devices to get started"
-msgstr ""
+msgstr "Add devices to get started"
 
 msgid "Add time point"
-msgstr ""
+msgstr "Add time point"
 
 msgid "Adding device to your list..."
-msgstr ""
+msgstr "Adding device to your list..."
 
 msgid "An error occurred. Please retry or contact support."
-msgstr ""
+msgstr "An error occurred. Please retry or contact support."
 
 msgid "App Settings"
 msgstr "App Settings"
 
 msgid "Apply"
-msgstr ""
+msgstr "Apply"
 
 #, python-brace-format
 msgid "Are you sure to delete the device \"{deviceName}\"?"
-msgstr ""
+msgstr "Are you sure to delete the device \"{deviceName}\"?"
 
 #, python-brace-format
 msgid ""
@@ -102,212 +102,224 @@ msgid ""
 "\n"
 "Devices in this group will be moved to the \"Ungrouped\" area."
 msgstr ""
+"Are you sure you want to delete \"{0}\" group?\n"
+"\n"
+"Devices in this group will be moved to the \"Ungrouped\" area."
 
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete \"{0}\" scene? This action cannot be undone."
 msgstr ""
+"Are you sure you want to delete \"{0}\" scene? This action cannot be undone."
 
 msgid "Are you sure you want to delete this device?"
-msgstr ""
+msgstr "Are you sure you want to delete this device?"
 
 msgid "Are you sure you want to remove all schedule entries?"
-msgstr ""
+msgstr "Are you sure you want to remove all schedule entries?"
 
 msgid ""
 "Are you sure you want to reset this device's network settings?\n"
 "The device will be removed and must be provisioned again."
 msgstr ""
+"Are you sure you want to reset this device's network settings?\n"
+"The device will be removed and must be provisioned again."
 
 msgid "Are you sure you want to restore this device to factory settings?"
-msgstr ""
+msgstr "Are you sure you want to restore this device to factory settings?"
 
 msgid "Back"
-msgstr ""
+msgstr "Back"
 
 msgid "Back to device"
-msgstr ""
+msgstr "Back to device"
 
 msgid "Bad device state"
-msgstr ""
+msgstr "Bad device state"
 
 msgid "Before proceeding, please read the following warnings carefully:"
-msgstr ""
+msgstr "Before proceeding, please read the following warnings carefully:"
 
 msgid ""
 "Bluetooth is not supported on this system; device WiFi provisioning is "
 "unavailable."
 msgstr ""
+"Bluetooth is not supported on this system; device WiFi provisioning is "
+"unavailable."
 
 msgid "Bluetooth permissions are required to discover devices."
-msgstr ""
+msgstr "Bluetooth permissions are required to discover devices."
 
 msgid "Bluetooth scan error, please check if Bluetooth device is enabled."
-msgstr ""
+msgstr "Bluetooth scan error, please check if Bluetooth device is enabled."
 
 msgid "CIE1931"
-msgstr ""
+msgstr "CIE1931"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Cancel"
 
 msgid "Cannot Delete Scene"
-msgstr ""
+msgstr "Cannot Delete Scene"
 
 msgid "Cannot delete the last remaining scene."
-msgstr ""
+msgstr "Cannot delete the last remaining scene."
 
 msgid "Change Device Group"
-msgstr ""
+msgstr "Change Device Group"
 
 msgid "Change group..."
-msgstr ""
+msgstr "Change group..."
 
 msgid "Channel Settings"
-msgstr ""
+msgstr "Channel Settings"
 
 msgid "Check for updates"
-msgstr ""
+msgstr "Check for updates"
 
 msgid "Checking for updates..."
-msgstr ""
+msgstr "Checking for updates..."
 
 msgid "Checking..."
-msgstr ""
+msgstr "Checking..."
 
 msgid "Chores"
-msgstr ""
+msgstr "Chores"
 
 msgid "Clear"
-msgstr ""
+msgstr "Clear"
 
 msgid "Close"
-msgstr ""
+msgstr "Close"
 
 msgid "Cloud simulation"
-msgstr ""
+msgstr "Cloud simulation"
 
 msgid "Cloud simulation mode updated successfully"
-msgstr ""
+msgstr "Cloud simulation mode updated successfully"
 
 msgid "Color"
-msgstr ""
+msgstr "Color"
 
 msgid "Confirm"
-msgstr ""
+msgstr "Confirm"
 
 msgid "Confirm Submit"
-msgstr ""
+msgstr "Confirm Submit"
 
 msgid "Confirmation"
-msgstr ""
+msgstr "Confirmation"
 
 msgid "Connecting to WiFi"
-msgstr ""
+msgstr "Connecting to WiFi"
 
 msgid "Connection unstable. Trying to reconnect…"
-msgstr ""
+msgstr "Connection unstable. Trying to reconnect…"
 
 msgid "Controller Settings"
-msgstr ""
+msgstr "Controller Settings"
 
 msgid ""
 "Copyright © Yunnan BinaryStars Technologies, Co., Ltd. All rights reserved."
 msgstr ""
+"Copyright © Yunnan BinaryStars Technologies, Co., Ltd. All rights reserved."
 
 msgid "Correction curve"
-msgstr ""
+msgstr "Correction curve"
 
 msgid "Crop Image"
-msgstr ""
+msgstr "Crop Image"
 
 msgid "Current location"
-msgstr ""
+msgstr "Current location"
 
 msgid "Current version"
-msgstr ""
+msgstr "Current version"
 
 msgid "DANGER ZONE"
-msgstr ""
+msgstr "DANGER ZONE"
 
 msgid "DEVICE INFORMATION"
-msgstr ""
+msgstr "DEVICE INFORMATION"
 
 msgid "DEVICE STATUS"
-msgstr ""
+msgstr "DEVICE STATUS"
 
 msgid "DIMM"
-msgstr ""
+msgstr "DIMM"
 
 msgid "Dark"
 msgstr "Dark"
 
 msgid "Delete device"
-msgstr ""
+msgstr "Delete device"
 
 msgid "Delete failed"
-msgstr ""
+msgstr "Delete failed"
 
 msgid "Delete..."
-msgstr ""
+msgstr "Delete..."
 
 msgid "Detected on network"
-msgstr ""
+msgstr "Detected on network"
 
 msgid "Device Error"
-msgstr ""
+msgstr "Device Error"
 
 msgid "Device Location"
-msgstr ""
+msgstr "Device Location"
 
 msgid "Device Name"
-msgstr ""
+msgstr "Device Name"
 
 msgid "Device Offline"
-msgstr ""
+msgstr "Device Offline"
 
 msgid "Device Setup"
-msgstr ""
+msgstr "Device Setup"
 
 msgid "Device address"
-msgstr ""
+msgstr "Device address"
 
 msgid "Device connection lost. Controls are locked."
-msgstr ""
+msgstr "Device connection lost. Controls are locked."
 
 #, python-brace-format
 msgid ""
 "Device firmware version {currentVersion} is not supported. Required: "
 "{requiredVersion}."
 msgstr ""
+"Device firmware version {currentVersion} is not supported. Required: "
+"{requiredVersion}."
 
 msgid "Device is not reachable at the moment."
-msgstr ""
+msgstr "Device is not reachable at the moment."
 
 msgid "Device is offline"
-msgstr ""
+msgstr "Device is offline"
 
 msgid "Device is offline. Please retry after reconnection."
-msgstr ""
+msgstr "Device is offline. Please retry after reconnection."
 
 msgid "Device name cannot be empty."
-msgstr ""
+msgstr "Device name cannot be empty."
 
 msgid "Device name cannot be pure whitespace."
-msgstr ""
+msgstr "Device name cannot be pure whitespace."
 
 msgid "Device name cannot have leading or trailing whitespace."
-msgstr ""
+msgstr "Device name cannot have leading or trailing whitespace."
 
 msgid ""
 "Device name is too long. Maximum length is 63 bytes when encoded as UTF-8."
 msgstr ""
+"Device name is too long. Maximum length is 63 bytes when encoded as UTF-8."
 
 msgid "Device name updated successfully"
-msgstr ""
+msgstr "Device name updated successfully"
 
 msgid "Device offline"
-msgstr ""
+msgstr "Device offline"
 
 msgid "Devices"
 msgstr "Devices"
@@ -317,60 +329,62 @@ msgid "Devices in {currentScene}"
 msgstr "Devices in {currentScene}"
 
 msgid "Dimming"
-msgstr ""
+msgstr "Dimming"
 
 msgid ""
 "Do NOT power off the device during the update. Interrupting power may "
 "permanently damage the device."
 msgstr ""
+"Do NOT power off the device during the update. Interrupting power may "
+"permanently damage the device."
 
 msgid "Do not power off the device or close this app."
-msgstr ""
+msgstr "Do not power off the device or close this app."
 
 msgid "Do you want to start the firmware update now?"
-msgstr ""
+msgstr "Do you want to start the firmware update now?"
 
 msgid "Documentation"
-msgstr ""
+msgstr "Documentation"
 
 msgid "Done"
-msgstr ""
+msgstr "Done"
 
 msgid "Dry Scape Mode"
-msgstr ""
+msgstr "Dry Scape Mode"
 
 msgid "Duration"
-msgstr ""
+msgstr "Duration"
 
 msgid "Duration must be between 5 and 100 days."
-msgstr ""
+msgstr "Duration must be between 5 and 100 days."
 
 msgid "ERROR"
-msgstr ""
+msgstr "ERROR"
 
 msgid "Easy"
-msgstr ""
+msgstr "Easy"
 
 msgid "Easy Setup"
-msgstr ""
+msgstr "Easy Setup"
 
 msgid "Edit Device Group"
 msgstr "Edit Device Group"
 
 msgid "Edit Scene"
-msgstr ""
+msgstr "Edit Scene"
 
 msgid "Editor initialization failed. Please retry."
-msgstr ""
+msgstr "Editor initialization failed. Please retry."
 
 msgid "Enable acclimation"
-msgstr ""
+msgstr "Enable acclimation"
 
 msgid "Enabled channel count"
-msgstr ""
+msgstr "Enabled channel count"
 
 msgid "Enter Password"
-msgstr ""
+msgstr "Enter Password"
 
 msgid "Enter the optional notes for this scene"
 msgstr "Enter the optional notes for this scene"
@@ -379,835 +393,851 @@ msgid "Enter the required scene name"
 msgstr "Enter the required scene name"
 
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 msgid "Error loading chores"
-msgstr ""
+msgstr "Error loading chores"
 
 msgid "Error loading document"
-msgstr ""
+msgstr "Error loading document"
 
 #, python-brace-format
 msgid "Error: {errMsg}"
 msgstr "Error: {errMsg}"
 
 msgid "Exponential"
-msgstr ""
+msgstr "Exponential"
 
 msgid "FEEDBACK"
 msgstr "FEEDBACK"
 
 #, python-brace-format
 msgid "Failed to change the group for device '{deviceName}'"
-msgstr ""
+msgstr "Failed to change the group for device '{deviceName}'"
 
 msgid "Failed to delete device"
-msgstr ""
+msgstr "Failed to delete device"
 
 #, python-brace-format
 msgid "Failed to fetch firmware manifest: HTTP code `{code}`"
-msgstr ""
+msgstr "Failed to fetch firmware manifest: HTTP code `{code}`"
 
 msgid "Failed to get location"
-msgstr ""
+msgstr "Failed to get location"
 
 #, python-brace-format
 msgid "Failed to initialize device: {msg}"
-msgstr ""
+msgstr "Failed to initialize device: {msg}"
 
 #, python-brace-format
 msgid "Failed to initialize local timezone: {msg}"
-msgstr ""
+msgstr "Failed to initialize local timezone: {msg}"
 
 #, python-brace-format
 msgid "Failed to load controller settings: {msg}"
-msgstr ""
+msgstr "Failed to load controller settings: {msg}"
 
 #, python-brace-format
 msgid "Failed to open dimming page: {msg}"
-msgstr ""
+msgstr "Failed to open dimming page: {msg}"
 
 msgid "Failed to refresh discovery"
-msgstr ""
+msgstr "Failed to refresh discovery"
 
 msgid "Failed to reset device network settings"
-msgstr ""
+msgstr "Failed to reset device network settings"
 
 msgid "Failed to restore device to factory settings"
-msgstr ""
+msgstr "Failed to restore device to factory settings"
 
 msgid "Failed to save changes. Please try again."
-msgstr ""
+msgstr "Failed to save changes. Please try again."
 
 msgid "Failed to scan  WiFi networks"
-msgstr ""
+msgstr "Failed to scan  WiFi networks"
 
 msgid "Failed to scan WiFi networks"
-msgstr ""
+msgstr "Failed to scan WiFi networks"
 
 msgid "Failed to switch mode"
-msgstr ""
+msgstr "Failed to switch mode"
 
 msgid "Failed to switch to temporary state"
-msgstr ""
+msgstr "Failed to switch to temporary state"
 
 #, python-brace-format
 msgid "Failed to sync timezone: {msg}"
-msgstr ""
+msgstr "Failed to sync timezone: {msg}"
 
 msgid "Failed to update LED correction method"
-msgstr ""
+msgstr "Failed to update LED correction method"
 
 msgid "Failed to update acclimation settings."
-msgstr ""
+msgstr "Failed to update acclimation settings."
 
 msgid "Failed to update cloud simulation mode"
-msgstr ""
+msgstr "Failed to update cloud simulation mode"
 
 msgid "Failed to update device location"
-msgstr ""
+msgstr "Failed to update device location"
 
 msgid "Failed to update device name"
-msgstr ""
+msgstr "Failed to update device name"
 
 msgid "Failed to update device time zone"
-msgstr ""
+msgstr "Failed to update device time zone"
 
 msgid "Failed to update fan modee"
-msgstr ""
+msgstr "Failed to update fan modee"
 
 msgid "Failed to update manual fan power"
-msgstr ""
+msgstr "Failed to update manual fan power"
 
 msgid "Failed to update moon settings."
-msgstr ""
+msgstr "Failed to update moon settings."
 
 msgid "Failed to update power behavior"
-msgstr ""
+msgstr "Failed to update power behavior"
 
 msgid "Failed to update temporary duration"
-msgstr ""
+msgstr "Failed to update temporary duration"
 
 msgid "Fan"
-msgstr ""
+msgstr "Fan"
 
 msgid "Fan mode"
-msgstr ""
+msgstr "Fan mode"
 
 msgid "Fan mode updated successfully"
-msgstr ""
+msgstr "Fan mode updated successfully"
 
 msgid "Feed Mode"
-msgstr ""
+msgstr "Feed Mode"
 
 msgid "Feedback via Email"
-msgstr ""
+msgstr "Feedback via Email"
 
 msgid "Fetching the latest firmware information from the server."
-msgstr ""
+msgstr "Fetching the latest firmware information from the server."
 
 msgid "Firmware Update"
-msgstr ""
+msgstr "Firmware Update"
 
 msgid "Firmware hash mismatch"
-msgstr ""
+msgstr "Firmware hash mismatch"
 
 msgid ""
 "Firmware update is in progress. Interrupting the update may permanently "
 "damage the device. Are you sure you want to abort?"
 msgstr ""
+"Firmware update is in progress. Interrupting the update may permanently "
+"damage the device. Are you sure you want to abort?"
 
 msgid ""
 "Firmware update is in progress. Interrupting the update may permanently "
 "damage the device. Are you sure you want to cancel?"
 msgstr ""
+"Firmware update is in progress. Interrupting the update may permanently "
+"damage the device. Are you sure you want to cancel?"
 
 msgid "Firmware version"
-msgstr ""
+msgstr "Firmware version"
 
 msgid "First Quarter"
-msgstr ""
+msgstr "First Quarter"
 
 msgid "Full Moon"
-msgstr ""
+msgstr "Full Moon"
+
+msgid "GNU General Public License v3"
+msgstr "GNU General Public License v3"
 
 msgid "Gamma"
-msgstr ""
+msgstr "Gamma"
 
 msgid "Geographical location"
-msgstr ""
+msgstr "Geographical location"
 
 msgid "Group deleted"
-msgstr ""
+msgstr "Group deleted"
 
 msgid "Hardware version"
-msgstr ""
+msgstr "Hardware version"
 
 msgid "Hrs"
-msgstr ""
+msgstr "Hrs"
 
 msgid "INACTIVE"
-msgstr ""
+msgstr "INACTIVE"
 
 msgid "Initialization failed"
-msgstr ""
+msgstr "Initialization failed"
 
 msgid "Invalid name"
-msgstr ""
+msgstr "Invalid name"
 
 msgid "Invalid wavelength"
-msgstr ""
+msgstr "Invalid wavelength"
 
 msgid "Keep off"
-msgstr ""
+msgstr "Keep off"
 
 msgid "Keep on"
-msgstr ""
+msgstr "Keep on"
 
 msgid "Keep the device connected to your network throughout the update."
-msgstr ""
+msgstr "Keep the device connected to your network throughout the update."
 
 msgid "LED CHANNELS"
-msgstr ""
+msgstr "LED CHANNELS"
 
 msgid "LED CONFIGURATION"
-msgstr ""
+msgstr "LED CONFIGURATION"
 
 msgid "LED Power"
-msgstr ""
+msgstr "LED Power"
 
 msgid "LED correction method updated successfully"
-msgstr ""
+msgstr "LED correction method updated successfully"
 
 msgid "LIGHTING"
-msgstr ""
+msgstr "LIGHTING"
 
 msgid "LOCATION & TIME"
-msgstr ""
+msgstr "LOCATION & TIME"
 
 msgid "Language"
-msgstr ""
+msgstr "Language"
 
 msgid "Last Quarter"
-msgstr ""
+msgstr "Last Quarter"
 
 msgid "Last shutdown"
-msgstr ""
+msgstr "Last shutdown"
 
 msgid "License"
-msgstr ""
+msgstr "License"
 
 msgid "Light"
 msgstr "Light"
 
 msgid "Linear"
-msgstr ""
+msgstr "Linear"
 
 msgid "Loading..."
-msgstr ""
+msgstr "Loading..."
 
 msgid "Location permissions are denied"
-msgstr ""
+msgstr "Location permissions are denied"
 
 msgid "Location permissions are permanently denied"
-msgstr ""
+msgstr "Location permissions are permanently denied"
 
 msgid "Location updated successfully"
-msgstr ""
+msgstr "Location updated successfully"
 
 msgid "Logarithmic"
-msgstr ""
+msgstr "Logarithmic"
 
 msgid "MANU"
-msgstr ""
+msgstr "MANU"
 
 msgid "Maintain last"
-msgstr ""
+msgstr "Maintain last"
 
 msgid "Manual"
-msgstr ""
+msgstr "Manual"
 
 msgid "Manual fan power"
-msgstr ""
+msgstr "Manual fan power"
 
 msgid "Manual fan power updated successfully"
-msgstr ""
+msgstr "Manual fan power updated successfully"
 
 msgid "Manual mode"
-msgstr ""
+msgstr "Manual mode"
 
 msgid "Manufacturer"
-msgstr ""
+msgstr "Manufacturer"
 
 msgid "Mins"
-msgstr ""
+msgstr "Mins"
 
 msgid "Model"
-msgstr ""
+msgstr "Model"
 
 msgid "Moonlight"
-msgstr ""
+msgstr "Moonlight"
 
 msgid "My"
 msgstr "My"
 
 msgid "My Home"
-msgstr ""
+msgstr "My Home"
 
 msgid "My Office"
-msgstr ""
+msgstr "My Office"
 
 msgid "N/A"
-msgstr ""
+msgstr "N/A"
 
 msgid "NORM"
-msgstr ""
+msgstr "NORM"
 
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 msgid "New Device Group"
 msgstr "New Device Group"
 
 msgid "New Moon"
-msgstr ""
+msgstr "New Moon"
 
 msgid "New Scene"
-msgstr ""
+msgstr "New Scene"
 
 msgid "New firmware available"
-msgstr ""
+msgstr "New firmware available"
 
 msgid "New version"
-msgstr ""
+msgstr "New version"
 
 msgid "Next"
-msgstr ""
+msgstr "Next"
 
 msgid "No Devices"
-msgstr ""
+msgstr "No Devices"
 
 msgid "No Moon"
-msgstr ""
+msgstr "No Moon"
 
 msgid "No WiFi networks found"
-msgstr ""
+msgstr "No WiFi networks found"
 
 msgid "No chores"
-msgstr ""
+msgstr "No chores"
 
 msgid "No chores available for devices in the current scene."
-msgstr ""
+msgstr "No chores available for devices in the current scene."
 
 msgid "No devices found"
-msgstr ""
+msgstr "No devices found"
 
 #, python-brace-format
 msgid "No firmware entry found for product ID `{pid}`"
-msgstr ""
+msgstr "No firmware entry found for product ID `{pid}`"
 
 msgid "No group"
-msgstr ""
+msgstr "No group"
 
 msgid "No time zone"
-msgstr ""
+msgstr "No time zone"
 
 msgid "Nominal PFD (PAR)"
-msgstr ""
+msgstr "Nominal PFD (PAR)"
 
 msgid "Nominal power"
-msgstr ""
+msgstr "Nominal power"
 
 msgid "Not set"
-msgstr ""
+msgstr "Not set"
 
 msgid "Notes"
 msgstr "Notes"
 
 msgid "OFF"
-msgstr ""
+msgstr "OFF"
 
 msgid "OFF-LINE"
-msgstr ""
+msgstr "OFF-LINE"
 
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgid "ON"
-msgstr ""
+msgstr "ON"
+
+msgid "Online Documentation"
+msgstr "Online Documentation"
 
 msgid "Operation failed"
-msgstr ""
+msgstr "Operation failed"
 
 msgid "Overpower cut-off"
-msgstr ""
+msgstr "Overpower cut-off"
 
 msgid "Overpower enabled"
-msgstr ""
+msgstr "Overpower enabled"
 
 msgid "Overtemperature cut-off"
-msgstr ""
+msgstr "Overtemperature cut-off"
 
 msgid "Overtemperature enabled"
-msgstr ""
+msgstr "Overtemperature enabled"
 
 msgid "PID Adaptive"
-msgstr ""
+msgstr "PID Adaptive"
 
 msgid "POWER & PROTECTION"
-msgstr ""
+msgstr "POWER & PROTECTION"
 
 msgid "PREV"
-msgstr ""
+msgstr "PREV"
 
 msgid "PWM frequency"
-msgstr ""
+msgstr "PWM frequency"
 
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 msgid ""
-"Please carefully check the configuration. Incorrect configuration may cause "
-"hardware damage or other dangerous situations. Submitting will reboot the "
-"device.\n"
+"Please carefully check the configuration. Incorrect configuration may cause hardware damage or other dangerous situations. Submitting will reboot the device.\n"
 "Do you want to proceed?"
 msgstr ""
+"Please carefully check the configuration. Incorrect configuration may cause hardware damage or other dangerous situations. Submitting will reboot the device.\n"
+"Do you want to proceed?"
 
 msgid "Please check device connection"
-msgstr ""
+msgstr "Please check device connection"
 
 msgid "Please enable location services"
-msgstr ""
+msgstr "Please enable location services"
 
 msgid "Please enter a password"
-msgstr ""
+msgstr "Please enter a password"
 
 msgid "Please enter the scene name"
 msgstr "Please enter the scene name"
 
 msgid "Please keep the device powered on and connected to the network."
-msgstr ""
+msgstr "Please keep the device powered on and connected to the network."
 
 msgid "Power Off All"
-msgstr ""
+msgstr "Power Off All"
 
 msgid "Power behavior updated successfully"
-msgstr ""
+msgstr "Power behavior updated successfully"
 
 msgid "Power status at startup"
-msgstr ""
+msgstr "Power status at startup"
 
 msgid "Press back again to exit"
-msgstr ""
+msgstr "Press back again to exit"
 
 msgid "Prev"
-msgstr ""
+msgstr "Prev"
 
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Privacy Policy"
 
 msgid "Provision"
-msgstr ""
+msgstr "Provision"
 
 msgid "Provisioning"
-msgstr ""
+msgstr "Provisioning"
 
 msgid "Provisioning Successful!"
-msgstr ""
+msgstr "Provisioning Successful!"
 
 msgid "RETRY"
-msgstr ""
+msgstr "RETRY"
 
 msgid "Rate in application store"
 msgstr "Rate in application store"
 
 msgid "Ready to provision"
-msgstr ""
+msgstr "Ready to provision"
 
 #, python-brace-format
 msgid "Reason code: {reasonCode}"
-msgstr ""
+msgstr "Reason code: {reasonCode}"
 
 msgid "Reconnect"
-msgstr ""
+msgstr "Reconnect"
 
 msgid "Refresh"
-msgstr ""
+msgstr "Refresh"
 
 msgid "Registering Device"
-msgstr ""
+msgstr "Registering Device"
 
 msgid "Release date"
-msgstr ""
+msgstr "Release date"
 
 msgid "Remove"
-msgstr ""
+msgstr "Remove"
 
 msgid "Reset device network settings"
-msgstr ""
+msgstr "Reset device network settings"
 
 msgid "Restore"
-msgstr ""
+msgstr "Restore"
 
 msgid "Restore Factory Settings"
-msgstr ""
+msgstr "Restore Factory Settings"
 
 msgid "Restore to factory settings"
-msgstr ""
+msgstr "Restore to factory settings"
 
 msgid "Retry"
-msgstr ""
+msgstr "Retry"
 
 #, python-brace-format
 msgid "Rises at {t}"
-msgstr ""
+msgstr "Rises at {t}"
 
 msgid "SCHED"
-msgstr ""
+msgstr "SCHED"
 
 msgid "SETTINGS"
-msgstr ""
+msgstr "SETTINGS"
 
 msgid "STANDALONE CONTROLLER"
-msgstr ""
+msgstr "STANDALONE CONTROLLER"
 
 msgid "SUN"
-msgstr ""
+msgstr "SUN"
 
 msgid "Save"
-msgstr ""
+msgstr "Save"
 
 msgid "Scene Image"
-msgstr ""
+msgstr "Scene Image"
 
 msgid "Scene deleted"
-msgstr ""
+msgstr "Scene deleted"
 
 msgid "Scenes"
 msgstr "Scenes"
 
 msgid "Scheduled"
-msgstr ""
+msgstr "Scheduled"
 
 msgid "Scheduled mode"
-msgstr ""
+msgstr "Scheduled mode"
 
 msgid "Searching for devices..."
-msgstr ""
+msgstr "Searching for devices..."
 
 msgid "Select Language"
-msgstr ""
+msgstr "Select Language"
 
 msgid "Select Location"
-msgstr ""
+msgstr "Select Location"
 
 msgid "Select PWM frequency"
-msgstr ""
+msgstr "Select PWM frequency"
 
 msgid "Select Temperature Unit"
-msgstr ""
+msgstr "Select Temperature Unit"
 
 msgid "Select Theme"
-msgstr ""
+msgstr "Select Theme"
 
 msgid "Select WiFi"
-msgstr ""
+msgstr "Select WiFi"
 
 msgid "Select channel count"
-msgstr ""
+msgstr "Select channel count"
 
 msgid "Select correction curve"
-msgstr ""
+msgstr "Select correction curve"
 
 msgid "Select duration"
-msgstr ""
+msgstr "Select duration"
 
 msgid "Select fan mode"
-msgstr ""
+msgstr "Select fan mode"
 
 msgid "Select overtemperature cut-off"
-msgstr ""
+msgstr "Select overtemperature cut-off"
 
 msgid "Select power status"
-msgstr ""
+msgstr "Select power status"
 
 #, python-brace-format
 msgid "Select the group to which device \"{deviceName}\" belongs:"
-msgstr ""
+msgstr "Select the group to which device \"{deviceName}\" belongs:"
 
 msgid "Sending Credentials"
-msgstr ""
+msgstr "Sending Credentials"
 
 msgid "Serial Number"
-msgstr ""
+msgstr "Serial Number"
 
 msgid "Set"
-msgstr ""
+msgstr "Set"
 
 msgid "Set Device Name"
-msgstr ""
+msgstr "Set Device Name"
 
 msgid "Set Manual Fan Power"
-msgstr ""
+msgstr "Set Manual Fan Power"
 
 msgid "Settings"
-msgstr ""
+msgstr "Settings"
 
 msgid "Simulate cloud shadow effect"
-msgstr ""
+msgstr "Simulate cloud shadow effect"
 
 msgid "Start date"
-msgstr ""
+msgstr "Start date"
 
 msgid "Start date is invalid."
-msgstr ""
+msgstr "Start date is invalid."
 
 msgid "Start strength"
-msgstr ""
+msgstr "Start strength"
 
 msgid "Start strength must be between 10% and 90%."
-msgstr ""
+msgstr "Start strength must be between 10% and 90%."
 
 msgid "Stop"
-msgstr ""
+msgstr "Stop"
 
 msgid "Submit"
-msgstr ""
+msgstr "Submit"
 
 msgid "Sun Simulation"
-msgstr ""
+msgstr "Sun Simulation"
 
 msgid "Sun simulation mode"
-msgstr ""
+msgstr "Sun simulation mode"
 
 msgid "System"
 msgstr "System"
 
 msgid "TEMP"
-msgstr ""
+msgstr "TEMP"
 
 msgid "THERMAL MANAGEMENT"
-msgstr ""
+msgstr "THERMAL MANAGEMENT"
 
 msgid "Tap globe to select location"
-msgstr ""
+msgstr "Tap globe to select location"
 
 msgid "Temperature & Fan"
-msgstr ""
+msgstr "Temperature & Fan"
 
 msgid "Temperature Unit"
-msgstr ""
+msgstr "Temperature Unit"
 
 msgid "Temporary"
-msgstr ""
+msgstr "Temporary"
 
 msgid "Temporary duration updated successfully"
-msgstr ""
+msgstr "Temporary duration updated successfully"
 
 msgid "Temporary light duration"
-msgstr ""
+msgstr "Temporary light duration"
 
 msgid "Term of Services."
-msgstr ""
+msgstr "Term of Services."
 
 msgid "The WiFi scanning has been cancelled."
-msgstr ""
+msgstr "The WiFi scanning has been cancelled."
 
 msgid "The device has been updated and will restart shortly."
-msgstr ""
+msgstr "The device has been updated and will restart shortly."
 
 msgid ""
 "The device is currently offline. Please check the network or power "
 "connection."
 msgstr ""
+"The device is currently offline. Please check the network or power "
+"connection."
 
 msgid "The device will need to be reconfigured after this operation."
-msgstr ""
+msgstr "The device will need to be reconfigured after this operation."
 
 msgid "The device will restart automatically after the update is complete."
-msgstr ""
+msgstr "The device will restart automatically after the update is complete."
 
 msgid "The update may take several minutes. Do not close this app."
-msgstr ""
+msgstr "The update may take several minutes. Do not close this app."
 
 msgid "Theme"
 msgstr "Theme"
 
 msgid "This action will:"
-msgstr ""
+msgstr "This action will:"
 
 msgid "This device is not compatible with the selected driver."
-msgstr ""
+msgstr "This device is not compatible with the selected driver."
 
 msgid ""
-"This mobile application is free software licensed under GNU General Public "
-"License version 3 or later, with no warranty.\n"
-"The author assumes no responsibility or liability for any direct or indirect "
-"consequences resulting from the use of this software."
+"This mobile application is free software licensed under GNU General Public License version 3 or later, with no warranty.\n"
+"The author assumes no responsibility or liability for any direct or indirect consequences resulting from the use of this software."
 msgstr ""
+"This mobile application is free software licensed under GNU General Public License version 3 or later, with no warranty.\n"
+"The author assumes no responsibility or liability for any direct or indirect consequences resulting from the use of this software."
 
 msgid ""
 "This scene contains devices or device groups. Please remove all devices and "
 "groups from this scene before deleting it."
 msgstr ""
+"This scene contains devices or device groups. Please remove all devices and "
+"groups from this scene before deleting it."
 
 #, python-brace-format
 msgid "Time remaining: {0} seconds"
-msgstr ""
+msgstr "Time remaining: {0} seconds"
 
 msgid "Time zone"
-msgstr ""
+msgstr "Time zone"
 
 msgid "Time zone updated successfully"
-msgstr ""
+msgstr "Time zone updated successfully"
 
 msgid "Timed out while probing the device."
-msgstr ""
+msgstr "Timed out while probing the device."
 
 msgid "Timezone mismatch"
-msgstr ""
+msgstr "Timezone mismatch"
 
 msgid "Timezone synchronized successfully"
-msgstr ""
+msgstr "Timezone synchronized successfully"
 
 msgid "Unable to connect to this device."
-msgstr ""
+msgstr "Unable to connect to this device."
 
 msgid "Unable to switch to Sun Simulation mode: the location is not set."
-msgstr ""
+msgstr "Unable to switch to Sun Simulation mode: the location is not set."
 
 msgid "Unable to switch to Sun Simulation mode: the timezone is not set."
-msgstr ""
+msgstr "Unable to switch to Sun Simulation mode: the timezone is not set."
 
 msgid ""
 "Unable to update Moon mode: configure at least one channel with brightness "
 "greater than 0."
 msgstr ""
+"Unable to update Moon mode: configure at least one channel with brightness "
+"greater than 0."
 
 msgid "Unable to update Moon mode: the location is not set."
-msgstr ""
+msgstr "Unable to update Moon mode: the location is not set."
 
 msgid "Unable to update Moon mode: the timezone is not set."
-msgstr ""
+msgstr "Unable to update Moon mode: the timezone is not set."
 
 msgid "Ungrouped devices"
-msgstr ""
+msgstr "Ungrouped devices"
 
 msgid "Unknown"
-msgstr ""
+msgstr "Unknown"
 
 msgid "Unknown Error"
-msgstr ""
+msgstr "Unknown Error"
 
 msgid "Unknown error"
-msgstr ""
+msgstr "Unknown error"
 
 msgid "Update Now"
-msgstr ""
+msgstr "Update Now"
 
 msgid "Update acclimation settings succeed."
-msgstr ""
+msgstr "Update acclimation settings succeed."
 
 msgid "Update failed"
-msgstr ""
+msgstr "Update failed"
 
 msgid "Update moon settings succeed."
-msgstr ""
+msgstr "Update moon settings succeed."
 
 msgid "Update successful!"
-msgstr ""
+msgstr "Update successful!"
 
 msgid "Updating firmware..."
-msgstr ""
+msgstr "Updating firmware..."
 
 #, python-brace-format
 msgid "Upgrade to {0}"
-msgstr ""
+msgstr "Upgrade to {0}"
 
 msgid "VERSION & UPGRADE"
-msgstr ""
+msgstr "VERSION & UPGRADE"
 
 #, python-brace-format
 msgid "Version {0} is available. Tap the button below to update."
-msgstr ""
+msgstr "Version {0} is available. Tap the button below to update."
 
 #, python-brace-format
 msgid "Version {0} is the latest version."
-msgstr ""
+msgstr "Version {0} is the latest version."
 
 #, python-brace-format
 msgid "Version {verText}+{buildNumberText}"
-msgstr ""
+msgstr "Version {verText}+{buildNumberText}"
 
 msgid "Waiting for device to join network"
-msgstr ""
+msgstr "Waiting for device to join network"
 
 msgid "Waning Crescent"
-msgstr ""
+msgstr "Waning Crescent"
 
 msgid "Waning Gibbous"
-msgstr ""
+msgstr "Waning Gibbous"
 
 msgid "Water Change Mode"
-msgstr ""
+msgstr "Water Change Mode"
 
 msgid "Wavelength"
-msgstr ""
+msgstr "Wavelength"
 
 msgid "Wavelength 2"
-msgstr ""
+msgstr "Wavelength 2"
 
 msgid "Waxing Crescent"
-msgstr ""
+msgstr "Waxing Crescent"
 
 msgid "Waxing Gibbous"
-msgstr ""
+msgstr "Waxing Gibbous"
 
 msgid "Website"
 msgstr "Website"
 
 msgid "You can finish now without waiting."
-msgstr ""
+msgstr "You can finish now without waiting."
 
 msgid "Your firmware is up to date"
-msgstr ""
+msgstr "Your firmware is up to date"
 
 msgid "[Debug] Force Update"
-msgstr ""
+msgstr "[Debug] Force Update"
 
 #, python-brace-format
 msgid "{0} active"
-msgstr ""
+msgstr "{0} active"
 
 #, python-brace-format
 msgid "{0} devices"
-msgstr ""
+msgstr "{0} devices"
 
 #, python-brace-format
 msgid "{0} seconds remaining"
-msgstr ""
+msgstr "{0} seconds remaining"
 
 #, python-brace-format
 msgid "{d} days"
-msgstr ""
+msgstr "{d} days"
 
 msgid "• Delete all custom settings and configurations"
-msgstr ""
+msgstr "• Delete all custom settings and configurations"
 
 msgid "• Disconnect the device from your network"
-msgstr ""
+msgstr "• Disconnect the device from your network"
 
 msgid "• Reset all schedules and modes to defaults"
-msgstr ""
+msgstr "• Reset all schedules and modes to defaults"
 
 msgid "℃"
-msgstr ""
+msgstr "℃"
 
 msgid "℃ (Celsius)"
-msgstr ""
+msgstr "℃ (Celsius)"
 
 msgid "℉"
-msgstr ""
+msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
-msgstr ""
+msgstr "℉ (Fahrenheit)"

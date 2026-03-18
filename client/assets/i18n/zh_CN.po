@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 00:03+0800\n"
+"POT-Creation-Date: 2026-03-18 11:10+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -535,6 +535,9 @@ msgstr "上弦月"
 msgid "Full Moon"
 msgstr "满月"
 
+msgid "GNU General Public License v3"
+msgstr "GNU 通用公共授权协议 v3"
+
 msgid "Gamma"
 msgstr "伽马矫正"
 
@@ -739,6 +742,9 @@ msgstr "确定"
 
 msgid "ON"
 msgstr "电源开"
+
+msgid "Online Documentation"
+msgstr "在线文档"
 
 msgid "Operation failed"
 msgstr "操作失败"
