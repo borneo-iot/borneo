@@ -109,8 +109,13 @@ int led_load_factory_settings()
 
         snprintf(key, sizeof(key), "ch%u.f", ch);
         len = sizeof(float);
-        BO_TRY(bo_nvs_get_or_set_blob(handle, key, &s_factory_settings.channels[ch].factor, &len,
-                                      &defaults->wavelength2, sizeof(float), &changed));
+        BO_TRY(bo_nvs_get_or_set_blob(handle, key, &s_factory_settings.channels[ch].factor, &len, &defaults->factor,
+                                      sizeof(float), &changed));
+
+        snprintf(key, sizeof(key), "ch%u.r", ch);
+        len = sizeof(float);
+        BO_TRY(bo_nvs_get_or_set_blob(handle, key, &s_factory_settings.channels[ch].ratio, &len, &defaults->ratio,
+                                      sizeof(float), &changed));
     }
 
     if (changed) {

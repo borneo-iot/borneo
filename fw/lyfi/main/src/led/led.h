@@ -91,7 +91,8 @@ struct led_channel_settings {
     char color[8]; ///< Channel color in hex format (e.g., "#F44336")
     int16_t wavelength; ///< Channel wavelength in nm (0 = unknown)
     int16_t wavelength2; ///< Channel wavelength2 in nm (0 = unknown)
-    float factor; ///< Power factor
+    float factor; ///< Power factor of this channel
+    float ratio; ///< The power ratio of the two wavelength beads
 };
 
 struct led_factory_settings {

@@ -42,6 +42,9 @@ static int _encode_channel_info_entry(CborEncoder* parent, const struct led_chan
     BO_TRY(cbor_encode_text_stringz(&ch_map, "f"));
     BO_TRY(cbor_encode_float(&ch_map, channel->factor));
 
+    BO_TRY(cbor_encode_text_stringz(&ch_map, "r"));
+    BO_TRY(cbor_encode_float(&ch_map, channel->ratio));
+
     BO_TRY(cbor_encoder_close_container(parent, &ch_map));
 
     return 0;

@@ -30,10 +30,10 @@ const struct led_factory_settings LED_FACTORY_DEFAULT_SETTINGS = {
     .pwm_freq = 19530,
     .channel_count = CONFIG_LYFI_LED_CHANNEL_COUNT,
     .channels = {
-        { .name = "R", .color = "#F44336", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 },
-        { .name = "G", .color = "#4CAF50", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 },
-        { .name = "B", .color = "#2196F3", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 },
-        { .name = "FW", .color = "#BDBDBD", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 },
-        { .name = "UV", .color = "#673AB7", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 },
+        { .name = "R", .color = "#F44336", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 , .ratio = 1.0},
+        { .name = "G", .color = "#4CAF50", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 , .ratio = 1.0},
+        { .name = "B", .color = "#2196F3", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 , .ratio = 1.0},
+        { .name = "FW", .color = "#BDBDBD", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 , .ratio = 1.0},
+        { .name = "UV", .color = "#673AB7", .wavelength = 0, .wavelength2 = 0, .factor = 0.2 , .ratio = 1.0},
     },
 };
