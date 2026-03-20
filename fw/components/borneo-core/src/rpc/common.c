@@ -3,6 +3,8 @@
 #include <esp_log.h>
 #include <sys/socket.h>
 
+#include <esp_heap_caps.h>
+
 #include <esp_mac.h>
 #include <esp_timer.h>
 #include <nvs_flash.h>
@@ -146,19 +148,11 @@ int bo_rpc_borneo_status_get(const CborValue* args, CborEncoder* retvals)
 {
     (void)args; // No input args for GET
     CborEncoder root_map;
-    uint32_t timestamp = 0;
 
     BO_TRY(cbor_encoder_create_map(retvals, &root_map, CborIndefiniteLength));
 
     BO_TRY(cbor_encode_text_stringz(&root_map, "mode"));
     BO_TRY(cbor_encode_uint(&root_map, k_get_mode()));
-
-    BO_TRY(cbor_encode_text_stringz(&root_map, "power"));
-    BO_TRY(cbor_encode_boolean(&root_map, bo_power_is_on()));
-
-    BO_TRY(cbor_encode_text_stringz(&root_map, "timestamp"));
-    BO_TRY(bo_rtc_get_timestamp(&timestamp));
-    BO_TRY(cbor_encode_uint(&root_map, timestamp));
 
     BO_TRY(cbor_encode_text_stringz(&root_map, "bootDuration"));
     BO_TRY(cbor_encode_int(&root_map, bo_timer_uptime_ms()));
@@ -249,6 +243,73 @@ int bo_rpc_heartbeat_get(const CborValue* args, CborEncoder* retvals)
 {
     (void)args; // No input args for GET
     BO_TRY(cbor_encode_int(retvals, (int64_t)time(NULL)));
+    return 0;
+}
+
+int bo_rpc_borneo_health_get(const CborValue* args, CborEncoder* retvals)
+{
+    (void)args; // No input args for GET
+
+    CborEncoder root_map;
+    BO_TRY(cbor_encoder_create_map(retvals, &root_map, CborIndefiniteLength));
+
+    size_t free_heap = esp_get_free_heap_size();
+    size_t min_free_heap = esp_get_minimum_free_heap_size();
+    size_t total_heap = heap_caps_get_total_size(MALLOC_CAP_8BIT);
+
+    size_t internal_total = heap_caps_get_total_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+    size_t internal_free = heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+
+#if CONFIG_SPIRAM
+    size_t psram_total = heap_caps_get_total_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    size_t psram_free = heap_caps_get_free_size(MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+#endif // CONFIG_SPIRAM
+
+#if CONFIG_SPIRAM
+    size_t physical_total = internal_total + psram_total;
+    size_t physical_free = internal_free + psram_free;
+#else
+    size_t physical_total = internal_total;
+    size_t physical_free = internal_free;
+#endif // CONFIG_SPIRAM
+    size_t physical_used = physical_total >= physical_free ? (physical_total - physical_free) : 0;
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "freeHeap"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)free_heap));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "minFreeHeap"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)min_free_heap));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "totalHeap"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)total_heap));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "usedHeap"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)(total_heap >= free_heap ? (total_heap - free_heap) : 0)));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "phyTotal"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)physical_total));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "phyFree"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)physical_free));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "phyUsed"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)physical_used));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "internalTotal"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)internal_total));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "internalFree"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)internal_free));
+
+#if CONFIG_SPIRAM
+    BO_TRY(cbor_encode_text_stringz(&root_map, "psramTotal"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)psram_total));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "psramFree"));
+    BO_TRY(cbor_encode_uint(&root_map, (uint64_t)psram_free));
+#endif // CONFIG_SPIRAM
+
+    BO_TRY(cbor_encoder_close_container(retvals, &root_map));
     return 0;
 }
 
