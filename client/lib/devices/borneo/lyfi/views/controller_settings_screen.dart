@@ -108,10 +108,10 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
             if (widget.vm.nominalPfdSetting.available)
               settingsSliderTile(
                 title: Text(context.translate('Nominal PFD (PAR)')),
-                value: widget.vm.nominalPfdSetting.value.clamp(0, 10000).toDouble(),
+                value: widget.vm.nominalPfdSetting.value.clamp(0, 2000).toDouble(),
                 min: 0,
-                max: 10000,
-                divisions: 10000,
+                max: 2000,
+                divisions: 2000,
                 showStepButtons: true,
                 label: widget.vm.nominalPfdSetting.value.toString(),
                 trailing: Selector<ControllerSettingsViewModel, int>(
@@ -126,10 +126,10 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
             if (widget.vm.nominalPowerSetting.available)
               settingsSliderTile(
                 title: Text(context.translate('Nominal power')),
-                value: widget.vm.nominalPowerSetting.value.clamp(0, 10000).toDouble(),
+                value: widget.vm.nominalPowerSetting.value.clamp(0, 1000).toDouble(),
                 min: 0,
-                max: 10000,
-                divisions: 10000,
+                max: 1000,
+                divisions: 1000,
                 showStepButtons: true,
                 label: widget.vm.nominalPowerSetting.value.toString(),
                 trailing: Selector<ControllerSettingsViewModel, int>(
