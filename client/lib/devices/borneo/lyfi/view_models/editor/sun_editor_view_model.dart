@@ -19,7 +19,7 @@ class SunEditorViewModel extends BaseEditorViewModel {
 
   List<SunCurveItem> _sunCurve = const [];
 
-  SunEditorViewModel(super.parent, super.lyfiThing);
+  SunEditorViewModel(super.parent, super.lyfiThing, {required super.gt});
 
   @override
   Future<void> onInitialize({CancellationToken? cancelToken}) async {
@@ -30,7 +30,7 @@ class SunEditorViewModel extends BaseEditorViewModel {
     assert(parent.mode == LyfiMode.sun);
 
     if (parent.boundDevice == null) {
-      throw StateError('Device is not bound.');
+      throw StateError(gt.translate('Device is not bound.'));
     }
 
     final sunColor = super.lyfiThing.getProperty<List<int>>('sunColor')!;
@@ -39,17 +39,30 @@ class SunEditorViewModel extends BaseEditorViewModel {
     }
     await super.syncDimmingColor(true, cancelToken: cancelToken);
 
-    _sunCurve = super.lyfiThing.getProperty<List<SunCurveItem>>('sunCurve')!;
-
     final instants = await parent.executeLyfiCommand(
       () => _deviceApi.getSunSchedule(parent.boundDevice!.device, cancelToken: cancelToken),
     );
     _sunInstants = instants;
+
+    _sunCurve = super.lyfiThing.getProperty<List<SunCurveItem>>('sunCurve')!;
+    if (_sunCurve.isEmpty || _sunCurve.length != _sunInstants.length) {
+      _sunCurve = await parent.executeLyfiCommand(
+        () => _deviceApi.getSunCurve(parent.boundDevice!.device, cancelToken: cancelToken),
+      );
+      parent.lyfiThing.findProperty('sunCurve')?.value.notifyOfExternalUpdate(_sunCurve);
+    }
+
+    if (_sunCurve.isEmpty) {
+      throw StateError(gt.translate('Sun curve data is unavailable.'));
+    }
   }
 
   @override
   Future<void> updateChannelValue(int index, int value) async {
     if (index >= 0 && index < channels.length && value != channels[index].value) {
+      if (_sunCurve.length < _sunInstants.length) {
+        throw StateError(gt.translate('Sun curve data is incomplete.'));
+      }
       channels[index].value = value;
       await super.syncDimmingColor(true);
       super.isChanged = true;

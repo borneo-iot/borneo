@@ -693,15 +693,15 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
     IEditor newEditor;
     switch (newMode) {
       case LyfiMode.manual:
-        newEditor = ManualEditorViewModel(this, super.lyfiThing);
+        newEditor = ManualEditorViewModel(this, super.lyfiThing, gt: this.gt);
         break;
 
       case LyfiMode.scheduled:
-        newEditor = ScheduleEditorViewModel(this, super.lyfiThing);
+        newEditor = ScheduleEditorViewModel(this, super.lyfiThing, gt: this.gt);
         break;
 
       case LyfiMode.sun:
-        newEditor = SunEditorViewModel(this, super.lyfiThing);
+        newEditor = SunEditorViewModel(this, super.lyfiThing, gt: this.gt);
         break;
     }
 

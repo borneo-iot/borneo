@@ -6,11 +6,14 @@ import 'package:borneo_wot/borneo/lyfi/wot_thing.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:flutter_debounce_throttle/flutter_debounce_throttle.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 
 abstract class BaseEditorViewModel extends ChangeNotifier implements IEditor {
   final ThrottleDebouncer _colorChangeRateLimiter = ThrottleDebouncer(duration: kLocalDimmingTrackingInterval);
   ThrottleDebouncer get colorChangeRateLimiter => _colorChangeRateLimiter;
+
   bool _isDisposed = false;
+  final GettextLocalizations gt;
 
   final List<ValueNotifier<int>> _channels;
   final List<int> blackColor;
@@ -34,7 +37,7 @@ abstract class BaseEditorViewModel extends ChangeNotifier implements IEditor {
   @override
   List<ValueNotifier<int>> get channels => _channels;
 
-  BaseEditorViewModel(this.parent, this.lyfiThing)
+  BaseEditorViewModel(this.parent, this.lyfiThing, {required this.gt})
     : _channels = List.generate(parent.lyfiDeviceInfo.channelCount, growable: false, (index) => ValueNotifier(0)),
       blackColor = List.filled(parent.lyfiDeviceInfo.channelCount, 0, growable: false);
 

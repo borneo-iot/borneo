@@ -67,7 +67,8 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
 
   ILyfiDeviceApi get _deviceApi => parent.boundDevice!.driver as ILyfiDeviceApi;
 
-  ScheduleEditorViewModel(super.parent, super.lyfiThing) : easySetupViewModel = EasySetupViewModel();
+  ScheduleEditorViewModel(super.parent, super.lyfiThing, {required super.gt})
+    : easySetupViewModel = EasySetupViewModel();
 
   @override
   Future<void> onInitialize({CancellationToken? cancelToken}) async {

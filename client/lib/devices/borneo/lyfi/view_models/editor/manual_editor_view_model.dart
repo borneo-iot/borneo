@@ -8,7 +8,7 @@ class ManualEditorViewModel extends BaseEditorViewModel {
 
   bool get canChangeColor => canEdit;
 
-  ManualEditorViewModel(super.parent, super.lyfiThing);
+  ManualEditorViewModel(super.parent, super.lyfiThing, {required super.gt});
 
   @override
   Future<void> onInitialize({CancellationToken? cancelToken}) async {
