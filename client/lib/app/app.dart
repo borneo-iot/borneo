@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:borneo_app/app/themes/app_theme.dart';
 import 'package:borneo_app/core/events/app_events.dart';
 import 'package:borneo_app/core/services/chore_manager_impl.dart';
 import 'package:borneo_app/core/services/clock.dart';
@@ -115,16 +116,8 @@ class _BorneoAppState extends State<BorneoApp> {
           return MaterialApp(
             title: 'Borneo Aqua',
             navigatorKey: _navigatorKey,
-            //theme: BorneoTheme(Theme.of(context).textTheme).light(),
-            //darkTheme: BorneoTheme(Theme.of(context).textTheme).dark(),
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff493b72), brightness: Brightness.light),
-              useMaterial3: true,
-            ),
-            darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff493b72), brightness: Brightness.dark),
-              useMaterial3: true,
-            ),
+            theme: BorneoTheme.light,
+            darkTheme: BorneoTheme.dark,
             themeMode: _themeMode,
             locale: _locale,
             supportedLocales: kSupportedLocales,

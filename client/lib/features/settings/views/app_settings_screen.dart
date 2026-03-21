@@ -1,4 +1,5 @@
 import 'package:borneo_app/core/services/app_notification_service.dart';
+import 'package:borneo_app/app/themes/settings_list_theme.dart';
 import 'package:borneo_app/core/services/url_launcher_service.dart';
 import 'package:borneo_app/shared/widgets/generic_bottom_sheet_picker.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class AppSettingsScreen extends ConsumerWidget {
       error: (err, st) => Scaffold(body: Center(child: Text('Error: $err'))),
       data: (state) {
         return Scaffold(
-          appBar: AppBar(title: Text(context.translate('App Settings')), elevation: 1),
+          appBar: AppBar(title: Text(context.translate('App Settings'))),
           body: buildItems(context, ref, state),
         );
       },
@@ -41,6 +42,8 @@ class AppSettingsScreen extends ConsumerWidget {
   }
 
   SettingsList buildItems(BuildContext context, WidgetRef ref, AppSettingsState state) => SettingsList(
+    lightTheme: settingsListTheme(context),
+    darkTheme: settingsListTheme(context),
     sections: [
       SettingsSection(
         title: Text(context.translate('APPEARANCE')),

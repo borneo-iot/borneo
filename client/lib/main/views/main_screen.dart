@@ -138,6 +138,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget buildScaffold(BuildContext context) {
     final mainVM = context.read<MainViewModel>();
     final routeManager = context.read<RouteManager>();
+    final cs = Theme.of(context).colorScheme;
 
     // Each tab needs its own NavigatorConfig so that
     // Navigator.of(context).pushNamed(...) calls inside tabs can resolve
@@ -154,8 +155,8 @@ class _MainScreenState extends State<MainScreen> {
           icon: const Icon(Icons.house),
           inactiveIcon: const Icon(Icons.house_outlined),
           title: context.translate('Scenes'),
-          activeForegroundColor: Theme.of(context).colorScheme.primary,
-          inactiveForegroundColor: Theme.of(context).colorScheme.onSurface,
+          activeForegroundColor: cs.primary,
+          inactiveBackgroundColor: cs.onSurfaceVariant,
         ),
         navigatorConfig: tabNavSettings(0),
       ),
@@ -165,8 +166,8 @@ class _MainScreenState extends State<MainScreen> {
           icon: const Icon(Icons.device_hub),
           inactiveIcon: const Icon(Icons.device_hub_outlined),
           title: context.translate('Devices'),
-          activeForegroundColor: Theme.of(context).colorScheme.primary,
-          inactiveForegroundColor: Theme.of(context).colorScheme.onSurface,
+          activeForegroundColor: cs.primary,
+          inactiveBackgroundColor: cs.onSurfaceVariant,
         ),
         navigatorConfig: tabNavSettings(1),
       ),
@@ -176,8 +177,8 @@ class _MainScreenState extends State<MainScreen> {
           icon: const Icon(Icons.person),
           inactiveIcon: const Icon(Icons.person_outline),
           title: context.translate('My'),
-          activeForegroundColor: Theme.of(context).colorScheme.primary,
-          inactiveForegroundColor: Theme.of(context).colorScheme.onSurface,
+          activeForegroundColor: cs.primary,
+          inactiveBackgroundColor: cs.onSurfaceVariant,
         ),
         navigatorConfig: tabNavSettings(2),
       ),

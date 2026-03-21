@@ -24,6 +24,8 @@ class MockLogger extends logger_pkg.Logger {
 
 class MockDriver implements Driver {
   final String id;
+  @override
+  final logger_pkg.Logger? logger;
   bool _isDisposed = false;
   final Map<String, bool> _probeResults = {};
   final Map<String, bool> _heartbeatResults = {};
@@ -31,7 +33,7 @@ class MockDriver implements Driver {
   final List<String> _removedDevices = [];
   final List<String> _heartbeatDevices = [];
 
-  MockDriver(this.id);
+  MockDriver(this.id, {this.logger});
 
   void setProbeResult(String deviceId, bool result) {
     _probeResults[deviceId] = result;

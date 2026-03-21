@@ -2,6 +2,7 @@ import 'package:borneo_app/core/services/clock.dart';
 import 'package:borneo_app/devices/borneo/lyfi/view_models/acclimation_view_model.dart';
 import 'package:borneo_app/core/services/devices/device_manager.dart';
 import 'package:borneo_app/core/services/app_notification_service.dart';
+import 'package:borneo_app/app/themes/settings_list_theme.dart';
 import 'package:borneo_app/shared/widgets/app_bar_apply_button.dart';
 import 'package:borneo_app/shared/widgets/settings_ui/settings_tile_extensions.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
@@ -85,6 +86,8 @@ class AcclimationScreen extends StatelessWidget {
     final vm = context.watch<AcclimationViewModel>();
 
     return SettingsList(
+      lightTheme: settingsListTheme(context),
+      darkTheme: settingsListTheme(context),
       sections: [
         SettingsSection(
           title: Text(context.translate('SETTINGS')),

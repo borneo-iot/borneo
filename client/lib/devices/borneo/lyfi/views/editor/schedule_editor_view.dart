@@ -229,7 +229,6 @@ class ScheduleEditorView extends StatelessWidget {
                   final vm = context.read<ScheduleEditorViewModel>();
                   return Card(
                     margin: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                    elevation: 1,
                     color: Theme.of(context).colorScheme.surfaceContainer,
                     child: Padding(
                       padding: EdgeInsetsGeometry.fromLTRB(8, 16, 8, 8),

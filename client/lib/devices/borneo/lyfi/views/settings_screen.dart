@@ -5,6 +5,7 @@ import 'package:borneo_app/devices/borneo/lyfi/view_models/settings_view_model.d
 import 'package:borneo_app/devices/borneo/lyfi/views/controller_settings_screen.dart';
 import 'package:borneo_app/devices/view_models/device_ota_view_model.dart';
 import 'package:borneo_app/devices/views/device_ota_screen.dart';
+import 'package:borneo_app/app/themes/settings_list_theme.dart';
 import 'package:borneo_app/shared/widgets/bottom_sheet_picker.dart';
 import 'package:borneo_app/shared/widgets/confirmation_sheet.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
@@ -36,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
       builder: (context, child) => DeviceAvailabilityGuard<SettingsViewModel>(
         viewModel: vm,
         child: Scaffold(
-          appBar: AppBar(title: Text(context.translate('Settings')), elevation: 1),
+          appBar: AppBar(title: Text(context.translate('Settings'))),
           body: SafeArea(child: _buildSettingsList(context)),
         ),
       ),
@@ -89,6 +90,8 @@ class SettingsScreen extends StatelessWidget {
   SettingsList _buildSettingsList(BuildContext context) {
     final lvm = context.watch<SettingsViewModel>();
     return SettingsList(
+      lightTheme: settingsListTheme(context),
+      darkTheme: settingsListTheme(context),
       sections: [
         SettingsSection(
           title: Text(context.translate('DEVICE INFORMATION')),

@@ -1,4 +1,5 @@
 import 'package:borneo_app/devices/borneo/lyfi/view_models/controller_settings_view_model.dart';
+import 'package:borneo_app/app/themes/settings_list_theme.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
 import 'package:borneo_app/shared/widgets/app_bar_apply_button.dart';
 import 'package:borneo_app/shared/widgets/bottom_sheet_picker.dart';
@@ -70,7 +71,6 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
                 appBar: AppBar(
                   title: Text(context.translate("Controller Settings")),
                   actions: _buildAppBarActions(context),
-                  elevation: 1,
                 ),
                 body: _buildSettingsList(context),
               ),
@@ -99,6 +99,8 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
   /// Convert the old widget-based groups into a [SettingsList] with sections.
   SettingsList _buildSettingsList(BuildContext context) {
     return SettingsList(
+      lightTheme: settingsListTheme(context),
+      darkTheme: settingsListTheme(context),
       sections: [
         SettingsSection(
           title: Text(context.translate('LED CONFIGURATION')),

@@ -78,7 +78,7 @@ class _ProvisioningScreenBody extends StatelessWidget {
             const Divider(height: 1),
             Expanded(
               child: Container(
-                color: Theme.of(context).colorScheme.surfaceContainer,
+                color: Theme.of(context).colorScheme.surface,
                 child: _StepContent(vm: vm),
               ),
             ),
@@ -272,7 +272,7 @@ class _SelectWifiStep extends StatelessWidget {
       onRefresh: vm.scanNetworks,
       child: ListView.separated(
         itemCount: vm.networks!.length,
-        separatorBuilder: (_, idx) => Divider(height: 1, color: Theme.of(context).dividerColor.withValues(alpha: 0.38)),
+        separatorBuilder: (_, idx) => Divider(height: 1, indent: 16, color: Theme.of(context).dividerColor),
         itemBuilder: (context, i) {
           final network = vm.networks![i];
           return ListTile(

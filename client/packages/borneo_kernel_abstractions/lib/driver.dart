@@ -2,11 +2,13 @@ import 'package:borneo_common/borneo_common.dart';
 import 'package:borneo_common/exceptions.dart';
 import 'package:borneo_kernel_abstractions/device.dart';
 import 'package:cancellation_token/cancellation_token.dart';
+import 'package:logger/logger.dart';
 
 import 'models/io.dart';
 
 abstract class Driver implements IDisposable {
-  Driver();
+  final Logger? logger;
+  const Driver({this.logger});
 
   Future<bool> probe(Device dev, {CancellationToken? cancelToken});
 
@@ -18,7 +20,14 @@ abstract class Driver implements IDisposable {
     if (dev.driverData.isBusy) {
       throw InvalidOperationException(message: "Device is busy");
     }
-    return await dev.driverData.lock.synchronized(action);
+    return await dev.driverData.lock.synchronized(() async {
+      try {
+        return await action();
+      } catch (error, stackTrace) {
+        logger?.e('Busy-check driver action failed for device ${dev.id}', error: error, stackTrace: stackTrace);
+        rethrow;
+      }
+    });
   }
 
   Future<T> withQueue<T>(
@@ -32,7 +41,12 @@ abstract class Driver implements IDisposable {
         if (dev.driverData.isBusy) {
           throw InvalidOperationException(message: "Device is busy");
         }
-        return await action();
+        try {
+          return await action();
+        } catch (error, stackTrace) {
+          logger?.e('Queued driver action failed for device ${dev.id}', error: error, stackTrace: stackTrace);
+          rethrow;
+        }
       },
       priority: priority,
       cancel: cancelToken,

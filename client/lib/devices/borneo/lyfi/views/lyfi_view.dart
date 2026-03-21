@@ -14,57 +14,6 @@ import 'package:borneo_app/features/devices/views/device_availability_guard.dart
 import '../view_models/lyfi_view_model.dart';
 import 'widgets/lyfi_header.dart';
 
-class CircleButton extends StatelessWidget {
-  final String text;
-  final Widget icon;
-  final Color? color;
-  final Color? backgroundColor;
-  final VoidCallback? onPressed;
-
-  const CircleButton({
-    super.key,
-    required this.text,
-    required this.icon,
-    this.color,
-    this.backgroundColor,
-    this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(0),
-      child: Column(
-        children: [
-          SizedBox(
-            width: 48,
-            height: 48,
-            child: Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: backgroundColor),
-              child: IconButton(
-                onPressed: onPressed,
-                padding: EdgeInsets.all(8),
-                icon: icon,
-                color: color,
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 1.0),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Divider(height: 2),
-          Text(text, style: Theme.of(context).textTheme.bodySmall),
-        ],
-      ),
-    );
-  }
-}
-
 class HeroVerticalDivider extends StatelessWidget {
   final double width;
   final Color color;

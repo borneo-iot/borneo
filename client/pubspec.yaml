@@ -122,6 +122,7 @@ dependencies:
   pub_semver: ^2.2.0
   libcompress: ^1.0.0
   crypto: ^3.0.0
+  flex_color_scheme: ^8.4.0
 
 
 dev_dependencies:

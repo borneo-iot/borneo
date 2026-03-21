@@ -124,7 +124,6 @@ class _DeviceOtaScreenState extends State<DeviceOtaScreen> with TickerProviderSt
             child: Scaffold(
               appBar: AppBar(
                 title: Text(context.translate('Firmware Update')),
-                elevation: 1,
                 automaticallyImplyLeading: !vm.isUpgrading,
               ),
               body: SafeArea(

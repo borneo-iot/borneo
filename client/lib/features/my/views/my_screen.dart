@@ -1,4 +1,5 @@
 import 'package:borneo_app/constants.dart';
+import 'package:borneo_app/app/themes/settings_list_theme.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
@@ -24,6 +25,8 @@ class MyScreen extends StatelessWidget {
   Widget buildItems(BuildContext context) {
     // Use a SettingsList for consistency with other settings screens
     return SettingsList(
+      lightTheme: settingsListTheme(context),
+      darkTheme: settingsListTheme(context),
       contentPadding: const EdgeInsets.fromLTRB(0, 16, 0, 16),
       sections: [
         SettingsSection(
