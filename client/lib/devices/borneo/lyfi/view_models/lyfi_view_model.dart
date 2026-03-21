@@ -407,6 +407,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       _modeSubscription?.cancel();
       _sunScheduleSubscription?.cancel();
       _moonScheduleSubscription?.cancel();
+      _outputSubscription?.cancel();
       for (final cvn in _channels) {
         cvn.dispose();
       }
