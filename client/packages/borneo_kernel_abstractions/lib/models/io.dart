@@ -88,13 +88,17 @@ class IORequestQueue {
       final item = _currentItem!;
       try {
         final result = await item.task();
-        if (item.cancel?.isCancelled ?? false) {
-          item.completer.completeError(CancelledException());
-        } else {
-          item.completer.complete(result);
+        if (!item.completer.isCompleted) {
+          if (item.cancel?.isCancelled ?? false) {
+            item.completer.completeError(CancelledException());
+          } else {
+            item.completer.complete(result);
+          }
         }
       } catch (e) {
-        item.completer.completeError(e);
+        if (!item.completer.isCompleted) {
+          item.completer.completeError(e);
+        }
       } finally {
         _currentItem = null;
       }

@@ -20,7 +20,7 @@ abstract class DriverData extends IDisposable {
 
   @override
   void dispose() {
-    if (_isDisposed) {
+    if (!_isDisposed) {
       _queue.dispose();
       deviceEvents.destroy();
       _isDisposed = true;

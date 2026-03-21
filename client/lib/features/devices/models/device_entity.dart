@@ -76,6 +76,10 @@ class DeviceEntity extends Device with BaseEntity {
 
   @override
   void setDriverData(DriverData driverData) {
+    if (identical(_driverData, driverData)) {
+      return;
+    }
+    _driverData?.dispose();
     _driverData = driverData;
   }
 

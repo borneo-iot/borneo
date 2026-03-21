@@ -140,6 +140,27 @@ void main() {
       expect(drv.probedDevices.where((id) => id == 'a').length, equals(1));
     });
 
+    test('DriverData dispose cancels queued work and rejects new submissions', () async {
+      final device = TestDevice('a', 'http://a');
+      final data = TestDriverData(device);
+      final started = Completer<void>();
+      final release = Completer<void>();
+
+      final first = data.queue.submit(() async {
+        started.complete();
+        await release.future;
+        return 1;
+      });
+
+      await started.future;
+      data.dispose();
+
+      expect(() => data.queue.submit(() async => 2), throwsStateError);
+
+      release.complete();
+      await expectLater(first, throwsA(isA<Exception>()));
+    });
+
     test('HeartbeatService start/batch/suspend/resume', () async {
       final svc = MockHeartbeatService();
       expect(svc.isActive, isFalse);
