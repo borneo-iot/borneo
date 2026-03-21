@@ -18,6 +18,8 @@ class AcclimationViewModel extends BaseLyfiDeviceViewModel {
   bool _enabled = false;
   bool get enabled => _enabled;
 
+  bool get canEditAcclimationSettings => _enabled && !isBusy && isOnline;
+
   late double _startPercent;
   double get startPercent => _startPercent;
 

@@ -84,6 +84,7 @@ class AcclimationScreen extends StatelessWidget {
   SettingsList _buildSettingsList(BuildContext context) {
     // use watch to rebuild when values change
     final vm = context.watch<AcclimationViewModel>();
+    final canEditAcclimationSettings = vm.canEditAcclimationSettings;
 
     return SettingsList(
       lightTheme: settingsListTheme(context),
@@ -110,20 +111,19 @@ class AcclimationScreen extends StatelessWidget {
                   );
                 },
               ),
-              onPressed: !vm.isBusy && vm.isOnline
-                  ? (bc) async {
-                      final now = context.read<IClock>().now();
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: vm.startTimestamp.toLocal().year < 2025 ? now : vm.startTimestamp.toLocal(),
-                        firstDate: DateTime(2025, 1, 1),
-                        lastDate: now.add(const Duration(days: 100)),
-                      );
-                      if (picked != null) {
-                        vm.updateStartTimestamp(picked);
-                      }
-                    }
-                  : null,
+              enabled: canEditAcclimationSettings,
+              onPressed: (bc) async {
+                final now = context.read<IClock>().now();
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: vm.startTimestamp.toLocal().year < 2025 ? now : vm.startTimestamp.toLocal(),
+                  firstDate: DateTime(2025, 1, 1),
+                  lastDate: now.add(const Duration(days: 100)),
+                );
+                if (picked != null) {
+                  vm.updateStartTimestamp(picked);
+                }
+              },
             ),
             settingsSliderTile(
               title: Text(context.translate('Duration')),
@@ -139,7 +139,7 @@ class AcclimationScreen extends StatelessWidget {
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
-              enabled: !vm.isBusy && vm.isOnline,
+              enabled: canEditAcclimationSettings,
               onChanged: (value) => vm.updateDays(value.roundToDouble()),
             ),
             settingsSliderTile(
@@ -156,7 +156,7 @@ class AcclimationScreen extends StatelessWidget {
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
-              enabled: !vm.isBusy && vm.isOnline,
+              enabled: canEditAcclimationSettings,
               onChanged: (value) => vm.updateStartPercent(value.roundToDouble()),
             ),
           ],
