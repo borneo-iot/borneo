@@ -102,7 +102,7 @@ static void _reboot_callback();
 
 void bo_system_reboot_later(uint32_t delay_ms)
 {
-    BO_TRY_ESP(esp_event_post(BO_SYSTEM_EVENTS, BO_EVENT_SHUTDOWN_SCHEDULED, NULL, 0, portMAX_DELAY));
+    BO_MUST_ESP(esp_event_post(BO_SYSTEM_EVENTS, BO_EVENT_SHUTDOWN_SCHEDULED, NULL, 0, portMAX_DELAY));
 
     const esp_timer_create_args_t timer_args = {
         .callback = &_reboot_callback,
