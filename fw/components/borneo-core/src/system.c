@@ -102,7 +102,7 @@ static void _reboot_callback();
 
 void bo_system_reboot_later(uint32_t delay_ms)
 {
-    ESP_LOGI(TAG, "THIS DEVICE HAS BEEN SCHEDULED TO REBOOT AFTER %lu MILLISECONDS!!!", delay_ms);
+    BO_TRY_ESP(esp_event_post(BO_SYSTEM_EVENTS, BO_EVENT_SHUTDOWN_SCHEDULED, NULL, 0, portMAX_DELAY));
 
     const esp_timer_create_args_t timer_args = {
         .callback = &_reboot_callback,
@@ -113,9 +113,7 @@ void bo_system_reboot_later(uint32_t delay_ms)
     BO_MUST_ESP(esp_timer_create(&timer_args, &reboot_timer));
     BO_MUST_ESP(esp_timer_start_once(reboot_timer, delay_ms * 1000));
 
-    if (bo_power_is_on()) {
-        BO_MUST(bo_power_shutdown(0));
-    }
+    ESP_LOGI(TAG, "THIS DEVICE HAS BEEN SCHEDULED TO REBOOT AFTER %lu MILLISECONDS!!!", delay_ms);
 }
 
 int bo_system_factory_reset()
