@@ -148,11 +148,19 @@ int bo_rpc_borneo_status_get(const CborValue* args, CborEncoder* retvals)
 {
     (void)args; // No input args for GET
     CborEncoder root_map;
+    uint32_t timestamp = 0;
 
     BO_TRY(cbor_encoder_create_map(retvals, &root_map, CborIndefiniteLength));
 
     BO_TRY(cbor_encode_text_stringz(&root_map, "mode"));
     BO_TRY(cbor_encode_uint(&root_map, k_get_mode()));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "power"));
+    BO_TRY(cbor_encode_boolean(&root_map, bo_power_is_on()));
+
+    BO_TRY(cbor_encode_text_stringz(&root_map, "timestamp"));
+    BO_TRY(bo_rtc_get_timestamp(&timestamp));
+    BO_TRY(cbor_encode_uint(&root_map, timestamp));
 
     BO_TRY(cbor_encode_text_stringz(&root_map, "bootDuration"));
     BO_TRY(cbor_encode_int(&root_map, bo_timer_uptime_ms()));
