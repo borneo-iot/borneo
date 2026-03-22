@@ -34,6 +34,7 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
   late final StreamSubscription<DeviceEntityUpdatedEvent> _deviceUpdatedSub;
   late final StreamSubscription<LoadingDriverFailedEvent> _loadingFailedEventSub;
   late final StreamSubscription<CurrentSceneDevicesReloadedEvent> _sceneReloadedSub;
+  StreamSubscription? _onlineSubscription;
 
   late bool _isPowerOn = false;
   bool get isPowerOn => _isPowerOn;
@@ -65,6 +66,7 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
     _deviceUpdatedSub.cancel();
     _loadingFailedEventSub.cancel();
     _sceneReloadedSub.cancel();
+    _onlineSubscription?.cancel();
     wotThing?.removeSubscriber(_onPowerPropertyChanged);
     super.dispose();
   }
@@ -95,10 +97,17 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
     }
   }
 
+  void _onOnlinePropertyChanged(WotMessage msg) {
+    if (isDisposed) return;
+    notifyListeners();
+  }
+
   @protected
   void onWotThingChanged(WotThing? oldThing, WotThing? newThing) {
     oldThing?.removeSubscriber(_onPowerPropertyChanged);
+    oldThing?.removeSubscriber(_onOnlinePropertyChanged);
     newThing?.addSubscriber(_onPowerPropertyChanged);
+    newThing?.addSubscriber(_onOnlinePropertyChanged);
   }
 
   void _refreshWotThing() {

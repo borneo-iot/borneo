@@ -83,8 +83,7 @@ class _TestDeviceViewModel extends BaseDeviceViewModel {
   Future<void> onInitialize() async {}
 
   @override
-  // TODO: implement rssiLevel
-  RssiLevel? get rssiLevel => throw UnimplementedError();
+  RssiLevel? get rssiLevel => RssiLevel.medium;
 }
 
 class _FakeDeviceManager implements IDeviceManager {

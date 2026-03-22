@@ -20,7 +20,6 @@ import 'package:borneo_kernel_abstractions/models/io.dart';
 import 'package:borneo_kernel_abstractions/models/supported_device_descriptor.dart';
 import 'package:borneo_kernel_abstractions/device.dart';
 import 'package:borneo_kernel_abstractions/driver.dart';
-import 'package:logger/logger.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 class LyfiPaths {
@@ -56,9 +55,8 @@ class LyfiPaths {
 
 class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi implements Driver, ILyfiDeviceApi {
   static const String lyfiCompatibleString = 'bst,borneo-lyfi';
-  final Logger? logger;
 
-  BorneoLyfiCoapDriver({this.logger});
+  BorneoLyfiCoapDriver({super.logger});
 
   @override
   Future<bool> probe(Device dev, {CancellationToken? cancelToken}) async {
