@@ -954,11 +954,17 @@ static int led_switch_state_now(uint8_t state)
         return -EINVAL;
     }
 
-    if (!bo_power_is_on() || k_get_mode() != KERNEL_MODE_NORMAL) {
+    if (k_get_mode() != KERNEL_MODE_NORMAL) {
+        return -EINVAL;
+    }
+
+    if (!bo_power_is_on() && state != LED_STATE_NORMAL) {
         return -EINVAL;
     }
 
     ESP_LOGI(TAG, "Switching state from %u to %u", led_get_state(), state);
+
+    uint8_t current_state = led_get_state();
 
     switch (state) {
 
@@ -967,7 +973,7 @@ static int led_switch_state_now(uint8_t state)
         break;
 
     case LED_STATE_DIMMING: {
-        if (led_get_state() == LED_STATE_NORMAL || led_get_state() == LED_STATE_TEMPORARY) {
+        if (current_state == LED_STATE_NORMAL || current_state == LED_STATE_TEMPORARY) {
             smf_set_state(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_DIMMING]);
         }
         else {
@@ -976,7 +982,7 @@ static int led_switch_state_now(uint8_t state)
     } break;
 
     case LED_STATE_TEMPORARY: {
-        if (led_get_state() == LED_STATE_NORMAL) {
+        if (current_state == LED_STATE_NORMAL) {
             smf_set_state(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_TEMPORARY]);
         }
         else {
@@ -985,7 +991,7 @@ static int led_switch_state_now(uint8_t state)
     } break;
 
     case LED_STATE_PREVIEW: {
-        if (led_get_state() == LED_STATE_DIMMING) {
+        if (current_state == LED_STATE_DIMMING) {
             smf_set_state(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_PREVIEW]);
         }
         else {
@@ -995,7 +1001,7 @@ static int led_switch_state_now(uint8_t state)
 
     case LED_STATE_DISCO: {
         // Can switch to DISCO from NORMAL state
-        if (led_get_state() == LED_STATE_NORMAL) {
+        if (current_state == LED_STATE_NORMAL || current_state == LED_STATE_TEMPORARY) {
             smf_set_state(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_DISCO]);
         }
         else {

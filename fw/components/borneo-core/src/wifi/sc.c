@@ -78,7 +78,7 @@ static void sc_event_handler(void* arg, esp_event_base_t event_base, int32_t eve
         memcpy(wifi_config.sta.ssid, evt->ssid, sizeof(wifi_config.sta.ssid));
         memcpy(wifi_config.sta.password, evt->password, sizeof(wifi_config.sta.password));
         wifi_config.sta.bssid_set = evt->bssid_set;
-        if (wifi_config.sta.bssid_set == true) {
+        if (wifi_config.sta.bssid_set) {
             memcpy(wifi_config.sta.bssid, evt->bssid, sizeof(wifi_config.sta.bssid));
         }
 

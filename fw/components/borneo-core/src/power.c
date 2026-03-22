@@ -116,60 +116,32 @@ int bo_power_set_behavior(uint8_t behavior)
 
 static int load_settings()
 {
-    int rc;
     nvs_handle_t handle;
-    rc = bo_nvs_user_open(POWER_NVS_NS, NVS_READWRITE, &handle);
-    if (rc) {
-        goto _EXIT_WITHOUT_CLOSE;
+    BO_TRY(bo_nvs_user_open(POWER_NVS_NS, NVS_READWRITE, &handle));
+    BO_NVS_AUTO_CLOSE(handle);
+    bool changed = false;
+
+    BO_TRY(bo_nvs_get_or_set_u8(handle, POWER_NVS_KEY_BEHAVIOR, &_settings.behavior, POWER_LAST_POWER_STATE, &changed));
+    BO_TRY(bo_nvs_get_or_set_u8(handle, POWER_NVS_KEY_LAST_STATE, &_settings.last_state, 1, &changed));
+
+    if (changed) {
+        BO_TRY(nvs_commit(handle));
     }
 
-    rc = nvs_get_u8(handle, POWER_NVS_KEY_BEHAVIOR, &_settings.behavior);
-    if (rc == ESP_ERR_NVS_NOT_FOUND) {
-        _settings.behavior = POWER_LAST_POWER_STATE;
-        rc = 0;
-    }
-    if (rc) {
-        goto _EXIT_CLOSE;
-    }
-
-    rc = nvs_get_u8(handle, POWER_NVS_KEY_LAST_STATE, &_settings.last_state);
-    if (rc == ESP_ERR_NVS_NOT_FOUND) {
-        _settings.last_state = 1;
-        rc = 0;
-    }
-    if (rc) {
-        goto _EXIT_CLOSE;
-    }
-
-_EXIT_CLOSE:
-    bo_nvs_close(handle);
-_EXIT_WITHOUT_CLOSE:
-    return rc;
+    return 0;
 }
 
 static int update_settings()
 {
-    int rc;
     nvs_handle_t handle;
-    rc = bo_nvs_user_open(POWER_NVS_NS, NVS_READWRITE, &handle);
-    if (rc) {
-        goto _EXIT_WITHOUT_CLOSE;
-    }
+    BO_TRY(bo_nvs_user_open(POWER_NVS_NS, NVS_READWRITE, &handle));
+    BO_NVS_AUTO_CLOSE(handle);
 
-    rc = nvs_set_u8(handle, POWER_NVS_KEY_BEHAVIOR, _settings.behavior);
-    if (rc) {
-        goto _EXIT_CLOSE;
-    }
+    BO_TRY(nvs_set_u8(handle, POWER_NVS_KEY_BEHAVIOR, _settings.behavior));
 
-    rc = nvs_set_u8(handle, POWER_NVS_KEY_LAST_STATE, _settings.last_state);
-    if (rc) {
-        goto _EXIT_CLOSE;
-    }
+    BO_TRY(nvs_set_u8(handle, POWER_NVS_KEY_LAST_STATE, _settings.last_state));
 
-    rc = nvs_commit(handle);
+    BO_TRY(nvs_commit(handle));
 
-_EXIT_CLOSE:
-    bo_nvs_close(handle);
-_EXIT_WITHOUT_CLOSE:
-    return rc;
+    return 0;
 }
