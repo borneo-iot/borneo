@@ -78,14 +78,14 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
   void _onBound(DeviceBoundEvent event) {
     if (event.device.id == deviceEntity.id) {
       deviceEntity.lastErrorMessage = null;
-      notifyListeners();
+      _notifyListenersAfterFrame();
     }
   }
 
   void _onRemoved(DeviceRemovedEvent event) {
     if (event.device.id == deviceEntity.id) {
       _refreshWotThing();
-      notifyListeners();
+      _notifyListenersAfterFrame();
     }
   }
 
@@ -93,13 +93,21 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
     final onValue = wotThing?.getProperty(LyfiKnownProperties.kOn);
     if (onValue != null && _isPowerOn != onValue) {
       _isPowerOn = onValue as bool;
-      notifyListeners();
+      _notifyListenersAfterFrame();
     }
   }
 
   void _onOnlinePropertyChanged(WotMessage msg) {
+    _notifyListenersAfterFrame();
+  }
+
+  void _notifyListenersAfterFrame() {
     if (isDisposed) return;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isDisposed) {
+        notifyListeners();
+      }
+    });
   }
 
   @protected
@@ -134,21 +142,21 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
   void _onDeviceUpdated(DeviceEntityUpdatedEvent event) {
     if (event.updated.id == deviceEntity.id) {
       deviceEntity = event.updated;
-      notifyListeners();
+      _notifyListenersAfterFrame();
     }
   }
 
   void _onLoadingFailed(LoadingDriverFailedEvent event) {
     if (event.device.id == deviceEntity.id) {
       deviceEntity.lastErrorMessage = event.message ?? event.error?.toString() ?? 'Unknown error';
-      notifyListeners();
+      _notifyListenersAfterFrame();
     }
   }
 
   void _onSceneReloaded(CurrentSceneDevicesReloadedEvent event) {
     if (event.scene.id == deviceEntity.sceneID) {
       _refreshWotThing();
-      notifyListeners();
+      _notifyListenersAfterFrame();
     }
   }
 
@@ -163,6 +171,6 @@ abstract class AbstractDeviceSummaryViewModel extends BaseViewModel with ViewMod
     assert(deviceEntity.id == other.deviceEntity.id);
     deviceEntity = other.deviceEntity;
     _refreshWotThing();
-    notifyListeners();
+    _notifyListenersAfterFrame();
   }
 }
