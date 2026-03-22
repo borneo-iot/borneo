@@ -357,13 +357,16 @@ void main() {
           discoveryLossGracePeriod: Duration(milliseconds: 20),
         );
         await k2.start();
-        UnboundDeviceLostEvent? got;
-        k2.events.on<UnboundDeviceLostEvent>().listen((e) {
-          got = e;
+        final gotCompleter = Completer<UnboundDeviceLostEvent>();
+        final sub = k2.events.on<UnboundDeviceLostEvent>().listen((e) {
+          if (!gotCompleter.isCompleted) {
+            gotCompleter.complete(e);
+          }
         });
+        addTearDown(sub.cancel);
         mgr.emitLost(TestMdnsDiscoveredDevice(host: 'abc', port: 80, name: 'lost-device'));
-        await Future.delayed(Duration(milliseconds: 30));
-        expect(got?.deviceId, 'test-test-driver');
+        final got = await gotCompleter.future.timeout(Duration(seconds: 1));
+        expect(got.deviceId, 'test-test-driver');
       });
 
       test('kernel emits known device discovery update events', () async {

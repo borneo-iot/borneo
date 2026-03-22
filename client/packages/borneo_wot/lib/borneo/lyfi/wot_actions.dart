@@ -149,7 +149,9 @@ class LyfiSetAcclimationAction extends WotAction<Map<String, dynamic>> {
       // Temporary Lyfi status property for refactoring - TODO: Remove after refactoring
       final status = await lyfiApi.getLyfiStatus(device);
       thing.findProperty('lyfiStatus')?.value.notifyOfExternalUpdate(status);
+      thing.findProperty('acclimationEnabled')?.value.notifyOfExternalUpdate(status.acclimationEnabled);
       thing.findProperty('acclimationActivated')?.value.notifyOfExternalUpdate(status.acclimationActivated);
+      thing.findProperty('currentColor')?.value.notifyOfExternalUpdate(status.currentColor);
     } catch (e, st) {
       logger?.e('setAcclimation failed for device ${device.id}', error: e, stackTrace: st);
       rethrow;
