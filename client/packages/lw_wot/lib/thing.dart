@@ -263,6 +263,16 @@ class WotThing {
     prop?.setValue(value);
   }
 
+  /// Set a property value and wait for the write to complete.
+  Future<void> setPropertyAsync(String propertyName, dynamic value) async {
+    final prop = findProperty(propertyName);
+    if (prop == null) {
+      return;
+    }
+
+    await prop.setValueAsync(value);
+  }
+
   /// Get an action.
   ///
   /// Returns the requested action if found, else null

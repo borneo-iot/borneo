@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-typedef WotForwarder<T> = void Function(T value);
+typedef WotForwarder<T> = FutureOr<void> Function(T value);
 
 class WotValue<T> {
   T _lastValue;
@@ -20,8 +20,25 @@ class WotValue<T> {
       return;
     }
 
-    if (_valueForwarder != null) {
-      _valueForwarder(value);
+    final forwarder = _valueForwarder;
+    if (forwarder != null) {
+      final result = forwarder(value);
+      if (result is Future) {
+        unawaited(result.then((_) => notifyOfExternalUpdate(value)));
+        return;
+      }
+    }
+    notifyOfExternalUpdate(value);
+  }
+
+  Future<void> setAsync(T value) async {
+    if (_isDisposed) {
+      return;
+    }
+
+    final forwarder = _valueForwarder;
+    if (forwarder != null) {
+      await Future.sync(() => forwarder(value));
     }
     notifyOfExternalUpdate(value);
   }

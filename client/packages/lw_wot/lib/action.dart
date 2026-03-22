@@ -5,6 +5,28 @@ import 'utils.dart' as utils;
 import 'thing.dart';
 import 'types.dart';
 
+class WotActionFailure {
+  final String kind;
+  final String message;
+  final String timestamp;
+  final String? stackTrace;
+
+  WotActionFailure({required this.kind, required this.message, this.stackTrace, String? timestamp})
+    : timestamp = timestamp ?? utils.timestamp();
+
+  factory WotActionFailure.fromError(Object error, [StackTrace? stackTrace]) {
+    return WotActionFailure(
+      kind: error.runtimeType.toString(),
+      message: error.toString(),
+      stackTrace: stackTrace?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'kind': kind, 'message': message, 'timestamp': timestamp, if (stackTrace != null) 'stackTrace': stackTrace};
+  }
+}
+
 class WotAction<InputType> {
   final String id;
   final WotThing thing;
@@ -16,6 +38,7 @@ class WotAction<InputType> {
   final String timeRequested;
   String? timeCompleted;
   String? error;
+  WotActionFailure? failure;
 
   WotAction({required this.id, required this.thing, required this.name, required this.input})
     : timeRequested = utils.timestamp() {
@@ -39,6 +62,10 @@ class WotAction<InputType> {
       (description[name] as Map<String, dynamic>)['error'] = error;
     }
 
+    if (failure != null) {
+      (description[name] as Map<String, dynamic>)['failure'] = failure!.toMap();
+    }
+
     return description;
   }
 
@@ -60,12 +87,15 @@ class WotAction<InputType> {
   void finish() {
     status = 'completed';
     timeCompleted = utils.timestamp();
+    error = null;
+    failure = null;
     thing.actionNotify(this);
   }
 
   void finishWithError(Object e, [StackTrace? stackTrace]) {
     status = 'error';
-    error = e.toString();
+    failure = WotActionFailure.fromError(e, stackTrace);
+    error = failure!.message;
     timeCompleted = utils.timestamp();
     thing.actionNotify(this);
   }
@@ -97,11 +127,15 @@ class ActionDescription<InputType> {
   final String status;
   final InputType? input;
   final String? timeCompleted;
+  final String? error;
+  final WotActionFailure? failure;
   ActionDescription({
     required this.href,
     required this.timeRequested,
     required this.status,
     this.input,
     this.timeCompleted,
+    this.error,
+    this.failure,
   });
 }

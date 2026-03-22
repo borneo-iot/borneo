@@ -85,6 +85,38 @@ void main() {
       expect(description['nullAction']['input'], isNull);
     });
 
+    test('finishWithError stores strong typed failure and keeps string error for compatibility', () {
+      final action = WotAction<String>(id: 'error-action', thing: thing, name: 'errorAction', input: 'input');
+      final stackTrace = StackTrace.current;
+
+      action.finishWithError(StateError('broken state'), stackTrace);
+
+      expect(action.status, equals('error'));
+      expect(action.error, contains('broken state'));
+      expect(action.failure, isNotNull);
+      expect(action.failure!.kind, equals('StateError'));
+      expect(action.failure!.message, contains('broken state'));
+      expect(action.failure!.stackTrace, isNotNull);
+
+      final description = action.asActionDescription();
+      expect(description['errorAction']['error'], contains('broken state'));
+      expect(description['errorAction']['failure']['kind'], equals('StateError'));
+      expect(description['errorAction']['failure']['message'], contains('broken state'));
+    });
+
+    test('finish clears previous failure details', () {
+      final action = WotAction<String>(id: 'clear-action', thing: thing, name: 'clearAction', input: 'input');
+
+      action.finishWithError(Exception('first failure'));
+      expect(action.failure, isNotNull);
+
+      action.finish();
+
+      expect(action.status, equals('completed'));
+      expect(action.error, isNull);
+      expect(action.failure, isNull);
+    });
+
     test('action lifecycle - successful execution', () async {
       final action = TestAction(
         id: 'success-action',
@@ -119,6 +151,8 @@ void main() {
       expect(action.status, equals('error'));
       expect(action.wasPerformed, isFalse);
       expect(action.error, contains('Test error'));
+      expect(action.failure, isNotNull);
+      expect(action.failure!.kind, contains('Exception'));
       expect(action.timeCompleted, isNotNull);
     });
 

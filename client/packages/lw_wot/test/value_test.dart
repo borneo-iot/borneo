@@ -62,6 +62,24 @@ void main() {
       expect(forwardedValues, contains('forwarded'));
       expect(value.get(), equals('forwarded'));
     });
+
+    test('setAsync awaits async forwarder before updating the value', () async {
+      final forwardedValues = <String>[];
+
+      final value = WotValue<String>(
+        initialValue: 'initial',
+        valueForwarder: (String newValue) async {
+          await Future<void>.delayed(Duration(milliseconds: 10));
+          forwardedValues.add(newValue);
+        },
+      );
+
+      await value.setAsync('async-forwarded');
+
+      expect(forwardedValues, contains('async-forwarded'));
+      expect(value.get(), equals('async-forwarded'));
+    });
+
     test('constructor with custom equality function', () async {
       // Custom equality that considers case-insensitive strings as equal
       final value = WotValue<String>(

@@ -143,6 +143,43 @@ void main() {
       expect(property.getValue(), equals(100));
     });
 
+    test('setValueAsync waits for async forwarder and clears failures', () async {
+      var forwardedValue = 0;
+      final asyncValue = WotValue<int>(
+        initialValue: 1,
+        valueForwarder: (newValue) async {
+          await Future<void>.delayed(Duration(milliseconds: 10));
+          forwardedValue = newValue;
+        },
+      );
+      final property = WotProperty<int>(thing: thing, name: 'asyncProp', value: asyncValue, metadata: metadata);
+
+      await property.setValueAsync(7);
+
+      expect(forwardedValue, equals(7));
+      expect(property.getValue(), equals(7));
+      expect(property.failure, isNull);
+    });
+
+    test('setValueAsync stores typed failure when the forwarder throws', () async {
+      final asyncValue = WotValue<int>(
+        initialValue: 1,
+        valueForwarder: (newValue) async {
+          await Future<void>.delayed(Duration(milliseconds: 10));
+          throw StateError('write failed for $newValue');
+        },
+      );
+      final property = WotProperty<int>(thing: thing, name: 'failingProp', value: asyncValue, metadata: metadata);
+
+      await expectLater(property.setValueAsync(7), throwsA(isA<StateError>()));
+
+      expect(property.getValue(), equals(1));
+      expect(property.failure, isNotNull);
+      expect(property.failure!.propertyName, equals('failingProp'));
+      expect(property.failure!.kind, contains('StateError'));
+      expect(property.error, contains('write failed for 7'));
+    });
+
     test('asPropertyDescription returns correct format', () {
       final property = WotProperty<int>(thing: thing, name: 'tempSensor', value: value, metadata: metadata);
       property.setHrefPrefix('/api');
