@@ -4,7 +4,7 @@ import 'package:borneo_kernel_abstractions/events.dart';
 import 'package:lw_wot/wot.dart';
 
 abstract class BorneoThing extends WotThing {
-  bool get isOffline => !super.getProperty<bool>('online')!;
+  bool get isOffline => !(super.getProperty<bool>('online') ?? false);
 
   BorneoThing({required super.id, required super.title, required super.type, required super.description}) {
     // Online property - indicates connection status

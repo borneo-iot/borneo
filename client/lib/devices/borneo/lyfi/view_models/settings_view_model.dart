@@ -272,7 +272,6 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to restore device to factory settings"), error: e, stackTrace: st);
     } finally {
-      await lyfiThing.sync();
       isBusy = false;
       notifyListeners();
     }
@@ -288,7 +287,6 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
     } catch (e, st) {
       notifyAppError(_gt.translate("Failed to reset device network settings"), error: e, stackTrace: st);
     } finally {
-      await lyfiThing.sync();
       isBusy = false;
       notifyListeners();
     }
