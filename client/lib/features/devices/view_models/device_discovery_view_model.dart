@@ -112,6 +112,10 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
 
   Future<void> stopDiscovery() async {
     await _stopRefresh();
+
+    if (_deviceManager.isDiscoverying) {
+      await _deviceManager.stopDiscovery();
+    }
   }
 
   // Clean resources when leaving screen or stopping
@@ -267,6 +271,9 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
       }
     } on CancelledException {
       _logger.w('BLE scan was cancelled by user.');
+      if (!_disposed && _scanCancelToken.isCancelled) {
+        await stopDiscovery();
+      }
       return;
     } catch (e, stackTrace) {
       _logger.e('BLE provisioning scan failed', error: e, stackTrace: stackTrace);
