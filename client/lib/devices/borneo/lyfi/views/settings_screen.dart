@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:borneo_app/core/services/devices/ota/ota_providers.dart';
 import 'package:borneo_app/devices/borneo/lyfi/view_models/controller_settings_view_model.dart';
@@ -24,7 +25,6 @@ import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:borneo_app/routes/platform_page_route.dart';
 
 import 'package:provider/provider.dart';
-import 'package:borneo_app/routes/app_routes.dart';
 
 class SettingsScreen extends StatelessWidget {
   final SettingsViewModel vm;
@@ -348,14 +348,9 @@ class SettingsScreen extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // after the factory reset completes navigate all the way back to the
-              // device list (rather than just popping a single route). this matches
-              // other flows such as provisioning where the user is returned to the
-              // main list when a long‑running action finishes.
-              vm.factoryReset().then((_) {
-                if (context.mounted) {
-                  Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.kDevices || route.isFirst);
-                }
+              popAllScreensOfCurrentTab(context);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                unawaited(vm.factoryReset());
               });
             },
             child: Text(context.translate('Restore')),
@@ -377,10 +372,11 @@ class SettingsScreen extends StatelessWidget {
       return;
     }
 
-    await vm.networkReset();
-
     if (context.mounted) {
-      Navigator.of(context).popUntil((route) => route.settings.name == AppRoutes.kDevices || route.isFirst);
+      popAllScreensOfCurrentTab(context);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(vm.networkReset());
+      });
     }
   }
 

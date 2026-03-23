@@ -264,7 +264,9 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
 
   Future<void> factoryReset() async {
     isBusy = true;
-    notifyListeners();
+    if (!this.isDisposed) {
+      notifyListeners();
+    }
     try {
       await api.factoryReset(boundDevice!.device);
       await deviceManager.delete(this.deviceID, cancelToken: masterCancellation);
@@ -273,13 +275,17 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
       notifyAppError(_gt.translate("Failed to restore device to factory settings"), error: e, stackTrace: st);
     } finally {
       isBusy = false;
-      notifyListeners();
+      if (!this.isDisposed) {
+        notifyListeners();
+      }
     }
   }
 
   Future<void> networkReset() async {
     isBusy = true;
-    notifyListeners();
+    if (!this.isDisposed) {
+      notifyListeners();
+    }
     try {
       await api.networkReset(boundDevice!.device, cancelToken: masterCancellation);
       await deviceManager.delete(this.deviceID, cancelToken: masterCancellation);
@@ -288,7 +294,9 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
       notifyAppError(_gt.translate("Failed to reset device network settings"), error: e, stackTrace: st);
     } finally {
       isBusy = false;
-      notifyListeners();
+      if (!this.isDisposed) {
+        notifyListeners();
+      }
     }
   }
 }
