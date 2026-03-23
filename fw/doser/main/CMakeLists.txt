@@ -12,5 +12,5 @@ endif()
 idf_component_register(
     SRCS ${BORNEO_APP_SOURCES}
     REQUIRES drvfx coap borneo-core smf cbor coap ${REQUIRES_PRO}
-    WHOLE_ARCHIVE
+    WHOLE_ARCHIVE TRUE
 )

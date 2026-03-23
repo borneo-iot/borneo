@@ -46,6 +46,7 @@ esp_err_t bo_nvs_init()
         rc = nvs_flash_init_partition(NVS_FACTORY_PART_NAME);
     }
 
+    ESP_LOGI(TAG, "Borneo NVS initialized successfully.");
     return rc;
 }
 

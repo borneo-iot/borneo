@@ -7,7 +7,6 @@
 #include <coap3/coap.h>
 
 #include <borneo/system.h>
-#include <borneo/coap.h>
 #include <borneo/power.h>
 #include <borneo/rpc/common.h>
 

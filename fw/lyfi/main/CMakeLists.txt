@@ -7,6 +7,6 @@ file(GLOB_RECURSE BORNEO_APP_SOURCES
 
 idf_component_register(
     SRCS ${BORNEO_APP_SOURCES}
-    REQUIRES drvfx smf cbor coap button borneo-core borneo-ota-coap
-    WHOLE_ARCHIVE
+    REQUIRES drvfx smf cbor coap button borneo-core borneo-coap borneo-ota-coap
+    WHOLE_ARCHIVE TRUE
 )

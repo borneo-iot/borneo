@@ -29,7 +29,7 @@ idf_component_register(
     INCLUDE_DIRS ${DRVFX_INCLUDE_DIRS}
     REQUIRES driver esp_event esp_driver_i2c
     LDFRAGMENTS kernel-linker.lf
-    WHOLE_ARCHIVE
+    WHOLE_ARCHIVE TRUE
 )
 
 

@@ -105,18 +105,25 @@ static void drvfx_sys_init_run_level(enum init_level level)
     }
 }
 
-static void __attribute__((constructor, used)) drvfx_kernel_init()
+ESP_SYSTEM_INIT_FN(drvfx_kernel_init, SECONDARY, BIT(0), 1000)
 {
-    ESP_LOGI(TAG, "Drvfx initializing...");
+    ESP_LOGI(TAG, "Drvfx kernel initializing...");
     k_init();
 
+    ESP_LOGI(TAG, "Drvfx DRVFX_INIT_LEVEL_EARLY...");
     drvfx_sys_init_run_level(DRVFX_INIT_LEVEL_EARLY);
+
+    ESP_LOGI(TAG, "Drvfx DRVFX_INIT_LEVEL_PRE_KERNEL_1...");
     drvfx_sys_init_run_level(DRVFX_INIT_LEVEL_PRE_KERNEL_1);
+
+    ESP_LOGI(TAG, "Drvfx DRVFX_INIT_LEVEL_PRE_KERNEL_2...");
     drvfx_sys_init_run_level(DRVFX_INIT_LEVEL_PRE_KERNEL_2);
+    return 0;
 }
 
-ESP_SYSTEM_INIT_FN(drvfx_post_kernel_init, SECONDARY, BIT(0), 1000)
+ESP_SYSTEM_INIT_FN(drvfx_post_kernel_init, SECONDARY, BIT(0), 2000)
 {
+    ESP_LOGI(TAG, "Drvfx DRVFX_INIT_LEVEL_POST_KERNEL...");
     drvfx_sys_init_run_level(DRVFX_INIT_LEVEL_POST_KERNEL);
     return 0;
 }
