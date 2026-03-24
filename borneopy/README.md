@@ -186,7 +186,7 @@ Execute complete OTA update process.
 ## Dependencies
 
 - `aiocoap>=0.4.12` - CoAP protocol support
-- `cbor2>=5.6.5` - CBOR data format support
+- `cbor2>=5.9.0` - CBOR data format support
 - `aiofiles` - Async file operations
 
 ## Packaging & development
