@@ -10,7 +10,7 @@ if(NOT DEFINED PRODUCT_ID)
     set(PRODUCT_ID "bst/blc06mk1")
 endif()
 
-include(BorneoProduct REQUIRED)
+include(BorneoProject REQUIRED)
 
 # include("${CMAKE_SOURCE_DIR}/../cmake/ClangFormat.cmake" REQUIRED)
 

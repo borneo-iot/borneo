@@ -33,3 +33,16 @@ string(REPLACE "/" "_" BORNEO_PROJECT_ID "${BORNEO_PRODUCT_ID}")
 message("[BORNEO] > Project: `${BORNEO_PROJECT_ID}`")
 
 set(BORNEO_BOARD_INCLUDE_DIR  ${BORNEO_BOARD_DIR})
+
+execute_process(
+    COMMAND git rev-list --count HEAD
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE BORNEO_BUILD_NUMBER
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+)
+
+if(NOT BORNEO_BUILD_NUMBER)
+    set(BORNEO_BUILD_NUMBER 0)
+    message(WARNING "Git repository not found, using default build number 0")
+endif()
