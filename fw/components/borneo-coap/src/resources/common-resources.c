@@ -312,32 +312,32 @@ static void coap_hnd_borneo_network_reset_post(coap_resource_t* resource, coap_s
     coap_pdu_set_code(response, COAP_RESPONSE_CODE(204));
 }
 
-COAP_RESOURCE_DEFINE("borneo/info", false, coap_hnd_borneo_info_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/info", false, coap_hnd_borneo_info_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/reboot", false, NULL, coap_hnd_borneo_reboot_post, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/reboot", false, NULL, coap_hnd_borneo_reboot_post, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/status", false, coap_hnd_borneo_status_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/status", false, coap_hnd_borneo_status_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/fwver", false, coap_hnd_borneo_fw_ver_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/fwver", false, coap_hnd_borneo_fw_ver_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/compatible", false, coap_hnd_borneo_compatible_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/compatible", false, coap_hnd_borneo_compatible_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/heartbeat", true, coap_hnd_heartbeat_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/heartbeat", true, coap_hnd_heartbeat_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/health", true, coap_hnd_borneo_health_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/health", true, coap_hnd_borneo_health_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/mode", true, coap_hnd_borneo_system_mode_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/mode", true, coap_hnd_borneo_system_mode_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/settings/timezone", false, coap_hnd_borneo_settings_timezone_get, NULL,
+COAP_RESOURCE_DEFINE("borneo/v1/settings/timezone", false, coap_hnd_borneo_settings_timezone_get, NULL,
                      coap_hnd_borneo_settings_timezone_put, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/settings/name", false, coap_hnd_borneo_settings_name_get, NULL,
+COAP_RESOURCE_DEFINE("borneo/v1/settings/name", false, coap_hnd_borneo_settings_name_get, NULL,
                      coap_hnd_borneo_settings_name_put, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/rtc/local", false, coap_hnd_rtc_local_get, coap_hnd_rtc_local_post, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/rtc/local", false, coap_hnd_rtc_local_get, coap_hnd_rtc_local_post, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/rtc/ts", true, coap_hnd_rtc_timestamp_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/rtc/ts", true, coap_hnd_rtc_timestamp_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/sensors", false, coap_hnd_sensors_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/sensors", false, coap_hnd_sensors_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/network/reset", false, NULL, coap_hnd_borneo_network_reset_post, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/network/reset", false, NULL, coap_hnd_borneo_network_reset_post, NULL, NULL);

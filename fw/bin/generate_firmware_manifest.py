@@ -48,7 +48,7 @@ def main():
     product_id = sdkconfig.get("BORNEO_PRODUCT_ID")
     device_name = sdkconfig.get("BORNEO_DEVICE_NAME_DEFAULT")
     board_name = sdkconfig.get("BORNEO_BOARD_NAME")
-    manufacturer = sdkconfig.get("BORNEO_MANUF_DEFAULT")
+    vendor = sdkconfig.get("BORNEO_VENDOR_DEFAULT")
     compatible = sdkconfig.get("BORNEO_DEVICE_COMPATIBLE")
 
     if not idf_target:
@@ -67,8 +67,8 @@ def main():
         print("`BORNEO_BOARD_NAME` not found in `sdkconfig.json`")
         sys.exit(1)
 
-    if not manufacturer:
-        print("`BORNEO_MANUF_DEFAULT` not found in `sdkconfig.json`")
+    if not vendor:
+        print("`BORNEO_VENDOR_DEFAULT` not found in `sdkconfig.json`")
         sys.exit(1)
 
     if not compatible:
@@ -143,7 +143,7 @@ def main():
         "name": device_name,
         "product_id": product_id,
         "board_name": board_name,
-        "manufacturer": manufacturer,
+        "vendor": vendor,
         "compatible": compatible,
         "version": version,
         "sha256": merged_binary_sha256,

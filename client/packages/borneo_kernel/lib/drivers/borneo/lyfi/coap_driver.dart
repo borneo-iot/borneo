@@ -23,34 +23,34 @@ import 'package:borneo_kernel_abstractions/driver.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 class LyfiPaths {
-  static final Uri info = Uri(path: '/borneo/lyfi/info');
-  static final Uri status = Uri(path: '/borneo/lyfi/status');
-  static final Uri state = Uri(path: '/borneo/lyfi/state');
-  static final Uri color = Uri(path: '/borneo/lyfi/color');
-  static final Uri output = Uri(path: '/borneo/lyfi/output');
-  static final Uri schedule = Uri(path: '/borneo/lyfi/schedule');
-  static final Uri mode = Uri(path: '/borneo/lyfi/mode');
-  static final Uri correctionMethod = Uri(path: '/borneo/lyfi/correction-method');
-  static final Uri geoLocation = Uri(path: '/borneo/lyfi/geo-location');
-  static final Uri tzEnabled = Uri(path: '/borneo/lyfi/tz/enabled');
-  static final Uri tzOffset = Uri(path: '/borneo/lyfi/tz/offset');
-  static final Uri acclimation = Uri(path: '/borneo/lyfi/acclimation');
-  static final Uri cloudEnabled = Uri(path: '/borneo/lyfi/cloud/enabled');
-  static final Uri temporaryDuration = Uri(path: '/borneo/lyfi/temporary-duration');
-  static final Uri channel = Uri(path: '/borneo/lyfi/channel');
+  static final Uri info = Uri(path: '/borneo/lyfi/v1/info');
+  static final Uri status = Uri(path: '/borneo/lyfi/v1/status');
+  static final Uri state = Uri(path: '/borneo/lyfi/v1/state');
+  static final Uri color = Uri(path: '/borneo/lyfi/v1/color');
+  static final Uri output = Uri(path: '/borneo/lyfi/v1/output');
+  static final Uri schedule = Uri(path: '/borneo/lyfi/v1/schedule');
+  static final Uri mode = Uri(path: '/borneo/lyfi/v1/mode');
+  static final Uri correctionMethod = Uri(path: '/borneo/lyfi/v1/correction-method');
+  static final Uri geoLocation = Uri(path: '/borneo/lyfi/v1/geo-location');
+  static final Uri tzEnabled = Uri(path: '/borneo/lyfi/v1/tz/enabled');
+  static final Uri tzOffset = Uri(path: '/borneo/lyfi/v1/tz/offset');
+  static final Uri acclimation = Uri(path: '/borneo/lyfi/v1/acclimation');
+  static final Uri cloudEnabled = Uri(path: '/borneo/lyfi/v1/cloud/enabled');
+  static final Uri temporaryDuration = Uri(path: '/borneo/lyfi/v1/temporary-duration');
+  static final Uri channel = Uri(path: '/borneo/lyfi/v1/channel');
 
-  static final Uri sunSchedule = Uri(path: '/borneo/lyfi/sun/schedule');
-  static final Uri sunCurve = Uri(path: '/borneo/lyfi/sun/curve');
+  static final Uri sunSchedule = Uri(path: '/borneo/lyfi/v1/sun/schedule');
+  static final Uri sunCurve = Uri(path: '/borneo/lyfi/v1/sun/curve');
 
-  static final Uri moonConfig = Uri(path: '/borneo/lyfi/moon');
-  static final Uri moonSchedule = Uri(path: '/borneo/lyfi/moon/schedule');
-  static final Uri moonCurve = Uri(path: '/borneo/lyfi/moon/curve');
-  static final Uri moonStatus = Uri(path: '/borneo/lyfi/moon/status');
+  static final Uri moonConfig = Uri(path: '/borneo/lyfi/v1/moon');
+  static final Uri moonSchedule = Uri(path: '/borneo/lyfi/v1/moon/schedule');
+  static final Uri moonCurve = Uri(path: '/borneo/lyfi/v1/moon/curve');
+  static final Uri moonStatus = Uri(path: '/borneo/lyfi/v1/moon/status');
 
-  static final Uri currentTemp = Uri(path: '/borneo/lyfi/thermal/temp/current');
-  static final Uri keepTemp = Uri(path: '/borneo/lyfi/thermal/temp/keep');
-  static final Uri fanMode = Uri(path: '/borneo/lyfi/thermal/fan/mode');
-  static final Uri fanManual = Uri(path: '/borneo/lyfi/thermal/fan/manual');
+  static final Uri currentTemp = Uri(path: '/borneo/lyfi/v1/thermal/temp/current');
+  static final Uri keepTemp = Uri(path: '/borneo/lyfi/v1/thermal/temp/keep');
+  static final Uri fanMode = Uri(path: '/borneo/lyfi/v1/thermal/fan/mode');
+  static final Uri fanManual = Uri(path: '/borneo/lyfi/v1/thermal/fan/manual');
 }
 
 class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi implements Driver, ILyfiDeviceApi {
@@ -85,6 +85,7 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
         device: dev,
         offlineDetectionEnabled: true,
       );
+
       // Verify firmware version
       final fwver = await _getFirmwareVersion(coapClient, cancelToken: cancelToken);
       if (!kLyfiFWVersionConstraint.allows(fwver)) {
@@ -193,6 +194,11 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
           return null;
         }
 
+        final interfaceVer = int.parse(discovered.txt?['iver'] ?? '0');
+        if (interfaceVer < kLyfiMinInterfaceVersion) {
+          return null;
+        }
+
         final matched = SupportedDeviceDescriptor(
           driverDescriptor: borneoLyfiDriverDescriptor,
           address: Uri(scheme: 'coap', host: discovered.host, port: discovered.port),
@@ -200,7 +206,8 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
           compatible: compatible,
           model: discovered.txt?['model'] ?? '',
           fingerprint: fingerprint,
-          manuf: discovered.txt?['manuf'] ?? '',
+          vendor: discovered.txt?['vendor'] ?? '',
+          interfaceVer: interfaceVer,
           fwVer: fwVer,
           isCE: discovered.txt?['ce'] == 'true' ? true : false,
         );

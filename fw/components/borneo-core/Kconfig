@@ -24,8 +24,8 @@ menu "Borneo Core"
         config BORNEO_HW_VER
             string "Borneo hardware version"
 
-        config BORNEO_MANUF_DEFAULT
-            string "Borneo manufacturer default value"
+        config BORNEO_VENDOR_DEFAULT
+            string "Borneo vendor default value"
             default "BST"
 
         config BORNEO_EDITION_CE

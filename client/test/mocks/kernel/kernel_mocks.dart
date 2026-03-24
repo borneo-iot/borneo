@@ -237,6 +237,7 @@ class TestSupportedDeviceDescriptor extends SupportedDeviceDescriptor {
         fingerprint: fingerprint,
         compatible: 'compatible',
         model: 'model',
+        interfaceVer: 1,
         fwVer: Version(0, 0, 1),
         isCE: false,
       );

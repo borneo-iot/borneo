@@ -38,6 +38,7 @@ SupportedDeviceDescriptor makeCandidate({String fingerprint = 'fp-1', String hos
     fingerprint: fingerprint,
     compatible: 'lyfi',
     model: 'test-model',
+    interfaceVer: 1,
     fwVer: Version.parse('1.0.0'),
     isCE: true,
   );

@@ -9,10 +9,11 @@ class SupportedDeviceDescriptor {
   final String fingerprint;
   final String compatible;
   final String model;
-  final String? manuf;
+  final String? vendor;
   final String? serno;
   final Version fwVer;
   final bool? isCE;
+  final int interfaceVer;
 
   const SupportedDeviceDescriptor({
     required this.driverDescriptor,
@@ -23,7 +24,8 @@ class SupportedDeviceDescriptor {
     required this.model,
     required this.fwVer,
     required this.isCE,
-    this.manuf,
+    required this.interfaceVer,
+    this.vendor,
     this.serno,
   });
 }

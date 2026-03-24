@@ -12,7 +12,7 @@ extern "C" {
 
 #define BO_DEVICE_ID_LENGTH 8 ///< In bytes, EUI-64 format
 #define BO_DEVICE_NAME_MAX 64
-#define BO_DEVICE_MANUF_MAX 64
+#define BO_DEVICE_VENDOR_MAX 64
 #define BO_DEVICE_MODEL_MAX 32
 
 #define BO_SEM_AUTO_RELEASE(sem_expr)                                                                                  \
@@ -47,7 +47,7 @@ enum {
 struct system_info {
     char name[BO_DEVICE_NAME_MAX];
     char model[BO_DEVICE_MODEL_MAX];
-    char manuf[BO_DEVICE_MANUF_MAX];
+    char vendor[BO_DEVICE_VENDOR_MAX];
     uint8_t id[BO_DEVICE_ID_LENGTH];
     char hex_id[(BO_DEVICE_ID_LENGTH * 2) + 1];
 };
@@ -73,7 +73,7 @@ int bo_system_factory_reset();
 int bo_system_set_factory_name(const char* name);
 int bo_system_set_user_name(const char* name);
 int bo_system_set_model(const char* model);
-int bo_system_set_manuf(const char* manuf);
+int bo_system_set_vendor(const char* vendor);
 
 uint32_t bo_system_get_shutdown_reason();
 void bo_system_set_shutdown_reason(uint32_t reason);

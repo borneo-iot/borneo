@@ -8,7 +8,8 @@ import 'coap_driver.dart';
 
 const kLyfiDriverID = "borneo.lyfi";
 const kLyfiDriverName = "Borneo LyFi Aquarium LED";
-final kLyfiFWVersionConstraint = VersionConstraint.parse('>=0.5.23');
+final kLyfiFWVersionConstraint = VersionConstraint.parse('>=0.7.0');
+const kLyfiMinInterfaceVersion = 1;
 
 final DriverDescriptor borneoLyfiDriverDescriptor = DriverDescriptor(
   id: kLyfiDriverID,

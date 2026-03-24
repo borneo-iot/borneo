@@ -229,6 +229,7 @@ SupportedDeviceDescriptor makeSupportedDevice({String fingerprint = 'fp-1', Stri
     fingerprint: fingerprint,
     compatible: 'lyfi',
     model: 'test-model',
+    interfaceVer: 1,
     fwVer: Version.parse('1.0.0'),
     isCE: true,
   );

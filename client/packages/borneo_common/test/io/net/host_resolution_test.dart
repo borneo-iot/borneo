@@ -31,14 +31,14 @@ void main() {
 
     test('replaces uri hostname while preserving other parts', () async {
       final resolved = await resolveUriHostToPreferredAddress(
-        Uri.parse('coap://borneo.local:5683/borneo/lyfi/info?mode=1'),
+        Uri.parse('coap://borneo.local:5683/borneo/lyfi/v1/info?mode=1'),
         lookup: (host, {type = InternetAddressType.any}) async => [InternetAddress('192.168.2.15')],
       );
 
       expect(resolved.scheme, 'coap');
       expect(resolved.host, '192.168.2.15');
       expect(resolved.port, 5683);
-      expect(resolved.path, '/borneo/lyfi/info');
+      expect(resolved.path, '/borneo/lyfi/v1/info');
       expect(resolved.query, 'mode=1');
     });
   });

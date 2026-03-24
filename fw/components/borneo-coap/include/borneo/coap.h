@@ -98,8 +98,8 @@ struct coap_resource_desc {
 
 // Known resource paths
 
-#define BO_COAP_PATH_HEARTBEAT "borneo/heartbeat"
-#define BO_COAP_PATH_POWER "borneo/power"
+#define BO_COAP_PATH_HEARTBEAT "borneo/v1/heartbeat"
+#define BO_COAP_PATH_POWER "borneo/v1/power"
 
 int bo_coap_notify_resource_changed(const coap_str_const_t* resource_uri);
 

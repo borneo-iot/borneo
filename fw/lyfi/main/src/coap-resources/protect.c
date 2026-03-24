@@ -32,6 +32,7 @@ static void _coap_hnd_overheated_temp_get(coap_resource_t* resource, coap_sessio
     coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTENT);
 }
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/protection/overheated-temp", false, _coap_hnd_overheated_temp_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/protection/overheated-temp", false, _coap_hnd_overheated_temp_get, NULL, NULL,
+                     NULL);
 
 #endif // CONFIG_LYFI_PROTECTION_OVERHEATED_SUPPORT

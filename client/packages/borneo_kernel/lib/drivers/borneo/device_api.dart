@@ -18,34 +18,34 @@ const String kBorneoDeviceMdnsServiceType = '_borneo._udp';
 const int kDeviceNameMaxInBytes = 63;
 
 class BorneoPaths {
-  static final Uri heartbeat = Uri(path: '/borneo/heartbeat');
-  static final Uri deviceInfo = Uri(path: '/borneo/info');
-  static final Uri power = Uri(path: '/borneo/power');
-  static final Uri reboot = Uri(path: '/borneo/reboot');
-  static final Uri powerBehavior = Uri(path: '/borneo/power/behavior');
-  static final Uri status = Uri(path: '/borneo/status');
-  static final Uri systemMode = Uri(path: '/borneo/mode');
-  static final Uri timezone = Uri(path: '/borneo/settings/timezone');
-  static final Uri name = Uri(path: '/borneo/settings/name');
-  static final Uri factoryReset = Uri(path: '/borneo/factory/reset');
-  static final Uri firmwareVersion = Uri(path: '/borneo/fwver');
-  static final Uri compatible = Uri(path: '/borneo/compatible');
-  static final Uri rtcLocal = Uri(path: '/borneo/rtc/local');
-  static final Uri rtcTimestamp = Uri(path: '/borneo/rtc/ts');
-  static final Uri networkReset = Uri(path: '/borneo/network/reset');
+  static final Uri heartbeat = Uri(path: '/borneo/v1/heartbeat');
+  static final Uri deviceInfo = Uri(path: '/borneo/v1/info');
+  static final Uri power = Uri(path: '/borneo/v1/power');
+  static final Uri reboot = Uri(path: '/borneo/v1/reboot');
+  static final Uri powerBehavior = Uri(path: '/borneo/v1/power/behavior');
+  static final Uri status = Uri(path: '/borneo/v1/status');
+  static final Uri systemMode = Uri(path: '/borneo/v1/mode');
+  static final Uri timezone = Uri(path: '/borneo/v1/settings/timezone');
+  static final Uri name = Uri(path: '/borneo/v1/settings/name');
+  static final Uri factoryReset = Uri(path: '/borneo/v1/factory/reset');
+  static final Uri firmwareVersion = Uri(path: '/borneo/v1/fwver');
+  static final Uri compatible = Uri(path: '/borneo/v1/compatible');
+  static final Uri rtcLocal = Uri(path: '/borneo/v1/rtc/local');
+  static final Uri rtcTimestamp = Uri(path: '/borneo/v1/rtc/ts');
+  static final Uri networkReset = Uri(path: '/borneo/v1/network/reset');
 
-  static final Uri coapOtaStatus = Uri(path: '/borneo/ota/coap/status');
-  static final Uri coapOtaDownload = Uri(path: '/borneo/ota/coap/download');
+  static final Uri coapOtaStatus = Uri(path: '/borneo/v1/ota/coap/status');
+  static final Uri coapOtaDownload = Uri(path: '/borneo/v1/ota/coap/download');
 
-  static final Uri nvsU8 = Uri(path: '/borneo/factory/nvs/u8');
-  static final Uri nvsU16 = Uri(path: '/borneo/factory/nvs/u16');
-  static final Uri nvsU32 = Uri(path: '/borneo/factory/nvs/u32');
-  static final Uri nvsI8 = Uri(path: '/borneo/factory/nvs/i8');
-  static final Uri nvsI16 = Uri(path: '/borneo/factory/nvs/i16');
-  static final Uri nvsI32 = Uri(path: '/borneo/factory/nvs/i32');
-  static final Uri nvsString = Uri(path: '/borneo/factory/nvs/str');
-  static final Uri nvsBlob = Uri(path: '/borneo/factory/nvs/blob');
-  static final Uri nvsExists = Uri(path: '/borneo/factory/nvs/exists');
+  static final Uri nvsU8 = Uri(path: '/borneo/v1/factory/nvs/u8');
+  static final Uri nvsU16 = Uri(path: '/borneo/v1/factory/nvs/u16');
+  static final Uri nvsU32 = Uri(path: '/borneo/v1/factory/nvs/u32');
+  static final Uri nvsI8 = Uri(path: '/borneo/v1/factory/nvs/i8');
+  static final Uri nvsI16 = Uri(path: '/borneo/v1/factory/nvs/i16');
+  static final Uri nvsI32 = Uri(path: '/borneo/v1/factory/nvs/i32');
+  static final Uri nvsString = Uri(path: '/borneo/v1/factory/nvs/str');
+  static final Uri nvsBlob = Uri(path: '/borneo/v1/factory/nvs/blob');
+  static final Uri nvsExists = Uri(path: '/borneo/v1/factory/nvs/exists');
 }
 
 enum TransportChannel {
@@ -144,7 +144,7 @@ class GeneralBorneoDeviceInfo {
   final bool hasBT;
   final bool hasWifi;
   final bool hasMqtt;
-  final String manufName;
+  final String vendorName;
   final String modelName;
   final Version hwVer;
   final Version fwVer;
@@ -161,7 +161,7 @@ class GeneralBorneoDeviceInfo {
     required this.hasBT,
     required this.hasWifi,
     required this.hasMqtt,
-    required this.manufName,
+    required this.vendorName,
     required this.modelName,
     required this.hwVer,
     required this.fwVer,
@@ -180,7 +180,7 @@ class GeneralBorneoDeviceInfo {
       hasBT: map['hasBT'] ?? false,
       hasWifi: map['hasWifi'] ?? false,
       hasMqtt: map['hasMqtt'] ?? false,
-      manufName: map['manuf'],
+      vendorName: map['vendor'],
       modelName: map['model'],
       hwVer: Version.parse(map['hwVer']),
       fwVer: Version.parse(map['fwVer']),

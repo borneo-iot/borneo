@@ -101,7 +101,7 @@ class SettingsScreen extends StatelessWidget {
               value: Text(lvm.name),
               onPressed: (bc) => _showNameDialog(bc, vm),
             ),
-            SettingsTile(title: Text(context.translate('Manufacturer')), trailing: Text(lvm.borneoInfo.manufName)),
+            SettingsTile(title: Text(context.translate('Vendor')), trailing: Text(lvm.borneoInfo.vendorName)),
             SettingsTile(title: Text(context.translate('Model')), trailing: Text(lvm.borneoInfo.modelName)),
             SettingsTile(
               title: Text(context.translate('Serial Number')),

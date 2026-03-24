@@ -145,7 +145,7 @@ static int add_mdns_services()
     mdns_txt_item_t serviceTxtData[] = {
         { "name", sysinfo->name },
         { "id", sysinfo->hex_id },
-        { "manuf", sysinfo->manuf },
+        { "vendor", sysinfo->vendor },
         { "model", sysinfo->model },
         { "hwver", CONFIG_BORNEO_HW_VER },
         { "fwver", app_desc->version },
@@ -159,6 +159,7 @@ static int add_mdns_services()
         { "compatible", CONFIG_BORNEO_DEVICE_COMPATIBLE },
         { "path", "/borneo" },
         { "mac", mac_str },
+        { "iver", "1" },
     };
 
     BO_TRY_ESP(mdns_service_txt_set(MDNS_SERVICE_TYPE, "_udp", serviceTxtData,

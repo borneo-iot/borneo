@@ -112,10 +112,10 @@ static void coap_hnd_moon_status_get(coap_resource_t* resource, coap_session_t* 
     coap_add_data_blocked_response(request, response, COAP_MEDIATYPE_APPLICATION_CBOR, 0, encoded_size, buf);
 }
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/moon", false, coap_hnd_moon_get, NULL, coap_hnd_moon_put, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/moon", false, coap_hnd_moon_get, NULL, coap_hnd_moon_put, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/moon/schedule", false, coap_hnd_moon_schedule_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/moon/schedule", false, coap_hnd_moon_schedule_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/moon/curve", false, coap_hnd_moon_curve_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/moon/curve", false, coap_hnd_moon_curve_get, NULL, NULL, NULL);
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/moon/status", false, coap_hnd_moon_status_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/moon/status", false, coap_hnd_moon_status_get, NULL, NULL, NULL);

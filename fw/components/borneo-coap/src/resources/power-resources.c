@@ -90,5 +90,5 @@ static void coap_hnd_borneo_power_behavior_put(coap_resource_t* resource, coap_s
 }
 
 COAP_RESOURCE_DEFINE(BO_COAP_PATH_POWER, true, coap_hnd_borneo_power_get, NULL, coap_hnd_borneo_power_put, NULL);
-COAP_RESOURCE_DEFINE("borneo/power/behavior", false, coap_hnd_borneo_power_behavior_get, NULL,
+COAP_RESOURCE_DEFINE("borneo/v1/power/behavior", false, coap_hnd_borneo_power_behavior_get, NULL,
                      coap_hnd_borneo_power_behavior_put, NULL);

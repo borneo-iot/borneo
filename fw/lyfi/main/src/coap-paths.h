@@ -4,11 +4,11 @@
 extern "C" {
 #endif
 
-#define LYFI_COAP_PATH_LED_STATE "borneo/lyfi/state"
-#define LYFI_COAP_PATH_LED_MODE "borneo/lyfi/mode"
-#define LYFI_COAP_PATH_TEMPERATURE "borneo/lyfi/temperature"
-#define LYFI_COAP_PATH_MOON "borneo/lyfi/moon"
-#define LYFI_COAP_PATH_MOON_STATUS "borneo/lyfi/moon/status"
+#define LYFI_COAP_PATH_LED_STATE "borneo/lyfi/v1/state"
+#define LYFI_COAP_PATH_LED_MODE "borneo/lyfi/v1/mode"
+#define LYFI_COAP_PATH_TEMPERATURE "borneo/lyfi/v1/temperature"
+#define LYFI_COAP_PATH_MOON "borneo/lyfi/v1/moon"
+#define LYFI_COAP_PATH_MOON_STATUS "borneo/lyfi/v1/moon/status"
 
 #ifdef __cplusplus
 }

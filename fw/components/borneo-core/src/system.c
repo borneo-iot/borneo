@@ -27,7 +27,7 @@
 #define SYSTEM_NVS_NS "device"
 #define SYSTEM_NVS_KEY_NAME "name"
 #define SYSTEM_NVS_KEY_MODEL "model"
-#define SYSTEM_NVS_KEY_MANUF "manuf"
+#define SYSTEM_NVS_KEY_VENDOR "vendor"
 enum state_flags_enum {
     STATE_FLAG_OPERABLE = 1,
     STATE_FLAG_CONNECTION_CONFIGURATED = 2,
@@ -168,16 +168,16 @@ int bo_system_set_model(const char* model)
     return 0;
 }
 
-int bo_system_set_manuf(const char* manuf)
+int bo_system_set_vendor(const char* vendor)
 {
-    if (manuf == NULL || strlen(manuf) >= BO_DEVICE_MANUF_MAX) {
+    if (vendor == NULL || strlen(vendor) >= BO_DEVICE_VENDOR_MAX) {
         return -EINVAL;
     }
 
     nvs_handle_t nvs_handle;
     BO_TRY(bo_nvs_factory_open(SYSTEM_NVS_NS, NVS_READWRITE, &nvs_handle));
     BO_NVS_AUTO_CLOSE(nvs_handle);
-    BO_TRY(nvs_set_str(nvs_handle, SYSTEM_NVS_KEY_MANUF, manuf));
+    BO_TRY(nvs_set_str(nvs_handle, SYSTEM_NVS_KEY_VENDOR, vendor));
     BO_TRY(nvs_commit(nvs_handle));
     return 0;
 }
@@ -271,8 +271,8 @@ int load_factory_settings()
     BO_TRY(bo_nvs_get_or_set_str(nvs_handle, SYSTEM_NVS_KEY_MODEL, _sysinfo.model, &len, CONFIG_BORNEO_BOARD_ID,
                                  &changed));
 
-    len = BO_DEVICE_MANUF_MAX;
-    BO_TRY(bo_nvs_get_or_set_str(nvs_handle, SYSTEM_NVS_KEY_MANUF, _sysinfo.manuf, &len, CONFIG_BORNEO_MANUF_DEFAULT,
+    len = BO_DEVICE_VENDOR_MAX;
+    BO_TRY(bo_nvs_get_or_set_str(nvs_handle, SYSTEM_NVS_KEY_VENDOR, _sysinfo.vendor, &len, CONFIG_BORNEO_VENDOR_DEFAULT,
                                  &changed));
 
     if (changed) {

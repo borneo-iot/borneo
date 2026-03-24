@@ -61,5 +61,5 @@ static void coap_hnd_acclimation_delete(coap_resource_t* resource, coap_session_
     coap_pdu_set_code(response, COAP_RESPONSE_CODE_DELETED);
 }
 
-COAP_RESOURCE_DEFINE("borneo/lyfi/acclimation", false, coap_hnd_acclimation_get, coap_hnd_acclimation_post, NULL,
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/acclimation", false, coap_hnd_acclimation_get, coap_hnd_acclimation_post, NULL,
                      coap_hnd_acclimation_delete);

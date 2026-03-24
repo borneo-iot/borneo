@@ -616,28 +616,28 @@ static void coap_hnd_factory_nvs_exists_get(coap_resource_t* resource, coap_sess
 
 #endif // CONFIG_BORNEO_PRODUCT_MODE_STANDALONE
 
-COAP_RESOURCE_DEFINE("borneo/factory/reset", false, NULL, coap_hnd_borneo_factory_reset_post, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/reset", false, NULL, coap_hnd_borneo_factory_reset_post, NULL, NULL);
 
 #if CONFIG_BORNEO_PRODUCT_MODE_STANDALONE
 
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/u8", false, coap_hnd_factory_nvs_u8_get, coap_hnd_factory_nvs_u8_set, NULL,
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/u8", false, coap_hnd_factory_nvs_u8_get, coap_hnd_factory_nvs_u8_set, NULL,
                      NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/u16", false, coap_hnd_factory_nvs_u16_get, coap_hnd_factory_nvs_u16_set, NULL,
-                     NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/u32", false, coap_hnd_factory_nvs_u32_get, coap_hnd_factory_nvs_u32_set, NULL,
-                     NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/u64", false, coap_hnd_factory_nvs_u64_get, coap_hnd_factory_nvs_u64_set, NULL,
-                     NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/i8", false, coap_hnd_factory_nvs_i8_get, coap_hnd_factory_nvs_i8_set, NULL,
-                     NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/i32", false, coap_hnd_factory_nvs_i32_get, coap_hnd_factory_nvs_i32_set, NULL,
-                     NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/i64", false, coap_hnd_factory_nvs_i64_get, coap_hnd_factory_nvs_i64_set, NULL,
-                     NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/blob", false, coap_hnd_factory_nvs_blob_get, coap_hnd_factory_nvs_blob_set,
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/u16", false, coap_hnd_factory_nvs_u16_get, coap_hnd_factory_nvs_u16_set,
                      NULL, NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/str", false, coap_hnd_factory_nvs_str_get, coap_hnd_factory_nvs_str_set, NULL,
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/u32", false, coap_hnd_factory_nvs_u32_get, coap_hnd_factory_nvs_u32_set,
+                     NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/u64", false, coap_hnd_factory_nvs_u64_get, coap_hnd_factory_nvs_u64_set,
+                     NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/i8", false, coap_hnd_factory_nvs_i8_get, coap_hnd_factory_nvs_i8_set, NULL,
                      NULL);
-COAP_RESOURCE_DEFINE("borneo/factory/nvs/exists", false, coap_hnd_factory_nvs_exists_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/i32", false, coap_hnd_factory_nvs_i32_get, coap_hnd_factory_nvs_i32_set,
+                     NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/i64", false, coap_hnd_factory_nvs_i64_get, coap_hnd_factory_nvs_i64_set,
+                     NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/blob", false, coap_hnd_factory_nvs_blob_get, coap_hnd_factory_nvs_blob_set,
+                     NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/str", false, coap_hnd_factory_nvs_str_get, coap_hnd_factory_nvs_str_set,
+                     NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/v1/factory/nvs/exists", false, coap_hnd_factory_nvs_exists_get, NULL, NULL, NULL);
 
 #endif // CONFIG_BORNEO_PRODUCT_MODE_STANDALONE

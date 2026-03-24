@@ -179,7 +179,8 @@ void main() {
             model: matched.model,
             fwVer: matched.fwVer,
             isCE: matched.isCE,
-            manuf: matched.manuf,
+            interfaceVer: matched.interfaceVer,
+            vendor: matched.vendor,
             serno: matched.serno,
           ),
         );

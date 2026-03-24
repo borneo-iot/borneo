@@ -98,8 +98,8 @@ int bo_rpc_borneo_info_get(const CborValue* args, CborEncoder* retvals)
     }
 
     {
-        BO_TRY(cbor_encode_text_stringz(&root_map, "manuf"));
-        BO_TRY(cbor_encode_text_stringz(&root_map, sysinfo->manuf));
+        BO_TRY(cbor_encode_text_stringz(&root_map, "vendor"));
+        BO_TRY(cbor_encode_text_stringz(&root_map, sysinfo->vendor));
     }
 
     {

@@ -32,7 +32,7 @@ class ProvisioningBleProvisioner implements IBleProvisioner {
       'hasBT': true,
       'hasWifi': true,
       'hasMqtt': false,
-      'manuf': 'Borneo',
+      'vendor': 'BST',
       'model': 'Test Model',
       'hwVer': '1.0.0',
       'fwVer': '1.0.0',
@@ -212,6 +212,7 @@ SupportedDeviceDescriptor makeProvisionedCandidate(String fingerprint) {
     fingerprint: fingerprint,
     compatible: 'lyfi',
     model: 'Test Model',
+    interfaceVer: 1,
     fwVer: Version.parse('1.0.0'),
     isCE: true,
   );

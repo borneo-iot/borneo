@@ -38,7 +38,7 @@ class CoAPFirmwareUpdater:
 
     async def check_server_status(self, context):
         """Check server status"""
-        uri = urljoin(self.target_url, "/borneo/ota/coap/status")
+        uri = urljoin(self.target_url, "/borneo/v1/ota/coap/status")
         print(f"Checking server status: {uri}")
         request = Message(code=Code.GET, uri=uri)
         try:
@@ -80,7 +80,7 @@ class CoAPFirmwareUpdater:
             firmware_data = await f.read()
 
         # Create CoAP PUT request
-        uri = urljoin(self.target_url, "/borneo/ota/coap/download")
+        uri = urljoin(self.target_url, "/borneo/v1/ota/coap/download")
         request = Message(code=Code.PUT, uri=uri, payload=firmware_data)
         request.remote.maximum_block_size_exp = 5  # 1024 bytes
 
