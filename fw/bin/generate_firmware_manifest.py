@@ -26,14 +26,19 @@ def main():
 
     os.makedirs(output_dir, exist_ok=True)
 
-    # Read version.txt
-    version_file = os.path.join(base_dir, "version.txt")
-    if not os.path.exists(version_file):
-        print(f"Version file {version_file} does not exist")
+    # Read build/project_description.json and extract project_version
+    project_description_file = os.path.join(base_dir, "build", "project_description.json")
+    if not os.path.exists(project_description_file):
+        print(f"Project description file {project_description_file} does not exist")
         sys.exit(1)
 
-    with open(version_file, 'r') as f:
-        version = f.read().strip()
+    with open(project_description_file, 'r') as f:
+        project_description = json.load(f)
+
+    version = project_description.get("project_version")
+    if not version:
+        print(f"`project_version` not found in {project_description_file}")
+        sys.exit(1)
 
     # Read sdkconfig.json
     sdkconfig_file = os.path.join(base_dir, "build", "config", "sdkconfig.json")
