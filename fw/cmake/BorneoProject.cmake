@@ -25,9 +25,11 @@ string(REGEX MATCH "[^/]+$" BORNEO_MODEL_ID ${PRODUCT_ID})
 if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
     message("[BORNEO] > Building RELEASE profile")
     set(SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.common;${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.release;${BORNEO_BOARD_DIR}/sdkconfig.board;${CMAKE_CURRENT_SOURCE_DIR}/products/${BORNEO_PRODUCT_ID}/sdkconfig.product")
+    add_compile_definitions(BUILD_TYPE_RELEASE=1)
 else()
     message("[BORNEO] > Building DEBUG profile")
     set(SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.common;${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.debug;${BORNEO_BOARD_DIR}/sdkconfig.board;${CMAKE_CURRENT_SOURCE_DIR}/products/${BORNEO_PRODUCT_ID}/sdkconfig.product")
+    add_compile_definitions(BUILD_TYPE_DEBUG=1)
 endif()
 
 
