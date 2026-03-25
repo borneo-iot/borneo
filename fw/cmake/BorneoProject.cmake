@@ -18,6 +18,9 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/boards/${BORNEO_BOARD_ID}/board.cmake")
 
 set(BORNEO_BOARD_DIR  "${CMAKE_CURRENT_SOURCE_DIR}/boards/${BORNEO_BOARD_ID}")
 
+string(REGEX MATCH "^[^/]+" BORNEO_VENDOR_ID ${PRODUCT_ID})
+string(REGEX MATCH "[^/]+$" BORNEO_MODEL_ID ${PRODUCT_ID})
+
 
 if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
     message("[BORNEO] > Building RELEASE profile")
