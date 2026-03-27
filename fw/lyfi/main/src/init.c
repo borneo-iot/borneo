@@ -17,7 +17,7 @@
 
 #define TAG "lyfi_init"
 
-static int _lyfi_init(const struct drvfx_device* dev)
+static int _lyfi_init(const struct drvfx_device*)
 {
 #if CONFIG_LYFI_THERMAL_ENABLED
     BO_TRY(thermal_init());
@@ -37,7 +37,7 @@ static int _lyfi_init(const struct drvfx_device* dev)
     return 0;
 }
 
-static int _app_init()
+static int _app_init(const struct drvfx_device*)
 {
     // At this point, power-on is complete, send the power-on completion message.
     return 0;

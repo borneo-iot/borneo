@@ -18,7 +18,7 @@
 #define NOTIFY_TASK_PRIO 9
 
 static int notify_init();
-static void notify_task();
+static void notify_task(void*);
 static void _system_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
 
 #define NOTIFY_QUEUE_LENGTH 32
@@ -89,7 +89,7 @@ void _bo_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id,
     }
 }
 
-static int _coap_init()
+static int _coap_init(const struct drvfx_device*)
 {
     int rc = 0;
     ESP_LOGI(TAG, "Initializing CoAP server...");
@@ -237,7 +237,7 @@ int notify_init()
 
     BO_TRY_ESP(esp_event_handler_register(BO_SYSTEM_EVENTS, ESP_EVENT_ANY_ID, &_system_event_handler, NULL));
 
-    BaseType_t rc = xTaskCreate(&notify_task, "coap.notify", 1024 * 3, NULL, NOTIFY_TASK_PRIO, &s_notify_task);
+    BaseType_t rc = xTaskCreate(notify_task, "coap.notify", 1024 * 3, NULL, NOTIFY_TASK_PRIO, &s_notify_task);
     if (rc != pdPASS) {
         s_notify_task = NULL;
         return -ENOMEM;
@@ -246,7 +246,7 @@ int notify_init()
     return 0;
 }
 
-void notify_task()
+void notify_task(void*)
 {
     static const coap_str_const_t BO_COAP_URI_HEARTBEAT = {
         .s = (const uint8_t*)BO_COAP_PATH_HEARTBEAT,

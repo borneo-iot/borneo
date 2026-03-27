@@ -15,7 +15,7 @@ on:
 jobs:
   build-lyfi:
     runs-on: ubuntu-latest
-    container: 'espressif/idf:v5.5.2'
+    container: 'espressif/idf:release-v6.0'
     if: ${{ vars.BO_EDITION == 'ce' }}
     env:
       LYFI_PRODUCTS: bst/ulva6 bst/blc06mk1

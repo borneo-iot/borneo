@@ -17,9 +17,6 @@
 
 #include <esp_netif.h>
 
-#include <coap3/coap.h>
-#include <coap3/coap_resource.h>
-
 #include <drvfx/drvfx.h>
 
 #include "borneo/common.h"

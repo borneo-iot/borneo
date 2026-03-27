@@ -1,6 +1,6 @@
 # The following lines of boilerplate have to be in your project's CMakeLists
 # in this exact order for cmake to work correctly
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../cmake")
 
@@ -34,5 +34,7 @@ include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
 
 project("${BORNEO_PROJECT_ID}")
+
+add_compile_definitions(HAVE_OPEN_MEMSTREAM)
 
 message(STATUS "Firmware Version: ${PROJECT_VER}")

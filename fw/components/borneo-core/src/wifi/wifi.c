@@ -493,7 +493,7 @@ void _wifi_reconnect_callback(void* arg)
 bool _has_ssid()
 {
     wifi_config_t wifi_config = { 0 };
-    int rc = esp_wifi_get_config(ESP_IF_WIFI_STA, &wifi_config);
+    int rc = esp_wifi_get_config(WIFI_IF_STA, &wifi_config);
     if (rc == ESP_OK) {
         const char* saved_ssid = (const char*)wifi_config.sta.ssid;
         return (strnlen(saved_ssid, MAX_SSID_LEN) > 0);

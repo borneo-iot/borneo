@@ -3,5 +3,5 @@ dependencies:
   espressif/button: "^4.1.0"
   ## Required IDF version
   idf:
-    version: ">=5.5.2"
+    version: ">=6.0.0"
 

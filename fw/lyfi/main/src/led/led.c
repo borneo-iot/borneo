@@ -41,7 +41,7 @@ void led_sch_drive(time_t utc_now, led_color_t color);
 static void system_events_handler(void* handler_args, esp_event_base_t base, int32_t event_id, void* event_data);
 static void led_events_handler(void* handler_args, esp_event_base_t base, int32_t id, void* event_data);
 
-static void led_render_task();
+static void led_render_task(void*);
 static void led_handle_pending_requests(uint32_t notifications);
 static void led_handle_temporary_toggle_request();
 static void led_handle_fault_shutdown_request();
@@ -51,25 +51,25 @@ static int led_switch_state_now(uint8_t state);
 static int led_request_state_switch(uint8_t state, bool wait_for_completion);
 static bool led_is_render_task_context();
 
-static void led_temporary_state_entry();
-static void led_temporary_state_run();
-static void led_temporary_state_exit();
+static void led_temporary_state_entry(void*);
+static void led_temporary_state_run(void*);
+static void led_temporary_state_exit(void*);
 
-static void disco_state_entry();
-static void disco_state_run();
-static void disco_state_exit();
+static void disco_state_entry(void*);
+static void disco_state_run(void*);
+static void disco_state_exit(void*);
 
-static void normal_state_entry();
-static void normal_state_run();
-static void normal_state_exit();
+static void normal_state_entry(void*);
+static void normal_state_run(void*);
+static void normal_state_exit(void*);
 
-static void preview_state_entry();
-static void preview_state_run();
-static void preview_state_exit();
+static void preview_state_entry(void*);
+static void preview_state_run(void*);
+static void preview_state_exit(void*);
 
-static void dimming_state_entry();
-static void dimming_state_run();
-static void dimming_state_exit();
+static void dimming_state_entry(void*);
+static void dimming_state_run(void*);
+static void dimming_state_exit(void*);
 
 static inline void led_dimming_reset_timeout();
 
@@ -121,16 +121,16 @@ ESP_EVENT_DEFINE_BASE(LYFI_EVENTS);
     */
 
 static const struct smf_state LED_STATE_TABLE[] = {
-    [LED_STATE_NORMAL] = SMF_CREATE_STATE(&normal_state_entry, &normal_state_run, &normal_state_exit, NULL, NULL),
+    [LED_STATE_NORMAL] = SMF_CREATE_STATE(normal_state_entry, normal_state_run, normal_state_exit, NULL, NULL),
 
-    [LED_STATE_DIMMING] = SMF_CREATE_STATE(&dimming_state_entry, &dimming_state_run, &dimming_state_exit, NULL, NULL),
+    [LED_STATE_DIMMING] = SMF_CREATE_STATE(dimming_state_entry, dimming_state_run, dimming_state_exit, NULL, NULL),
 
     [LED_STATE_TEMPORARY]
-    = SMF_CREATE_STATE(&led_temporary_state_entry, &led_temporary_state_run, &led_temporary_state_exit, NULL, NULL),
+    = SMF_CREATE_STATE(led_temporary_state_entry, led_temporary_state_run, led_temporary_state_exit, NULL, NULL),
 
-    [LED_STATE_PREVIEW] = SMF_CREATE_STATE(&preview_state_entry, &preview_state_run, &preview_state_exit, NULL, NULL),
+    [LED_STATE_PREVIEW] = SMF_CREATE_STATE(preview_state_entry, preview_state_run, preview_state_exit, NULL, NULL),
 
-    [LED_STATE_DISCO] = SMF_CREATE_STATE(&disco_state_entry, &disco_state_run, &disco_state_exit, NULL, NULL),
+    [LED_STATE_DISCO] = SMF_CREATE_STATE(disco_state_entry, disco_state_run, disco_state_exit, NULL, NULL),
 };
 
 static const uint8_t LED_GPIOS[CONFIG_LYFI_LED_CHANNEL_COUNT] = {
@@ -189,7 +189,7 @@ struct led_state_switch_request {
     SemaphoreHandle_t completion;
 };
 
-static ledc_channel_config_t _ledc_channels[CONFIG_LYFI_LED_CHANNEL_COUNT];
+static ledc_channel_config_t _ledc_channels[CONFIG_LYFI_LED_CHANNEL_COUNT] = { 0 };
 static TaskHandle_t s_led_render_task_handle;
 static struct led_state_switch_request s_led_state_switch_request;
 /**
@@ -244,7 +244,6 @@ int led_init()
     // Initialize all channels
     for (size_t ch = 0; ch < CONFIG_LYFI_LED_CHANNEL_COUNT; ch++) {
         _ledc_channels[ch].gpio_num = LED_GPIOS[ch];
-        _ledc_channels[ch].intr_type = LEDC_INTR_DISABLE;
         _ledc_channels[ch].hpoint = (ch * LED_MAX_DUTY) / led_channel_count();
 #if SOC_LEDC_SUPPORT_HS_MODE
         if (ch <= 7) { // the next timer
@@ -753,7 +752,7 @@ int led_mode_sun_entry()
     return 0;
 }
 
-void led_render_task()
+void led_render_task(void*)
 {
     led_color_t last_color;
     led_virtual_color_t last_virtual_color = { 0 };
@@ -1128,7 +1127,7 @@ int led_set_correction_method(uint8_t correction_method)
     return 0;
 }
 
-static void normal_state_entry()
+static void normal_state_entry(void*)
 {
     if (_led.settings.mode == LED_MODE_SUN) {
         if (led_sun_can_active()) {
@@ -1149,7 +1148,7 @@ static void normal_state_entry()
     }
 }
 
-static void normal_state_run()
+static void normal_state_run(void*)
 {
     if (!bo_power_is_on() || k_get_mode() != KERNEL_MODE_NORMAL) {
         if (led_is_fading()) {
@@ -1202,7 +1201,7 @@ static void normal_state_run()
     BO_MUST(led_update_color(color));
 }
 
-void normal_state_exit()
+void normal_state_exit(void*)
 {
     if (led_is_fading()) {
         BO_MUST(led_fade_stop());
@@ -1210,7 +1209,7 @@ void normal_state_exit()
     return;
 }
 
-void dimming_state_entry()
+void dimming_state_entry(void*)
 {
     if (led_is_fading()) {
         BO_MUST(led_fade_stop());
@@ -1239,7 +1238,7 @@ void dimming_state_entry()
     }
 }
 
-void dimming_state_run()
+void dimming_state_run(void*)
 {
     if (CONFIG_LYFI_DIMMING_TIMEOUT > 0) {
         int64_t now_ms = bo_timer_uptime_ms();
@@ -1255,7 +1254,7 @@ void dimming_state_run()
     }
 }
 
-void dimming_state_exit()
+void dimming_state_exit(void*)
 {
     portENTER_CRITICAL(&g_led_spinlock);
     _led.dimming_timeout_deadline_ms = 0;
@@ -1263,7 +1262,7 @@ void dimming_state_exit()
     ESP_LOGI(TAG, "Exiting dimming mode.");
 }
 
-static void preview_state_entry()
+static void preview_state_entry(void*)
 {
     if (_led.settings.scheduler.item_count <= 1) {
         return;
@@ -1283,7 +1282,7 @@ static void preview_state_entry()
     ESP_LOGI(TAG, "Preview state started.");
 }
 
-static void preview_state_run()
+static void preview_state_run(void*)
 {
     assert(led_get_state() == LED_STATE_PREVIEW);
     assert(_led.settings.scheduler.item_count > 0);
@@ -1300,7 +1299,7 @@ static void preview_state_run()
     smf_set_state(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_DIMMING]);
 }
 
-static void preview_state_exit()
+static void preview_state_exit(void*)
 {
     _led.preview_state_clock = 0;
     led_update_color(_led.color_to_resume);
@@ -1309,7 +1308,7 @@ static void preview_state_exit()
 
 // ========== DISCO State ==========
 
-static void disco_state_entry()
+static void disco_state_entry(void*)
 {
     ESP_LOGI(TAG, "Entering disco state.");
 
@@ -1317,7 +1316,7 @@ static void disco_state_entry()
     BO_MUST(led_disco_init());
 }
 
-static void disco_state_run()
+static void disco_state_run(void*)
 {
     if (!bo_power_is_on() || k_get_mode() != KERNEL_MODE_NORMAL) {
         // If power off or not in normal kernel mode, return to normal state
@@ -1335,7 +1334,7 @@ static void disco_state_run()
     BO_MUST(led_update_color(color));
 }
 
-static void disco_state_exit() { ESP_LOGI(TAG, "Exiting disco state."); }
+static void disco_state_exit(void*) { ESP_LOGI(TAG, "Exiting disco state."); }
 
 int led_set_temporary_duration(uint32_t duration)
 {
@@ -1377,7 +1376,7 @@ int led_set_dimming_timeout(uint32_t timeout_sec)
 
 uint32_t led_get_dimming_timeout() { return CONFIG_LYFI_DIMMING_TIMEOUT; }
 
-void led_temporary_state_entry()
+void led_temporary_state_entry(void*)
 {
     if (!bo_power_is_on() || k_get_mode() != KERNEL_MODE_NORMAL) {
         return;
@@ -1392,7 +1391,7 @@ void led_temporary_state_entry()
     BO_MUST(led_fade_to_color(_led.settings.manual_color, TEMPORARY_FADE_PERIOD_MS));
 }
 
-void led_temporary_state_exit()
+void led_temporary_state_exit(void*)
 {
     assert(led_get_state() == LED_STATE_TEMPORARY);
     portENTER_CRITICAL(&g_led_spinlock);
@@ -1400,7 +1399,7 @@ void led_temporary_state_exit()
     portEXIT_CRITICAL(&g_led_spinlock);
 }
 
-void led_temporary_state_run()
+void led_temporary_state_run(void*)
 {
     assert(led_get_state() == LED_STATE_TEMPORARY);
 

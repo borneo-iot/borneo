@@ -28,7 +28,7 @@
 #if CONFIG_LYFI_PROTECTION_ENABLED
 
 static int load_factory_settings();
-static void protect_task();
+static void protect_task(void*);
 
 #define TASK_PRIORITY 12
 
@@ -88,7 +88,7 @@ int bo_protect_init()
     }
 #endif // CONFIG_LYFI_PROTECTION_OVERPOWER_SUPPORT
 
-    xTaskCreate(&protect_task, "protect_task", 2048, NULL, TASK_PRIORITY, NULL);
+    xTaskCreate(protect_task, "protect_task", 2048, NULL, TASK_PRIORITY, NULL);
 
     ESP_LOGI(TAG, "Protection initialized");
     return 0;
@@ -226,7 +226,7 @@ static void check_overpower_protection()
 
 #endif // CONFIG_LYFI_PROTECTION_OVERPOWER_SUPPORT
 
-void protect_task()
+void protect_task(void*)
 {
     for (;;) {
         if (bo_power_is_on()) {

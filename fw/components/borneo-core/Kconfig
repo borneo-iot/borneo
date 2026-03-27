@@ -57,7 +57,7 @@ menu "Borneo Core"
 
             config BORNEO_PROV_METHOD_NP
                 bool "Espressif Network Provisioning"
-                depends on SOC_BT_SUPPORTED && BT_ENABLED && BT_NIMBLE_ENABLED
+                depends on SOC_BT_SUPPORTED && BT_ENABLED && BT_NIMBLE_ENABLED && ESP_PROTOCOMM_SUPPORT_SECURITY_VERSION_1
         endchoice
     endmenu
 

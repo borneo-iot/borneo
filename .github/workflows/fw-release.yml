@@ -17,7 +17,7 @@ jobs:
   release:
     if: ${{ vars.BO_EDITION == 'ce' }}
     runs-on: ubuntu-latest
-    container: 'espressif/idf:v5.5.2'
+    container: 'espressif/idf:release-v6.0'
     env:
       LYFI_PRODUCTS: bst/ulva6 bst/blc06mk1 bst/xiaoc3 bst/c3devkitm1 bst/c5devkitc1 bst/c3supermini
 

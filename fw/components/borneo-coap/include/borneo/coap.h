@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#include "common.h"
+#include <borneo/common.h>
 
 #define BO_COAP_HEARTBEAT_INTERVAL_MS (5000)
 

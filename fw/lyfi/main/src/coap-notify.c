@@ -52,8 +52,9 @@ static void led_event_handler(void* arg, esp_event_base_t event_base, int32_t ev
     }
 }
 
-int _coap_notify_init()
+int _coap_notify_init(const struct drvfx_device* dev)
 {
+    ESP_UNUSED(dev);
     ESP_LOGI(TAG, "Initializing LyFi CoAP notification sub-system...");
     BO_TRY_ESP(esp_event_handler_register(LYFI_EVENTS, ESP_EVENT_ANY_ID, &led_event_handler, NULL));
     return 0;

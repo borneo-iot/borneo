@@ -10,11 +10,10 @@
 #include <esp_system.h>
 #include <esp_err.h>
 #include <esp_log.h>
-#include <driver/ledc.h>
 #include <nvs_flash.h>
 #include <driver/gpio.h>
 
-#include "driver/dac_oneshot.h"
+#include <driver/dac_oneshot.h>
 
 #include <drvfx/drvfx.h>
 #include <borneo/system.h>

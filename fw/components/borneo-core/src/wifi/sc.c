@@ -100,7 +100,7 @@ static void sc_event_handler(void* arg, esp_event_base_t event_base, int32_t eve
         }
 
         BO_MUST(esp_wifi_disconnect());
-        BO_MUST(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+        BO_MUST(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
         _sc_state = SC_STATE_CONNECTING;
         BO_MUST(esp_wifi_connect());
     } break;

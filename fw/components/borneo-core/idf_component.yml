@@ -1,9 +1,11 @@
 ## IDF Component Manager Manifest File
 dependencies:
-  espressif/cbor: "^0.6.1~4"
-  espressif/coap: "^4.3.5~5"
-  espressif/mdns: "^1.10.1"
+  espressif/mdns: "^1.11.0"
   espressif/network_provisioning: "^1.2.2"
+  cbor:
+    # 指定本地组件的路径，可以是相对路径或绝对路径
+    path: "../../3rd-components/cbor"
+
   ## Required IDF version
   idf:
-    version: ">=5.1"
+    version: ">=6.0.0"

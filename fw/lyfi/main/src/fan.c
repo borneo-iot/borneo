@@ -10,7 +10,6 @@
 #include <esp_system.h>
 #include <esp_err.h>
 #include <esp_log.h>
-#include <driver/ledc.h>
 #include <nvs_flash.h>
 #include <driver/gpio.h>
 
@@ -141,8 +140,9 @@ int fan_factory_settings_load()
     return 0;
 }
 
-static int fan_init()
+static int fan_init(const struct drvfx_device* dev)
 {
+    ESP_UNUSED(dev);
     ESP_LOGI(TAG, "Initializing fan driver...");
 
     BO_TRY(fan_factory_settings_load());

@@ -15,8 +15,6 @@
 #include <nvs_flash.h>
 #include <esp_flash.h>
 
-#include <mbedtls/sha256.h>
-
 #include <drvfx/drvfx.h>
 #include <borneo/common.h>
 #include <borneo/nvs.h>
@@ -98,7 +96,7 @@ const struct system_info* bo_system_get_info() { return &_sysinfo; }
 
 const struct system_status* bo_system_get_status() { return &_status; }
 
-static void _reboot_callback();
+static void _reboot_callback(void*);
 
 void bo_system_reboot_later(uint32_t delay_ms)
 {
@@ -207,7 +205,7 @@ uint64_t bo_system_get_shutdown_timestamp()
     return timestamp;
 }
 
-void _reboot_callback()
+void _reboot_callback(void* _user_args)
 {
     BO_MUST_ESP(esp_event_post(BO_SYSTEM_EVENTS, BO_EVENT_REBOOTING, NULL, 0, portMAX_DELAY));
     vTaskDelay(pdMS_TO_TICKS(500));

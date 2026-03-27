@@ -4,7 +4,6 @@
 #include <sys/socket.h>
 
 #include <cbor.h>
-#include <coap3/coap.h>
 
 #include <borneo/system.h>
 #include <borneo/power.h>

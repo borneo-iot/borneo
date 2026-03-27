@@ -1,0 +1,5 @@
+dependencies:
+  espressif/cbor:
+    version: 0.*
+description: CBOR Example
+version: 1.0.0
