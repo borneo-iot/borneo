@@ -147,6 +147,7 @@ static int add_mdns_services()
         { "id", sysinfo->hex_id },
         { "vendor", sysinfo->vendor },
         { "model", sysinfo->model },
+        { "pid", CONFIG_BORNEO_PRODUCT_ID },
         { "hwver", CONFIG_BORNEO_HW_VER },
         { "fwver", app_desc->version },
 #if CONFIG_BORNEO_EDITION_CE
