@@ -31,9 +31,6 @@ class ManualRunningChart extends StatelessWidget {
     // Compute a compressed gradient where small values remain light.
     // Define the full (100%) gradient as: lightStart -> primaryColor (darker).
     // For current value (x%), only show 0..x% of that gradient: lightStart -> colorAt(x%).
-    final lightStart = Color.lerp(primaryColor, Colors.white, 0.7)!; // lighter start
-    final double fraction = (y / kLyfiBrightnessMax).clamp(0.0, 1.0).toDouble();
-    final currentEndColor = Color.lerp(lightStart, primaryColor, fraction)!;
     return BarChartGroupData(
       groupVertically: false,
       x: x,
@@ -41,12 +38,7 @@ class ManualRunningChart extends StatelessWidget {
         BarChartRodData(
           toY: y,
           borderRadius: BorderRadius.zero,
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            // Start from light -> progress toward primary only up to x% to keep small values light.
-            colors: [lightStart, currentEndColor],
-          ),
+          color: primaryColor,
           width: 20,
           backDrawRodData: BackgroundBarChartRodData(
             show: true,

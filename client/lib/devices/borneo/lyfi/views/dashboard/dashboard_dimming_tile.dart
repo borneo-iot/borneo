@@ -37,8 +37,8 @@ class DashboardDimmingTile extends StatelessWidget {
                 selector: (_, vm) => vm.mode,
                 builder: (context, mode, _) {
                   final modeIcon = switch (mode) {
-                    LyfiMode.manual => Icons.bar_chart_outlined,
-                    LyfiMode.scheduled => Icons.alarm_outlined,
+                    LyfiMode.manual => Icons.tune_outlined,
+                    LyfiMode.scheduled => Icons.auto_graph_outlined,
                     LyfiMode.sun => Icons.wb_sunny_outlined,
                   };
                   return Icon(modeIcon, size: 32, color: effectiveIconColor);

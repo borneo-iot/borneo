@@ -3,6 +3,7 @@ import 'package:borneo_app/features/devices/models/device_entity.dart';
 import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:borneo_app/devices/borneo/lyfi/views/dashboard/dashboard_view.dart';
 import 'package:borneo_app/core/services/devices/device_manager.dart';
 import 'package:borneo_app/features/devices/views/device_availability_guard.dart';
+import 'package:borneo_app/shared/widgets/system_ui_overlay_style.dart';
 
 import '../view_models/lyfi_view_model.dart';
 import 'widgets/lyfi_header.dart';
@@ -79,6 +81,7 @@ class _LyfiDeviceDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.read<LyfiViewModel>();
+    final theme = Theme.of(context);
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) async {
@@ -94,17 +97,20 @@ class _LyfiDeviceDetailsScreen extends StatelessWidget {
           Navigator.of(context).pop();
         }
       },
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: NestedScrollView(
-          // turn off scrolling so the details screen remains fixed
-          physics: const NeverScrollableScrollPhysics(),
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            LyfiAppBar(onBack: () => goBack(context)),
-            const LyfiBusyIndicatorSliver(),
-            const LyfiStatusBannersSliver(),
-          ],
-          body: _DashboardRouteVisibilityGate(),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: borneoSystemUiOverlayStyle(theme),
+        child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          body: NestedScrollView(
+            // turn off scrolling so the details screen remains fixed
+            physics: const NeverScrollableScrollPhysics(),
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              LyfiAppBar(onBack: () => goBack(context)),
+              const LyfiBusyIndicatorSliver(),
+              const LyfiStatusBannersSliver(),
+            ],
+            body: _DashboardRouteVisibilityGate(),
+          ),
         ),
       ),
     );

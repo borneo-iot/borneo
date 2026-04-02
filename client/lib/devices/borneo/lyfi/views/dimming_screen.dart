@@ -45,12 +45,12 @@ class DimmingAppBar extends StatelessWidget {
             segments: [
               ButtonSegment<LyfiMode>(
                 value: LyfiMode.manual,
-                icon: const Icon(Icons.bar_chart_outlined, size: 20),
+                icon: const Icon(Icons.tune_outlined, size: 20),
                 tooltip: context.translate('Manual mode'),
               ),
               ButtonSegment<LyfiMode>(
                 value: LyfiMode.scheduled,
-                icon: const Icon(Icons.alarm_outlined, size: 20),
+                icon: const Icon(Icons.auto_graph_outlined, size: 20),
                 tooltip: context.translate('Scheduled mode'),
               ),
               ButtonSegment<LyfiMode>(

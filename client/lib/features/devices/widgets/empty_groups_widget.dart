@@ -15,13 +15,15 @@ class EmptyGroupsWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.devices_other_outlined, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
-            Text(context.translate('No Devices'), style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              context.translate('No Devices'),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Theme.of(context).hintColor),
+            ),
             const SizedBox(height: 8),
             Text(
               context.translate('Add devices to get started'),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).hintColor),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),

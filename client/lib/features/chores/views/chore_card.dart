@@ -93,7 +93,7 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
                   Text(
                     widget.chore.name,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: textTheme.labelLarge?.fontSize, color: effectiveFgColor),
+                    style: textTheme.titleSmall?.copyWith(color: effectiveFgColor),
                   ),
                   Divider(height: 16, thickness: 1.5, color: effectiveSecondaryFgColor.withValues(alpha: 0.3)),
                   Row(
@@ -107,10 +107,7 @@ class _ChoreCardState extends ConsumerState<ChoreCard> {
                           child: Text(
                             isActive ? context.translate('ACTIVE') : context.translate('INACTIVE'),
                             key: ValueKey(isActive),
-                            style: TextStyle(
-                              fontSize: textTheme.labelSmall?.fontSize,
-                              color: effectiveSecondaryFgColor,
-                            ),
+                            style: textTheme.labelMedium?.copyWith(color: effectiveSecondaryFgColor),
                           ),
                         ),
                       ),

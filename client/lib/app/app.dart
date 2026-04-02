@@ -10,6 +10,7 @@ import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:borneo_app/core/services/scene_manager_impl.dart';
 import 'package:borneo_app/core/services/url_launcher_service.dart';
 import 'package:borneo_app/main/views/main_screen.dart';
+import 'package:borneo_app/shared/widgets/system_ui_overlay_style.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
@@ -138,15 +139,9 @@ class _BorneoAppState extends State<BorneoApp> {
                   : (_themeMode == ThemeMode.light ? Brightness.light : theme.brightness);
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 SystemChrome.setSystemUIOverlayStyle(
-                  SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: theme.brightness,
-                    systemNavigationBarColor: theme.colorScheme.surfaceContainer,
-                    /*
-                    effectiveBrightness == Brightness.light
-                        ? Colors.white
-                        : theme.colorScheme.surfaceContainer,
-                        */
+                  borneoSystemUiOverlayStyle(
+                    theme,
+                    systemNavigationBarDividerColor: theme.colorScheme.surfaceBright,
                     systemNavigationBarIconBrightness: effectiveBrightness == Brightness.light
                         ? Brightness.dark
                         : Brightness.light,

@@ -21,6 +21,7 @@ import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:borneo_app/shared/widgets/system_ui_overlay_style.dart';
 
 import '../../core/services/devices/device_manager.dart';
 import '../../core/services/scene_manager.dart';
@@ -197,7 +198,7 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: theme.brightness),
+          value: borneoSystemUiOverlayStyle(theme),
           child: PersistentTabView(
             controller: _persistentController,
             tabs: navBarTabs(),

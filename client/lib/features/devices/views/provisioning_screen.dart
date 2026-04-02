@@ -78,7 +78,7 @@ class _ProvisioningScreenBody extends StatelessWidget {
             const Divider(height: 1),
             Expanded(
               child: Container(
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
                 child: _StepContent(vm: vm),
               ),
             ),

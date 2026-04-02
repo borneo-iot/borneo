@@ -180,7 +180,7 @@ class SceneCard extends ConsumerWidget {
                     context.translate('{0} devices', pArgs: ['${scene.totalDeviceCount}']),
                     style: Theme.of(
                       context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.white, shadows: const [_smallShadow]),
+                    ).textTheme.titleSmall?.copyWith(color: Colors.white, shadows: const [_smallShadow]),
                   ),
                   const SizedBox(width: 8),
                   const Icon(Icons.circle, size: 4, color: Colors.white, shadows: [_smallShadow]),
@@ -189,7 +189,7 @@ class SceneCard extends ConsumerWidget {
                     context.translate('{0} active', pArgs: ['${scene.activeDeviceCount}']),
                     style: Theme.of(
                       context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.white, shadows: const [_smallShadow]),
+                    ).textTheme.titleSmall?.copyWith(color: Colors.white, shadows: const [_smallShadow]),
                   ),
                 ],
               ),

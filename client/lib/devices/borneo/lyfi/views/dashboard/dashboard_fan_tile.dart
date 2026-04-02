@@ -27,7 +27,7 @@ class DashboardFanTile extends StatelessWidget {
         foregroundColor: theme.colorScheme.onSurface,
         backgroundColor: theme.colorScheme.surfaceContainerHighest,
         arcColor: theme.colorScheme.outlineVariant,
-        progressColor: theme.colorScheme.secondary,
+        linearGradient: LinearGradient(colors: [theme.colorScheme.primary, theme.colorScheme.secondary]),
         minValue: 0,
         maxValue: 100,
         value: vm.fanPowerRatio ?? 0,

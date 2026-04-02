@@ -155,7 +155,7 @@ class _DeviceDiscoveryContent extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  Icons.media_bluetooth_off,
+                                  Icons.highlight_off_outlined,
                                   size: 64,
                                   color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.38),
                                 ),

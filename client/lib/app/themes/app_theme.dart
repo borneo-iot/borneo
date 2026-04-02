@@ -8,8 +8,13 @@ abstract final class BorneoTheme {
     surfaceTint: Colors.transparent,
   );
 
+  static final lightTextTheme = Typography.material2021().black.copyWith(
+    titleLarge: Typography.material2021().black.titleLarge?.copyWith(fontSize: 18),
+  );
+
   static final light = FlexThemeData.light(
     colorScheme: lightScheme,
+    textTheme: lightTextTheme,
     surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
     blendLevel: 7,
     subThemesData: const FlexSubThemesData(blendOnLevel: 10, blendOnColors: false),
@@ -28,8 +33,13 @@ abstract final class BorneoTheme {
     surfaceTint: Colors.transparent,
   );
 
+  static final darkTextTheme = Typography.material2021().white.copyWith(
+    titleLarge: Typography.material2021().white.titleLarge?.copyWith(fontSize: 18),
+  );
+
   static final dark = FlexThemeData.dark(
     colorScheme: darkScheme,
+    textTheme: darkTextTheme,
     surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
     blendLevel: 13,
     subThemesData: const FlexSubThemesData(blendOnLevel: 20),

@@ -47,7 +47,7 @@ class DashboardTemperatureTile extends StatelessWidget {
       backgroundColor: theme.colorScheme.surfaceContainerHighest,
       arcColor: null,
       progressColor: progressColor,
-      value: currentTempRaw?.toDouble() ?? 0.0,
+      value: (currentTempRaw?.toDouble() ?? 0.0).clamp(0, 105),
       minValue: 0,
       maxValue: 105,
       center: Column(
@@ -67,7 +67,7 @@ class DashboardTemperatureTile extends StatelessWidget {
                     final String digit = digits[i];
                     final bool isLeadingZero =
                         i < digits.length - 1 && digit == '0' && digits.sublist(0, i).every((c) => c == '0');
-                    final Color color = isLeadingZero ? theme.colorScheme.outlineVariant : progressColor;
+                    final Color color = isLeadingZero ? theme.colorScheme.surfaceDim : progressColor;
                     digitWidgets.add(
                       RollingInteger(
                         value: int.parse(digit),
@@ -99,7 +99,7 @@ class DashboardTemperatureTile extends StatelessWidget {
                 ),
             ],
           ),
-          const Divider(height: 8, thickness: 2.5),
+          const Divider(height: 6, thickness: 1, indent: 24, endIndent: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -126,7 +126,7 @@ class DashboardTemperatureTile extends StatelessWidget {
         ],
       ),
       segments: [
-        GaugeSegment(from: 0, to: 45, color: greenBg),
+        GaugeSegment(from: 25, to: 45, color: greenBg),
         GaugeSegment(from: 45, to: 65, color: yellowBg),
         GaugeSegment(from: 65, to: 105, color: redBg),
       ],
