@@ -99,12 +99,12 @@ int bo_rpc_borneo_info_get(const CborValue* args, CborEncoder* retvals)
 
     {
         BO_TRY(cbor_encode_text_stringz(&root_map, "vendor"));
-        BO_TRY(cbor_encode_text_stringz(&root_map, sysinfo->vendor));
+        BO_TRY(cbor_encode_text_stringz(&root_map, CONFIG_BORNEO_VENDOR_NAME));
     }
 
     {
         BO_TRY(cbor_encode_text_stringz(&root_map, "model"));
-        BO_TRY(cbor_encode_text_stringz(&root_map, sysinfo->model));
+        BO_TRY(cbor_encode_text_stringz(&root_map, CONFIG_BORNEO_MODEL_NAME));
     }
 
     {

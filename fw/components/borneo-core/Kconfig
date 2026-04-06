@@ -24,9 +24,12 @@ menu "Borneo Core"
         config BORNEO_HW_VER
             string "Borneo hardware version"
 
-        config BORNEO_VENDOR_DEFAULT
-            string "Borneo vendor default value"
+        config BORNEO_VENDOR_NAME
+            string "Device vendor name"
             default "BST"
+
+        config BORNEO_MODEL_NAME
+            string "Device model name"
 
         config BORNEO_EDITION_CE
             bool "Is open-source edition"

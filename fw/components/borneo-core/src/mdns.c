@@ -145,8 +145,8 @@ static int add_mdns_services()
     mdns_txt_item_t serviceTxtData[] = {
         { "name", sysinfo->name },
         { "id", sysinfo->hex_id },
-        { "vendor", sysinfo->vendor },
-        { "model", sysinfo->model },
+        { "vendor", CONFIG_BORNEO_VENDOR_NAME },
+        { "model", CONFIG_BORNEO_MODEL_NAME },
         { "pid", CONFIG_BORNEO_PRODUCT_ID },
         { "hwver", CONFIG_BORNEO_HW_VER },
         { "fwver", app_desc->version },
