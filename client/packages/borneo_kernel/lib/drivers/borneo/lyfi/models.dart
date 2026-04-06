@@ -72,7 +72,7 @@ enum LyfiState {
   disco,
   slave;
 
-  bool get isLocked => !(this == preview || this == dimming || this == disco || this == slave);
+  bool get isLocked => this != preview && this != dimming && this != disco && this != slave;
 
   factory LyfiState.fromString(String item) => switch (item) {
     "normal" => LyfiState.normal,
