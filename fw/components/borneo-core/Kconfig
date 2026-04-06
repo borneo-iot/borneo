@@ -48,6 +48,22 @@ menu "Borneo Core"
                 bool "OEM / Custom"
         endchoice
 
+        choice
+            prompt "Select region"
+            default REGION_GLOBAL
+
+            config BORNEO_REGION_GLOBAL
+                bool "Global"
+
+            config BORNEO_REGION_CN
+                bool "China Mainland"
+        endchoice
+
+        config DEVICE_REGION_NAME
+            string "Region name string"
+            default "cn" if BORNEO_REGION_CN
+            default "global" if BORNEO_REGION_GLOBAL
+
     endmenu
 
     menu "Network Provisioning"
@@ -156,9 +172,12 @@ menu "Borneo Core"
     endmenu
 
     menu "SNTP Configuration"
-        config BORNEO_SNTP_SERVER
+
+        config BORNEO_NTP_SERVER
             string "SNTP Server Address"
-            default "pool.ntp.org"
+            default "pool.ntp.org" if BORNEO_REGION_GLOBAL
+            default "ntp.aliyun.com" if BORNEO_REGION_CN
+
     endmenu
 
 

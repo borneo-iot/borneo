@@ -35,8 +35,6 @@
 
 ESP_EVENT_DEFINE_BASE(BO_SNTP_EVENTS);
 
-#define SNTP_SERVER_0 "pool.ntp.org"
-
 #define DELTA (2208988800ull)
 
 static volatile bool _is_syncing = false;
@@ -169,7 +167,7 @@ static int bo_try_sync_time()
     ESP_LOGI(TAG, "Starting SNTP...");
 
     unsigned long seconds = 0, fractional = 0;
-    while (bo_sntp(CONFIG_BORNEO_SNTP_SERVER, 123, &seconds, &fractional) != 0) {
+    while (bo_sntp(CONFIG_BORNEO_NTP_SERVER, 123, &seconds, &fractional) != 0) {
         ESP_LOGI(TAG, "Waiting for system time to be set... (%d/%d)", retry, MAX_RETRY_COUNT);
 
         if (retry >= MAX_RETRY_COUNT) {
