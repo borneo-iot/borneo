@@ -50,7 +50,7 @@ menu "Borneo Core"
 
         choice
             prompt "Select region"
-            default REGION_GLOBAL
+            default BORNEO_REGION_GLOBAL
 
             config BORNEO_REGION_GLOBAL
                 bool "Global"
