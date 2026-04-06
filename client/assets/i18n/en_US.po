@@ -2,12 +2,12 @@
 # Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Automatically generated, 2025.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 11:10+0800\n"
+"POT-Creation-Date: 2026-04-06 13:55+0800\n"
 "PO-Revision-Date: 2025-06-01 20:57+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -291,6 +291,9 @@ msgid ""
 msgstr ""
 "Device firmware version {currentVersion} is not supported. Required: "
 "{requiredVersion}."
+
+msgid "Device is not bound."
+msgstr ""
 
 msgid "Device is not reachable at the moment."
 msgstr "Device is not reachable at the moment."
@@ -657,9 +660,6 @@ msgstr "Manual fan power updated successfully"
 msgid "Manual mode"
 msgstr "Manual mode"
 
-msgid "Manufacturer"
-msgstr "Manufacturer"
-
 msgid "Mins"
 msgstr "Mins"
 
@@ -791,10 +791,14 @@ msgid "Password"
 msgstr "Password"
 
 msgid ""
-"Please carefully check the configuration. Incorrect configuration may cause hardware damage or other dangerous situations. Submitting will reboot the device.\n"
+"Please carefully check the configuration. Incorrect configuration may cause "
+"hardware damage or other dangerous situations. Submitting will reboot the "
+"device.\n"
 "Do you want to proceed?"
 msgstr ""
-"Please carefully check the configuration. Incorrect configuration may cause hardware damage or other dangerous situations. Submitting will reboot the device.\n"
+"Please carefully check the configuration. Incorrect configuration may cause "
+"hardware damage or other dangerous situations. Submitting will reboot the "
+"device.\n"
 "Do you want to proceed?"
 
 msgid "Please check device connection"
@@ -1001,6 +1005,12 @@ msgstr "Submit"
 msgid "Sun Simulation"
 msgstr "Sun Simulation"
 
+msgid "Sun curve data is incomplete."
+msgstr ""
+
+msgid "Sun curve data is unavailable."
+msgstr ""
+
 msgid "Sun simulation mode"
 msgstr "Sun simulation mode"
 
@@ -1066,11 +1076,15 @@ msgid "This device is not compatible with the selected driver."
 msgstr "This device is not compatible with the selected driver."
 
 msgid ""
-"This mobile application is free software licensed under GNU General Public License version 3 or later, with no warranty.\n"
-"The author assumes no responsibility or liability for any direct or indirect consequences resulting from the use of this software."
+"This mobile application is free software licensed under GNU General Public "
+"License version 3 or later, with no warranty.\n"
+"The author assumes no responsibility or liability for any direct or indirect "
+"consequences resulting from the use of this software."
 msgstr ""
-"This mobile application is free software licensed under GNU General Public License version 3 or later, with no warranty.\n"
-"The author assumes no responsibility or liability for any direct or indirect consequences resulting from the use of this software."
+"This mobile application is free software licensed under GNU General Public "
+"License version 3 or later, with no warranty.\n"
+"The author assumes no responsibility or liability for any direct or indirect "
+"consequences resulting from the use of this software."
 
 msgid ""
 "This scene contains devices or device groups. Please remove all devices and "
@@ -1157,6 +1171,9 @@ msgstr "Upgrade to {0}"
 msgid "VERSION & UPGRADE"
 msgstr "VERSION & UPGRADE"
 
+msgid "Vendor"
+msgstr ""
+
 #, python-brace-format
 msgid "Version {0} is available. Tap the button below to update."
 msgstr "Version {0} is available. Tap the button below to update."
@@ -1241,3 +1258,6 @@ msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
 msgstr "℉ (Fahrenheit)"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Manufacturer"

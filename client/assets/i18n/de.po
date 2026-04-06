@@ -2,12 +2,12 @@
 # Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Automatically generated, 2025.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 11:10+0800\n"
+"POT-Creation-Date: 2026-04-06 13:55+0800\n"
 "PO-Revision-Date: 2025-09-09 14:10+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -302,6 +302,9 @@ msgstr ""
 "Geräte-Firmware-Version {currentVersion} wird nicht unterstützt. "
 "Erforderlich: {requiredVersion}."
 
+msgid "Device is not bound."
+msgstr "Das Gerät ist nicht gebunden."
+
 msgid "Device is not reachable at the moment."
 msgstr "Das Gerät ist im Moment nicht erreichbar."
 
@@ -310,8 +313,7 @@ msgstr "Gerät ist offline"
 
 msgid "Device is offline. Please retry after reconnection."
 msgstr ""
-"Gerät ist offline. Bitte versuchen Sie es nach dem erneuten Verbinden "
-"erneut."
+"Gerät ist offline. Bitte versuchen Sie es nach dem erneuten Verbinden erneut."
 
 msgid "Device name cannot be empty."
 msgstr "Gerätename darf nicht leer sein."
@@ -320,14 +322,13 @@ msgid "Device name cannot be pure whitespace."
 msgstr "Gerätename darf nicht nur aus Leerzeichen bestehen."
 
 msgid "Device name cannot have leading or trailing whitespace."
-msgstr ""
-"Gerätename darf keine führenden oder abschließenden Leerzeichen haben."
+msgstr "Gerätename darf keine führenden oder abschließenden Leerzeichen haben."
 
 msgid ""
 "Device name is too long. Maximum length is 63 bytes when encoded as UTF-8."
 msgstr ""
-"Gerätename ist zu lang. Die maximale Länge beträgt 63 Bytes bei "
-"UTF-8-Kodierung."
+"Gerätename ist zu lang. Die maximale Länge beträgt 63 Bytes bei UTF-8-"
+"Kodierung."
 
 msgid "Device name updated successfully"
 msgstr "Gerätename erfolgreich aktualisiert"
@@ -674,9 +675,6 @@ msgstr "Manuelle Lüfterleistung erfolgreich aktualisiert"
 msgid "Manual mode"
 msgstr "Manueller Modus"
 
-msgid "Manufacturer"
-msgstr "Hersteller"
-
 msgid "Mins"
 msgstr "Min"
 
@@ -808,10 +806,14 @@ msgid "Password"
 msgstr "Passwort"
 
 msgid ""
-"Please carefully check the configuration. Incorrect configuration may cause hardware damage or other dangerous situations. Submitting will reboot the device.\n"
+"Please carefully check the configuration. Incorrect configuration may cause "
+"hardware damage or other dangerous situations. Submitting will reboot the "
+"device.\n"
 "Do you want to proceed?"
 msgstr ""
-"Bitte überprüfen Sie die Konfiguration sorgfältig. Eine falsche Konfiguration kann Hardware-Schäden oder andere gefährliche Situationen verursachen. Die Übermittlung wird das Gerät neu starten.\n"
+"Bitte überprüfen Sie die Konfiguration sorgfältig. Eine falsche "
+"Konfiguration kann Hardware-Schäden oder andere gefährliche Situationen "
+"verursachen. Die Übermittlung wird das Gerät neu starten.\n"
 "Möchten Sie fortfahren?"
 
 msgid "Please check device connection"
@@ -1019,6 +1021,12 @@ msgstr "Übermitteln"
 msgid "Sun Simulation"
 msgstr "Sonnensimulation"
 
+msgid "Sun curve data is incomplete."
+msgstr "Sonnendaten sind unvollständig."
+
+msgid "Sun curve data is unavailable."
+msgstr "Sonnendaten sind nicht verfügbar."
+
 msgid "Sun simulation mode"
 msgstr "Sonnensimulationsmodus"
 
@@ -1084,11 +1092,15 @@ msgid "This device is not compatible with the selected driver."
 msgstr "Dieses Gerät ist mit dem ausgewählten Treiber nicht kompatibel."
 
 msgid ""
-"This mobile application is free software licensed under GNU General Public License version 3 or later, with no warranty.\n"
-"The author assumes no responsibility or liability for any direct or indirect consequences resulting from the use of this software."
+"This mobile application is free software licensed under GNU General Public "
+"License version 3 or later, with no warranty.\n"
+"The author assumes no responsibility or liability for any direct or indirect "
+"consequences resulting from the use of this software."
 msgstr ""
-"Diese mobile Anwendung ist freie Software, lizenziert unter GNU General Public License Version 3 oder später, ohne Garantie.\n"
-"Der Autor übernimmt keine Verantwortung oder Haftung für direkte oder indirekte Folgen aus der Verwendung dieser Software."
+"Diese mobile Anwendung ist freie Software, lizenziert unter GNU General "
+"Public License Version 3 oder später, ohne Garantie.\n"
+"Der Autor übernimmt keine Verantwortung oder Haftung für direkte oder "
+"indirekte Folgen aus der Verwendung dieser Software."
 
 msgid ""
 "This scene contains devices or device groups. Please remove all devices and "
@@ -1133,8 +1145,8 @@ msgid ""
 "Unable to update Moon mode: configure at least one channel with brightness "
 "greater than 0."
 msgstr ""
-"Mondmodus kann nicht aktualisiert werden: Konfigurieren Sie mindestens einen"
-" Kanal mit einer Helligkeit größer als 0."
+"Mondmodus kann nicht aktualisiert werden: Konfigurieren Sie mindestens einen "
+"Kanal mit einer Helligkeit größer als 0."
 
 msgid "Unable to update Moon mode: the location is not set."
 msgstr ""
@@ -1180,6 +1192,9 @@ msgstr "Aktualisieren auf {0}"
 
 msgid "VERSION & UPGRADE"
 msgstr "VERSION & UPGRADE"
+
+msgid "Vendor"
+msgstr "Hersteller"
 
 #, python-brace-format
 msgid "Version {0} is available. Tap the button below to update."
@@ -1267,3 +1282,6 @@ msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
 msgstr "℉ (Fahrenheit)"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Hersteller"

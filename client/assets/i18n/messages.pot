@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 11:10+0800\n"
+"POT-Creation-Date: 2026-04-06 13:55+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -279,6 +279,9 @@ msgstr ""
 msgid ""
 "Device firmware version {currentVersion} is not supported. Required: "
 "{requiredVersion}."
+msgstr ""
+
+msgid "Device is not bound."
 msgstr ""
 
 msgid "Device is not reachable at the moment."
@@ -639,9 +642,6 @@ msgstr ""
 msgid "Manual mode"
 msgstr ""
 
-msgid "Manufacturer"
-msgstr ""
-
 msgid "Mins"
 msgstr ""
 
@@ -983,6 +983,12 @@ msgstr ""
 msgid "Sun Simulation"
 msgstr ""
 
+msgid "Sun curve data is incomplete."
+msgstr ""
+
+msgid "Sun curve data is unavailable."
+msgstr ""
+
 msgid "Sun simulation mode"
 msgstr ""
 
@@ -1131,6 +1137,9 @@ msgid "Upgrade to {0}"
 msgstr ""
 
 msgid "VERSION & UPGRADE"
+msgstr ""
+
+msgid "Vendor"
 msgstr ""
 
 #, python-brace-format

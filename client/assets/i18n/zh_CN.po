@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 11:10+0800\n"
+"POT-Creation-Date: 2026-04-06 13:55+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -282,6 +282,9 @@ msgid ""
 "Device firmware version {currentVersion} is not supported. Required: "
 "{requiredVersion}."
 msgstr "设备固件版本 {currentVersion} 不受支持。需要版本：{requiredVersion}。"
+
+msgid "Device is not bound."
+msgstr "设备未绑定。"
 
 msgid "Device is not reachable at the moment."
 msgstr "设备当前不可达"
@@ -643,9 +646,6 @@ msgstr "手动风扇功率更新成功"
 msgid "Manual mode"
 msgstr "手动模式"
 
-msgid "Manufacturer"
-msgstr "制造商"
-
 msgid "Mins"
 msgstr "分"
 
@@ -989,6 +989,12 @@ msgstr "提交"
 msgid "Sun Simulation"
 msgstr "日出日落"
 
+msgid "Sun curve data is incomplete."
+msgstr "日光曲线数据不完整。"
+
+msgid "Sun curve data is unavailable."
+msgstr "日光曲线数据不可用。"
+
 msgid "Sun simulation mode"
 msgstr "日光模拟模式"
 
@@ -1141,6 +1147,9 @@ msgstr "升级到 {0}"
 msgid "VERSION & UPGRADE"
 msgstr "版本与升级"
 
+msgid "Vendor"
+msgstr "厂商"
+
 #, python-brace-format
 msgid "Version {0} is available. Tap the button below to update."
 msgstr "版本 {0} 可用。点击下方按钮进行更新。"
@@ -1225,3 +1234,6 @@ msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
 msgstr "℉（华氏度）"
+
+#~ msgid "Manufacturer"
+#~ msgstr "制造商"
