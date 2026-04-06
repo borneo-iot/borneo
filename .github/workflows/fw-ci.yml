@@ -4,34 +4,34 @@ on:
   push:
     branches: [master, dev, dev-*]
     paths:
-      - 'fw/**'
-      - '.github/workflows/fw-ci.yml'
+      - "fw/**"
+      - ".github/workflows/fw-ci.yml"
   pull_request:
     branches: [master, dev, dev-*]
     paths:
-      - 'fw/**'
-      - '.github/workflows/fw-ci.yml'
+      - "fw/**"
+      - ".github/workflows/fw-ci.yml"
 
 jobs:
   build-lyfi:
     runs-on: ubuntu-latest
-    container: 'espressif/idf:release-v6.0'
+    container: "espressif/idf:release-v6.0"
     if: ${{ vars.BO_EDITION == 'ce' }}
     env:
       LYFI_PRODUCTS: bst/ulva6 bst/blc06mk1
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Configure git
-      run: git config --global --add safe.directory "*"
+      - name: Configure git
+        run: git config --global --add safe.directory "*"
 
-    - name: Build LyFi Firmware
-      working-directory: fw/lyfi
-      run: |
-        . /opt/esp/idf/export.sh
-        for product in ${{ env.LYFI_PRODUCTS }}; do
-          rm -rf ./build
-          idf.py -DPRODUCT_ID=$product -DCMAKE_BUILD_TYPE=Release build
-        done
+      - name: Build LyFi Firmware
+        working-directory: fw/lyfi
+        run: |
+          . /opt/esp/idf/export.sh
+          for product in ${{ env.LYFI_PRODUCTS }}; do
+            rm -rf ./build
+            idf.py -DPRODUCT_ID=$product -DCMAKE_BUILD_TYPE=production build
+          done

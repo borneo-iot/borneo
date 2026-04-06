@@ -4,11 +4,11 @@ on:
   pull_request:
     branches: [master]
     paths:
-      - 'fw/**'
-      - '.github/workflows/fw-release.yml'
+      - "fw/**"
+      - ".github/workflows/fw-release.yml"
   workflow_dispatch:
   schedule:
-    - cron: '0 18 * * *'
+    - cron: "0 18 * * *"
 
 permissions:
   contents: write
@@ -17,80 +17,80 @@ jobs:
   release:
     if: ${{ vars.BO_EDITION == 'ce' }}
     runs-on: ubuntu-latest
-    container: 'espressif/idf:release-v6.0'
+    container: "espressif/idf:release-v6.0"
     env:
       LYFI_PRODUCTS: bst/ulva6 bst/blc06mk1 bst/xiaoc3 bst/c3devkitm1 bst/c5devkitc1 bst/c3supermini
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Configure git
-      run: git config --global --add safe.directory "*"
+      - name: Configure git
+        run: git config --global --add safe.directory "*"
 
-    - name: Build LyFi Firmware
-      working-directory: fw/lyfi
-      run: |
-        . /opt/esp/idf/export.sh
-        mkdir -p ../../artifacts
-        for product in ${{ env.LYFI_PRODUCTS }}; do
-          rm -rf ./build
-          idf.py -DPRODUCT_ID=$product -DCMAKE_BUILD_TYPE=Release build
-          idf.py merge-bin
-          python ../bin/generate_firmware_manifest.py . -o ../../artifacts
-        done
+      - name: Build LyFi Firmware
+        working-directory: fw/lyfi
+        run: |
+          . /opt/esp/idf/export.sh
+          mkdir -p ../../artifacts
+          for product in ${{ env.LYFI_PRODUCTS }}; do
+            rm -rf ./build
+            idf.py -DPRODUCT_ID=$product -DCMAKE_BUILD_TYPE=production build
+            idf.py merge-bin
+            python ../bin/generate_firmware_manifest.py . -o ../../artifacts
+          done
 
-    - name: Generate Manifests file
-      run: python fw/bin/merge_manifest.py ./artifacts -o ./artifacts/manifests.json
+      - name: Generate Manifests file
+        run: python fw/bin/merge_manifest.py ./artifacts -o ./artifacts/manifests.json
 
-    - name: Create and push new tag
-      run: |
-        git tag -d release-fw-latest || true
-        git tag release-fw-latest
-        git push origin release-fw-latest --force
+      - name: Create and push new tag
+        run: |
+          git tag -d release-fw-latest || true
+          git tag release-fw-latest
+          git push origin release-fw-latest --force
 
-    - name: Remove previous release assets
-      uses: actions/github-script@v8
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const tag = 'release-fw-latest';
-          try {
-            const rel = await github.rest.repos.getReleaseByTag({ owner: context.repo.owner, repo: context.repo.repo, tag });
-            const release_id = rel.data.id;
-            const assets = await github.paginate(github.rest.repos.listReleaseAssets, { owner: context.repo.owner, repo: context.repo.repo, release_id });
-            for (const a of assets) {
-              console.log(`Deleting asset ${a.name} (${a.id})`);
-              await github.rest.repos.deleteReleaseAsset({ owner: context.repo.owner, repo: context.repo.repo, asset_id: a.id });
+      - name: Remove previous release assets
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = 'release-fw-latest';
+            try {
+              const rel = await github.rest.repos.getReleaseByTag({ owner: context.repo.owner, repo: context.repo.repo, tag });
+              const release_id = rel.data.id;
+              const assets = await github.paginate(github.rest.repos.listReleaseAssets, { owner: context.repo.owner, repo: context.repo.repo, release_id });
+              for (const a of assets) {
+                console.log(`Deleting asset ${a.name} (${a.id})`);
+                await github.rest.repos.deleteReleaseAsset({ owner: context.repo.owner, repo: context.repo.repo, asset_id: a.id });
+              }
+              console.log('Previous release assets removed.');
+            } catch (err) {
+              if (err.status === 404) {
+                console.log('Release not found, nothing to delete.');
+              } else {
+                throw err;
+              }
             }
-            console.log('Previous release assets removed.');
-          } catch (err) {
-            if (err.status === 404) {
-              console.log('Release not found, nothing to delete.');
-            } else {
-              throw err;
-            }
-          }
 
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: release-fw-latest
-        name: Daily Firmware Release
-        draft: false
-        overwrite_files: true
-        files: artifacts/*
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: release-fw-latest
+          name: Daily Firmware Release
+          draft: false
+          overwrite_files: true
+          files: artifacts/*
 
-    - name: Trigger web-flasher workflow
-      uses: actions/github-script@v8
-      with:
-        github-token: ${{ secrets.BORNEO_OSS_WEB_FLASHER_TOKEN }}
-        script: |
-          await github.rest.repos.createDispatchEvent({
-            owner: 'borneo-iot',
-            repo: 'web-flasher',
-            event_type: 'deploy-firmware',
-            client_payload: {}
-          });
+      - name: Trigger web-flasher workflow
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.BORNEO_OSS_WEB_FLASHER_TOKEN }}
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner: 'borneo-iot',
+              repo: 'web-flasher',
+              event_type: 'deploy-firmware',
+              client_payload: {}
+            });

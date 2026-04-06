@@ -16,8 +16,7 @@
         "cppStandard": "c++20",
         "intelliSenseMode": "gcc-x64",
         "compileCommands": [
-            "${workspaceFolder}/lyfi/build/compile_commands.json",
-            "${workspaceFolder}/doser/build/compile_commands.json"
+            "${workspaceFolder}/lyfi/build/compile_commands.json"
         ],
         "configurationProvider": "ms-vscode.cmake-tools"
       }

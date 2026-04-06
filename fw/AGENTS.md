@@ -17,7 +17,7 @@ Borneo Firmware is ESP-IDF based software for ESP32/ESP32-C3 devices, implementi
 - `cmake/`: Build configuration
 - `scripts/`: Build and utility scripts
 - `3rd-components/`: Third-party components
-- `doser/`, `lyfi/`, `products/`: Device-specific code
+- `lyfi/`, `products/`: Device-specific code
 
 ## Development Guidelines
 

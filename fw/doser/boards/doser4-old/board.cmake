@@ -1,1 +1,0 @@
-set(IDF_TARGET "esp32")
