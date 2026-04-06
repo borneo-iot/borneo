@@ -1,2 +1,4 @@
-*.po  merge=gettext
-*.pot merge=gettext
+# .gitattributes
+*.po    text    diff=gettext    merge=gettext
+*.pot   text    diff=gettext    merge=gettext
+*.mo    binary
