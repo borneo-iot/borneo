@@ -30,3 +30,8 @@ CONFIG_LWIP_DHCP_MAX_NTP_SERVERS=3
 
 ######################## OTA ###############################
 CONFIG_LWIP_IPV6=y
+
+################################ LyFi General ######################
+
+CONFIG_BORNEO_DEVICE_COMPATIBLE="bst,borneo-lyfi"
+CONFIG_BORNEO_DEVICE_CATEGORY="lighting"

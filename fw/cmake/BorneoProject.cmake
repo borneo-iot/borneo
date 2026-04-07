@@ -17,6 +17,7 @@ message("[BORNEO] > Board ID: `${BORNEO_BOARD_ID}`")
 include("${CMAKE_CURRENT_SOURCE_DIR}/boards/${BORNEO_BOARD_ID}/board.cmake")
 
 set(BORNEO_BOARD_DIR  "${CMAKE_CURRENT_SOURCE_DIR}/boards/${BORNEO_BOARD_ID}")
+set(BORNEO_VENDOR_SDKCONFIG  "${CMAKE_CURRENT_SOURCE_DIR}/products/${BORNEO_PRODUCT_ID}/../sdkconfig.vendor")
 
 string(REGEX MATCH "^[^/]+" BORNEO_VENDOR_ID ${PRODUCT_ID})
 string(REGEX MATCH "[^/]+$" BORNEO_MODEL_ID ${PRODUCT_ID})
@@ -31,6 +32,11 @@ else()
     set(SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.common;${CMAKE_CURRENT_SOURCE_DIR}/sdkconfig.dev;${BORNEO_BOARD_DIR}/sdkconfig.board;${CMAKE_CURRENT_SOURCE_DIR}/products/${BORNEO_PRODUCT_ID}/sdkconfig.product")
     add_compile_definitions(BUILD_TYPE_DEVELOPMENT=1)
 endif()
+
+if(EXISTS ${BORNEO_VENDOR_SDKCONFIG})
+list(APPEND SDKCONFIG_DEFAULTS "${BORNEO_VENDOR_SDKCONFIG}")
+endif()
+
 
 
 set(BORNEO_PROJECT_ID ${BORNEO_PRODUCT_ID})
