@@ -124,4 +124,6 @@ Check our [milestones](https://github.com/borneo-iot/borneo/milestones) for the 
 
 ---
 
+Copyright © 2025-TODAY [Yunnan BinaryStars Technologies, Co., Ltd.](https://www.binarystarstech.com/en) All rights reserved.
+
 The hardware, firmware, and App for this project were all created by: Wei Li（李维）.
