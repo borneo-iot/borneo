@@ -4,6 +4,8 @@ PODS:
   - bonsoir_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
+  - connectivity_plus (0.0.1):
+    - Flutter
   - ESPProvision (3.0.3):
     - ESPProvision/Core (= 3.0.3)
   - ESPProvision/Core (3.0.3):
@@ -47,6 +49,7 @@ PODS:
 DEPENDENCIES:
   - app_review (from `.symlinks/plugins/app_review/ios`)
   - bonsoir_darwin (from `.symlinks/plugins/bonsoir_darwin/darwin`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_esp_ble_prov (from `.symlinks/plugins/flutter_esp_ble_prov/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
@@ -74,6 +77,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/app_review/ios"
   bonsoir_darwin:
     :path: ".symlinks/plugins/bonsoir_darwin/darwin"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   Flutter:
     :path: Flutter
   flutter_esp_ble_prov:
@@ -108,6 +113,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   app_review: f75e3250ef5694e328a5ecb3f4c445bc7b32d821
   bonsoir_darwin: 29c7ccf356646118844721f36e1de4b61f6cbd0e
+  connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   ESPProvision: 2368cd8dabef74272f50c76290891a9674035929
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_esp_ble_prov: 6cff8544535225431d58e5577706ba2a1a106303
