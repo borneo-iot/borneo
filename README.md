@@ -27,6 +27,14 @@
 
 </p>
 
+<p align="center">
+    <a href="https://apps.apple.com/us/app/borneo-aqua-pro/id6759588830" target="_blank" rel="noopener">
+        <img alt="Download on App Store" src="assets/download-on-the-app-store.svg" />
+    </a>
+</p>
+
+
+
 
 > **Production-grade open-source stack for aquarium LED dimmers.**
 > Hardware designs, embedded firmware, and mobile controls. Ready for weekend builds or product integration.
