@@ -75,7 +75,7 @@ class LyfiTimeLineChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 24,
+              reservedSize: 28,
               interval: xInterval,
               getTitlesWidget: (value, meta) {
                 final text = _formatAxisLabel(value);

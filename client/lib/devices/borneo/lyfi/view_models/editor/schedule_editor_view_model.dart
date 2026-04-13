@@ -206,12 +206,15 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
     }
     final current = _entries[_currentEntryIndex!].instant;
     final currentDay = current.inHours ~/ 24;
-    final currentHour = current.inHours % 24;
-    var targetHours = currentDay * 24 + normalizedHours;
-    if (currentDay == 0 && normalizedHours <= currentHour) {
-      targetHours += 24;
+    final currentTime = Duration(
+      hours: current.inHours % 24,
+      minutes: current.inMinutes % 60,
+      seconds: current.inSeconds % 60,
+    );
+    var result = Duration(hours: currentDay * 24) + normalized;
+    if (currentDay == 0 && normalized <= currentTime) {
+      result += const Duration(days: 1);
     }
-    final result = Duration(hours: targetHours, minutes: normalizedMinutes);
     if (result.inHours >= 48) {
       return null;
     }
