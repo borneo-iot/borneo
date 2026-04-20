@@ -218,6 +218,7 @@ int led_init()
     // Initialize the first timer
     // TODO allow set the freq in product definition
     ledc_timer_config_t ledc_timer = {
+        .clk_cfg = LEDC_AUTO_CLK,
         .duty_resolution = LEDC_TIMER_12_BIT,
         .freq_hz = factory_settings->pwm_freq,
 
