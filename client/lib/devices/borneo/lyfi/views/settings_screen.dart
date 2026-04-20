@@ -348,7 +348,6 @@ class SettingsScreen extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              popAllScreensOfCurrentTab(context);
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 unawaited(vm.factoryReset());
               });
@@ -373,7 +372,6 @@ class SettingsScreen extends StatelessWidget {
     }
 
     if (context.mounted) {
-      popAllScreensOfCurrentTab(context);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         unawaited(vm.networkReset());
       });

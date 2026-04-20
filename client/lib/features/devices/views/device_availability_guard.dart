@@ -15,6 +15,19 @@ class _DeviceAvailabilityGuardState<TDeviceViewModel extends BaseDeviceViewModel
     extends State<DeviceAvailabilityGuard<TDeviceViewModel>> {
   bool _didHandleUnavailable = false;
 
+  void _dismissGuardedRoute() {
+    final route = ModalRoute.of(context);
+    final navigator = Navigator.maybeOf(context);
+    if (route == null || navigator == null) {
+      return;
+    }
+
+    // Remove the route that owns this guard instead of popping the current
+    // top-most route. This avoids hidden device pages surviving underneath a
+    // settings/details overlay and later surfacing as a blank screen.
+    route.navigator?.removeRoute(route);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +63,7 @@ class _DeviceAvailabilityGuardState<TDeviceViewModel extends BaseDeviceViewModel
       if (!mounted) {
         return;
       }
-      await Navigator.of(context).maybePop();
+      _dismissGuardedRoute();
     });
   }
 

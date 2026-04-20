@@ -119,7 +119,7 @@ final class CoapOtaService implements IOtaService {
     // Step 2: Download the OTA firmware (.bin.gz)
     final otaUrl = '$_kFirmwareBaseUrl${upgradeInfo.otaFilename}';
     _logger?.i('Downloading firmware: $otaUrl');
-    final httpResponse = await http.get(Uri.parse(otaUrl));
+    final httpResponse = await http.get(Uri.parse(otaUrl)).asCancellable(cancelToken);
     if (httpResponse.statusCode != 200) {
       final msg = 'Failed to download firmware: HTTP ${httpResponse.statusCode}';
       _logger?.e(msg);
@@ -132,7 +132,7 @@ final class CoapOtaService implements IOtaService {
     final verificationResult = await compute(
       _verifyAndDecompressFirmware,
       _FirmwareVerificationRequest(compressedData: compressedData, expectedSha256: upgradeInfo.otaSha256),
-    );
+    ).asCancellable(cancelToken);
     cancelToken?.throwIfCancelled();
     if (!verificationResult.hashMatches) {
       final msg = gt.translate('Firmware hash mismatch');

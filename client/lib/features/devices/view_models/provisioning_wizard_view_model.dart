@@ -127,6 +127,8 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
       await _bleProvisioner.provisionWifi(deviceName, _selectedSsid!, password, cancelToken: _cancelToken);
       _updateProvisioningState(BleProvisioningState.connectingToWifi);
 
+      await Future.delayed(const Duration(seconds: 3)).asCancellable(_cancelToken);
+
       await _restartRegistrationDiscovery();
       _updateProvisioningState(BleProvisioningState.registeringDevice);
       _startRegisterTimer();
