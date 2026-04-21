@@ -76,7 +76,7 @@ static int _sensors_init(const struct drvfx_device* dev)
     }
 
     // Create task
-    xTaskCreate(sensor_task, "sensor_task", 2048, sensors, 12, NULL);
+    xTaskCreate(sensor_task, "sensor_task", 2048, sensors, 8, NULL);
 
     s_sensors = sensors;
 
