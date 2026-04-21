@@ -165,6 +165,11 @@ static void check_overheated_protection()
     if (!_settings.overheated_enabled) {
         return;
     }
+    if (!thermal_is_available()) {
+        _protect.temp_read_fail_count = 0;
+        _protect.overheated_count = 0;
+        return;
+    }
     int current_temp = thermal_get_current_temp();
     if (current_temp < 0) {
         _protect.temp_read_fail_count++;

@@ -25,6 +25,7 @@ struct thermal_settings {
 int thermal_init();
 const struct thermal_settings* thermal_get_settings();
 int thermal_set_pid(int32_t kp, int32_t ki, int32_t kd);
+bool thermal_is_available();
 
 int thermal_set_manual_fan_power(uint8_t power);
 

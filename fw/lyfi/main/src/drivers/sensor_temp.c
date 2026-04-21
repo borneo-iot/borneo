@@ -136,7 +136,6 @@ static int _fetch_sample(const struct drvfx_device* dev)
 
     int value = ntc_table_lookup(adc_mv);
     if (value == NTC_BAD_TEMPERATURE) {
-        ESP_LOGE(TAG, "Bad temperature!");
         return -EIO;
     }
     data->temp_value = (int8_t)ema_filter((int32_t)value, &data->filtered_temp, 1, 10);

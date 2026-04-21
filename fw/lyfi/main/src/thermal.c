@@ -112,15 +112,15 @@ int thermal_init()
 {
     ESP_LOGI(TAG, "Initializing thermal management subsystem...");
 
+    _thermal.current_temp = -1;
+    memset(_thermal.temp_window, -1, sizeof(_thermal.temp_window));
+
     BO_TRY(load_factory_settings());
     BO_TRY(load_user_settings());
 
 #if CONFIG_LYFI_NTC_SUPPORT
     _thermal.temp_dev = k_device_get_binding("sensor.temp");
-    if (_thermal.temp_dev == NULL) {
-        return -ENODEV;
-    }
-    {
+    if (_thermal.temp_dev != NULL) {
         // Fill the window
         for (size_t ti = 0; ti < TEMP_WINDOW_SIZE; ti++) {
             int32_t temp;
@@ -134,6 +134,9 @@ int thermal_init()
             }
             vTaskDelay(pdMS_TO_TICKS(10));
         }
+    }
+    else {
+        ESP_LOGW(TAG, "Temperature sensor unavailable, thermal PID and overheating protection are degraded.");
     }
 #else
     _thermal.temp_dev = NULL;
@@ -251,10 +254,16 @@ int thermal_set_pid(int32_t kp, int32_t ki, int32_t kd)
 
 #if CONFIG_LYFI_NTC_SUPPORT
 
+bool thermal_is_available() { return _thermal.temp_dev != NULL; }
+
 int thermal_get_current_temp() { return _thermal.current_temp; }
 
 static void _timer_callback_pid(void* args)
 {
+    if (!thermal_is_available()) {
+        return;
+    }
+
     int32_t new_temp = -1;
     int rc = sensor_get_value(_thermal.temp_dev, &new_temp);
     if (rc != 0) {
@@ -401,6 +410,10 @@ uint8_t thermal_pid_step(int32_t current_temp)
 }
 
 #endif // CONFIG_LYFI_NTC_SUPPORT
+
+#if !CONFIG_LYFI_NTC_SUPPORT
+bool thermal_is_available() { return false; }
+#endif
 
 int thermal_set_fan_mode(int fan_mode)
 {

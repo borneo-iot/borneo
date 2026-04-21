@@ -38,7 +38,7 @@ static void sensor_task(void* arg)
         for (size_t i = 0; i < sensors->count; i++) {
             int ret = sensor_fetch_sample(sensors->devices[i]);
             if (ret != 0) {
-                ESP_LOGE(TAG, "Failed to fetch sample from %s: %d", sensors->devices[i]->name, ret);
+                ESP_LOGW(TAG, "Failed to fetch sample from %s: %d", sensors->devices[i]->name, ret);
             }
         }
         vTaskDelay(pdMS_TO_TICKS(200));

@@ -18,8 +18,18 @@ int bo_rpc_borneo_lyfi_thermal_current_temp_get(const CborValue* args, CborEncod
 {
     (void)args;
 #if CONFIG_LYFI_NTC_SUPPORT
+    if (!thermal_is_available()) {
+        BO_TRY(cbor_encode_null(retvals));
+        return 0;
+    }
+
     int temp = thermal_get_current_temp();
-    BO_TRY(cbor_encode_uint(retvals, temp));
+    if (temp < 0) {
+        BO_TRY(cbor_encode_null(retvals));
+    }
+    else {
+        BO_TRY(cbor_encode_uint(retvals, temp));
+    }
 #else
     BO_TRY(cbor_encode_null(retvals));
 #endif // CONFIG_LYFI_NTC_SUPPORT
