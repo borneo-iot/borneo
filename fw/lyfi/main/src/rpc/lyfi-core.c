@@ -333,10 +333,10 @@ int bo_rpc_borneo_lyfi_temp_get(const CborValue* args, CborEncoder* retvals)
     const struct drvfx_device* temp_dev = k_device_get_binding("sensor.temp");
     int rc = sensor_get_value(temp_dev, &temp);
     if (rc != 0) {
-        BO_TRY(cbor_encode_int(retvals, temp));
+        BO_TRY(cbor_encode_null(retvals));
     }
     else {
-        BO_TRY(cbor_encode_null(retvals));
+        BO_TRY(cbor_encode_int(retvals, temp));
     }
 #else
     BO_TRY(cbor_encode_null(retvals));
