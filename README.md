@@ -1,8 +1,8 @@
 # BorneoIoT: Professional Aquarium Lighting Platform
 
-![Firmware Build Status](https://github.com/borneo-iot/borneo/actions/workflows/fw-ci.yml/badge.svg)
-![Firmware Release Status](https://github.com/borneo-iot/borneo/actions/workflows/fw-release.yml/badge.svg)
-![App Build Status](https://github.com/borneo-iot/borneo/actions/workflows/flutter-ci.yml/badge.svg)
+[![Firmware Build Status](https://github.com/borneo-iot/borneo/actions/workflows/fw-ci.yml/badge.svg)](https://github.com/borneo-iot/borneo/actions/workflows/fw-ci.yml)
+[![Firmware Release Status](https://github.com/borneo-iot/borneo/actions/workflows/fw-release.yml/badge.svg)](https://github.com/borneo-iot/borneo/actions/workflows/fw-release.yml)
+[![App Build Status](https://github.com/borneo-iot/borneo/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/borneo-iot/borneo/actions/workflows/flutter-ci)
 [![Hardware: OSHWA Certified](https://img.shields.io/badge/Hardware-OSHWA%20CN000017-green)](https://certification.oshwa.org/cn000017.html)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue)](LICENSE)
 [![License: CERN-OHL-S-2.0](https://img.shields.io/badge/Hardware%20License-CERN--OHL--S--2.0-lightgrey)](LICENSE-HARDWARE)
@@ -11,25 +11,30 @@
 ![BorneoIoT Banner](assets/borneo-repo-banner.jpg)
 
 <p align="center">
-        <a href="https://www.borneoiot.com"><b>Website</b></a> •
-        <a href="https://docs.borneoiot.com"><b>Documentation</b></a> •
-        <a href="https://github.com/borneo-iot/borneo/discussions"><b>Forum</b></a> •
-        <a href="https://discord.gg/EFJTm7PpEs"><b>Discord</b></a> •
+<a href="https://www.borneoiot.com"><b>Website</b></a> •
+<a href="https://docs.borneoiot.com"><b>Documentation</b></a> •
+<a href="https://github.com/borneo-iot/borneo/discussions"><b>Forum</b></a> •
+<a href="https://discord.gg/EFJTm7PpEs"><b>Discord</b></a> 
 </p>
 
+
 <p align="center">
-    <a href="https://www.crowdsupply.com/borneo-iot/buce-aquarium-led-controller" target="_blank" rel="noopener">
-        <img alt="Crowd Supply: Subscribe" src="https://img.shields.io/badge/Subscribe-Crowd%20Supply-009999?style=for-the-badge&logo=crowdsupply" />
-    </a>
-    <a href="https://flasher.borneoiot.com">
-        <img src="https://img.shields.io/badge/⚡%20Flash%20Firmware-Web%20Flasher-blue?style=for-the-badge" alt="Web Flasher">
-    </a>
+<a href="https://www.pcbway.com/project/gifts_detail/6_Channel_Wi_Fi_PWM_LED_Dimmer_for_Aquariums_adb134c9.html">
+<img src="https://img.shields.io/badge/Buy-%20PCBWay-00a563?style=for-the-badge&logo=cart" alt="Get It on PCBWay" />
+</a>
+<a href="https://www.crowdsupply.com/borneo-iot/buce-aquarium-led-controller" target="_blank" rel="noopener">
+<img alt="Crowd Supply: Subscribe" src="https://img.shields.io/badge/Subscribe-Crowd%20Supply-009999?style=for-the-badge&logo=crowdsupply" />
+</a>
+<a href="https://flasher.borneoiot.com">
+<img src="https://img.shields.io/badge/⚡%20Flash%20Firmware-Web%20Flasher-blue?style=for-the-badge" alt="Web Flasher" />
+</a>
+
 
 </p>
 
 <p align="center">
     <a href="https://apps.apple.com/us/app/borneo-aqua-pro/id6759588830" target="_blank" rel="noopener">
-        <img alt="Download on App Store" src="assets/download-on-the-app-store.svg" />
+        <img alt="Download on App Store" src="assets/download-on-the-app-store.svg" style="height: 60px;" />
     </a>
 </p>
 
