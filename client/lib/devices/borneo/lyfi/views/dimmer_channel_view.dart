@@ -19,6 +19,8 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
   late final TextEditingController _wavelengthController;
   late final TextEditingController _wavelength2Controller;
   late String _color;
+  late double _fraction;
+  late double _ratio;
 
   String get _name => _nameController.text;
 
@@ -41,7 +43,9 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
     return _name != widget.initialValue.name ||
         _color != widget.initialValue.color ||
         _wavelength != widget.initialValue.wavelength ||
-        _wavelength2 != widget.initialValue.wavelength2;
+        _wavelength2 != widget.initialValue.wavelength2 ||
+        _fraction != widget.initialValue.fraction ||
+        _ratio != widget.initialValue.ratio;
   }
 
   bool get _canSave => _hasChanges && _nameValid && _wavelengthValid && _wavelength2Valid;
@@ -53,6 +57,8 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
     _wavelengthController = TextEditingController(text: widget.initialValue.wavelength.toString());
     _wavelength2Controller = TextEditingController(text: widget.initialValue.wavelength2.toString());
     _color = widget.initialValue.color;
+    _fraction = widget.initialValue.fraction;
+    _ratio = widget.initialValue.ratio;
   }
 
   @override
@@ -69,6 +75,8 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
       color: _color,
       wavelength: _wavelength ?? widget.initialValue.wavelength,
       wavelength2: _wavelength2 ?? widget.initialValue.wavelength2,
+      fraction: _fraction,
+      ratio: _ratio,
     );
   }
 
@@ -124,6 +132,54 @@ class _DimmerChannelViewState extends State<DimmerChannelView> {
                   errorText: _wavelength2Valid ? null : context.translate('Invalid wavelength'),
                 ),
                 onChanged: (_) => setState(() {}),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.translate('Channel fraction')),
+                      Text(
+                        '${(_fraction * 100).toStringAsFixed(1)}%',
+                        style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _fraction,
+                    min: 0.0,
+                    max: 1.0,
+                    divisions: 1000,
+                    onChanged: (value) => setState(() => _fraction = value),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(context.translate('WL1 : WL2 ratio')),
+                      Text(
+                        _ratio >= 1.0
+                            ? context.translate('WL1 only')
+                            : _ratio <= 0.0
+                            ? context.translate('WL2 only')
+                            : '${(_ratio * 100).toStringAsFixed(1)}% : ${((1 - _ratio) * 100).toStringAsFixed(1)}%',
+                        style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _ratio,
+                    min: 0.0,
+                    max: 1.0,
+                    divisions: 1000,
+                    onChanged: (value) => setState(() => _ratio = value),
+                  ),
+                ],
               ),
               Text(context.translate('Color')),
               ColorPicker(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:borneo_app/devices/borneo/lyfi/view_models/base_lyfi_device_view_model.dart';
 
@@ -23,12 +24,16 @@ class ChannelSettingsDraft {
   final String color;
   final int wavelength;
   final int wavelength2;
+  final double fraction;
+  final double ratio;
 
   const ChannelSettingsDraft({
     required this.name,
     required this.color,
     required this.wavelength,
     required this.wavelength2,
+    required this.fraction,
+    required this.ratio,
   });
 
   bool get nameValid => isValidChannelName(name);
@@ -78,18 +83,27 @@ class ChannelSettingsEntry {
   int _wavelength;
   int _initialWavelength2;
   int _wavelength2;
+  double _fraction;
+  double _initialFraction;
+  double _ratio;
+  double _initialRatio;
 
   String get name => _name;
   String get color => _color;
   int get wavelength => _wavelength;
   int get wavelength2 => _wavelength2;
+  double get fraction => _fraction;
+  double get ratio => _ratio;
 
   bool get nameChanged => _name != _initialName;
   bool get colorChanged => _color != _initialColor;
   bool get wavelengthChanged => _wavelength != _initialWavelength;
   bool get wavelength2Changed => _wavelength2 != _initialWavelength2;
+  bool get fractionChanged => _fraction != _initialFraction;
+  bool get ratioChanged => _ratio != _initialRatio;
 
-  bool get changed => nameChanged || colorChanged || wavelengthChanged || wavelength2Changed;
+  bool get changed =>
+      nameChanged || colorChanged || wavelengthChanged || wavelength2Changed || fractionChanged || ratioChanged;
 
   bool get nameValid => isValidChannelName(_name);
   bool get wavelengthValid => isValidChannelWavelength(_wavelength);
@@ -101,6 +115,8 @@ class ChannelSettingsEntry {
     required String color,
     required int wavelength,
     required int wavelength2,
+    required double fraction,
+    required double ratio,
     required void Function() notifyListeners,
   }) : _name = name,
        _initialName = name,
@@ -110,6 +126,10 @@ class ChannelSettingsEntry {
        _initialWavelength = wavelength,
        _wavelength2 = wavelength2,
        _initialWavelength2 = wavelength2,
+       _fraction = fraction,
+       _initialFraction = fraction,
+       _ratio = ratio,
+       _initialRatio = ratio,
        _notifyListeners = notifyListeners;
 
   void setName(String value) {
@@ -140,15 +160,38 @@ class ChannelSettingsEntry {
     }
   }
 
+  void setFraction(double value) {
+    if (_fraction != value) {
+      _fraction = value;
+      _notifyListeners();
+    }
+  }
+
+  void setRatio(double value) {
+    if (_ratio != value) {
+      _ratio = value;
+      _notifyListeners();
+    }
+  }
+
   ChannelSettingsDraft toDraft() {
-    return ChannelSettingsDraft(name: _name, color: _color, wavelength: _wavelength, wavelength2: _wavelength2);
+    return ChannelSettingsDraft(
+      name: _name,
+      color: _color,
+      wavelength: _wavelength,
+      wavelength2: _wavelength2,
+      fraction: _fraction,
+      ratio: _ratio,
+    );
   }
 
   void applyDraft(ChannelSettingsDraft draft) {
     if (_name == draft.name &&
         _color == draft.color &&
         _wavelength == draft.wavelength &&
-        _wavelength2 == draft.wavelength2) {
+        _wavelength2 == draft.wavelength2 &&
+        _fraction == draft.fraction &&
+        _ratio == draft.ratio) {
       return;
     }
 
@@ -156,6 +199,8 @@ class ChannelSettingsEntry {
     _color = draft.color;
     _wavelength = draft.wavelength;
     _wavelength2 = draft.wavelength2;
+    _fraction = draft.fraction;
+    _ratio = draft.ratio;
     _notifyListeners();
   }
 
@@ -164,6 +209,8 @@ class ChannelSettingsEntry {
     _initialColor = _color;
     _initialWavelength = _wavelength;
     _initialWavelength2 = _wavelength2;
+    _initialFraction = _fraction;
+    _initialRatio = _ratio;
   }
 }
 
@@ -178,7 +225,7 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
   late final NvsSettingEntry<int> overtempCutoff;
   late final NvsSettingEntry<int> channelCountSetting;
 
-  late final List<ChannelSettingsEntry> _channels;
+  List<ChannelSettingsEntry> _channels = const [];
   List<ChannelSettingsEntry> get channels => _channels;
 
   bool get hasChanges {
@@ -301,11 +348,15 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
       final channelColors = List<String>.filled(maxChannelCount, '#FFFFFF', growable: false);
       final channelWavelengths = List<int>.filled(maxChannelCount, 0, growable: false);
       final channelWavelengths2 = List<int>.filled(maxChannelCount, 0, growable: false);
+      final channelFractions = List<double>.filled(maxChannelCount, 1.0, growable: false);
+      final channelRatios = List<double>.filled(maxChannelCount, 1.0, growable: false);
       for (int channel = 0; channel < maxChannelCount; channel++) {
         channelNames[channel] = await _loadChannelNameFromNvs(channel);
         channelColors[channel] = await _loadChannelColorFromNvs(channel);
         channelWavelengths[channel] = await _loadChannelWavelengthFromNvs(channel);
         channelWavelengths2[channel] = await _loadChannelWavelength2FromNvs(channel);
+        channelFractions[channel] = await _loadChannelFractionFromNvs(channel);
+        channelRatios[channel] = await _loadChannelRatioFromNvs(channel);
       }
 
       _channels = List<ChannelSettingsEntry>.generate(
@@ -316,6 +367,8 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
           color: channelColors[i],
           wavelength: channelWavelengths[i],
           wavelength2: channelWavelengths2[i],
+          fraction: channelFractions[i],
+          ratio: channelRatios[i],
           notifyListeners: notifyListeners,
         ),
         growable: false,
@@ -382,6 +435,44 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
     }
 
     return await this.borneoDeviceApi.getFactoryNvsU16(boundDevice!.device, 'led', key);
+  }
+
+  Future<double> _loadChannelFractionFromNvs(int channel) async {
+    final key = 'ch$channel.f';
+    const fallback = 1.0;
+    final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
+    if (!exists) {
+      return fallback;
+    }
+
+    final bytes = await this.borneoDeviceApi.getFactoryNvsBlob(boundDevice!.device, 'led', key);
+    return _float32BytesToDouble(bytes);
+  }
+
+  Future<double> _loadChannelRatioFromNvs(int channel) async {
+    final key = 'ch$channel.r';
+    const fallback = 1.0;
+    final exists = await this.borneoDeviceApi.factoryNvsExists(boundDevice!.device, 'led', key);
+    if (!exists) {
+      return fallback;
+    }
+
+    final bytes = await this.borneoDeviceApi.getFactoryNvsBlob(boundDevice!.device, 'led', key);
+    return _float32BytesToDouble(bytes);
+  }
+
+  static double _float32BytesToDouble(List<int> bytes) {
+    final bd = ByteData(4);
+    for (int i = 0; i < 4; i++) {
+      bd.setUint8(i, bytes[i] & 0xFF);
+    }
+    return bd.getFloat32(0, Endian.little);
+  }
+
+  static Uint8List _doubleToFloat32Bytes(double value) {
+    final bd = ByteData(4);
+    bd.setFloat32(0, value, Endian.little);
+    return bd.buffer.asUint8List(bd.offsetInBytes, 4);
   }
 
   Future<void> _initSetting<T>(NvsSettingEntry<T> setting, Future<T> Function() getter) async {
@@ -517,6 +608,25 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
           channel.wavelength2,
         );
       }
+
+      if (channel.fractionChanged) {
+        await this.borneoDeviceApi.setFactoryNvsBlob(
+          boundDevice!.device,
+          "led",
+          "ch${channel.index}.f",
+          _doubleToFloat32Bytes(channel.fraction),
+        );
+      }
+
+      if (channel.ratioChanged) {
+        await this.borneoDeviceApi.setFactoryNvsBlob(
+          boundDevice!.device,
+          "led",
+          "ch${channel.index}.r",
+          _doubleToFloat32Bytes(channel.ratio),
+        );
+      }
+
       if (channel.changed) {
         channel.syncInitial();
       }
