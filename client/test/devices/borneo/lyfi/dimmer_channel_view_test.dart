@@ -47,7 +47,14 @@ void main() {
     final resultFuture = Navigator.of(navigatorContext!).push<ChannelSettingsDraft>(
       MaterialPageRoute(
         builder: (_) => const DimmerChannelView(
-          initialValue: ChannelSettingsDraft(name: 'ch1', color: '#FFFFFF', wavelength: 450, wavelength2: 450),
+          initialValue: ChannelSettingsDraft(
+            name: 'ch1',
+            color: '#FFFFFF',
+            wavelength: 450,
+            wavelength2: 450,
+            fraction: 1.0,
+            ratio: 1.0,
+          ),
         ),
       ),
     );
@@ -100,7 +107,14 @@ void main() {
     Navigator.of(navigatorContext!).push<void>(
       MaterialPageRoute(
         builder: (_) => const DimmerChannelView(
-          initialValue: ChannelSettingsDraft(name: 'ch1', color: '#FFFFFF', wavelength: 450, wavelength2: 450),
+          initialValue: ChannelSettingsDraft(
+            name: 'ch1',
+            color: '#FFFFFF',
+            wavelength: 450,
+            wavelength2: 450,
+            fraction: 1.0,
+            ratio: 1.0,
+          ),
         ),
       ),
     );
