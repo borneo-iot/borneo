@@ -279,6 +279,10 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
     }
     final toSave = _entries.map((x) => x.toModel()).toList(growable: false);
     await lyfiThing.performActionAndWait('setSchedule', toSave).asCancellable(cancelToken);
+    // Immediately reflect the saved schedule in the local WoT property so that
+    // _syncScheduleTables() reads fresh data when toggleLock() is called,
+    // instead of waiting for the slow background WoT sync.
+    lyfiThing.findProperty('schedule')?.value.notifyOfExternalUpdate(toSave);
   }
 
   void resetChannelValues() {}

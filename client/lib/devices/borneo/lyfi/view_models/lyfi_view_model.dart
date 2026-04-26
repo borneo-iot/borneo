@@ -173,6 +173,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
 
   StreamSubscription<String>? _stateSubscription;
   StreamSubscription<String>? _modeSubscription;
+  StreamSubscription<ScheduleTable>? _scheduleSubscription;
   StreamSubscription<ScheduleTable>? _sunScheduleSubscription;
   StreamSubscription<ScheduleTable>? _moonScheduleSubscription;
 
@@ -335,6 +336,15 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
         super.lyfiThing.findProperty('mode')?.value.onUpdate.listen((value) => _onModeChanged(value))
             as StreamSubscription<String>?;
 
+    _scheduleSubscription =
+        super.lyfiThing.findProperty('schedule')?.value.onUpdate.listen((value) {
+              scheduledInstants
+                ..clear()
+                ..addAll(value);
+              notifyListeners();
+            })
+            as StreamSubscription<ScheduleTable>?;
+
     _sunScheduleSubscription =
         super.lyfiThing.findProperty('sunSchedule')?.value.onUpdate.listen((value) {
               sunInstants
@@ -397,6 +407,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
       _colorSubscription?.cancel();
       _stateSubscription?.cancel();
       _modeSubscription?.cancel();
+      _scheduleSubscription?.cancel();
       _sunScheduleSubscription?.cancel();
       _moonScheduleSubscription?.cancel();
       for (final cvn in _channels) {
