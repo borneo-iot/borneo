@@ -44,15 +44,18 @@ class LyfiTimeLineChart extends StatelessWidget {
       context,
     ).textTheme.labelMedium?.copyWith(color: cs.onPrimary, fontFeatures: const [FontFeature.tabularFigures()]);
     if (currentTime != null) {
-      final labelText = _formatNowLabel(currentTime!.inSeconds.toDouble());
-      final textPainter = TextPainter(
-        text: TextSpan(text: labelText, style: labelStyle),
-        textDirection: TextDirection.ltr,
-        maxLines: 1,
-      )..layout();
-      final labelHeight = textPainter.height;
+      final currentTimeX = _resolveCurrentTimeX(currentTime!, minX, maxX);
+      if (currentTimeX != null) {
+        final labelText = _formatNowLabel(currentTimeX);
+        final textPainter = TextPainter(
+          text: TextSpan(text: labelText, style: labelStyle),
+          textDirection: TextDirection.ltr,
+          maxLines: 1,
+        )..layout();
+        final labelHeight = textPainter.height;
 
-      verticalLines.add(_buildNowLine(context, currentTime!, labelHeight));
+        verticalLines.add(_buildNowLine(context, currentTimeX, labelHeight));
+      }
     }
     final xInterval = _resolveTimeInterval(minX, maxX);
     if (extraVerticalLines != null) {
@@ -149,9 +152,9 @@ class LyfiTimeLineChart extends StatelessWidget {
 
   LineTouchData get _defaultLineTouchData => LineTouchData(handleBuiltInTouches: true);
 
-  VerticalLine _buildNowLine(BuildContext context, Duration now, double labelHeight) {
+  VerticalLine _buildNowLine(BuildContext context, double currentTimeX, double labelHeight) {
     return VerticalLine(
-      x: now.inSeconds.toDouble(),
+      x: currentTimeX,
       gradient: LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
@@ -173,6 +176,21 @@ class LyfiTimeLineChart extends StatelessWidget {
         labelResolver: (vl) => _formatNowLabel(vl.x),
       ),
     );
+  }
+
+  double? _resolveCurrentTimeX(Duration currentTime, double minX, double maxX) {
+    const daySeconds = 24 * 3600.0;
+    final currentX = currentTime.inSeconds.toDouble();
+    if (currentX >= minX && currentX <= maxX) {
+      return currentX;
+    }
+
+    final shiftedX = currentX + daySeconds;
+    if (maxX > daySeconds && shiftedX >= minX && shiftedX <= maxX) {
+      return shiftedX;
+    }
+
+    return null;
   }
 
   String _formatAxisLabel(double seconds) {
