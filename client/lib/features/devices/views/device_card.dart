@@ -23,7 +23,7 @@ class DeviceCard extends StatelessWidget {
 
     await pushScreen(
       context,
-      screen: moduleMeta.detailsViewBuilder(context),
+      screen: KeyedSubtree(key: ValueKey(device.id), child: moduleMeta.detailsViewBuilder(context)),
       withNavBar: false,
       pageTransitionAnimation: PageTransitionAnimation.platform,
       settings: RouteSettings(name: AppRoutes.makeDeviceScreenRoute(device.driverID), arguments: device),

@@ -148,13 +148,6 @@ class DevicesScreen extends StatelessWidget {
                           ),
                         )
                         .toList(),
-                    shouldRebuild: (previous, current) {
-                      if (previous.length != current.length) return true;
-                      for (var i = 0; i < previous.length; i++) {
-                        if (previous[i].lastModified != current[i].lastModified) return true;
-                      }
-                      return false;
-                    },
                     builder: (context, groupSnapshots, child) {
                       final groupedDevicesVM = context.read<GroupedDevicesViewModel>();
                       if (groupedDevicesVM.isLoading) {
@@ -170,7 +163,10 @@ class DevicesScreen extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 final snapshot = groupSnapshots[index];
                                 final gvm = groupedDevicesVM.groups.firstWhere((g) => g.id == snapshot.id);
-                                return _buildGroupSection(context, gvm);
+                                return KeyedSubtree(
+                                  key: ValueKey(snapshot.id),
+                                  child: _buildGroupSection(context, gvm),
+                                );
                               },
                             );
                     },
