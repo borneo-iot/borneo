@@ -8,10 +8,13 @@ abstract class AppRoutes {
   static const kDeviceDiscoveryWifiSelection = '/devices/discovery/wifi-selection';
   static const kDeviceDiscoveryProvisioning = '/devices/discovery/provisioning';
 
-  static String makeDeviceScreenRoute(String driverID) {
+  static String makeDeviceScreenRoute(String driverID, [String? deviceID]) {
     if (driverID.isEmpty) {
       throw ArgumentError('The argument cannot be empty', 'driverID');
     }
-    return '/devices/$driverID';
+    if (deviceID == null || deviceID.isEmpty) {
+      return '/devices/$driverID';
+    }
+    return '/devices/$driverID/$deviceID';
   }
 }

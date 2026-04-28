@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:borneo_app/devices/borneo/lyfi/core/wot.dart';
 import 'package:borneo_app/devices/borneo/view_models/base_borneo_summary_device_view_model.dart';
+import 'package:borneo_app/devices/view_models/abstract_device_summary_view_model.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:flutter/material.dart';
 import 'package:lw_wot/wot.dart';
@@ -31,6 +32,19 @@ class LyfiSummaryDeviceViewModel extends BaseBorneoSummaryDeviceViewModel {
       // plain fields don't require disposal
       super.dispose();
     }
+  }
+
+  @override
+  void updateFrom(AbstractDeviceSummaryViewModel other) {
+    super.updateFrom(other);
+    if (other is! LyfiSummaryDeviceViewModel) {
+      return;
+    }
+
+    ledState = other.ledState;
+    ledMode = other.ledMode;
+    channelBrightness = other.channelBrightness == null ? null : List<int>.from(other.channelBrightness!);
+    lyfiDeviceInfo = other.lyfiDeviceInfo;
   }
 
   void _onStateChanged(WotMessage msg) {

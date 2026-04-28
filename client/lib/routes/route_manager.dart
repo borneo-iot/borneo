@@ -33,9 +33,34 @@ class RouteManager {
     final builder = _routes[settings.name];
     if (builder != null) {
       return platformPageRoute(builder: builder, settings: settings);
-    } else {
-      return platformPageRoute(builder: (_) => const DevicesScreen(), settings: settings);
     }
+
+    final normalizedDeviceRoute = _normalizeDeviceRoute(settings.name);
+    if (normalizedDeviceRoute != null) {
+      final deviceBuilder = _routes[normalizedDeviceRoute];
+      if (deviceBuilder != null) {
+        return platformPageRoute(builder: deviceBuilder, settings: settings);
+      }
+    }
+
+    return platformPageRoute(builder: (_) => const DevicesScreen(), settings: settings);
+  }
+
+  String? _normalizeDeviceRoute(String? routeName) {
+    if (routeName == null) {
+      return null;
+    }
+
+    final uri = Uri.tryParse(routeName);
+    if (uri == null || uri.pathSegments.length < 2 || uri.pathSegments.first != 'devices') {
+      return null;
+    }
+
+    if (uri.pathSegments[1] == 'discovery') {
+      return null;
+    }
+
+    return '/devices/${uri.pathSegments[1]}';
   }
 
   Widget _makeDeviceDetailsScreenBuilder(BuildContext context, DeviceModuleMetadata meta) {

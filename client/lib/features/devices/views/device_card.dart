@@ -26,7 +26,7 @@ class DeviceCard extends StatelessWidget {
       screen: KeyedSubtree(key: ValueKey(device.id), child: moduleMeta.detailsViewBuilder(context)),
       withNavBar: false,
       pageTransitionAnimation: PageTransitionAnimation.platform,
-      settings: RouteSettings(name: AppRoutes.makeDeviceScreenRoute(device.driverID), arguments: device),
+      settings: RouteSettings(name: AppRoutes.makeDeviceScreenRoute(device.driverID, device.id), arguments: device),
     );
 
     if (!vm.isDisposed) {
