@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:gauge_indicator/gauge_indicator.dart';
 
@@ -102,9 +103,9 @@ class _DashboardToufuState extends State<DashboardToufu> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final bgColor = widget.backgroundColor ?? Theme.of(context).colorScheme.surfaceContainer;
-    final progColor = widget.progressColor ?? Theme.of(context).colorScheme.primary;
-    final arcColor = widget.arcColor ?? Theme.of(context).colorScheme.surfaceDim;
+    final bgColor = widget.backgroundColor ?? cs.surfaceContainer;
+    final progColor = widget.progressColor ?? cs.primary;
+    final arcColor = widget.arcColor ?? (cs.brightness == Brightness.light ? bgColor.darken() : bgColor.brighten());
     final progressGradient = widget.linearGradient;
 
     return AnimatedBuilder(

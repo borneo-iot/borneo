@@ -339,10 +339,19 @@ class DevicesScreen extends StatelessWidget {
                     ),
                     itemCount: groupData.deviceCount,
                     itemBuilder: (context, index) {
-                      return Selector<GroupViewModel, AbstractDeviceSummaryViewModel>(
-                        selector: (_, gvm) => gvm.devices[index],
+                      // Use a nullable selector so that if GroupViewModel
+                      // notifies listeners with fewer devices than the
+                      // snapshot-based itemCount (e.g. during _clearAllItems),
+                      // we return null instead of throwing a RangeError.
+                      // Flutter will remove the item from the tree on the next
+                      // frame once the outer Selector rebuilds with deviceCount=0.
+                      return Selector<GroupViewModel, AbstractDeviceSummaryViewModel?>(
+                        selector: (_, gvm) => index < gvm.devices.length ? gvm.devices[index] : null,
                         shouldRebuild: (previous, current) => previous != current,
                         builder: (context, deviceVM, _) {
+                          if (deviceVM == null) {
+                            return const SizedBox.shrink();
+                          }
                           return ChangeNotifierProvider.value(
                             key: ValueKey(deviceVM.deviceEntity.id),
                             value: deviceVM,

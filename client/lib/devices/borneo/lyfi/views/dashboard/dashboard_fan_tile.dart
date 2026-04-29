@@ -1,4 +1,5 @@
 import 'package:borneo_app/devices/borneo/lyfi/views/dashboard/toufu_view.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +20,9 @@ class DashboardFanTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final dimmedColor = (theme.colorScheme.brightness == Brightness.light
+        ? theme.colorScheme.surfaceContainerHighest.darken()
+        : theme.colorScheme.surfaceContainerHighest.lighten());
     return Selector<LyfiViewModel, ({bool isOnline, double? fanPowerRatio, FanMode? fanMode})>(
       selector: (_, vm) => (isOnline: vm.isOnline, fanPowerRatio: vm.fanPowerRatio, fanMode: vm.fanMode),
       builder: (context, vm, _) => DashboardToufu(
@@ -26,7 +30,6 @@ class DashboardFanTile extends StatelessWidget {
         icon: Icons.air,
         foregroundColor: theme.colorScheme.onSurface,
         backgroundColor: theme.colorScheme.surfaceContainerHighest,
-        arcColor: theme.colorScheme.outlineVariant,
         linearGradient: LinearGradient(colors: [theme.colorScheme.primary, theme.colorScheme.secondary]),
         minValue: 0,
         maxValue: 100,
@@ -50,9 +53,7 @@ class DashboardFanTile extends StatelessWidget {
                         final String digit = digits[i];
                         final bool isLeadingZero =
                             i < digits.length - 1 && digit == '0' && digits.sublist(0, i).every((c) => c == '0');
-                        final Color color = isLeadingZero
-                            ? theme.colorScheme.outlineVariant
-                            : theme.colorScheme.primary;
+                        final Color color = isLeadingZero ? dimmedColor : theme.colorScheme.primary;
                         digitWidgets.add(
                           RollingInteger(
                             value: int.parse(digit),

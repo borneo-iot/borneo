@@ -240,6 +240,10 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
 
   /// Lightweight sync - only check essential properties to minimize API calls
   Future<void> _lightweightSync() async {
+    if (_isSyncing) {
+      return;
+    }
+    _isSyncing = true;
     try {
       final borneoApi = _getBorneoApiOrNull();
       final lyfiApi = _getLyfiApiOrNull();
@@ -285,10 +289,14 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
       findProperty('timezone')?.value.notifyOfExternalUpdate(generalStatus.timezone);
     } catch (e, stackTrace) {
       logger?.w('Lightweight sync failed: $e', error: e, stackTrace: stackTrace);
+    } finally {
+      _isSyncing = false;
     }
   }
 
   Future<void> _lowFrequencySync() async {
+    if (_isLowFreqSyncing) return;
+    _isLowFreqSyncing = true;
     try {
       final lyfiApi = _getLyfiApiOrNull();
       final borneoApi = _getBorneoApiOrNull();
@@ -346,6 +354,8 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
       findProperty('moonStatus')?.value.notifyOfExternalUpdate(moonStatus);
     } catch (e, stackTrace) {
       logger?.w('Low-frequency sync failed: $e', error: e, stackTrace: stackTrace);
+    } finally {
+      _isLowFreqSyncing = false;
     }
   }
 
@@ -354,6 +364,12 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
   bool get isDisposed => _disposed;
   Timer? _syncTimer;
   Timer? _lowFrequencySyncTimer;
+  // Re-entrancy guards: prevent a new timer-triggered sync from starting
+  // while the previous one is still awaiting network responses.  Overlapping
+  // calls on the same device would race to write stale values back into the
+  // WotThing properties, causing incorrect UI data.
+  bool _isSyncing = false;
+  bool _isLowFreqSyncing = false;
 
   BoundDevice? _tryGetBoundDevice() {
     if (!kernel.isBound(deviceId)) return null;
@@ -448,11 +464,18 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
     }
     _borneoApi = null;
     _lyfiApi = null;
+    // Clear the cached device reference so that any in-flight sync that resumes
+    // after this point must re-validate the binding via _tryGetBoundDevice(),
+    // preventing it from using a stale/disposed CoAP connection.
+    _device = null;
     findProperty('online')?.value.notifyOfExternalUpdate(false);
     _syncTimer?.cancel();
     _lowFrequencySyncTimer?.cancel();
     _syncTimer = null;
     _lowFrequencySyncTimer = null;
+    // Reset re-entrancy guards so a fresh sync can start after rebind.
+    _isSyncing = false;
+    _isLowFreqSyncing = false;
     _clearDriverDataEventSubscriptions();
   }
 

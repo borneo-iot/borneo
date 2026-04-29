@@ -1,5 +1,6 @@
 import 'package:borneo_app/devices/borneo/lyfi/views/dashboard/toufu_view.dart';
 import 'package:community_material_icon/community_material_icon.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gettext/flutter_gettext/context_ext.dart';
 import 'package:provider/provider.dart';
@@ -24,12 +25,16 @@ class DashboardPowerTile extends StatelessWidget {
       ),
       builder: (context, props, _) {
         final theme = Theme.of(context);
+
+        final dimmedColor = (theme.colorScheme.brightness == Brightness.light
+            ? theme.colorScheme.surfaceContainerHighest.darken()
+            : theme.colorScheme.surfaceContainerHighest.lighten());
+
         final vm = context.read<LyfiViewModel>();
         final mergedListenable = Listenable.merge([vm.currentVoltage, vm.currentCurrent, vm.currentWatts]);
         final bool isOnline = props.isOnline;
         final disabledColor = theme.colorScheme.onSurface.withValues(alpha: 0.38);
         final Color fgColor = theme.colorScheme.onSurface;
-        final Color arcColor = theme.colorScheme.surfaceDim;
         //final Color progressColor = isOnline ? theme.colorScheme.primary : disabledColor;
         final Color textPrimary = theme.colorScheme.primary;
         final Color textOnSurface = theme.colorScheme.onSurface;
@@ -43,7 +48,6 @@ class DashboardPowerTile extends StatelessWidget {
             icon: CommunityMaterialIcons.lightning_bolt_outline,
             foregroundColor: isOnline ? fgColor : disabledColor,
             backgroundColor: theme.colorScheme.surfaceContainerHighest,
-            arcColor: arcColor,
             linearGradient: progressGradient,
             minValue: 0.0,
             maxValue: isOnline ? vm.nominalPower ?? 99999 : 99999,
@@ -69,7 +73,7 @@ class DashboardPowerTile extends StatelessWidget {
                           final String digit = digits[i];
                           final bool isLeadingZero =
                               i < digits.length - 1 && digit == '0' && digits.sublist(0, i).every((c) => c == '0');
-                          final Color color = isLeadingZero ? arcColor : textPrimary;
+                          final Color color = isLeadingZero ? dimmedColor : textPrimary;
                           digitWidgets.add(
                             RollingInteger(
                               value: int.parse(digit),

@@ -30,6 +30,7 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
   final CancellationToken _cancellationToken = CancellationToken();
   final Lock _deviceOperLock = Lock();
   bool _isInitialized = false;
+  bool _pendingReload = false;
 
   // Getter for loading state
   bool get isInitialized => _isInitialized;
@@ -98,6 +99,7 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
     } finally {
       _isInitialized = true;
       super.setBusy(false, notify: false);
+      _checkPendingReload();
     }
   }
 
@@ -141,6 +143,7 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
       this.notifyAppError(gt.translate('Failed to refresh discovery'), error: err, stackTrace: st);
     } finally {
       super.setBusy(false);
+      _checkPendingReload();
     }
   }
 
@@ -157,6 +160,16 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
       logger?.i("Refreshing task cancelled");
     } finally {
       super.setBusy(false);
+      _checkPendingReload();
+    }
+  }
+
+  /// If a device-added event arrived while a reload was running, trigger
+  /// another reload now that we are idle so the new device is shown.
+  void _checkPendingReload() {
+    if (_pendingReload && !isDisposed) {
+      _pendingReload = false;
+      _tryReloadAll();
     }
   }
 
@@ -237,7 +250,14 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
   }
 
   Future<void> _onNewDeviceEntityAdded(NewDeviceEntityAddedEvent event) async {
-    if (isDisposed) return;
+    if (isDisposed) {
+      return;
+    }
+
+    if (isBusy) {
+      _pendingReload = true;
+      return;
+    }
 
     try {
       final metaModule = _deviceModuleRegistry.metaModules[event.device.driverID];
