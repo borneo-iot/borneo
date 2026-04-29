@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.7.8
+version: 0.7.9
 
 workspace:
   - packages/lw_wot
@@ -238,6 +238,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  fonts:
+    - family: DSEG14ClassicItalic
+      fonts:
+        - asset: assets/fonts/DSEG14Classic-Italic.ttf
+          style: italic
 
 flutter_launcher_icons:
   android: true
