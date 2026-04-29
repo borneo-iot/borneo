@@ -27,12 +27,12 @@ class _TestDeviceModuleMetadata extends DeviceModuleMetadata {
           factory: _factory,
         ),
         detailsViewBuilder: (_) => const Scaffold(body: Text('DETAIL PAGE')),
-        detailsViewModelBuilder: (_, __) => throw UnimplementedError(),
-        deviceIconBuilder: (_, __, ___) => const SizedBox.shrink(),
-        primaryStateIconBuilder: (_, __) => const SizedBox.shrink(),
-        secondaryStatesBuilder: (_, __) => const <Widget>[],
-        createSummaryVM: (_, __, ___, ____) => throw UnimplementedError(),
-        createWotThing: (_, __, {logger, cancelToken}) => throw UnimplementedError(),
+        detailsViewModelBuilder: (_, _) => throw UnimplementedError(),
+        deviceIconBuilder: (_, _, _) => const SizedBox.shrink(),
+        primaryStateIconBuilder: (_, _) => const SizedBox.shrink(),
+        secondaryStatesBuilder: (_, _) => const <Widget>[],
+        createSummaryVM: (_, _, _, _) => throw UnimplementedError(),
+        createWotThing: (_, _, {logger, cancelToken}) => throw UnimplementedError(),
       );
 
   static SupportedDeviceDescriptor? _matches(DiscoveredDevice device) => null;
