@@ -238,11 +238,6 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-  fonts:
-    - family: DSEG14ClassicItalic
-      fonts:
-        - asset: assets/fonts/DSEG14Classic-Italic.ttf
-          style: italic
 
 flutter_launcher_icons:
   android: true
