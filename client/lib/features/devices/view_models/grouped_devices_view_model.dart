@@ -341,7 +341,24 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
     assert(!isBusy);
     setBusy(true, notify: false);
     try {
-      await _deviceManager.delete(id);
+      await _deviceOperLock.synchronized(() async {
+        await _deviceManager.delete(id);
+
+        // Optimistically remove the device from the current UI state so the
+        // user sees immediate feedback without waiting for the event bus.
+        final changedGroupIndex = _groups.indexWhere((g) => g.devices.any((d) => d.deviceEntity.id == id));
+        if (changedGroupIndex != -1) {
+          final changedGroup = _groups[changedGroupIndex];
+          final deviceIndex = changedGroup.devices.indexWhere((d) => d.deviceEntity.id == id);
+          if (deviceIndex != -1) {
+            final deviceToRemove = changedGroup.devices[deviceIndex];
+            if (!deviceToRemove.isDisposed) {
+              deviceToRemove.dispose();
+            }
+          }
+          changedGroup.removeDeviceById(id);
+        }
+      });
     } catch (e, stackTrace) {
       notifyAppError(gt.translate('Failed to delete device'), error: e, stackTrace: stackTrace);
     } finally {
