@@ -103,30 +103,54 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
     final lyfiApi = _getLyfiApiOrNull();
     final device = _getDeviceOrNull();
     if (isOffline || borneoApi == null || lyfiApi == null || device == null) return;
-    // Get actual device state and update property values
-    final generalStatus = await borneoApi.getGeneralDeviceStatus(device, cancelToken: cancelToken);
-    final generalDeviceInfo = await borneoApi.getGeneralDeviceInfo(device, cancelToken: cancelToken);
-    final lyfiStatus = await lyfiApi.getLyfiStatus(device, cancelToken: cancelToken);
-    final schedule = await lyfiApi.getSchedule(device, cancelToken: cancelToken);
-    final acclimation = await lyfiApi.getAcclimation(device, cancelToken: cancelToken);
-    final location = await lyfiApi.getLocation(device, cancelToken: cancelToken);
-    final correctionMethod = await lyfiApi.getCorrectionMethod(device, cancelToken: cancelToken);
-    final timeZoneEnabled = await lyfiApi.getTimeZoneEnabled(device, cancelToken: cancelToken);
-    final timeZoneOffset = await lyfiApi.getTimeZoneOffset(device, cancelToken: cancelToken);
-    final keepTemp = await lyfiApi.getKeepTemp(device, cancelToken: cancelToken);
-    final fanMode = await lyfiApi.getFanMode(device, cancelToken: cancelToken);
-    final fanPower = await lyfiApi.getFanManualPower(device, cancelToken: cancelToken);
 
-    // Additional API calls for new properties
-    final cloudEnabled = await lyfiApi.getCloudEnabled(device, cancelToken: cancelToken);
-    final temporaryDuration = await lyfiApi.getTemporaryDuration(device, cancelToken: cancelToken);
-    final sunSchedule = await lyfiApi.getSunSchedule(device, cancelToken: cancelToken);
+    // ── Batch 1: core status + schedule/location config (parallel) ──────────
+    final (
+      generalStatus,
+      generalDeviceInfo,
+      lyfiStatus,
+      schedule,
+      acclimation,
+      location,
+      correctionMethod,
+      timeZoneEnabled,
+      timeZoneOffset,
+    ) = await (
+      borneoApi.getGeneralDeviceStatus(device, cancelToken: cancelToken),
+      borneoApi.getGeneralDeviceInfo(device, cancelToken: cancelToken),
+      lyfiApi.getLyfiStatus(device, cancelToken: cancelToken),
+      lyfiApi.getSchedule(device, cancelToken: cancelToken),
+      lyfiApi.getAcclimation(device, cancelToken: cancelToken),
+      lyfiApi.getLocation(device, cancelToken: cancelToken),
+      lyfiApi.getCorrectionMethod(device, cancelToken: cancelToken),
+      lyfiApi.getTimeZoneEnabled(device, cancelToken: cancelToken),
+      lyfiApi.getTimeZoneOffset(device, cancelToken: cancelToken),
+    ).wait;
 
-    final powerBehavior = await borneoApi.getPowerBehavior(device, cancelToken: cancelToken);
-    final deviceInfo = await lyfiApi.getLyfiInfo(device, cancelToken: cancelToken);
-    // final currentTemp = await lyfiApi.getCurrentTemp(device); // Use lyfiStatus.temperature
-    // final deviceInfo = await lyfiApi.getDeviceInfo(device); // Skip for now
+    // ── Batch 2: peripheral / low-frequency settings (parallel) ─────────────
+    final (
+      keepTemp,
+      fanMode,
+      fanPower,
+      cloudEnabled,
+      temporaryDuration,
+      sunSchedule,
+      powerBehavior,
+      deviceInfo,
+      moonConfig,
+    ) = await (
+      lyfiApi.getKeepTemp(device, cancelToken: cancelToken),
+      lyfiApi.getFanMode(device, cancelToken: cancelToken),
+      lyfiApi.getFanManualPower(device, cancelToken: cancelToken),
+      lyfiApi.getCloudEnabled(device, cancelToken: cancelToken),
+      lyfiApi.getTemporaryDuration(device, cancelToken: cancelToken),
+      lyfiApi.getSunSchedule(device, cancelToken: cancelToken),
+      borneoApi.getPowerBehavior(device, cancelToken: cancelToken),
+      lyfiApi.getLyfiInfo(device, cancelToken: cancelToken),
+      lyfiApi.getMoonConfig(device, cancelToken: cancelToken),
+    ).wait;
 
+    // ── Conditional fetches (depend on results from the batches above) ───────
     if (lyfiStatus.mode == LyfiMode.sun) {
       try {
         final sunCurve = await lyfiApi.getSunCurve(device, cancelToken: cancelToken);
@@ -157,8 +181,7 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
     findProperty('temporaryDuration')?.value.notifyOfExternalUpdate(temporaryDuration);
     findProperty('sunSchedule')?.value.notifyOfExternalUpdate(sunSchedule);
 
-    // Additional moon API calls
-    final moonConfig = await lyfiApi.getMoonConfig(device, cancelToken: cancelToken);
+    // Moon properties (moonConfig already fetched in batch 2)
     findProperty('moonConfig')?.value.notifyOfExternalUpdate(moonConfig);
 
     if (moonConfig.enabled) {

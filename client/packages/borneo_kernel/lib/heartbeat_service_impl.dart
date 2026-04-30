@@ -285,7 +285,10 @@ class DefaultHeartbeatService implements HeartbeatService {
       if (_missedObservations[deviceId]! >= maxMissedObservations) {
         _logger.w('Device $deviceId marked offline after $maxMissedObservations missed observations');
         _failureController.add(_devices[deviceId]!.device);
-        _stopHeartbeatObservation(deviceId);
+        // Call the lock-free helper directly; we already hold _observationLock
+        // and _stopHeartbeatObservation() would try to re-acquire it, causing a
+        // deadlock with the non-reentrant Lock from the synchronized package.
+        _cancelObservationDataLocked(deviceId);
       } else {
         // Reset timeout timer for next observation
         _resetObservationTimeout(deviceId);
@@ -304,15 +307,21 @@ class DefaultHeartbeatService implements HeartbeatService {
     );
   }
 
+  /// Cancels and removes all observation data for [deviceId].
+  /// Must be called while already holding [_observationLock].
+  void _cancelObservationDataLocked(String deviceId) {
+    _observationSubscriptions[deviceId]?.cancel();
+    _observationSubscriptions.remove(deviceId);
+
+    _observationTimeoutTimers[deviceId]?.cancel();
+    _observationTimeoutTimers.remove(deviceId);
+
+    _missedObservations.remove(deviceId);
+  }
+
   Future<void> _stopHeartbeatObservation(String deviceId) async {
-    await _observationLock.synchronized(() async {
-      _observationSubscriptions[deviceId]?.cancel();
-      _observationSubscriptions.remove(deviceId);
-
-      _observationTimeoutTimers[deviceId]?.cancel();
-      _observationTimeoutTimers.remove(deviceId);
-
-      _missedObservations.remove(deviceId);
+    await _observationLock.synchronized(() {
+      _cancelObservationDataLocked(deviceId);
     });
   }
 

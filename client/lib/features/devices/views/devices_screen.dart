@@ -18,22 +18,6 @@ import 'package:borneo_app/features/devices/widgets/empty_groups_widget.dart';
 import 'package:borneo_app/features/devices/views/device_discovery_screen.dart';
 import 'group_edit_screen.dart';
 
-class GroupSnapshot {
-  final String id;
-  final String name;
-  final int deviceCount;
-  final int lastModified;
-  final bool isDummy;
-
-  const GroupSnapshot({
-    required this.id,
-    required this.name,
-    required this.deviceCount,
-    required this.lastModified,
-    required this.isDummy,
-  });
-}
-
 enum PlusMenuIndexes { addGroup, addDevice }
 
 /// A small badge showing the number of new device candidates.
@@ -148,6 +132,13 @@ class DevicesScreen extends StatelessWidget {
                           ),
                         )
                         .toList(),
+                    shouldRebuild: (previous, current) {
+                      if (previous.length != current.length) return true;
+                      for (var i = 0; i < previous.length; i++) {
+                        if (previous[i] != current[i]) return true;
+                      }
+                      return false;
+                    },
                     builder: (context, groupSnapshots, child) {
                       final groupedDevicesVM = context.read<GroupedDevicesViewModel>();
                       if (groupedDevicesVM.isLoading) {

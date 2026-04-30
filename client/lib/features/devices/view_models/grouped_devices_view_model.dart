@@ -174,6 +174,9 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
   }
 
   void _clearAllItems() {
+    // Intentionally does NOT call notifyListeners() here.  Callers reload
+    // fresh data immediately after this call and notify once, avoiding a
+    // brief flash of an empty list between the clear and the repopulate.
     for (final g in _groups) {
       g.dispose();
     }
@@ -213,7 +216,13 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
   }
 
   Future<void> changeDeviceGroup(DeviceEntity device, String? newGroupID) async {
-    return await _deviceOperLock.synchronized(() async {
+    // Capture error info outside the lock so that _reloadAll() can be called
+    // after the lock is released.  If _reloadAll() were ever wrapped in
+    // _deviceOperLock, calling it from inside the catch block would deadlock.
+    Object? caughtError;
+    StackTrace? caughtStackTrace;
+
+    await _deviceOperLock.synchronized(() async {
       if (isDisposed) return;
 
       final originalGroupVM = _groups.singleWhere((g) => g.devices.any((d) => d.deviceEntity.id == device.id));
@@ -236,17 +245,26 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
         originalGroupVM.notifyListeners();
         newGroupVM.notifyListeners();
       } catch (e, stackTrace) {
-        // Reload all data to maintain consistency in case of failure
-        logger?.e('Failed to change device group, reloading all devices', error: e, stackTrace: stackTrace);
-        await _reloadAll();
-        await Future.delayed(Duration.zero);
-        notifyAppError(
-          gt.translate("Failed to change the group for device '{deviceName}'", nArgs: {'deviceName': device.name}),
-          error: e,
-          stackTrace: stackTrace,
-        );
+        caughtError = e;
+        caughtStackTrace = stackTrace;
       }
     });
+
+    // Reload and report the error outside the lock.
+    if (caughtError != null) {
+      logger?.e(
+        'Failed to change device group, reloading all devices',
+        error: caughtError,
+        stackTrace: caughtStackTrace,
+      );
+      await _reloadAll();
+      await Future.delayed(Duration.zero);
+      notifyAppError(
+        gt.translate("Failed to change the group for device '{deviceName}'", nArgs: {'deviceName': device.name}),
+        error: caughtError,
+        stackTrace: caughtStackTrace,
+      );
+    }
   }
 
   Future<void> _onNewDeviceEntityAdded(NewDeviceEntityAddedEvent event) async {
@@ -289,6 +307,14 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
       return;
     }
 
+    // Mirror the same guard used in _onNewDeviceEntityAdded: if a reload is
+    // already running, schedule another reload so the deletion is picked up
+    // consistently once the current one finishes.
+    if (isBusy) {
+      _pendingReload = true;
+      return;
+    }
+
     final int changedGroupIndex = _groups.indexWhere((g) => g.devices.any((d) => d.deviceEntity.id == event.id));
     // Remove the deleted device from UI
     if (changedGroupIndex != -1) {
@@ -320,6 +346,10 @@ class GroupedDevicesViewModel extends BaseViewModel with ViewModelEventBusMixin,
       notifyAppError(gt.translate('Failed to delete device'), error: e, stackTrace: stackTrace);
     } finally {
       setBusy(false, notify: false);
+      // If a DeviceDeletedEvent arrived while we were busy, _pendingReload
+      // would have been set. Ensure we handle it now that the operation
+      // finished so the UI reflects the deletion immediately.
+      _checkPendingReload();
     }
   }
 
