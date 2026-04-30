@@ -36,6 +36,7 @@ class _FakeSceneManager implements ISceneManager {
   @override
   Future<SceneEntity> changeCurrent(String newSceneID) async => current;
 
+  @override
   noSuchMethod(Invocation i) => super.noSuchMethod(i);
 }
 
@@ -97,19 +98,19 @@ class _FakeModule implements DeviceModuleMetadata {
 
   @override
   BaseDeviceViewModel Function(BuildContext context, String deviceID) get detailsViewModelBuilder =>
-      (_, __) => throw UnimplementedError();
+      (_, _) => throw UnimplementedError();
 
   @override
   Widget Function(BuildContext context, double iconSize, bool isOnline) get deviceIconBuilder =>
-      (_, __, ___) => const SizedBox.shrink();
+      (_, _, _) => const SizedBox.shrink();
 
   @override
   Widget Function(BuildContext context, double iconSize) get primaryStateIconBuilder =>
-      (_, __) => const SizedBox.shrink();
+      (_, _) => const SizedBox.shrink();
 
   @override
   List<Widget> Function(BuildContext, AbstractDeviceSummaryViewModel) get secondaryStatesBuilder =>
-      (_, __) => [];
+      (_, _) => [];
 
   @override
   AbstractDeviceSummaryViewModel Function(DeviceEntity, IDeviceManager, EventBus, GettextLocalizations)
@@ -119,21 +120,15 @@ class _FakeModule implements DeviceModuleMetadata {
   @override
   Future<WotThing> Function(DeviceEntity, IDeviceManager, {Logger? logger, CancellationToken? cancelToken})
   get createWotThing =>
-      (_, __, {logger, cancelToken}) async => throw UnimplementedError();
+      (_, _, {logger, cancelToken}) async => throw UnimplementedError();
 
   @override
   Widget Function(BuildContext context, AbstractDeviceSummaryViewModel vm)? get summaryContentBuilder => null;
 }
 
 class _SimpleSummaryVM extends AbstractDeviceSummaryViewModel {
-  _SimpleSummaryVM(
-    DeviceEntity device,
-    IDeviceManager manager,
-    EventBus globalEventBus, {
-    required GettextLocalizations gt,
-  }) : super(device, manager, globalEventBus, gt: gt);
+  _SimpleSummaryVM(super.device, super.manager, super.globalEventBus, {required super.gt});
 
-  @override
   Future<void> onInitialize() async {}
 }
 
