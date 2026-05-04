@@ -49,16 +49,17 @@ static int _borneo_early_init(const struct drvfx_device* dev)
     // Initialize NVS
     BO_TRY(bo_nvs_init());
     BO_TRY(esp_event_loop_create_default());
+
+#if CONFIG_BORNEO_INDICATOR_ENABLED
+    BO_TRY(bo_indicator_init());
+#endif
+
     ESP_LOGI(TAG, "Early stuff has been initialized successfully.");
     return 0;
 }
 
 static int _borneo_core_init(const struct drvfx_device* dev)
 {
-
-#if CONFIG_BORNEO_INDICATOR_ENABLED
-    BO_TRY(bo_indicator_init());
-#endif
 
     BO_TRY(bo_system_init());
     BO_TRY(bo_power_init());
