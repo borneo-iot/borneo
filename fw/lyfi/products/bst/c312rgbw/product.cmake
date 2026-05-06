@@ -1,0 +1,1 @@
+set(BORNEO_BOARD_ID "bst/c312rgbw")

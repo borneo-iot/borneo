@@ -1,0 +1,57 @@
+CONFIG_BORNEO_BOARD_ID="c312rgbw"
+CONFIG_BORNEO_BOARD_NAME="Sibo ESPC3-12 RGBW Demo"
+
+CONFIG_ESP32C3_REV_MIN_3=y
+
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_160=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=160
+
+################ Flash ####################################
+CONFIG_ESPTOOLPY_FLASHMODE="qio"
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHFREQ="80m"
+
+#################### Core Stuff #########################
+CONFIG_BORNEO_ADC_ENABLED=n
+
+################################# Power Supply Measurement ###############################
+CONFIG_BORNEO_MEAS_VOLTAGE_SUPPORT=n
+CONFIG_LYFI_MEAS_CURRENT_SUPPORT=n
+
+################## NTC #########################
+CONFIG_LYFI_NTC_SUPPORT=n
+
+################## Indicator #########################
+CONFIG_BORNEO_INDICATOR_ENABLED=y
+CONFIG_BORNEO_INDICATOR_GPIO=8
+
+################## LED PWM ########################
+CONFIG_LYFI_LED_CHANNEL_COUNT=4
+CONFIG_LYFI_LED_CH0_GPIO=2
+CONFIG_LYFI_LED_CH1_GPIO=3
+CONFIG_LYFI_LED_CH2_GPIO=4
+CONFIG_LYFI_LED_CH3_GPIO=5
+
+###################### FAN ###########################
+CONFIG_LYFI_FAN_CTRL_SUPPORT=y
+CONFIG_LYFI_FAN_CTRL_PWM_SUPPORT=y
+CONFIG_LYFI_FAN_CTRL_PWM_DEVICE_RMTPWM=y
+CONFIG_LYFI_FAN_CTRL_PWM_GPIO=19
+CONFIG_LYFI_FAN_CTRL_VREG_SUPPORT=n
+CONFIG_LYFI_FAN_CTRL_SHUTDOWN_ENABLED=n
+
+
+############################# THERMAL MANAGEMENT ##############################
+CONFIG_LYFI_THERMAL_ENABLED=y
+CONFIG_LYFI_THERMAL_FAN_MODE_MANUAL=y
+
+
+############################### Button ###################################
+CONFIG_LYFI_PRESS_BUTTON_ENABLED=y
+CONFIG_LYFI_PRESS_BUTTON_GPIO=9
+
+################################## PROTECTION ##################################
+CONFIG_LYFI_PROTECTION_ENABLED=n

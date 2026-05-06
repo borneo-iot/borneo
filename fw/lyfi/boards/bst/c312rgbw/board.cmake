@@ -1,0 +1,1 @@
+set(IDF_TARGET "esp32c3")

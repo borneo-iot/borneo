@@ -49,7 +49,7 @@ static void coap_hnd_power_meas_power_get(coap_resource_t* resource, coap_sessio
     return;
 }
 
-COAP_RESOURCE_DEFINE("lyfi/power/meas/current", false, coap_hnd_power_meas_current_get, NULL, NULL, NULL);
-COAP_RESOURCE_DEFINE("lyfi/power/meas/power", false, coap_hnd_power_meas_power_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/power/meas/current", false, coap_hnd_power_meas_current_get, NULL, NULL, NULL);
+COAP_RESOURCE_DEFINE("borneo/lyfi/v1/power/meas/power", false, coap_hnd_power_meas_power_get, NULL, NULL, NULL);
 
 #endif // CONFIG_BORNEO_MEAS_VOLTAGE_SUPPORT && CONFIG_LYFI_MEAS_CURRENT_SUPPORT
