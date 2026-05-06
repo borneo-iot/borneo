@@ -33,7 +33,6 @@
 #define TAG "ota.coap"
 
 #define OTA_COAP_UPDATE_TIMEOUT 5000
-#define OTA_BUFFER_SIZE 1024
 #define COAP_MAX_BLOCK_SIZE 512
 
 struct ota_state {
@@ -41,8 +40,6 @@ struct ota_state {
     esp_ota_handle_t update_handle;
     bool update_in_progress;
     size_t total_bytes_received;
-    uint8_t* buffer;
-    size_t buffer_len;
     TickType_t last_block_time;
     size_t last_block_num;
     uint32_t last_processed_block_num;
@@ -53,12 +50,29 @@ static struct ota_state s_ota_state = {
     .update_handle = 0,
     .update_in_progress = false,
     .total_bytes_received = 0,
-    .buffer = NULL,
-    .buffer_len = 0,
     .last_block_time = 0,
     .last_block_num = 0,
     .last_processed_block_num = UINT32_MAX,
 };
+
+static void ota_reset_state(bool abort_update)
+{
+    esp_ota_handle_t update_handle = 0;
+
+    portENTER_CRITICAL(&s_ota_state.lock);
+    update_handle = s_ota_state.update_handle;
+    s_ota_state.update_handle = 0;
+    s_ota_state.update_in_progress = false;
+    s_ota_state.total_bytes_received = 0;
+    s_ota_state.last_block_time = 0;
+    s_ota_state.last_block_num = 0;
+    s_ota_state.last_processed_block_num = UINT32_MAX;
+    portEXIT_CRITICAL(&s_ota_state.lock);
+
+    if (abort_update && update_handle != 0) {
+        esp_ota_abort(update_handle);
+    }
+}
 
 /**
  * @brief Build status response in CBOR format
@@ -175,64 +189,73 @@ static void coap_hnd_download(coap_resource_t* resource, coap_session_t* session
         // If first block, initialize OTA
         portENTER_CRITICAL(&s_ota_state.lock);
         bool update_in_progress = s_ota_state.update_in_progress;
+        uint32_t last_processed_block_num = s_ota_state.last_processed_block_num;
+        size_t last_block_num = s_ota_state.last_block_num;
+        TickType_t last_block_time = s_ota_state.last_block_time;
+        esp_ota_handle_t update_handle = s_ota_state.update_handle;
         portEXIT_CRITICAL(&s_ota_state.lock);
 
-        if (block_num == 0 && !update_in_progress) {
-            portENTER_CRITICAL(&s_ota_state.lock);
-            s_ota_state.last_block_num = 0;
-            s_ota_state.last_processed_block_num = UINT32_MAX;
-            portEXIT_CRITICAL(&s_ota_state.lock);
-
-            ESP_LOGI(TAG, "Starting new OTA download...");
-
-            const esp_partition_t* update_partition = esp_ota_get_next_update_partition(NULL);
-            if (update_partition == NULL) {
-                ESP_LOGE(TAG, "No OTA update partition found");
-                coap_pdu_set_code(response, COAP_RESPONSE_CODE_INTERNAL_ERROR);
-                return;
-            }
-
-            esp_err_t err = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &s_ota_state.update_handle);
-            if (err != ESP_OK) {
-                ESP_LOGE(TAG, "OTA begin failed: %s", esp_err_to_name(err));
-                coap_pdu_set_code(response, COAP_RESPONSE_CODE_INTERNAL_ERROR);
-                return;
-            }
-
-            uint8_t* buf = malloc(OTA_BUFFER_SIZE);
-            if (buf == NULL) {
-                ESP_LOGE(TAG, "OTA buffer malloc failed");
-                err_code = COAP_RESPONSE_CODE_INTERNAL_ERROR;
-                goto put_abort_err;
-            }
-
-            portENTER_CRITICAL(&s_ota_state.lock);
-            s_ota_state.buffer = buf;
-            s_ota_state.update_in_progress = true;
-            s_ota_state.total_bytes_received = 0;
-            s_ota_state.buffer_len = 0;
-            s_ota_state.last_block_time = xTaskGetTickCount();
-            portEXIT_CRITICAL(&s_ota_state.lock);
-        }
-
-        // Check for duplicate block
-        if (block_num == s_ota_state.last_processed_block_num) {
+        // Check for duplicate block before any session restart logic.
+        if (block_num == last_processed_block_num) {
             ESP_LOGW(TAG, "Received duplicate block number %lu, ignoring", block_num);
-            coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTINUE);
+            if (block_opt) {
+                uint8_t buf[4];
+                size_t len = coap_encode_var_safe(buf, sizeof(buf), block_val);
+                coap_add_option(response, COAP_OPTION_BLOCK1, len, buf);
+                coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTINUE);
+            }
+            else {
+                coap_pdu_set_code(response, COAP_RESPONSE_CODE_CREATED);
+            }
             return;
         }
 
+        if (block_num == 0) {
+            if (update_in_progress) {
+                ESP_LOGW(TAG, "Received block 0 during OTA, restarting session");
+                ota_reset_state(true);
+                update_in_progress = false;
+                update_handle = 0;
+            }
+
+            if (!update_in_progress) {
+                ESP_LOGI(TAG, "Starting new OTA download...");
+
+                const esp_partition_t* update_partition = esp_ota_get_next_update_partition(NULL);
+                if (update_partition == NULL) {
+                    ESP_LOGE(TAG, "No OTA update partition found");
+                    coap_pdu_set_code(response, COAP_RESPONSE_CODE_INTERNAL_ERROR);
+                    return;
+                }
+
+                update_handle = 0;
+                esp_err_t err = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &update_handle);
+                if (err != ESP_OK) {
+                    ESP_LOGE(TAG, "OTA begin failed: %s", esp_err_to_name(err));
+                    coap_pdu_set_code(response, COAP_RESPONSE_CODE_INTERNAL_ERROR);
+                    return;
+                }
+
+                portENTER_CRITICAL(&s_ota_state.lock);
+                s_ota_state.update_handle = update_handle;
+                s_ota_state.update_in_progress = true;
+                s_ota_state.total_bytes_received = 0;
+                s_ota_state.last_block_time = xTaskGetTickCount();
+                s_ota_state.last_block_num = 0;
+                s_ota_state.last_processed_block_num = UINT32_MAX;
+                portEXIT_CRITICAL(&s_ota_state.lock);
+            }
+        }
+
         // Check block number continuity
-        if (block_num > 0 && block_num != s_ota_state.last_block_num + 1) {
-            ESP_LOGE(TAG, "Non-sequential block number: expected=%zu, received=%lu", s_ota_state.last_block_num + 1,
-                     block_num);
+        if (block_num > 0 && block_num != last_block_num + 1) {
+            ESP_LOGE(TAG, "Non-sequential block number: expected=%zu, received=%lu", last_block_num + 1, block_num);
             coap_pdu_set_code(response, COAP_RESPONSE_CODE_BAD_REQUEST);
             return;
         }
 
         // Check timeout
-        if (block_num > 0
-            && (xTaskGetTickCount() - s_ota_state.last_block_time) > pdMS_TO_TICKS(OTA_COAP_UPDATE_TIMEOUT)) {
+        if (block_num > 0 && (xTaskGetTickCount() - last_block_time) > pdMS_TO_TICKS(OTA_COAP_UPDATE_TIMEOUT)) {
             ESP_LOGE(TAG, "Block transfer timeout, aborting OTA");
             err_code = COAP_RESPONSE_CODE_GATEWAY_TIMEOUT;
             goto put_abort_err;
@@ -253,20 +276,15 @@ static void coap_hnd_download(coap_resource_t* resource, coap_session_t* session
                 return;
             }
 
-            if (s_ota_state.buffer_len + data_len >= OTA_BUFFER_SIZE) {
-                esp_err_t err = esp_ota_write(s_ota_state.update_handle, s_ota_state.buffer, s_ota_state.buffer_len);
-                if (err != ESP_OK) {
-                    ESP_LOGE(TAG, "OTA write failed: %s", esp_err_to_name(err));
-                    err_code = COAP_RESPONSE_CODE_INTERNAL_ERROR;
-                    goto put_abort_err;
-                }
-                portENTER_CRITICAL(&s_ota_state.lock);
-                s_ota_state.buffer_len = 0;
-                portEXIT_CRITICAL(&s_ota_state.lock);
+            esp_err_t err = esp_ota_write(update_handle, data, data_len);
+            if (err != ESP_OK) {
+                ESP_LOGE(TAG, "OTA write failed: %s (write_len=%zu, total_received=%zu, block=%lu)",
+                         esp_err_to_name(err), data_len, s_ota_state.total_bytes_received, block_num);
+                err_code = COAP_RESPONSE_CODE_INTERNAL_ERROR;
+                goto put_abort_err;
             }
+
             portENTER_CRITICAL(&s_ota_state.lock);
-            memcpy(s_ota_state.buffer + s_ota_state.buffer_len, data, data_len);
-            s_ota_state.buffer_len += data_len;
             s_ota_state.total_bytes_received += data_len;
             s_ota_state.last_block_time = xTaskGetTickCount();
             s_ota_state.last_block_num = block_num;
@@ -284,19 +302,6 @@ static void coap_hnd_download(coap_resource_t* resource, coap_session_t* session
                 coap_pdu_set_code(response, COAP_RESPONSE_CODE_CONTINUE);
             }
             else {
-                // Write remaining data
-                if (s_ota_state.buffer_len > 0) {
-                    esp_err_t err
-                        = esp_ota_write(s_ota_state.update_handle, s_ota_state.buffer, s_ota_state.buffer_len);
-                    if (err != ESP_OK) {
-                        ESP_LOGE(TAG, "OTA write failed: %s", esp_err_to_name(err));
-                        err_code = COAP_RESPONSE_CODE_INTERNAL_ERROR;
-                        goto put_abort_err;
-                    }
-                    portENTER_CRITICAL(&s_ota_state.lock);
-                    s_ota_state.buffer_len = 0;
-                    portEXIT_CRITICAL(&s_ota_state.lock);
-                }
                 ESP_LOGI(TAG, "All firmware blocks received, total size %zu bytes", s_ota_state.total_bytes_received);
                 coap_pdu_set_code(response, COAP_RESPONSE_CODE_CREATED);
             }
@@ -307,12 +312,7 @@ static void coap_hnd_download(coap_resource_t* resource, coap_session_t* session
         return;
 
     put_abort_err:
-        esp_ota_abort(s_ota_state.update_handle);
-        portENTER_CRITICAL(&s_ota_state.lock);
-        s_ota_state.update_in_progress = false;
-        free(s_ota_state.buffer);
-        s_ota_state.buffer = NULL;
-        portEXIT_CRITICAL(&s_ota_state.lock);
+        ota_reset_state(true);
         coap_pdu_set_code(response, err_code);
         return;
     }
@@ -366,11 +366,7 @@ static void coap_hnd_download(coap_resource_t* resource, coap_session_t* session
             goto post_err;
         }
 
-        portENTER_CRITICAL(&s_ota_state.lock);
-        s_ota_state.update_in_progress = false;
-        free(s_ota_state.buffer);
-        s_ota_state.buffer = NULL;
-        portEXIT_CRITICAL(&s_ota_state.lock);
+        ota_reset_state(false);
 
         // Prepare response
         uint8_t cbor_buffer[128];
@@ -405,11 +401,7 @@ static void coap_hnd_download(coap_resource_t* resource, coap_session_t* session
         return;
 
     post_err:
-        portENTER_CRITICAL(&s_ota_state.lock);
-        s_ota_state.update_in_progress = false;
-        free(s_ota_state.buffer);
-        s_ota_state.buffer = NULL;
-        portEXIT_CRITICAL(&s_ota_state.lock);
+        ota_reset_state(false);
         coap_pdu_set_code(response, err_code);
         return;
     }
