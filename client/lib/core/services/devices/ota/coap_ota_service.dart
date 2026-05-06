@@ -43,8 +43,9 @@ _FirmwareVerificationResult _verifyAndDecompressFirmware(_FirmwareVerificationRe
 final class CoapOtaService implements IOtaService {
   final Logger? _logger;
   final GettextLocalizations gt;
+  final IKernel _kernel;
 
-  CoapOtaService({required this.gt, Logger? logger}) : _logger = logger;
+  CoapOtaService({required IKernel kernel, required this.gt, Logger? logger}) : _kernel = kernel, _logger = logger;
 
   /// Fetches the manifest JSON and returns the entry whose `product_id` and
   /// `compatible` both match the given values. Returns `null` if not found.
@@ -142,8 +143,15 @@ final class CoapOtaService implements IOtaService {
     final firmwareBuffer = verificationResult.firmwareBuffer;
     _logger?.i('Firmware decompressed: ${firmwareBuffer.length} bytes, starting OTA upload');
 
-    // Step 5: Upload firmware via CoAP OTA engage
-    await api.otaCoapEngage(bound.device, firmwareBuffer, cancelToken: cancelToken);
-    _logger?.i('OTA firmware upload completed successfully');
+    // OTA can temporarily starve heartbeat handling on the MCU, so suppress
+    // offline detection while the upload is in flight.
+    _kernel.enterHeartbeatBatch();
+    try {
+      // Step 5: Upload firmware via CoAP OTA engage
+      await api.otaCoapEngage(bound.device, firmwareBuffer, cancelToken: cancelToken);
+      _logger?.i('OTA firmware upload completed successfully');
+    } finally {
+      _kernel.exitHeartbeatBatch();
+    }
   }
 }

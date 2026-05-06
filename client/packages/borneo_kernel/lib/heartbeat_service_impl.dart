@@ -43,7 +43,7 @@ class DefaultHeartbeatService implements HeartbeatService {
 
   Timer? _timer;
   bool _isStarted = false;
-  bool _inBatch = false;
+  int _batchDepth = 0;
 
   // state maps keyed by device id
   final Map<String, BoundDevice> _devices = {};
@@ -118,17 +118,33 @@ class DefaultHeartbeatService implements HeartbeatService {
 
   @override
   void enterBatch() {
-    if (!_inBatch) {
-      _inBatch = true;
+    if (_batchDepth == 0) {
       _batchController.add(true);
+      _observationLock.synchronized(() {
+        for (final timer in _observationTimeoutTimers.values) {
+          timer.cancel();
+        }
+        _observationTimeoutTimers.clear();
+      });
     }
+    _batchDepth++;
   }
 
   @override
   void exitBatch() {
-    if (_inBatch) {
-      _inBatch = false;
+    if (_batchDepth == 0) {
+      return;
+    }
+
+    _batchDepth--;
+    if (_batchDepth == 0) {
       _batchController.add(false);
+      _observationLock.synchronized(() {
+        for (final deviceId in _observationSubscriptions.keys) {
+          _missedObservations[deviceId] = 0;
+          _resetObservationTimeout(deviceId);
+        }
+      });
     }
   }
 
@@ -174,7 +190,9 @@ class DefaultHeartbeatService implements HeartbeatService {
   Stream<void> get onTick => _tickController.stream;
 
   @override
-  bool get isActive => _isStarted && !_inBatch;
+  bool get isActive => _isStarted && !_isInBatch;
+
+  bool get _isInBatch => _batchDepth > 0;
 
   @override
   void onDeviceCommunication(String deviceID) {
@@ -268,6 +286,10 @@ class DefaultHeartbeatService implements HeartbeatService {
 
   void _onHeartbeatReceived(String deviceId, dynamic timestamp) {
     _lastSeen[deviceId] = DateTime.now();
+    if (_isInBatch) {
+      return;
+    }
+
     _observationLock.synchronized(() {
       // Reset missed observations counter
       _missedObservations[deviceId] = 0;
@@ -278,6 +300,10 @@ class DefaultHeartbeatService implements HeartbeatService {
   }
 
   void _onHeartbeatMissed(String deviceId) {
+    if (_isInBatch) {
+      return;
+    }
+
     _observationLock.synchronized(() {
       _missedObservations[deviceId] = (_missedObservations[deviceId] ?? 0) + 1;
       _logger.i('Heartbeat missed for device $deviceId. Total missed: ${_missedObservations[deviceId]}');
@@ -326,7 +352,7 @@ class DefaultHeartbeatService implements HeartbeatService {
   }
 
   Future<void> _heartbeatPollingPeriodicTask() async {
-    if (_inBatch || !_isStarted) {
+    if (_isInBatch || !_isStarted) {
       _logger.t('Heartbeat polling skipped because batch mode or stopped.');
       return;
     }

@@ -7,6 +7,7 @@ import 'package:borneo_kernel_abstractions/device_bus.dart';
 import 'package:borneo_kernel_abstractions/event_dispatcher.dart';
 import 'package:borneo_kernel/discovery_manager_impl.dart';
 import 'package:borneo_kernel/binding_engine_impl.dart';
+import 'package:borneo_kernel/heartbeat_service_impl.dart';
 import 'package:test/test.dart';
 import 'mocks.dart';
 
@@ -179,6 +180,31 @@ void main() {
       await Future.delayed(Duration.zero);
       expect(recorded, [true, false]);
       await sub.cancel();
+    });
+
+    test('DefaultHeartbeatService batch is nest-safe', () async {
+      final svc = DefaultHeartbeatService(MockLogger());
+      final recorded = <bool>[];
+      final sub = svc.batchMode.listen(recorded.add);
+
+      await svc.start();
+      expect(svc.isActive, isTrue);
+
+      svc.enterBatch();
+      svc.enterBatch();
+      expect(svc.isActive, isFalse);
+
+      svc.exitBatch();
+      expect(svc.isActive, isFalse);
+
+      svc.exitBatch();
+      expect(svc.isActive, isTrue);
+
+      await Future.delayed(Duration.zero);
+      expect(recorded, [true, false]);
+
+      await sub.cancel();
+      await svc.stop();
     });
 
     test('DriverFactory returns provided driver', () {
