@@ -206,25 +206,28 @@ class SettingsScreen extends StatelessWidget {
           ],
         ),
 
-        SettingsSection(
-          title: Text(context.translate('THERMAL MANAGEMENT')),
-          tiles: [
-            SettingsTile.navigation(
-              title: Text(context.translate('Fan mode')),
-              value: Text(_formatFanMode(context, lvm.fanMode)),
-              enabled: lvm.canUpdateFanMode,
-              onPressed: (bc) => _showFanModePicker(bc, vm),
-            ),
-            SettingsTile.navigation(
-              title: Text(context.translate('Manual fan power')),
-              value: Text('${lvm.manualFanPower}%'),
-              enabled: lvm.canUpdateManualFanPower,
-              onPressed: lvm.canUpdateManualFanPower
-                  ? (bc) => _showManualFanPowerDialog(bc, vm, lvm.manualFanPower)
-                  : null,
-            ),
-          ],
-        ),
+        if (lvm.hasThermalManagement)
+          SettingsSection(
+            title: Text(context.translate('THERMAL MANAGEMENT')),
+            tiles: [
+              if (lvm.hasFanMode)
+                SettingsTile.navigation(
+                  title: Text(context.translate('Fan mode')),
+                  value: Text(_formatFanMode(context, lvm.fanMode)),
+                  enabled: lvm.canUpdateFanMode,
+                  onPressed: (bc) => _showFanModePicker(bc, vm),
+                ),
+              if (lvm.hasManualFanPower)
+                SettingsTile.navigation(
+                  title: Text(context.translate('Manual fan power')),
+                  value: Text('${lvm.manualFanPower}%'),
+                  enabled: lvm.canUpdateManualFanPower,
+                  onPressed: lvm.canUpdateManualFanPower
+                      ? (bc) => _showManualFanPowerDialog(bc, vm, lvm.manualFanPower)
+                      : null,
+                ),
+            ],
+          ),
 
         SettingsSection(
           title: Text(context.translate('VERSION & UPGRADE')),

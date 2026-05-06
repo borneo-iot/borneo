@@ -1,4 +1,7 @@
 import 'package:borneo_wot/borneo/lyfi/wot_thing.dart';
+import 'package:borneo_kernel/drivers/borneo/device_api.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
+import 'package:borneo_kernel_abstractions/models/bound_device.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
@@ -87,6 +90,59 @@ void main() {
         expect(lyfiThing.hasProperty('mode'), isTrue);
         expect(lyfiThing.hasProperty('color'), isTrue);
         expect(lyfiThing.hasProperty('schedule'), isTrue);
+      });
+
+      test('should skip optional API reads when /.well-known/core omits those resources', () async {
+        await mockDevice.setDriverData(
+          TestSupportedResourceDriverData(mockDevice, {
+            BorneoPaths.deviceInfo.path,
+            BorneoPaths.power.path,
+            BorneoPaths.powerBehavior.path,
+            BorneoPaths.status.path,
+            LyfiPaths.status.path,
+          }),
+        );
+        final driver = MockLyfiDriver(
+          supportedResources: {
+            BorneoPaths.deviceInfo.path,
+            BorneoPaths.power.path,
+            BorneoPaths.powerBehavior.path,
+            BorneoPaths.status.path,
+            LyfiPaths.status.path,
+          },
+        );
+        mockKernel.setBoundDevice(BoundDevice('mock-driver', mockDevice, driver));
+
+        final lyfiThing = LyfiThing(
+          kernel: mockKernel,
+          deviceId: mockDevice.id,
+          title: 'Test Lyfi',
+          logger: mockLogger,
+        );
+
+        await lyfiThing.sync();
+
+        expect(driver.scheduleReads, equals(0));
+        expect(driver.lyfiInfoReads, equals(0));
+        expect(driver.moonConfigReads, equals(0));
+      });
+
+      test('should skip optional API reads when capability cache is unavailable', () async {
+        final driver = MockLyfiDriver();
+        mockKernel.setBoundDevice(BoundDevice('mock-driver', mockDevice, driver));
+
+        final lyfiThing = LyfiThing(
+          kernel: mockKernel,
+          deviceId: mockDevice.id,
+          title: 'Test Lyfi',
+          logger: mockLogger,
+        );
+
+        await lyfiThing.sync();
+
+        expect(driver.scheduleReads, equals(0));
+        expect(driver.lyfiInfoReads, equals(0));
+        expect(driver.moonConfigReads, equals(0));
       });
     });
   });

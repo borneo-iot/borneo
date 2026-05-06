@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:borneo_common/io/net/coap_client.dart';
 import 'package:borneo_kernel/drivers/borneo/coap_driver_data.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/events.dart';
-import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 
 class LyfiCoapDriverData extends BorneoCoapDriverData {
@@ -12,7 +12,7 @@ class LyfiCoapDriverData extends BorneoCoapDriverData {
   StreamSubscription? _modeChangedSub;
   StreamSubscription? _stateChangedSub;
 
-  LyfiCoapDriverData(super.device, super.coap, super.probeCoap);
+  LyfiCoapDriverData(super.device, super.coap, super.probeCoap, {required super.supportedResourcePaths});
 
   @override
   void load() {

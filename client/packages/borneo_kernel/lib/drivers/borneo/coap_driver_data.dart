@@ -6,15 +6,24 @@ import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel/drivers/borneo/events.dart';
 import 'package:borneo_kernel_abstractions/models/driver_data.dart';
 
-abstract class BorneoCoapDriverData extends DriverData {
+abstract interface class BorneoSupportedResourceDriverData {
+  Set<String> get supportedResourcePaths;
+}
+
+abstract class BorneoCoapDriverData extends DriverData implements BorneoSupportedResourceDriverData {
   bool _disposed = false;
   final BorneoCoapClient probeCoap;
   final BorneoCoapClient coap;
+
+  @override
+  final Set<String> supportedResourcePaths;
+
   StreamSubscription<bool>? _coapPowerOnOffSub;
 
   bool get isDisposed => _disposed;
 
-  BorneoCoapDriverData(super.device, this.coap, this.probeCoap);
+  BorneoCoapDriverData(super.device, this.coap, this.probeCoap, {required Set<String> supportedResourcePaths})
+    : supportedResourcePaths = Set.unmodifiable(supportedResourcePaths);
 
   void load() {
     _coapPowerOnOffSub = coap

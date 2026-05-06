@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:borneo_kernel/drivers/borneo/coap_client.dart';
 import 'package:borneo_kernel/drivers/borneo/coap_driver_data.dart';
 import 'package:borneo_kernel_abstractions/device_api.dart';
 import 'package:borneo_kernel_abstractions/driver.dart';
@@ -18,6 +19,7 @@ const String kBorneoDeviceMdnsServiceType = '_borneo._udp';
 const int kDeviceNameMaxInBytes = 63;
 
 class BorneoPaths {
+  static final Uri wellKnownCore = Uri(path: '/.well-known/core');
   static final Uri heartbeat = Uri(path: '/borneo/v1/heartbeat');
   static final Uri deviceInfo = Uri(path: '/borneo/v1/info');
   static final Uri power = Uri(path: '/borneo/v1/power');
@@ -46,6 +48,37 @@ class BorneoPaths {
   static final Uri nvsString = Uri(path: '/borneo/v1/factory/nvs/str');
   static final Uri nvsBlob = Uri(path: '/borneo/v1/factory/nvs/blob');
   static final Uri nvsExists = Uri(path: '/borneo/v1/factory/nvs/exists');
+}
+
+Set<String> parseSupportedResourcePaths(String payload) {
+  final paths = <String>{};
+  for (final match in RegExp(r'<([^>]+)>').allMatches(payload)) {
+    final href = match.group(1);
+    if (href == null || href.isEmpty) {
+      continue;
+    }
+
+    try {
+      final uri = Uri.parse(href);
+      final normalizedPath = uri.path.isEmpty ? href : uri.path;
+      if (normalizedPath.isNotEmpty) {
+        paths.add(normalizedPath);
+      }
+    } catch (_) {
+      paths.add(href);
+    }
+  }
+  return paths;
+}
+
+Future<Set<String>> fetchSupportedResourcePaths(BorneoCoapClient client, {CancellationToken? cancelToken}) async {
+  final request = CoapRequest.get(BorneoPaths.wellKnownCore, confirmable: true);
+  final response = await client.send(request).asCancellable(cancelToken);
+  if (!response.isSuccess) {
+    throw StateError('Failed to get `${response.location}`');
+  }
+
+  return parseSupportedResourcePaths(utf8.decode(response.payload));
 }
 
 enum TransportChannel {
@@ -295,6 +328,7 @@ final class BorneoOtaCoapStatus {
 }
 
 abstract class IBorneoDeviceApi extends IDeviceApi {
+  Future<Set<String>> getSupportedResourcePaths(Device dev, {CancellationToken? cancelToken});
   Future<String> getCompatible(Device dev, {CancellationToken? cancelToken});
   Future<Version> getFirmwareVersion(Device dev, {CancellationToken? cancelToken});
 
@@ -349,6 +383,14 @@ abstract class IBorneoDeviceApi extends IDeviceApi {
 }
 
 mixin BorneoDeviceCoapApi on Driver implements IBorneoDeviceApi {
+  @override
+  Future<Set<String>> getSupportedResourcePaths(Device dev, {CancellationToken? cancelToken}) async {
+    return await this.withQueue(dev, () async {
+      final dd = dev.driverData as BorneoCoapDriverData;
+      return await fetchSupportedResourcePaths(dd.coap, cancelToken: cancelToken);
+    }, cancelToken: cancelToken);
+  }
+
   Future<int> _getFactoryNvs(Device dev, Uri path, String ns, String key, {CancellationToken? cancelToken}) async {
     return await this.withQueue(dev, () async {
       final dd = dev.driverData as BorneoCoapDriverData;

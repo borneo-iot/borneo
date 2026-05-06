@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:borneo_kernel/drivers/borneo/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
@@ -120,6 +121,14 @@ class TestDriverData extends DriverData {
   TestDriverData(super.device);
 }
 
+class TestSupportedResourceDriverData extends TestDriverData implements BorneoSupportedResourceDriverData {
+  TestSupportedResourceDriverData(super.device, Set<String> supportedResourcePaths)
+    : supportedResourcePaths = Set.unmodifiable(supportedResourcePaths);
+
+  @override
+  final Set<String> supportedResourcePaths;
+}
+
 class MockMdnsDiscovery implements IMdnsDiscovery {
   final String _serviceType;
   bool _isDisposed = false;
@@ -193,14 +202,16 @@ DriverDescriptor createTestDriverDescriptor(String id, MockDriver driver) {
 }
 
 class MockDevice extends Device {
+  DriverData? _driverData;
+
   MockDevice(String id, String address) : super(id: id, address: Uri.parse(address), fingerprint: 'test-$id');
 
   @override
-  DriverData get driverData => TestDriverData(this);
+  DriverData get driverData => _driverData ?? TestDriverData(this);
 
   @override
   Future<void> setDriverData(DriverData driverData, {CancellationToken? cancelToken}) async {
-    // Mock implementation
+    _driverData = driverData;
   }
 }
 
@@ -227,6 +238,11 @@ class MockDeviceEventBus implements DeviceEventBus {
 }
 
 class MockBorneoDeviceApi implements IBorneoDeviceApi {
+  @override
+  Future<Set<String>> getSupportedResourcePaths(Device device, {CancellationToken? cancelToken}) async {
+    return <String>{};
+  }
+
   @override
   Future<GeneralBorneoDeviceInfo> getGeneralDeviceInfo(Device device, {CancellationToken? cancelToken}) async {
     return GeneralBorneoDeviceInfo(
@@ -270,6 +286,11 @@ class MockBorneoDeviceApi implements IBorneoDeviceApi {
 }
 
 class MockLyfiDeviceApi implements ILyfiDeviceApi {
+  @override
+  Future<Set<String>> getSupportedResourcePaths(Device device, {CancellationToken? cancelToken}) async {
+    return <String>{};
+  }
+
   @override
   Future<LyfiDeviceStatus> getLyfiStatus(Device device, {CancellationToken? cancelToken}) async {
     return LyfiDeviceStatus(
@@ -379,6 +400,77 @@ class MockLyfiDeviceApi implements ILyfiDeviceApi {
   dynamic noSuchMethod(Invocation invocation) {
     return super.noSuchMethod(invocation);
   }
+}
+
+class MockLyfiDriver extends MockLyfiDeviceApi implements Driver {
+  MockLyfiDriver({Set<String>? supportedResources}) : _supportedResources = supportedResources;
+
+  final Set<String>? _supportedResources;
+  int scheduleReads = 0;
+  int lyfiInfoReads = 0;
+  int moonConfigReads = 0;
+
+  @override
+  logger_pkg.Logger? get logger => null;
+
+  @override
+  Future<Set<String>> getSupportedResourcePaths(Device device, {CancellationToken? cancelToken}) async {
+    return _supportedResources ?? <String>{};
+  }
+
+  bool _supports(Uri path) {
+    return _supportedResources == null || _supportedResources.contains(path.path);
+  }
+
+  @override
+  Future<ScheduleTable> getSchedule(Device device, {CancellationToken? cancelToken}) async {
+    scheduleReads++;
+    if (!_supports(LyfiPaths.schedule)) {
+      throw StateError('Unexpected schedule read');
+    }
+    return super.getSchedule(device, cancelToken: cancelToken);
+  }
+
+  @override
+  Future<LyfiDeviceInfo> getLyfiInfo(Device device, {CancellationToken? cancelToken}) async {
+    lyfiInfoReads++;
+    if (!_supports(LyfiPaths.info)) {
+      throw StateError('Unexpected Lyfi info read');
+    }
+    return super.getLyfiInfo(device, cancelToken: cancelToken);
+  }
+
+  @override
+  Future<MoonConfig> getMoonConfig(Device device, {CancellationToken? cancelToken}) async {
+    moonConfigReads++;
+    if (!_supports(LyfiPaths.moonConfig)) {
+      throw StateError('Unexpected moon config read');
+    }
+    return super.getMoonConfig(device, cancelToken: cancelToken);
+  }
+
+  @override
+  Future<bool> probe(Device dev, {CancellationToken? cancelToken}) async => true;
+
+  @override
+  Future<bool> remove(Device dev, {CancellationToken? cancelToken}) async => true;
+
+  @override
+  Future<bool> heartbeat(Device dev, {CancellationToken? cancelToken}) async => true;
+
+  @override
+  Future<T> withBusyCheck<T>(Device dev, Future<T> Function() action, {CancellationToken? cancelToken}) => action();
+
+  @override
+  Future<T> withQueue<T>(
+    Device dev,
+    Future<T> Function() action, {
+    CancellationToken? cancelToken,
+    IOCommandPriority? priority,
+  }) => action();
+
+  @override
+  void dispose() {}
 }
 
 class MockKernel implements IKernel {

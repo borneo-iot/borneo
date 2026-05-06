@@ -3,6 +3,7 @@ import 'package:borneo_app/core/infrastructure/timezone.dart';
 import 'package:borneo_common/exceptions.dart' as bo_ex;
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
@@ -51,6 +52,15 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
   bool get isControllerSettingsAvailable =>
       !isBusy && isOnline && !isSuspectedOffline && !isDemo && borneoInfo.productMode == ProductMode.standalone;
 
+  bool _hasThermalManagement = false;
+  bool get hasThermalManagement => _hasThermalManagement;
+
+  bool _hasFanMode = false;
+  bool get hasFanMode => _hasFanMode;
+
+  bool _hasManualFanPower = false;
+  bool get hasManualFanPower => _hasManualFanPower;
+
   SettingsViewModel({
     required super.deviceManager,
     required super.globalEventBus,
@@ -73,8 +83,19 @@ class SettingsViewModel extends BaseLyfiDeviceViewModel {
     _correctionMethod = await api.getCorrectionMethod(boundDevice!.device, cancelToken: masterCancellation);
     _temporaryDuration = await api.getTemporaryDuration(boundDevice!.device, cancelToken: masterCancellation);
     _cloudEnabled = await api.getCloudEnabled(boundDevice!.device, cancelToken: masterCancellation);
-    _fanMode = await api.getFanMode(boundDevice!.device, cancelToken: masterCancellation);
-    _manualFanPower = await api.getFanManualPower(boundDevice!.device, cancelToken: masterCancellation);
+
+    var coapDriver = deviceManager.getBoundDevice(this.deviceID).device.driverData as LyfiCoapDriverData;
+    _hasThermalManagement = coapDriver.supportedResourcePaths.contains(LyfiPaths.currentTemp.path);
+
+    _hasFanMode = coapDriver.supportedResourcePaths.contains(LyfiPaths.fanMode.path);
+    if (_hasFanMode) {
+      _fanMode = await api.getFanMode(boundDevice!.device, cancelToken: masterCancellation);
+    }
+
+    _hasManualFanPower = coapDriver.supportedResourcePaths.contains(LyfiPaths.fanManual.path);
+    if (_hasManualFanPower) {
+      _manualFanPower = await api.getFanManualPower(boundDevice!.device, cancelToken: masterCancellation);
+    }
   }
 
   Future<Position> getLocation() async {
