@@ -14,6 +14,17 @@
 #if CONFIG_BORNEO_MEAS_VOLTAGE_SUPPORT && CONFIG_LYFI_MEAS_CURRENT_SUPPORT
 
 #define TAG "lyfi-rpc-power"
+
+int bo_rpc_lyfi_current_ma_get(const CborValue* args, CborEncoder* retvals)
+{
+    (void)args; // No input args for GET
+    int32_t ma;
+    const struct drvfx_device* sensor_dev = k_device_get_binding("sensor.led_current");
+    BO_TRY(sensor_get_value(sensor_dev, &ma));
+    BO_TRY(cbor_encode_uint(retvals, ma));
+    return 0;
+}
+
 int bo_rpc_lyfi_power_mw_get(const CborValue* args, CborEncoder* retvals)
 {
     (void)args; // No input args for GET
