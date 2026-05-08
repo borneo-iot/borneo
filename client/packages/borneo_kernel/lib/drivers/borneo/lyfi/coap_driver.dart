@@ -376,11 +376,11 @@ class BorneoLyfiCoapDriver extends BaseLyfiDriver with BorneoDeviceCoapApi imple
   }, cancelToken: cancelToken);
 
   @override
-  Future<void> setOutputInvertEnabled(Device dev, bool enabled, {CancellationToken? cancelToken}) => withQueue(dev, () async {
-    final dd = dev.driverData as LyfiCoapDriverData;
-    await dd.coap.putCbor(LyfiPaths.outputInvertEnabled, enabled, cancelToken: cancelToken);
-  }, cancelToken: cancelToken);
-
+  Future<void> setOutputInvertEnabled(Device dev, bool enabled, {CancellationToken? cancelToken}) =>
+      withQueue(dev, () async {
+        final dd = dev.driverData as LyfiCoapDriverData;
+        await dd.coap.putCbor(LyfiPaths.outputInvertEnabled, enabled, cancelToken: cancelToken);
+      }, cancelToken: cancelToken);
 
   @override
   Future<AcclimationSettings> getAcclimation(Device dev, {CancellationToken? cancelToken}) => withQueue(dev, () async {
