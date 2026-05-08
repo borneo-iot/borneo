@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 13:55+0800\n"
+"POT-Creation-Date: 2026-05-08 17:03+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -164,6 +164,9 @@ msgid "Change group..."
 msgstr ""
 
 msgid "Channel Settings"
+msgstr ""
+
+msgid "Channel fraction"
 msgstr ""
 
 msgid "Check for updates"
@@ -562,6 +565,9 @@ msgid "Invalid name"
 msgstr ""
 
 msgid "Invalid wavelength"
+msgstr ""
+
+msgid "Invert PWM output"
 msgstr ""
 
 msgid "Keep off"
@@ -1152,6 +1158,15 @@ msgstr ""
 
 #, python-brace-format
 msgid "Version {verText}+{buildNumberText}"
+msgstr ""
+
+msgid "WL1 : WL2 ratio"
+msgstr ""
+
+msgid "WL1 only"
+msgstr ""
+
+msgid "WL2 only"
 msgstr ""
 
 msgid "Waiting for device to join network"

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:borneo_app/devices/borneo/lyfi/view_models/base_lyfi_device_view_model.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
 
 bool isValidChannelName(String value) {
   final trimmed = value.trim();
@@ -225,6 +226,22 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
   late final NvsSettingEntry<int> overtempCutoff;
   late final NvsSettingEntry<int> channelCountSetting;
 
+  bool _outputInvertEnabled = false;
+  bool _initialOutputInvertEnabled = false;
+  bool _outputInvertEnabledAvailable = false;
+
+  bool get outputInvertEnabled => _outputInvertEnabled;
+  bool get outputInvertEnabledAvailable => _outputInvertEnabledAvailable;
+  bool get outputInvertEnabledChanged =>
+      _outputInvertEnabledAvailable && _outputInvertEnabled != _initialOutputInvertEnabled;
+
+  void setOutputInvertEnabled(bool value) {
+    if (_outputInvertEnabled != value) {
+      _outputInvertEnabled = value;
+      notifyListeners();
+    }
+  }
+
   List<ChannelSettingsEntry> _channels = const [];
   List<ChannelSettingsEntry> get channels => _channels;
 
@@ -237,7 +254,8 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
         overpowerCutoff.changed ||
         overtempEnabled.changed ||
         overtempCutoff.changed ||
-        channelCountSetting.changed;
+        channelCountSetting.changed ||
+        outputInvertEnabledChanged;
     final channelChanged = _channels.any((channel) => channel.changed);
     return basicChanged || channelChanged;
   }
@@ -343,6 +361,19 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
           channelCountSetting.key,
         ),
       );
+
+      final supportedResourcePaths = await lyfiDeviceApi.getSupportedResourcePaths(
+        boundDevice!.device,
+        cancelToken: masterCancellation,
+      );
+      _outputInvertEnabledAvailable = supportedResourcePaths.contains(LyfiPaths.outputInvertEnabled.path);
+      if (_outputInvertEnabledAvailable) {
+        _outputInvertEnabled = await lyfiDeviceApi.getOutputInvertEnabled(
+          boundDevice!.device,
+          cancelToken: masterCancellation,
+        );
+        _initialOutputInvertEnabled = _outputInvertEnabled;
+      }
 
       final channelNames = List<String>.filled(maxChannelCount, '', growable: false);
       final channelColors = List<String>.filled(maxChannelCount, '#FFFFFF', growable: false);
@@ -569,6 +600,16 @@ class ControllerSettingsViewModel extends BaseLyfiDeviceViewModel {
         channelCountSetting.value,
       );
       channelCountSetting.reset();
+    }
+
+    if (outputInvertEnabledChanged) {
+      await lyfiDeviceApi.setOutputInvertEnabled(
+        boundDevice!.device,
+        _outputInvertEnabled,
+        cancelToken: masterCancellation,
+      );
+      _initialOutputInvertEnabled = _outputInvertEnabled;
+      notifyListeners();
     }
 
     // Channel metadata updates (name/color)

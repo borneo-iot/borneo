@@ -19,6 +19,7 @@ class LyfiPaths {
   static final Uri tzOffset = Uri(path: '/borneo/lyfi/v1/tz/offset');
   static final Uri acclimation = Uri(path: '/borneo/lyfi/v1/acclimation');
   static final Uri cloudEnabled = Uri(path: '/borneo/lyfi/v1/cloud/enabled');
+  static final Uri outputInvertEnabled = Uri(path: '/borneo/lyfi/v1/output/invert');
   static final Uri temporaryDuration = Uri(path: '/borneo/lyfi/v1/temporary-duration');
   static final Uri channel = Uri(path: '/borneo/lyfi/v1/channel');
 
@@ -73,6 +74,9 @@ abstract class ILyfiDeviceApi extends IBorneoDeviceApi {
 
   Future<bool> getCloudEnabled(Device dev, {CancellationToken? cancelToken});
   Future<void> setCloudEnabled(Device dev, bool enabled, {CancellationToken? cancelToken});
+
+  Future<bool> getOutputInvertEnabled(Device dev, {CancellationToken? cancelToken});
+  Future<void> setOutputInvertEnabled(Device dev, bool enabled, {CancellationToken? cancelToken});
 
   Future<AcclimationSettings> getAcclimation(Device dev, {CancellationToken? cancelToken});
   Future<void> setAcclimation(Device dev, AcclimationSettings acc, {CancellationToken? cancelToken});

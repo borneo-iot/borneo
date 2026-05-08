@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 13:55+0800\n"
+"POT-Creation-Date: 2026-05-08 17:03+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -167,6 +167,9 @@ msgstr "更改分组..."
 
 msgid "Channel Settings"
 msgstr "通道设置"
+
+msgid "Channel fraction"
+msgstr "通道系数"
 
 msgid "Check for updates"
 msgstr "检查更新"
@@ -567,6 +570,9 @@ msgstr "名称无效"
 
 msgid "Invalid wavelength"
 msgstr "无效波长"
+
+msgid "Invert PWM output"
+msgstr "反转 PWM 输出"
 
 msgid "Keep off"
 msgstr "保持关闭"
@@ -1161,6 +1167,15 @@ msgstr "版本 {0} 是最新版本。"
 #, python-brace-format
 msgid "Version {verText}+{buildNumberText}"
 msgstr "版本 {verText}+{buildNumberText}"
+
+msgid "WL1 : WL2 ratio"
+msgstr "WL1 : WL2 比例"
+
+msgid "WL1 only"
+msgstr "仅 WL1"
+
+msgid "WL2 only"
+msgstr "仅 WL2"
 
 msgid "Waiting for device to join network"
 msgstr "正在等待设备加入网络"

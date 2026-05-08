@@ -47,6 +47,7 @@
 #define LED_NVS_KEY_ACCLIMATION_START_PERCENT "acc.pc"
 #define LED_NVS_KEY_CLOUD_ENABLED "cloud.en"
 #define LED_NVS_KEY_MOON_ENABLED "moon.en"
+#define LED_NVS_KEY_OUTPUT_INVERT "invert.en"
 
 #define TAG "led.settings"
 
@@ -361,11 +362,31 @@ int led_load_user_settings()
         }
     }
 
+    {
+        uint8_t output_invert = 0;
+        rc = nvs_get_u8(handle, LED_NVS_KEY_OUTPUT_INVERT, &output_invert);
+        if (rc == 0) {
+            if (output_invert) {
+                settings->flags |= LED_OPTION_OUTPUT_INVERT;
+            }
+            else {
+                settings->flags &= ~LED_OPTION_OUTPUT_INVERT;
+            }
+        }
+        else if (rc == ESP_ERR_NVS_NOT_FOUND) {
+            settings->flags &= ~LED_OPTION_OUTPUT_INVERT;
+            rc = 0;
+        }
+        else if (rc) {
+            ESP_LOGE(TAG, "Fucked %d", rc);
+            return rc;
+        }
+    }
+
     // TODO
     // Loading the brightness and power settings...
     // #ifdef CONFIG_LYFI_STANDALONE_CONTROLLER
     // #endif // CONFIG_LYFI_STANDALONE_CONTROLLER
-
     return rc;
 }
 
@@ -401,6 +422,7 @@ int led_save_user_settings()
     BO_TRY(nvs_set_u8(handle, LED_NVS_KEY_ACCLIMATION_START_PERCENT, settings->acclimation.start_percent));
     BO_TRY(nvs_set_u8(handle, LED_NVS_KEY_CLOUD_ENABLED, (uint8_t)(settings->flags & LED_OPTION_CLOUD_ENABLED)));
     BO_TRY(nvs_set_u8(handle, LED_NVS_KEY_MOON_ENABLED, (uint8_t)(settings->flags & LED_OPTION_MOON_ENABLED)));
+    BO_TRY(nvs_set_u8(handle, LED_NVS_KEY_OUTPUT_INVERT, (uint8_t)(settings->flags & LED_OPTION_OUTPUT_INVERT)));
 
     BO_TRY(nvs_commit(handle));
     ESP_LOGI(TAG, "Dimming settings updated.");
@@ -513,4 +535,21 @@ int16_t led_get_channel_wavelength(uint8_t ch)
         return 0;
     }
     return s_factory_settings.channels[ch].wavelength;
+}
+
+bool led_output_invert_get() { return _led.settings.flags & LED_OPTION_OUTPUT_INVERT; }
+
+int led_output_invert_set(bool enabled)
+{
+    if (enabled == led_output_invert_get()) {
+        return -EINVAL;
+    }
+
+    portENTER_CRITICAL(&g_led_spinlock);
+    if (enabled) {
+        _led.settings.flags |= LED_OPTION_OUTPUT_INVERT;
+    }
+    portEXIT_CRITICAL(&g_led_spinlock);
+    BO_TRY(led_save_user_settings());
+    return 0;
 }

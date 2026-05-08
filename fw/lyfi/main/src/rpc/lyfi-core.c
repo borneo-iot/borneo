@@ -514,3 +514,20 @@ int bo_rpc_borneo_lyfi_cloud_enabled_put(const CborValue* args, CborEncoder* ret
 
     return 0;
 }
+
+int bo_rpc_borneo_lyfi_output_invert_get(const CborValue* args, CborEncoder* retvals)
+{
+    (void)args;
+    BO_TRY(cbor_encode_boolean(retvals, led_output_invert_get()));
+    return 0;
+}
+
+int bo_rpc_borneo_lyfi_output_invert_put(const CborValue* args, CborEncoder* retvals)
+{
+    bool enabled = false;
+    BO_TRY(cbor_value_get_boolean(args, &enabled));
+    BO_TRY(led_output_invert_set(enabled));
+    BO_TRY(led_save_user_settings());
+
+    return 0;
+}

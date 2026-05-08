@@ -148,6 +148,12 @@ class _ControllerSettingsScreenState extends State<ControllerSettingsScreen> {
                 ),
                 onPressed: (bc) => _showPwmFreqPicker(bc),
               ),
+            if (widget.vm.outputInvertEnabledAvailable)
+              SettingsTile.switchTile(
+                initialValue: widget.vm.outputInvertEnabled,
+                onToggle: (bool value) => context.read<ControllerSettingsViewModel>().setOutputInvertEnabled(value),
+                title: Text(context.translate('Invert PWM output')),
+              ),
           ],
         ),
 

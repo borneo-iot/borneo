@@ -261,6 +261,7 @@ int led_init()
 #endif
         _ledc_channels[ch].duty = 0;
         _ledc_channels[ch].channel = (uint8_t)ch % 8;
+        _ledc_channels[ch].flags.output_invert = (unsigned int)led_output_invert_get();
         ESP_LOGI(TAG, "Configure GPIO [%u] as PWM Channel [%u], hpoint=[%u]", _ledc_channels[ch].gpio_num,
                  _ledc_channels[ch].channel, _ledc_channels[ch].hpoint);
         BO_TRY_ESP(ledc_channel_config(&_ledc_channels[ch]));

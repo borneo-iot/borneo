@@ -68,11 +68,12 @@ enum led_running_modes {
 };
 
 enum led_option_flags {
-    LED_OPTION_MOON_ENABLED = 1,
-    LED_OPTION_HAS_GEO_LOCATION = 2,
-    LED_OPTION_ACCLIMATION_ENABLED = 4, ///< Whether acclimation is enabled
-    LED_OPTION_TZ_ENABLED = 8, ///< Whether timezone is enabled
-    LED_OPTION_CLOUD_ENABLED = 16, ///< Whether cloud overlay is enabled
+    LED_OPTION_MOON_ENABLED = 1UL << 0,
+    LED_OPTION_HAS_GEO_LOCATION = 1UL << 1,
+    LED_OPTION_ACCLIMATION_ENABLED = 1UL << 2, ///< Whether acclimation is enabled
+    LED_OPTION_TZ_ENABLED = 1UL << 3, ///< Whether timezone is enabled
+    LED_OPTION_CLOUD_ENABLED = 1UL << 4, ///< Whether cloud overlay is enabled
+    LED_OPTION_OUTPUT_INVERT = 1UL << 5, ///< Output invert
 };
 
 struct led_scheduler_item {
@@ -268,6 +269,9 @@ int led_cloud_enable(bool enabled);
 bool led_cloud_is_enabled();
 bool led_cloud_is_activated();
 void led_cloud_drive(led_color_t color);
+
+bool led_output_invert_get();
+int led_output_invert_set(bool enabled);
 
 // Disco mode functions
 int led_disco_init();
