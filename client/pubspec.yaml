@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.7.13
+version: 0.7.14
 
 workspace:
   - packages/lw_wot
@@ -51,8 +51,8 @@ dependencies:
   uuid: ^4.4.0
 
   http: ^1.2.0
-  coap: ^9.2.0
-  cbor: ^6.5.0
+  coap: ^9.2.1
+  cbor: ^6.5.1
   path_provider: ^2.1.0
   bonsoir: ^6.0.0
   sembast: ^3.7.0
@@ -61,7 +61,7 @@ dependencies:
   logger: ^2.6.0
   intl: ^0.20.2
   flutter_xlider: ^3.5.0
-  cancellation_token: ^2.0.0
+  cancellation_token: ^2.0.1
   event_bus: ^2.0.0
   path: ^1.9.0
   async_queue: ^2.0.0
@@ -81,7 +81,7 @@ dependencies:
   synchronized: ^3.4.0
   collection: ^1.18.0
   connectivity_plus: ^6.0.0
-  polly_dart: ^0.0.7
+  polly_dart: ^0.0.8
   flutter_settings_ui: ^3.0.0
   flutter_debounce_throttle: ^2.4.5
 

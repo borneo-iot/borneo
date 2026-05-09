@@ -4,7 +4,7 @@ import 'package:borneo_app/devices/borneo/lyfi/view_models/lyfi_view_model.dart'
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:borneo_wot/borneo/lyfi/wot_thing.dart';
 import 'package:cancellation_token/cancellation_token.dart';
-import 'package:flutter_debounce_throttle/flutter_debounce_throttle.dart';
+import 'package:flutter_debounce_throttle/flutter_debounce_throttle.dart' show ThrottleDebouncer;
 import 'package:flutter/material.dart';
 import 'package:flutter_gettext/flutter_gettext/gettext_localizations.dart';
 

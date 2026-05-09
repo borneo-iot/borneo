@@ -14,8 +14,8 @@ dependencies:
   event_bus: ^2.0.1
   cancellation_token: ^2.0.1
   logger: ^2.6.0
-  coap: ^9.2.0
-  cbor: ^6.5.0
+  coap: ^9.2.1
+  cbor: ^6.5.1
   pub_semver: ^2.2.0
   synchronized: ^3.4.0
   retry: ^3.1.2

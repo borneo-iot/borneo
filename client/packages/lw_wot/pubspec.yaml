@@ -11,7 +11,7 @@ dependencies:
   cancellation_token: ^2.0.1
   event_bus: ^2.0.1
   pub_semver: ^2.2.0
-  polly_dart: ^0.0.7
+  polly_dart: ^0.0.8
 
 dev_dependencies:
   lints: ^6.1.0
