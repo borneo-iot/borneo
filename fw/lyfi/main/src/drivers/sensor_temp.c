@@ -1,5 +1,6 @@
 #include <string.h>
 #include <sys/time.h>
+#include <stdbool.h>
 
 #include <freertos/FreeRTOS.h>
 #include <freertos/event_groups.h>
@@ -28,6 +29,7 @@ struct ntc_data {
     const struct drvfx_device* adc_dev;
     int8_t temp_value;
     int32_t filtered_temp;
+    bool filter_initialized;
 };
 
 static int8_t ntc_table_lookup(int r);
@@ -40,6 +42,7 @@ static int8_t ntc_table_lookup(int r);
 enum {
     NTC_SAMPLING_INTERVAL = 100,
     NTC_BAD_TEMPERATURE = -127,
+    NTC_FILTER_SCALE = 10,
 };
 
 // clang-format off
@@ -117,6 +120,22 @@ static int8_t ntc_table_lookup(int value)
     return closest_index;
 }
 
+static int8_t ntc_filter_temperature(struct ntc_data* data, int8_t value)
+{
+    int32_t scaled_value = (int32_t)value * NTC_FILTER_SCALE;
+
+    if (!data->filter_initialized) {
+        data->filtered_temp = scaled_value;
+        data->filter_initialized = true;
+    }
+    else {
+        int64_t weighted_sum = scaled_value + (int64_t)9 * data->filtered_temp;
+        data->filtered_temp = (int32_t)(weighted_sum / 10);
+    }
+
+    return (int8_t)((data->filtered_temp + (NTC_FILTER_SCALE / 2)) / NTC_FILTER_SCALE);
+}
+
 static int _fetch_sample(const struct drvfx_device* dev)
 {
     if (dev == NULL) {
@@ -138,7 +157,7 @@ static int _fetch_sample(const struct drvfx_device* dev)
     if (value == NTC_BAD_TEMPERATURE) {
         return -EIO;
     }
-    data->temp_value = (int8_t)ema_filter((int32_t)value, &data->filtered_temp, 1, 10);
+    data->temp_value = ntc_filter_temperature(data, (int8_t)value);
     return 0;
 }
 
