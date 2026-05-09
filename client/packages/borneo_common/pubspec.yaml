@@ -9,8 +9,8 @@ environment:
   sdk: ^3.8.0
 
 dependencies:
-  coap: ^9.2.0
-  cbor: ^6.5.0
+  coap: ^9.2.1
+  cbor: ^6.5.1
   cancellation_token: ^2.0.1
   pub_semver: ^2.2.0
 

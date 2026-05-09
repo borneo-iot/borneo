@@ -19,7 +19,7 @@ dependencies:
   pub_semver: ^2.2.0
   synchronized: ^3.4.0
   retry: ^3.1.2
-  polly_dart: ^0.0.7
+  polly_dart: ^0.0.8
 
   # in this project
   borneo_common:
