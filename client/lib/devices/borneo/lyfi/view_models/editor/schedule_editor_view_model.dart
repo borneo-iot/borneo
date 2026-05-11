@@ -1,3 +1,4 @@
+import 'package:borneo_app/devices/borneo/lyfi/view_models/constants.dart';
 import 'package:borneo_app/devices/borneo/lyfi/view_models/editor/base_editor_view_model.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
@@ -44,7 +45,6 @@ class ScheduleEntryViewModel extends ChangeNotifier {
 
 class ScheduleEditorViewModel extends BaseEditorViewModel {
   static const Duration defaultInstantSpan = Duration(minutes: 30);
-  static const int maxEntries = 48;
 
   final EasySetupViewModel easySetupViewModel;
 
@@ -180,11 +180,13 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
     }
   }
 
-  bool get canAddInstant => isInitialized && _entries.length < maxEntries;
+  bool get isAtMaxInstants => _entries.length >= kLyfiInstantMaxLength;
 
-  Future<void> addInstant(Duration instant) async {
-    if (_entries.length >= maxEntries) return;
-    final normalized = _normalizeAddInstant(instant);
+  bool get canAddInstant => isInitialized && !isAtMaxInstants;
+
+  Future<void> addInstant(Duration instant, {bool forceToday = false}) async {
+    if (isAtMaxInstants) return;
+    final normalized = _normalizeAddInstant(instant, forceToday: forceToday);
     if (normalized == null) {
       return;
     }
@@ -197,7 +199,7 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
     await setCurrentEntryAndSyncDimmingColor(insertPos);
   }
 
-  Duration? _normalizeAddInstant(Duration instant) {
+  Duration? _normalizeAddInstant(Duration instant, {bool forceToday = false}) {
     final normalizedHours = instant.inHours % 24;
     final normalizedMinutes = instant.inMinutes % 60;
     final normalized = Duration(hours: normalizedHours, minutes: normalizedMinutes);
@@ -212,7 +214,7 @@ class ScheduleEditorViewModel extends BaseEditorViewModel {
       seconds: current.inSeconds % 60,
     );
     var result = Duration(hours: currentDay * 24) + normalized;
-    if (currentDay == 0 && normalized <= currentTime) {
+    if (!forceToday && currentDay == 0 && normalized <= currentTime) {
       result += const Duration(days: 1);
     }
     if (result.inHours >= 48) {

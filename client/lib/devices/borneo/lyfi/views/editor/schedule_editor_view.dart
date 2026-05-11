@@ -115,16 +115,56 @@ class ScheduleEditorView extends StatelessWidget {
     );
   }
 
-  Future<Duration?> showNewInstantDialog(BuildContext context, TimeOfDay initialTime) async {
-    // bool isNextDay = false;
+  Future<({Duration time, bool forceToday})?> showNewInstantDialog(
+    BuildContext context,
+    TimeOfDay initialTime,
+    Duration? currentInstant,
+  ) async {
     final selectedTime = await showTimePicker(
       initialTime: initialTime,
       context: context,
       confirmText: context.translate('Add time point'),
-      builder: (context, child) =>
-          MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child!),
+      initialEntryMode: TimePickerEntryMode.inputOnly,
+      builder: (context, child) {
+        return MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child!);
+      },
     );
-    return selectedTime?.toDuration();
+    if (selectedTime == null) return null;
+
+    final selected = selectedTime.toDuration();
+    bool forceToday = false;
+
+    // Detect ambiguity: selected time <= current entry time on day 0
+    if (currentInstant != null) {
+      final currentDay = currentInstant.inHours ~/ 24;
+      if (currentDay == 0) {
+        final currentTimeOfDay = Duration(hours: currentInstant.inHours % 24, minutes: currentInstant.inMinutes % 60);
+        if (selected <= currentTimeOfDay) {
+          final formattedTime = selectedTime.format(context);
+          if (!context.mounted) return null;
+          final isToday = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(ctx.translate('Which day?')),
+              content: Text(
+                ctx.translate(
+                  'The time {0} is before the current point. Add it today or on the next day?',
+                  pArgs: [formattedTime],
+                ),
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(ctx.translate('Today'))),
+                TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.translate('Next day'))),
+              ],
+            ),
+          );
+          if (isToday == null) return null;
+          forceToday = isToday;
+        }
+      }
+    }
+
+    return (time: selected, forceToday: forceToday);
   }
 
   Widget bottomTitleWidgets(BuildContext context, double value, TitleMeta meta) {
@@ -268,12 +308,13 @@ class ScheduleEditorView extends StatelessWidget {
                                       hours: initialTime.inHours % 24,
                                       minutes: initialTime.inMinutes % 60,
                                     );
-                                    final selectedTime = await showNewInstantDialog(
+                                    final result = await showNewInstantDialog(
                                       context,
                                       safeInitialTime.toTimeOfDay(),
+                                      actions.currentInstant,
                                     );
-                                    if (selectedTime != null) {
-                                      vm.addInstant(selectedTime);
+                                    if (result != null) {
+                                      vm.addInstant(result.time, forceToday: result.forceToday);
                                     }
                                   }
                                 : null,

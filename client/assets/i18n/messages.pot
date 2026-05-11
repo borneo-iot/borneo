@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 17:03+0800\n"
+"POT-Creation-Date: 2026-05-11 02:18+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -693,6 +693,9 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
+msgid "Next day"
+msgstr ""
+
 msgid "No Devices"
 msgstr ""
 
@@ -1045,6 +1048,11 @@ msgstr ""
 msgid "The device will restart automatically after the update is complete."
 msgstr ""
 
+#, python-brace-format
+msgid ""
+"The time {0} is before the current point. Add it today or on the next day?"
+msgstr ""
+
 msgid "The update may take several minutes. Do not close this app."
 msgstr ""
 
@@ -1086,6 +1094,9 @@ msgid "Timezone mismatch"
 msgstr ""
 
 msgid "Timezone synchronized successfully"
+msgstr ""
+
+msgid "Today"
 msgstr ""
 
 msgid "Unable to connect to this device."
@@ -1194,6 +1205,9 @@ msgid "Waxing Gibbous"
 msgstr ""
 
 msgid "Website"
+msgstr ""
+
+msgid "Which day?"
 msgstr ""
 
 msgid "You can finish now without waiting."

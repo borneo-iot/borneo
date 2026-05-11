@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 17:03+0800\n"
+"POT-Creation-Date: 2026-05-11 02:18+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -697,6 +697,9 @@ msgstr "新版本"
 msgid "Next"
 msgstr "下个时间点"
 
+msgid "Next day"
+msgstr "隔日"
+
 msgid "No Devices"
 msgstr "暂无设备"
 
@@ -1051,6 +1054,10 @@ msgstr "经过此操作以后设备需要重新进行配置。"
 msgid "The device will restart automatically after the update is complete."
 msgstr "更新完成后设备将自动重启。"
 
+msgid ""
+"The time {0} is before the current point. Add it today or on the next day?"
+msgstr "时间 {0} 位于当前时间点之前。是把它作为今日时间还是第二日的时间？"
+
 msgid "The update may take several minutes. Do not close this app."
 msgstr "更新可能需要几分钟时间。请勿关闭此应用。"
 
@@ -1095,6 +1102,9 @@ msgstr "时区不匹配"
 
 msgid "Timezone synchronized successfully"
 msgstr "时区同步成功"
+
+msgid "Today"
+msgstr "今日"
 
 msgid "Unable to connect to this device."
 msgstr "无法连接到该设备。"
@@ -1203,6 +1213,9 @@ msgstr "盈凸月"
 
 msgid "Website"
 msgstr "网站"
+
+msgid "Which day?"
+msgstr "那一天？"
 
 msgid "You can finish now without waiting."
 msgstr "您现在可以完成，无需等待。"

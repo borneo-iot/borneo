@@ -2,12 +2,12 @@
 # Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Automatically generated, 2025.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 17:03+0800\n"
+"POT-Creation-Date: 2026-05-11 02:18+0800\n"
 "PO-Revision-Date: 2025-06-01 20:57+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -711,6 +711,9 @@ msgstr "New version"
 msgid "Next"
 msgstr "Next"
 
+msgid "Next day"
+msgstr ""
+
 msgid "No Devices"
 msgstr "No Devices"
 
@@ -1069,6 +1072,11 @@ msgstr "The device will need to be reconfigured after this operation."
 msgid "The device will restart automatically after the update is complete."
 msgstr "The device will restart automatically after the update is complete."
 
+#, python-brace-format
+msgid ""
+"The time {0} is before the current point. Add it today or on the next day?"
+msgstr ""
+
 msgid "The update may take several minutes. Do not close this app."
 msgstr "The update may take several minutes. Do not close this app."
 
@@ -1117,6 +1125,9 @@ msgstr "Timezone mismatch"
 
 msgid "Timezone synchronized successfully"
 msgstr "Timezone synchronized successfully"
+
+msgid "Today"
+msgstr ""
 
 msgid "Unable to connect to this device."
 msgstr "Unable to connect to this device."
@@ -1227,6 +1238,9 @@ msgstr "Waxing Gibbous"
 
 msgid "Website"
 msgstr "Website"
+
+msgid "Which day?"
+msgstr ""
 
 msgid "You can finish now without waiting."
 msgstr "You can finish now without waiting."

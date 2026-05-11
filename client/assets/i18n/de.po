@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 17:03+0800\n"
+"POT-Creation-Date: 2026-05-11 02:18+0800\n"
 "PO-Revision-Date: 2025-09-09 14:10+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -726,6 +726,9 @@ msgstr "Neue Version"
 msgid "Next"
 msgstr "Weiter"
 
+msgid "Next day"
+msgstr "Nächster Tag"
+
 msgid "No Devices"
 msgstr "Keine Geräte"
 
@@ -1085,6 +1088,13 @@ msgstr "Das Gerät muss nach diesem Vorgang neu konfiguriert werden."
 msgid "The device will restart automatically after the update is complete."
 msgstr "Das Gerät wird nach Abschluss des Updates automatisch neu gestartet."
 
+#, python-brace-format
+msgid ""
+"The time {0} is before the current point. Add it today or on the next day?"
+msgstr ""
+"Die Zeit {0} liegt vor dem aktuellen Zeitpunkt. Möchten Sie sie heute oder am "
+"nächsten Tag hinzufügen?"
+
 msgid "The update may take several minutes. Do not close this app."
 msgstr "Das Update kann einige Minuten dauern. Schließen Sie diese App nicht."
 
@@ -1133,6 +1143,9 @@ msgstr "Zeitzonenabweichung"
 
 msgid "Timezone synchronized successfully"
 msgstr "Zeitzone erfolgreich synchronisiert"
+
+msgid "Today"
+msgstr "Heute"
 
 msgid "Unable to connect to this device."
 msgstr "Verbindung zu diesem Gerät konnte nicht hergestellt werden."
@@ -1251,6 +1264,9 @@ msgstr "Zunehmender Mond"
 
 msgid "Website"
 msgstr "Website"
+
+msgid "Which day?"
+msgstr "Welcher Tag?"
 
 msgid "You can finish now without waiting."
 msgstr "Sie können jetzt beenden, ohne zu warten."
