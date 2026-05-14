@@ -549,6 +549,9 @@ int led_output_invert_set(bool enabled)
     if (enabled) {
         _led.settings.flags |= LED_OPTION_OUTPUT_INVERT;
     }
+    else {
+        _led.settings.flags &= ~LED_OPTION_OUTPUT_INVERT;
+    }
     portEXIT_CRITICAL(&g_led_spinlock);
     BO_TRY(led_save_user_settings());
     return 0;
