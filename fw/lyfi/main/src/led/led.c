@@ -8,8 +8,8 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 #include <freertos/task.h>
-#include <driver/ledc.h>
 #include <esp_err.h>
+#include "../drivers/ledpwm.h"
 #include <esp_log.h>
 #include <nvs_flash.h>
 #include <esp_rom_md5.h>
@@ -73,12 +73,12 @@ static void dimming_state_exit(void*);
 
 static inline void led_dimming_reset_timeout();
 
-#define TAG "lyfi-ledc"
+#define TAG "lyfi-led"
 
 #define TASK_PRIORITY 15
 #define SECS_PER_DAY 86400
-#define LED_MAX_DUTY ((1 << LEDC_TIMER_12_BIT) - 1)
-#define LED_DUTY_RES LEDC_TIMER_12_BIT
+/* Must match the value returned by ledpwm_get_max_duty(). */
+#define LED_MAX_DUTY ((1u << CONFIG_LYFI_LED_PWM_RESOLUTION_BITS) - 1u)
 
 #define LED_UPDATE_PERIOD_US 10000 // 10ms
 #define LED_UPDATE_PERIOD_TICKS (pdMS_TO_TICKS(10)) // Ticks in 10ms
@@ -189,7 +189,7 @@ struct led_state_switch_request {
     SemaphoreHandle_t completion;
 };
 
-static ledc_channel_config_t _ledc_channels[CONFIG_LYFI_LED_CHANNEL_COUNT] = { 0 };
+static const struct drvfx_device* s_ledpwm_dev;
 static TaskHandle_t s_led_render_task_handle;
 static struct led_state_switch_request s_led_state_switch_request;
 /**
@@ -201,7 +201,6 @@ int led_init()
     ESP_LOGI(TAG, "Initializing LED controller....");
 
     memset(&_led, 0, sizeof(_led));
-    memset(_ledc_channels, 0, sizeof(_ledc_channels));
     _led.fade_active = ATOMIC_VAR_INIT(false);
 
     _led.settings_lock = xSemaphoreCreateMutex();
@@ -211,64 +210,18 @@ int led_init()
 
     BO_TRY(led_load_user_settings());
 
-    ESP_LOGI(TAG, "Initializing PWM timer for LEDC....");
+    ESP_LOGI(TAG, "Initializing LED PWM driver....");
     ESP_LOGI(TAG, "Total channel count: %u", CONFIG_LYFI_LED_CHANNEL_COUNT);
     ESP_LOGI(TAG, "Enabled channel count: %u", factory_settings->channel_count);
 
-    // Initialize the first timer
-    // TODO allow set the freq in product definition
-    ledc_timer_config_t ledc_timer = {
-        .clk_cfg = LEDC_AUTO_CLK,
-        .duty_resolution = LEDC_TIMER_12_BIT,
-        .freq_hz = factory_settings->pwm_freq,
-
-#if SOC_LEDC_SUPPORT_HS_MODE
-        .speed_mode = LEDC_HIGH_SPEED_MODE,
-        .timer_num = LEDC_TIMER_0,
-#else
-        .speed_mode = LEDC_LOW_SPEED_MODE,
-        .timer_num = LEDC_TIMER_1,
-#endif
-    };
-
-    BO_TRY_ESP(ledc_timer_config(&ledc_timer));
-
-    // More than 8 channels need to initialize the second timer
-    if (CONFIG_LYFI_LED_CHANNEL_COUNT > 8) {
-        ledc_timer.speed_mode = LEDC_LOW_SPEED_MODE;
-        ledc_timer.timer_num = LEDC_TIMER_1;
-        BO_TRY_ESP(ledc_timer_config(&ledc_timer));
+    s_ledpwm_dev = k_device_get_binding(LEDPWM_DEVICE_NAME);
+    if (!s_ledpwm_dev) {
+        ESP_LOGE(TAG, "LED PWM driver device not found");
+        return -ENODEV;
     }
 
-    ESP_LOGI(TAG, "PWM timer initialized.");
-
-    // Initialize all channels
-    for (size_t ch = 0; ch < CONFIG_LYFI_LED_CHANNEL_COUNT; ch++) {
-        _ledc_channels[ch].gpio_num = LED_GPIOS[ch];
-        _ledc_channels[ch].hpoint = (ch * LED_MAX_DUTY) / led_channel_count();
-#if SOC_LEDC_SUPPORT_HS_MODE
-        if (ch <= 7) { // the next timer
-            _ledc_channels[ch].speed_mode = LEDC_HIGH_SPEED_MODE;
-            _ledc_channels[ch].timer_sel = LEDC_TIMER_0;
-        }
-        else {
-            _ledc_channels[ch].speed_mode = LEDC_LOW_SPEED_MODE;
-            _ledc_channels[ch].timer_sel = LEDC_TIMER_1;
-        }
-#else
-        _ledc_channels[ch].speed_mode = LEDC_LOW_SPEED_MODE;
-        _ledc_channels[ch].timer_sel = LEDC_TIMER_1;
-#endif
-        _ledc_channels[ch].duty = 0;
-        _ledc_channels[ch].channel = (uint8_t)ch % 8;
-        _ledc_channels[ch].flags.output_invert = (unsigned int)led_output_invert_get();
-        ESP_LOGI(TAG, "Configure GPIO [%u] as PWM Channel [%u], hpoint=[%u]", _ledc_channels[ch].gpio_num,
-                 _ledc_channels[ch].channel, _ledc_channels[ch].hpoint);
-        BO_TRY_ESP(ledc_channel_config(&_ledc_channels[ch]));
-    }
-
-    // Initialize fade service.
-    BO_TRY_ESP(ledc_fade_func_install(0));
+    BO_TRY(ledpwm_configure(s_ledpwm_dev, factory_settings->channel_count, factory_settings->pwm_freq, LED_GPIOS,
+                            led_output_invert_get()));
 
     smf_set_initial(SMF_CTX(&_led), &LED_STATE_TABLE[LED_STATE_NORMAL]);
 
@@ -502,22 +455,16 @@ int led_set_channel_duty(uint8_t ch, led_duty_t duty)
     if (ch >= led_channel_count() || duty > LED_MAX_DUTY) {
         return -1;
     }
-
-    if (ledc_get_duty(_ledc_channels[ch].speed_mode, _ledc_channels[ch].channel) == (uint32_t)duty) {
-        return 0;
-    }
-
-    uint32_t hpoint = _ledc_channels[ch].hpoint;
-    BO_TRY_ESP(ledc_set_duty_and_update(_ledc_channels[ch].speed_mode, _ledc_channels[ch].channel, duty, hpoint));
-    return 0;
+    return ledpwm_set_channel_duty(s_ledpwm_dev, ch, (uint32_t)duty);
 }
 
 int led_get_duties(led_duty_t* duties)
 {
     for (size_t ch = 0; ch < led_channel_count(); ch++) {
-        uint32_t duty = ledc_get_duty(_ledc_channels[ch].speed_mode, _ledc_channels[ch].channel);
-        if (duty == LEDC_ERR_DUTY) {
-            return -EIO;
+        uint32_t duty;
+        int rc = ledpwm_get_channel_duty(s_ledpwm_dev, ch, &duty);
+        if (rc) {
+            return rc;
         }
         duties[ch] = (led_duty_t)duty;
     }
@@ -527,10 +474,7 @@ int led_get_duties(led_duty_t* duties)
 int led_set_duties(const led_duty_t* duties)
 {
     for (size_t ch = 0; ch < led_channel_count(); ch++) {
-        led_duty_t duty = duties[ch];
-        // Use pre-allocated hpoint from initialization, no dynamic recalculation
-        uint32_t hpoint = _ledc_channels[ch].hpoint;
-        BO_MUST(ledc_set_duty_and_update(_ledc_channels[ch].speed_mode, _ledc_channels[ch].channel, duty, hpoint));
+        BO_MUST(ledpwm_set_channel_duty(s_ledpwm_dev, ch, (uint32_t)duties[ch]));
     }
     return 0;
 }
@@ -787,9 +731,9 @@ void led_render_task(void*)
 
         if (!skip_hw_update) {
             // Copy shared color state under lock only - HW update must NOT be inside critical section
-            // because ledc_set_duty_and_update lazily allocates FreeRTOS objects (semaphores) on the
-            // first call per channel, and creating FreeRTOS primitives with interrupts disabled is
-            // undefined behaviour that corrupts scheduler state.
+            // because the PWM driver may allocate FreeRTOS objects (semaphores) on first use, and
+            // creating FreeRTOS primitives with interrupts disabled is undefined behaviour that
+            // corrupts scheduler state.
             led_color_t new_color;
             led_virtual_color_t new_virtual_color;
             bool fade_active;

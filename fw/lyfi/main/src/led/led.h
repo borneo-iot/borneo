@@ -24,7 +24,7 @@ typedef led_duty_t led_duties_t[CONFIG_LYFI_LED_CHANNEL_COUNT];
 typedef led_virtual_brightness_t led_virtual_color_t[CONFIG_LYFI_LED_CHANNEL_COUNT];
 
 #define LED_BRIGHTNESS_MIN ((led_brightness_t)0)
-#define LED_BRIGHTNESS_MAX ((led_brightness_t)4095)
+#define LED_BRIGHTNESS_MAX ((led_brightness_t)((1u << CONFIG_LYFI_LED_PWM_RESOLUTION_BITS) - 1u))
 #define LED_VIRTUAL_BRIGHTNESS_MAX ((led_virtual_brightness_t)65535)
 
 #define LED_ACCLIMATION_DAYS_MAX 100

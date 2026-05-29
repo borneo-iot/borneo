@@ -191,6 +191,11 @@ int bo_rpc_borneo_lyfi_info_get(const CborValue* args, CborEncoder* retvals)
         BO_TRY(_encode_channel_info_array(&root_map));
     }
 
+    {
+        BO_TRY(cbor_encode_text_stringz(&root_map, "dutyRes"));
+        BO_TRY(cbor_encode_uint(&root_map, CONFIG_LYFI_LED_PWM_RESOLUTION_BITS));
+    }
+
     BO_TRY(cbor_encoder_close_container(retvals, &root_map));
 
     return 0;

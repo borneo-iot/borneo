@@ -30,6 +30,44 @@ menu "Borneo LyFi"
             int "DIMMING mode timeout (seconds)"
             default 900
             range 0 3600
+
+        choice
+            prompt "LED PWM hardware backend"
+            default LYFI_LED_PWM_BACKEND_LEDC
+            help
+              Select the hardware peripheral used to generate LED PWM signals.
+              LEDC is available on all supported targets and supports phase-shifted
+              outputs (via hpoint) to reduce simultaneous switching noise.
+
+            config LYFI_LED_PWM_BACKEND_LEDC
+                bool "LEDC (default, supports phase-shift, all targets)"
+                depends on SOC_LEDC_SUPPORTED
+
+            config LYFI_LED_PWM_BACKEND_MCPWM
+                bool "MCPWM"
+                depends on SOC_MCPWM_SUPPORTED
+        endchoice
+
+        choice
+            prompt "LED PWM duty resolution"
+            default LYFI_LED_PWM_RESOLUTION_12BIT
+            help
+              Select the PWM duty cycle resolution.
+              13-bit gives finer dimming steps (8191 levels) but requires more
+              timer clock bandwidth and is only available on non-CE editions.
+
+            config LYFI_LED_PWM_RESOLUTION_12BIT
+                bool "12-bit (4095 steps)"
+
+            config LYFI_LED_PWM_RESOLUTION_13BIT
+                bool "13-bit (8191 steps)"
+                depends on !BORNEO_EDITION_CE
+        endchoice
+
+        config LYFI_LED_PWM_RESOLUTION_BITS
+            int
+            default 12 if LYFI_LED_PWM_RESOLUTION_12BIT
+            default 13 if LYFI_LED_PWM_RESOLUTION_13BIT
     endmenu
 
     menu "LED channels"
