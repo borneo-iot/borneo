@@ -19,9 +19,6 @@
 
 
 <p align="center">
-<a href="https://www.pcbway.com/project/gifts_detail/6_Channel_Wi_Fi_PWM_LED_Dimmer_for_Aquariums_adb134c9.html">
-<img src="https://img.shields.io/badge/Buy-%20PCBWay-00a563?style=for-the-badge&logo=cart" alt="Get It on PCBWay" />
-</a>
 <a href="https://www.crowdsupply.com/borneo-iot/buce-aquarium-led-controller" target="_blank" rel="noopener">
 <img alt="Crowd Supply: Subscribe" src="https://img.shields.io/badge/Subscribe-Crowd%20Supply-009999?style=for-the-badge&logo=crowdsupply" />
 </a>
@@ -38,8 +35,13 @@
     </a>
 </p>
 
+If you would like to support this project, please consider purchasing a ready-to-use, pre-tested, pre-loaded firmware product from PCBWay Store: 
 
+<a href="https://www.pcbway.com/project/gifts_detail/6_Channel_Wi_Fi_PWM_LED_Dimmer_for_Aquariums_adb134c9.html">
+<img src="https://img.shields.io/badge/PCBWay-00a563?style=for-the-badge&logo=cart" alt="Get It on PCBWay" />
+</a>
 
+---
 
 > **Production-grade open-source stack for aquarium LED dimmers.**
 > Hardware designs, embedded firmware, and mobile controls. Ready for weekend builds or product integration.
