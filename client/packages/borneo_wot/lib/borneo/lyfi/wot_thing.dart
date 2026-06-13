@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel/drivers/borneo/events.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/events.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
@@ -102,7 +103,10 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
     final borneoApi = _getBorneoApiOrNull();
     final lyfiApi = _getLyfiApiOrNull();
     final device = _getDeviceOrNull();
-    if (isOffline || borneoApi == null || lyfiApi == null || device == null) return;
+    if (isOffline || borneoApi == null || lyfiApi == null || device == null) {
+      return;
+    }
+    final supportedResourcePaths = device.data<LyfiCoapDriverData>().supportedResourcePaths;
 
     // ── Batch 1: core status + schedule/location config (parallel) ──────────
     final (
@@ -139,9 +143,18 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
       deviceInfo,
       moonConfig,
     ) = await (
-      lyfiApi.getKeepTemp(device, cancelToken: cancelToken),
-      lyfiApi.getFanMode(device, cancelToken: cancelToken),
-      lyfiApi.getFanManualPower(device, cancelToken: cancelToken),
+      supportedResourcePaths.contains(LyfiPaths.keepTemp.path)
+          ? lyfiApi.getKeepTemp(device, cancelToken: cancelToken)
+          : Future<int?>.value(null),
+
+      supportedResourcePaths.contains(LyfiPaths.fanMode.path)
+          ? lyfiApi.getFanMode(device, cancelToken: cancelToken)
+          : Future<FanMode?>.value(null),
+
+      supportedResourcePaths.contains(LyfiPaths.fanManual.path)
+          ? lyfiApi.getFanManualPower(device, cancelToken: cancelToken)
+          : Future<int?>.value(null),
+
       lyfiApi.getCloudEnabled(device, cancelToken: cancelToken),
       lyfiApi.getTemporaryDuration(device, cancelToken: cancelToken),
       lyfiApi.getSunSchedule(device, cancelToken: cancelToken),
@@ -172,10 +185,20 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
     findProperty('timezone')?.value.notifyOfExternalUpdate(generalStatus.timezone);
     findProperty('timezoneEnabled')?.value.notifyOfExternalUpdate(timeZoneEnabled);
     findProperty('timezoneOffset')?.value.notifyOfExternalUpdate(timeZoneOffset);
-    findProperty('keepTemp')?.value.notifyOfExternalUpdate(keepTemp);
+
+    if (keepTemp != null) {
+      findProperty('keepTemp')?.value.notifyOfExternalUpdate(keepTemp);
+    }
+
     findProperty('temperature')?.value.notifyOfExternalUpdate(lyfiStatus.temperature);
-    findProperty('fanMode')?.value.notifyOfExternalUpdate(fanMode.name);
-    findProperty('fanManualPower')?.value.notifyOfExternalUpdate(fanPower);
+
+    if (fanMode != null) {
+      findProperty('fanMode')?.value.notifyOfExternalUpdate(fanMode.name);
+    }
+
+    if (fanPower != null) {
+      findProperty('fanManualPower')?.value.notifyOfExternalUpdate(fanPower);
+    }
 
     findProperty('cloudEnabled')?.value.notifyOfExternalUpdate(cloudEnabled);
     findProperty('temporaryDuration')?.value.notifyOfExternalUpdate(temporaryDuration);

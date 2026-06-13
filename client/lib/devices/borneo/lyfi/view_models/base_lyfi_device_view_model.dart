@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:borneo_app/devices/borneo/view_models/base_borneo_device_view_model.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:borneo_wot/borneo/lyfi/wot_thing.dart';
 import 'package:flutter/material.dart';
@@ -41,10 +42,17 @@ abstract class BaseLyfiDeviceViewModel extends BaseBorneoDeviceViewModel {
   final ValueNotifier<double?> currentCurrent = ValueNotifier<double?>(null);
   final ValueNotifier<double?> currentWatts = ValueNotifier<double?>(null);
 
+  bool hasFan = false;
+  bool hasTempSensor = false;
+
   @override
   @protected
   Future<void> onInitialize() async {
     super.onInitialize();
+    final supportedResourcePaths = super.boundDevice!.device.data<LyfiCoapDriverData>().supportedResourcePaths;
+    this.hasFan = supportedResourcePaths.contains(LyfiPaths.fanMode.path);
+    this.hasTempSensor = supportedResourcePaths.contains(LyfiPaths.currentTemp.path);
+
     _subscribeToLyfiThing();
   }
 

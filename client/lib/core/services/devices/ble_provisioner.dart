@@ -15,7 +15,7 @@ abstract class IBleProvisioner {
 }
 
 class BleProvisioner implements IBleProvisioner {
-  final _plugin = FlutterEspBleProv(defaultSecurity: SecurityLevel.secure1);
+  final _plugin = FlutterEspBleProv(defaultSecurity: SecurityLevel.unsecure);
 
   BleProvisioner();
 

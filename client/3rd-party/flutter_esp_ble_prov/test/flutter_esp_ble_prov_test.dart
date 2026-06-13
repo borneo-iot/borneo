@@ -22,6 +22,10 @@ void main() {
     expect(initialPlatform, isInstanceOf<MethodChannelFlutterEspBleProv>());
   });
 
+  test('default security level is compatible with legacy ESP firmware', () {
+    expect(FlutterEspBleProv().defaultSecurity, SecurityLevel.unsecure);
+  });
+
   test('getPlatformVersion', () async {
     FlutterEspBleProv flutterEspBleProvPlugin = FlutterEspBleProv();
     MockFlutterEspBleProvPlatform fakePlatform =

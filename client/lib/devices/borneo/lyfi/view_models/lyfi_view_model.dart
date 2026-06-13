@@ -145,7 +145,7 @@ class LyfiViewModel extends BaseLyfiDeviceViewModel {
   }
 
   // LyFi device status and info
-  double? _fanPowerRatio = 0.0;
+  double? _fanPowerRatio;
   double? get fanPowerRatio => _fanPowerRatio;
 
   FanMode? _fanMode;

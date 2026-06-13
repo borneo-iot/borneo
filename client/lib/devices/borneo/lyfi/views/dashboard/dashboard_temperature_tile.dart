@@ -21,10 +21,16 @@ class DashboardTemperatureTile extends StatelessWidget {
     final yellowBg = isDark ? Colors.amber[800]!.withValues(alpha: 0.38) : Colors.amber[100]!;
     final redBg = isDark ? Colors.red[800]!.withValues(alpha: 0.38) : Colors.red[100]!;
 
-    final (isOnline, currentTempRaw, currentTemp, temperatureUnitText, fanPowerRatio) = context
-        .select<LyfiViewModel, (bool, int?, int?, String, double?)>(
-          (vm) =>
-              (vm.isOnline, vm.currentTempRaw, vm.currentTemp, vm.localeService.temperatureUnitText, vm.fanPowerRatio),
+    final (isOnline, currentTempRaw, currentTemp, temperatureUnitText, hasFan, fanPowerRatio) = context
+        .select<LyfiViewModel, (bool, int?, int?, String, bool, double?)>(
+          (vm) => (
+            vm.isOnline,
+            vm.currentTempRaw,
+            vm.currentTemp,
+            vm.localeService.temperatureUnitText,
+            vm.hasFan,
+            vm.fanPowerRatio,
+          ),
         );
     final disabledColor = theme.colorScheme.onSurface.withValues(alpha: 0.38);
     final Color fgColor = theme.colorScheme.onSurface;
@@ -99,30 +105,31 @@ class DashboardTemperatureTile extends StatelessWidget {
                 ),
             ],
           ),
-          const Divider(height: 6, thickness: 1, indent: 24, endIndent: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (isOnline && fanPowerRatio != null) ...[
-                Icon(CommunityMaterialIcons.fan, size: 16, color: theme.colorScheme.primary),
-                const SizedBox(width: 4),
-                Text(
-                  '${fanPowerRatio.toInt().toString().padLeft(3)}%',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+          if (hasFan) const Divider(height: 6, thickness: 1, indent: 24, endIndent: 24),
+          if (hasFan)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (isOnline && fanPowerRatio != null) ...[
+                  Icon(CommunityMaterialIcons.fan, size: 16, color: theme.colorScheme.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${fanPowerRatio.toInt().toString().padLeft(3)}%',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
                   ),
-                ),
-              ] else
-                Text(
-                  context.translate("N/A"),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.outlineVariant,
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                ] else
+                  Text(
+                    context.translate("N/A"),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.outlineVariant,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
                   ),
-                ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
       segments: [
