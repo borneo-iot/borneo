@@ -304,13 +304,23 @@ class DefaultHeartbeatService implements HeartbeatService {
       return;
     }
 
+    final boundDevice = _devices[deviceId];
+    if (boundDevice == null) {
+      _logger.t('Ignoring missed heartbeat for unregistered device $deviceId');
+      return;
+    }
+
     _observationLock.synchronized(() {
+      if (!_devices.containsKey(deviceId)) {
+        return;
+      }
+
       _missedObservations[deviceId] = (_missedObservations[deviceId] ?? 0) + 1;
       _logger.i('Heartbeat missed for device $deviceId. Total missed: ${_missedObservations[deviceId]}');
 
       if (_missedObservations[deviceId]! >= maxMissedObservations) {
         _logger.w('Device $deviceId marked offline after $maxMissedObservations missed observations');
-        _failureController.add(_devices[deviceId]!.device);
+        _failureController.add(boundDevice.device);
         // Call the lock-free helper directly; we already hold _observationLock
         // and _stopHeartbeatObservation() would try to re-acquire it, causing a
         // deadlock with the non-reentrant Lock from the synchronized package.

@@ -97,16 +97,15 @@ final class DeviceManagerImpl extends IDeviceManager {
       _kernel.registerDevices(devices.map((x) => BoundDeviceDescriptor(device: x, driverID: x.driverID)));
       await _kernel.start();
 
-      unawaited(() async {
-        // Load WotThings for ALL scenes so they persist across scene switches.
-        await _loadAllWotThings(cancelToken: cancelToken);
-        // Activate only the current scene's WotThings.
-        await _activateSceneWotThings(_sceneManager.current.id);
-        await _rebindAll(devices, cancelToken: cancelToken);
+      // Load WotThings for ALL scenes so they persist across scene switches.
+      await _loadAllWotThings(cancelToken: cancelToken);
+      // Activate only the current scene's WotThings.
+      await _activateSceneWotThings(_sceneManager.current.id);
+      await _rebindAll(devices, cancelToken: cancelToken);
 
-        final currentScene = _sceneManager.current;
-        _globalBus.fire(CurrentSceneDevicesReloadedEvent(currentScene));
-      }());
+      final currentScene = _sceneManager.current;
+      _globalBus.fire(CurrentSceneDevicesReloadedEvent(currentScene));
+
       logger?.i('DeviceManagerImpl has been initialized successfully.');
     } finally {
       _isInitialized = true;

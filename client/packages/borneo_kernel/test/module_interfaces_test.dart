@@ -8,10 +8,23 @@ import 'package:borneo_kernel_abstractions/event_dispatcher.dart';
 import 'package:borneo_kernel/discovery_manager_impl.dart';
 import 'package:borneo_kernel/binding_engine_impl.dart';
 import 'package:borneo_kernel/heartbeat_service_impl.dart';
+import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver.dart';
+import 'package:borneo_kernel_abstractions/models/heartbeat_method.dart';
+import 'package:borneo_kernel_abstractions/models/bound_device.dart';
+import 'package:borneo_kernel_abstractions/device.dart';
 import 'package:test/test.dart';
 import 'mocks.dart';
 
 // helper dummy bus for testing
+class TestLyfiObservationDriver extends BorneoLyfiCoapDriver {
+  final StreamController<dynamic> _controller;
+
+  TestLyfiObservationDriver(this._controller);
+
+  @override
+  Future<Stream<dynamic>> startHeartbeatObservation(Device dev) async => _controller.stream;
+}
+
 class DummyBus implements DeviceBus {
   @override
   String get id => 'dummy';
@@ -180,6 +193,28 @@ void main() {
       await Future.delayed(Duration.zero);
       expect(recorded, [true, false]);
       await sub.cancel();
+    });
+
+    test('DefaultHeartbeatService ignores stale heartbeat errors after unregister', () async {
+      final controller = StreamController<dynamic>.broadcast();
+      final svc = DefaultHeartbeatService(MockLogger(), maxMissedObservations: 1);
+      final driver = TestLyfiObservationDriver(controller);
+      final device = MockDevice('device-a', 'http://a');
+
+      await svc.start();
+      svc.registerDevice(BoundDevice('drv', device, driver), HeartbeatMethod.push);
+      await Future.delayed(Duration.zero);
+
+      svc.unregisterDevice(device.id);
+
+      await expectLater(() async {
+        controller.addError(Exception('simulated heartbeat failure'));
+        await Future.delayed(Duration.zero);
+      }, returnsNormally);
+
+      expect(svc.getState(device.id), isNull);
+      await controller.close();
+      await svc.stop();
     });
 
     test('DefaultHeartbeatService batch is nest-safe', () async {
