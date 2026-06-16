@@ -133,9 +133,9 @@ class DashboardTemperatureTile extends StatelessWidget {
         ],
       ),
       segments: [
-        GaugeSegment(from: 25, to: 45, color: greenBg),
-        GaugeSegment(from: 45, to: 65, color: yellowBg),
-        GaugeSegment(from: 65, to: 105, color: redBg),
+        GaugeZone(from: 25, to: 45, color: greenBg),
+        GaugeZone(from: 45, to: 65, color: yellowBg),
+        GaugeZone(from: 65, to: 105, color: redBg),
       ],
     );
   }

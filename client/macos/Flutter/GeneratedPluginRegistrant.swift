@@ -5,7 +5,6 @@
 import FlutterMacOS
 import Foundation
 
-import app_review
 import bonsoir_darwin
 import connectivity_plus
 import file_selector_macos
@@ -17,7 +16,6 @@ import url_launcher_macos
 import window_size
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
-  AppReviewPlugin.register(with: registry.registrar(forPlugin: "AppReviewPlugin"))
   SwiftBonsoirPlugin.register(with: registry.registrar(forPlugin: "SwiftBonsoirPlugin"))
   ConnectivityPlusPlugin.register(with: registry.registrar(forPlugin: "ConnectivityPlusPlugin"))
   FileSelectorPlugin.register(with: registry.registrar(forPlugin: "FileSelectorPlugin"))

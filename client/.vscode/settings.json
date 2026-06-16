@@ -1,26 +1,26 @@
 {
-    "dart.flutterSdkPath": ".fvm/versions/3.38.8",
-    "dart.lineLength": 120,
-    "editor.defaultFormatter": "Dart-Code.dart-code",
-    "files.exclude": {
-        "**/.dart_tool": true,
-        "**/.flutter-plugins": true,
-        "**/.flutter-plugins-dependencies": true,
-        "**/.metadata": true,
-        "**/.packages": true,
-        "**/build": true
-    },
-    "[dart]": {
-        "editor.tabSize": 2,
-        "editor.insertSpaces": true,
-        "editor.detectIndentation": false
-    },
-    "dart.previewFlutterUiGuides": true,
-    "extensions.autoUpdate": true,
-    "[xml]": {
-        "editor.defaultFormatter": "DotJoshJohnson.xml"
-    },
-    "[jsonc]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    }
+  "dart.flutterSdkPath": ".fvm/versions/3.38.10",
+  "dart.lineLength": 120,
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "files.exclude": {
+    "**/.dart_tool": true,
+    "**/.flutter-plugins": true,
+    "**/.flutter-plugins-dependencies": true,
+    "**/.metadata": true,
+    "**/.packages": true,
+    "**/build": true
+  },
+  "[dart]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false
+  },
+  "dart.previewFlutterUiGuides": true,
+  "extensions.autoUpdate": true,
+  "[xml]": {
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
 }

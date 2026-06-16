@@ -20,7 +20,7 @@ class DashboardToufu extends StatefulWidget {
   final Color? progressColor;
   final LinearGradient? linearGradient;
   final Color? arcColor;
-  final List<GaugeSegment> segments;
+  final List<GaugeZone> segments;
 
   DashboardToufu({
     required this.title,
