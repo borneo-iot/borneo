@@ -402,9 +402,10 @@ class MockLyfiDeviceApi implements ILyfiDeviceApi {
   }
 }
 
-class MockLyfiDriver extends MockLyfiDeviceApi implements Driver {
+class MockLyfiDriver extends MockLyfiDeviceApi implements Driver, IBorneoDeviceApi {
   MockLyfiDriver({Set<String>? supportedResources}) : _supportedResources = supportedResources;
 
+  final MockBorneoDeviceApi _borneoApi = MockBorneoDeviceApi();
   final Set<String>? _supportedResources;
   int scheduleReads = 0;
   int lyfiInfoReads = 0;
@@ -416,6 +417,21 @@ class MockLyfiDriver extends MockLyfiDeviceApi implements Driver {
   @override
   Future<Set<String>> getSupportedResourcePaths(Device device, {CancellationToken? cancelToken}) async {
     return _supportedResources ?? <String>{};
+  }
+
+  @override
+  Future<GeneralBorneoDeviceInfo> getGeneralDeviceInfo(Device device, {CancellationToken? cancelToken}) async {
+    return _borneoApi.getGeneralDeviceInfo(device, cancelToken: cancelToken);
+  }
+
+  @override
+  Future<GeneralBorneoDeviceStatus> getGeneralDeviceStatus(Device device, {CancellationToken? cancelToken}) async {
+    return _borneoApi.getGeneralDeviceStatus(device, cancelToken: cancelToken);
+  }
+
+  @override
+  Future<PowerBehavior> getPowerBehavior(Device device, {CancellationToken? cancelToken}) async {
+    return _borneoApi.getPowerBehavior(device, cancelToken: cancelToken);
   }
 
   bool _supports(Uri path) {

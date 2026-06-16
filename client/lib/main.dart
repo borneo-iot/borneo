@@ -183,7 +183,7 @@ Future<Widget> buildAppWidget({
     // IBleProvisioner
     provider.ProxyProvider<Logger, IBleProvisioner>(update: (_, logger, prev) => prev ?? BleProvisioner(), lazy: true),
 
-    provider.ProxyProvider<IKernel, OtaProvider>(update: (_, kernel, __) => OtaProvider(kernel: kernel), lazy: true),
+    provider.ProxyProvider<IKernel, OtaProvider>(update: (_, kernel, _) => OtaProvider(kernel: kernel), lazy: true),
   ];
 
   // Wrap the existing provider graph in a ProviderScope so that

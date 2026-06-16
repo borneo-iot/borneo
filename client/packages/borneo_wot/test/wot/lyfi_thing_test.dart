@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:borneo_wot/borneo/lyfi/wot_thing.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
+import 'package:borneo_kernel_abstractions/device.dart';
 import 'package:borneo_kernel_abstractions/models/bound_device.dart';
+import 'package:cancellation_token/cancellation_token.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
@@ -144,6 +148,70 @@ void main() {
         expect(driver.lyfiInfoReads, equals(0));
         expect(driver.moonConfigReads, equals(0));
       });
+
+      test('should not start a second bind while the first bind is still in progress', () async {
+        final driver = _BlockingLyfiDriver();
+        await mockDevice.setDriverData(
+          TestSupportedResourceDriverData(mockDevice, {
+            BorneoPaths.deviceInfo.path,
+            BorneoPaths.power.path,
+            BorneoPaths.powerBehavior.path,
+            BorneoPaths.status.path,
+            LyfiPaths.status.path,
+            LyfiPaths.keepTemp.path,
+            LyfiPaths.fanMode.path,
+            LyfiPaths.fanManual.path,
+          }),
+        );
+        mockKernel.setBoundDevice(BoundDevice('mock-driver', mockDevice, driver));
+
+        final lyfiThing = LyfiThing(
+          kernel: mockKernel,
+          deviceId: mockDevice.id,
+          title: 'Test Lyfi',
+          logger: mockLogger,
+        );
+        lyfiThing.activate();
+
+        final firstSync = lyfiThing.sync();
+        await driver.started.future;
+
+        final secondSync = lyfiThing.sync();
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+
+        expect(
+          driver.scheduleReads,
+          equals(1),
+          reason: 'a second full bind must not start while the first bind is still running',
+        );
+
+        driver.release();
+        await Future.wait([firstSync, secondSync]);
+      });
     });
   });
+}
+
+class _BlockingLyfiDriver extends MockLyfiDriver {
+  final Completer<void> _release = Completer<void>();
+  final Completer<void> started = Completer<void>();
+  int statusCalls = 0;
+
+  void release() {
+    if (!_release.isCompleted) {
+      _release.complete();
+    }
+  }
+
+  @override
+  Future<GeneralBorneoDeviceStatus> getGeneralDeviceStatus(Device device, {CancellationToken? cancelToken}) async {
+    statusCalls++;
+    if (!started.isCompleted) {
+      started.complete();
+    }
+    if (statusCalls == 1) {
+      await _release.future;
+    }
+    return super.getGeneralDeviceStatus(device, cancelToken: cancelToken);
+  }
 }

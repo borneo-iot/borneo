@@ -1,10 +1,10 @@
 // dart format width=120
 
 import 'dart:async';
+import 'package:borneo_kernel/drivers/borneo/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel/drivers/borneo/events.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
-import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/events.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
@@ -100,156 +100,184 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
 
   /// Bind properties to actual hardware state (like Mozilla WebThing ready callback)
   Future<void> _bindToHardware({CancellationToken? cancelToken}) async {
+    if (_isBinding || isDisposed) {
+      return;
+    }
+
     final borneoApi = _getBorneoApiOrNull();
     final lyfiApi = _getLyfiApiOrNull();
     final device = _getDeviceOrNull();
     if (isOffline || borneoApi == null || lyfiApi == null || device == null) {
       return;
     }
-    final supportedResourcePaths = device.data<LyfiCoapDriverData>().supportedResourcePaths;
 
-    // ── Batch 1: core status + schedule/location config (parallel) ──────────
-    final (
-      generalStatus,
-      generalDeviceInfo,
-      lyfiStatus,
-      schedule,
-      acclimation,
-      location,
-      correctionMethod,
-      timeZoneEnabled,
-      timeZoneOffset,
-    ) = await (
-      borneoApi.getGeneralDeviceStatus(device, cancelToken: cancelToken),
-      borneoApi.getGeneralDeviceInfo(device, cancelToken: cancelToken),
-      lyfiApi.getLyfiStatus(device, cancelToken: cancelToken),
-      lyfiApi.getSchedule(device, cancelToken: cancelToken),
-      lyfiApi.getAcclimation(device, cancelToken: cancelToken),
-      lyfiApi.getLocation(device, cancelToken: cancelToken),
-      lyfiApi.getCorrectionMethod(device, cancelToken: cancelToken),
-      lyfiApi.getTimeZoneEnabled(device, cancelToken: cancelToken),
-      lyfiApi.getTimeZoneOffset(device, cancelToken: cancelToken),
-    ).wait;
+    _isBinding = true;
+    try {
+      final supportedResourcePaths = device.driverData is BorneoSupportedResourceDriverData
+          ? (device.driverData as BorneoSupportedResourceDriverData).supportedResourcePaths
+          : <String>{};
 
-    // ── Batch 2: peripheral / low-frequency settings (parallel) ─────────────
-    final (
-      keepTemp,
-      fanMode,
-      fanPower,
-      cloudEnabled,
-      temporaryDuration,
-      sunSchedule,
-      powerBehavior,
-      deviceInfo,
-      moonConfig,
-    ) = await (
-      supportedResourcePaths.contains(LyfiPaths.keepTemp.path)
-          ? lyfiApi.getKeepTemp(device, cancelToken: cancelToken)
-          : Future<int?>.value(null),
-
-      supportedResourcePaths.contains(LyfiPaths.fanMode.path)
-          ? lyfiApi.getFanMode(device, cancelToken: cancelToken)
-          : Future<FanMode?>.value(null),
-
-      supportedResourcePaths.contains(LyfiPaths.fanManual.path)
-          ? lyfiApi.getFanManualPower(device, cancelToken: cancelToken)
-          : Future<int?>.value(null),
-
-      lyfiApi.getCloudEnabled(device, cancelToken: cancelToken),
-      lyfiApi.getTemporaryDuration(device, cancelToken: cancelToken),
-      lyfiApi.getSunSchedule(device, cancelToken: cancelToken),
-      borneoApi.getPowerBehavior(device, cancelToken: cancelToken),
-      lyfiApi.getLyfiInfo(device, cancelToken: cancelToken),
-      lyfiApi.getMoonConfig(device, cancelToken: cancelToken),
-    ).wait;
-
-    // ── Conditional fetches (depend on results from the batches above) ───────
-    if (lyfiStatus.mode == LyfiMode.sun) {
-      try {
-        final sunCurve = await lyfiApi.getSunCurve(device, cancelToken: cancelToken);
-        findProperty('sunCurve')?.value.notifyOfExternalUpdate(sunCurve);
-      } catch (e) {
-        logger?.w("Failed to get Sun curve: $e");
+      if (isDisposed || !kernel.isBound(deviceId) || _device != device) {
+        return;
       }
-    }
 
-    // Update properties with actual values (like notifyOfExternalUpdate in Mozilla WebThing)
-    findProperty('on')?.value.notifyOfExternalUpdate(generalStatus.power);
-    findProperty('state')?.value.notifyOfExternalUpdate(lyfiStatus.state.name);
-    findProperty('mode')?.value.notifyOfExternalUpdate(lyfiStatus.mode.name);
-    findProperty('color')?.value.notifyOfExternalUpdate(lyfiStatus.currentColor);
-    findProperty('schedule')?.value.notifyOfExternalUpdate(schedule);
-    findProperty('acclimation')?.value.notifyOfExternalUpdate(acclimation);
-    findProperty('location')?.value.notifyOfExternalUpdate(location);
-    findProperty('correctionMethod')?.value.notifyOfExternalUpdate(correctionMethod.name);
-    findProperty('timezone')?.value.notifyOfExternalUpdate(generalStatus.timezone);
-    findProperty('timezoneEnabled')?.value.notifyOfExternalUpdate(timeZoneEnabled);
-    findProperty('timezoneOffset')?.value.notifyOfExternalUpdate(timeZoneOffset);
+      // ── Batch 1: core status + schedule/location config (parallel) ──────────
+      final (
+        generalStatus,
+        generalDeviceInfo,
+        lyfiStatus,
+        schedule,
+        acclimation,
+        location,
+        correctionMethod,
+        timeZoneEnabled,
+        timeZoneOffset,
+      ) = await (
+        borneoApi.getGeneralDeviceStatus(device, cancelToken: cancelToken),
+        borneoApi.getGeneralDeviceInfo(device, cancelToken: cancelToken),
+        lyfiApi.getLyfiStatus(device, cancelToken: cancelToken),
+        lyfiApi.getSchedule(device, cancelToken: cancelToken),
+        lyfiApi.getAcclimation(device, cancelToken: cancelToken),
+        lyfiApi.getLocation(device, cancelToken: cancelToken),
+        lyfiApi.getCorrectionMethod(device, cancelToken: cancelToken),
+        lyfiApi.getTimeZoneEnabled(device, cancelToken: cancelToken),
+        lyfiApi.getTimeZoneOffset(device, cancelToken: cancelToken),
+      ).wait;
 
-    if (keepTemp != null) {
-      findProperty('keepTemp')?.value.notifyOfExternalUpdate(keepTemp);
-    }
-
-    findProperty('temperature')?.value.notifyOfExternalUpdate(lyfiStatus.temperature);
-
-    if (fanMode != null) {
-      findProperty('fanMode')?.value.notifyOfExternalUpdate(fanMode.name);
-    }
-
-    if (fanPower != null) {
-      findProperty('fanManualPower')?.value.notifyOfExternalUpdate(fanPower);
-    }
-
-    findProperty('cloudEnabled')?.value.notifyOfExternalUpdate(cloudEnabled);
-    findProperty('temporaryDuration')?.value.notifyOfExternalUpdate(temporaryDuration);
-    findProperty('sunSchedule')?.value.notifyOfExternalUpdate(sunSchedule);
-
-    // Moon properties (moonConfig already fetched in batch 2)
-    findProperty('moonConfig')?.value.notifyOfExternalUpdate(moonConfig);
-
-    if (moonConfig.enabled) {
-      try {
-        final moonSchedule = await lyfiApi.getMoonSchedule(device, cancelToken: cancelToken);
-        final moonStatus = await lyfiApi.getMoonStatus(device, cancelToken: cancelToken);
-        final moonCurve = await lyfiApi.getMoonCurve(device, cancelToken: cancelToken);
-        findProperty('moonCurve')?.value.notifyOfExternalUpdate(moonCurve);
-        findProperty('moonSchedule')?.value.notifyOfExternalUpdate(moonSchedule);
-        findProperty('moonStatus')?.value.notifyOfExternalUpdate(moonStatus);
-      } catch (e) {
-        logger?.w("Failed to get Moon curve: $e");
+      if (isDisposed || !kernel.isBound(deviceId) || _device != device) {
+        return;
       }
+
+      // ── Batch 2: peripheral / low-frequency settings (parallel) ─────────────
+      final (
+        keepTemp,
+        fanMode,
+        fanPower,
+        cloudEnabled,
+        temporaryDuration,
+        sunSchedule,
+        powerBehavior,
+        deviceInfo,
+        moonConfig,
+      ) = await (
+        supportedResourcePaths.contains(LyfiPaths.keepTemp.path)
+            ? lyfiApi.getKeepTemp(device, cancelToken: cancelToken)
+            : Future<int?>.value(null),
+
+        supportedResourcePaths.contains(LyfiPaths.fanMode.path)
+            ? lyfiApi.getFanMode(device, cancelToken: cancelToken)
+            : Future<FanMode?>.value(null),
+
+        supportedResourcePaths.contains(LyfiPaths.fanManual.path)
+            ? lyfiApi.getFanManualPower(device, cancelToken: cancelToken)
+            : Future<int?>.value(null),
+
+        lyfiApi.getCloudEnabled(device, cancelToken: cancelToken),
+        lyfiApi.getTemporaryDuration(device, cancelToken: cancelToken),
+        lyfiApi.getSunSchedule(device, cancelToken: cancelToken),
+        borneoApi.getPowerBehavior(device, cancelToken: cancelToken),
+        lyfiApi.getLyfiInfo(device, cancelToken: cancelToken),
+        lyfiApi.getMoonConfig(device, cancelToken: cancelToken),
+      ).wait;
+
+      if (isDisposed || !kernel.isBound(deviceId) || _device != device) {
+        return;
+      }
+
+      // ── Conditional fetches (depend on results from the batches above) ───────
+      if (lyfiStatus.mode == LyfiMode.sun) {
+        try {
+          final sunCurve = await lyfiApi.getSunCurve(device, cancelToken: cancelToken);
+          findProperty('sunCurve')?.value.notifyOfExternalUpdate(sunCurve);
+        } catch (e) {
+          logger?.w("Failed to get Sun curve: $e");
+        }
+      }
+
+      if (isDisposed || !kernel.isBound(deviceId) || _device != device) {
+        return;
+      }
+
+      // Update properties with actual values (like notifyOfExternalUpdate in Mozilla WebThing)
+      findProperty('on')?.value.notifyOfExternalUpdate(generalStatus.power);
+      findProperty('state')?.value.notifyOfExternalUpdate(lyfiStatus.state.name);
+      findProperty('mode')?.value.notifyOfExternalUpdate(lyfiStatus.mode.name);
+      findProperty('color')?.value.notifyOfExternalUpdate(lyfiStatus.currentColor);
+      findProperty('schedule')?.value.notifyOfExternalUpdate(schedule);
+      findProperty('acclimation')?.value.notifyOfExternalUpdate(acclimation);
+      findProperty('location')?.value.notifyOfExternalUpdate(location);
+      findProperty('correctionMethod')?.value.notifyOfExternalUpdate(correctionMethod.name);
+      findProperty('timezone')?.value.notifyOfExternalUpdate(generalStatus.timezone);
+      findProperty('timezoneEnabled')?.value.notifyOfExternalUpdate(timeZoneEnabled);
+      findProperty('timezoneOffset')?.value.notifyOfExternalUpdate(timeZoneOffset);
+
+      if (keepTemp != null) {
+        findProperty('keepTemp')?.value.notifyOfExternalUpdate(keepTemp);
+      }
+
+      findProperty('temperature')?.value.notifyOfExternalUpdate(lyfiStatus.temperature);
+
+      if (fanMode != null) {
+        findProperty('fanMode')?.value.notifyOfExternalUpdate(fanMode.name);
+      }
+
+      if (fanPower != null) {
+        findProperty('fanManualPower')?.value.notifyOfExternalUpdate(fanPower);
+      }
+
+      findProperty('cloudEnabled')?.value.notifyOfExternalUpdate(cloudEnabled);
+      findProperty('temporaryDuration')?.value.notifyOfExternalUpdate(temporaryDuration);
+      findProperty('sunSchedule')?.value.notifyOfExternalUpdate(sunSchedule);
+
+      // Moon properties (moonConfig already fetched in batch 2)
+      findProperty('moonConfig')?.value.notifyOfExternalUpdate(moonConfig);
+
+      if (moonConfig.enabled) {
+        try {
+          final moonSchedule = await lyfiApi.getMoonSchedule(device, cancelToken: cancelToken);
+          final moonStatus = await lyfiApi.getMoonStatus(device, cancelToken: cancelToken);
+          final moonCurve = await lyfiApi.getMoonCurve(device, cancelToken: cancelToken);
+          findProperty('moonCurve')?.value.notifyOfExternalUpdate(moonCurve);
+          findProperty('moonSchedule')?.value.notifyOfExternalUpdate(moonSchedule);
+          findProperty('moonStatus')?.value.notifyOfExternalUpdate(moonStatus);
+        } catch (e) {
+          logger?.w("Failed to get Moon curve: $e");
+        }
+      }
+
+      findProperty('currentTemp')?.value.notifyOfExternalUpdate(lyfiStatus.temperature ?? 25);
+      findProperty('lyfiDeviceInfo')?.value.notifyOfExternalUpdate(deviceInfo);
+      findProperty('unscheduled')?.value.notifyOfExternalUpdate(lyfiStatus.unscheduled);
+      findProperty('temporaryRemaining')?.value.notifyOfExternalUpdate(lyfiStatus.temporaryRemaining);
+      findProperty('fanPower')?.value.notifyOfExternalUpdate(lyfiStatus.fanPower ?? 0);
+      findProperty('manualColor')?.value.notifyOfExternalUpdate(lyfiStatus.manualColor);
+      findProperty('sunColor')?.value.notifyOfExternalUpdate(lyfiStatus.sunColor);
+      findProperty('acclimationEnabled')?.value.notifyOfExternalUpdate(lyfiStatus.acclimationEnabled);
+      findProperty('acclimationActivated')?.value.notifyOfExternalUpdate(lyfiStatus.acclimationActivated);
+      findProperty('cloudActivated')?.value.notifyOfExternalUpdate(lyfiStatus.cloudActivated);
+
+      // Update power measurement properties
+      findProperty('voltage')?.value.notifyOfExternalUpdate(generalStatus.powerVoltage);
+      findProperty('current')?.value.notifyOfExternalUpdate(lyfiStatus.powerCurrent);
+      findProperty('power')?.value.notifyOfExternalUpdate(
+        generalStatus.powerVoltage != null && lyfiStatus.powerCurrent != null
+            ? generalStatus.powerVoltage! * lyfiStatus.powerCurrent!
+            : null,
+      );
+
+      // Update power behavior property
+      findProperty('powerBehavior')?.value.notifyOfExternalUpdate(powerBehavior);
+
+      // Update timestamp property
+      findProperty('timestamp')?.value.notifyOfExternalUpdate(generalStatus.timestamp);
+
+      // Update status properties
+      findProperty('lyfiStatus')?.value.notifyOfExternalUpdate(lyfiStatus);
+      findProperty('generalDeviceInfo')?.value.notifyOfExternalUpdate(generalDeviceInfo);
+      findProperty('generalStatus')?.value.notifyOfExternalUpdate(generalStatus);
+    } finally {
+      _isBinding = false;
     }
-
-    findProperty('currentTemp')?.value.notifyOfExternalUpdate(lyfiStatus.temperature ?? 25);
-    findProperty('lyfiDeviceInfo')?.value.notifyOfExternalUpdate(deviceInfo);
-    findProperty('unscheduled')?.value.notifyOfExternalUpdate(lyfiStatus.unscheduled);
-    findProperty('temporaryRemaining')?.value.notifyOfExternalUpdate(lyfiStatus.temporaryRemaining);
-    findProperty('fanPower')?.value.notifyOfExternalUpdate(lyfiStatus.fanPower ?? 0);
-    findProperty('manualColor')?.value.notifyOfExternalUpdate(lyfiStatus.manualColor);
-    findProperty('sunColor')?.value.notifyOfExternalUpdate(lyfiStatus.sunColor);
-    findProperty('acclimationEnabled')?.value.notifyOfExternalUpdate(lyfiStatus.acclimationEnabled);
-    findProperty('acclimationActivated')?.value.notifyOfExternalUpdate(lyfiStatus.acclimationActivated);
-    findProperty('cloudActivated')?.value.notifyOfExternalUpdate(lyfiStatus.cloudActivated);
-
-    // Update power measurement properties
-    findProperty('voltage')?.value.notifyOfExternalUpdate(generalStatus.powerVoltage);
-    findProperty('current')?.value.notifyOfExternalUpdate(lyfiStatus.powerCurrent);
-    findProperty('power')?.value.notifyOfExternalUpdate(
-      generalStatus.powerVoltage != null && lyfiStatus.powerCurrent != null
-          ? generalStatus.powerVoltage! * lyfiStatus.powerCurrent!
-          : null,
-    );
-
-    // Update power behavior property
-    findProperty('powerBehavior')?.value.notifyOfExternalUpdate(powerBehavior);
-
-    // Update timestamp property
-    findProperty('timestamp')?.value.notifyOfExternalUpdate(generalStatus.timestamp);
-
-    // Update status properties
-    findProperty('lyfiStatus')?.value.notifyOfExternalUpdate(lyfiStatus);
-    findProperty('generalDeviceInfo')?.value.notifyOfExternalUpdate(generalDeviceInfo);
-    findProperty('generalStatus')?.value.notifyOfExternalUpdate(generalStatus);
   }
 
   /// Lightweight periodic sync - only check critical properties
@@ -416,6 +444,7 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
   // WotThing properties, causing incorrect UI data.
   bool _isSyncing = false;
   bool _isLowFreqSyncing = false;
+  bool _isBinding = false;
 
   BoundDevice? _tryGetBoundDevice() {
     if (!kernel.isBound(deviceId)) return null;
@@ -522,6 +551,7 @@ class LyfiThing extends BorneoThing implements WotWriteGuard, WotActionGuard {
     // Reset re-entrancy guards so a fresh sync can start after rebind.
     _isSyncing = false;
     _isLowFreqSyncing = false;
+    _isBinding = false;
     _clearDriverDataEventSubscriptions();
   }
 
