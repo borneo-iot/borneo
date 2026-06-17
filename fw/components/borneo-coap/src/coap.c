@@ -113,6 +113,8 @@ static int _coap_init(const struct drvfx_device*)
         goto _EXIT;
     }
 
+    coap_context_set_block_mode(_ctx, COAP_BLOCK_USE_LIBCOAP);
+
     _ep_udp = coap_new_endpoint(_ctx, &_serv_addr, COAP_PROTO_UDP);
     if (_ep_udp == NULL) {
         ESP_LOGE(TAG, "_ep_udp: coap_new_endpoint() failed");
