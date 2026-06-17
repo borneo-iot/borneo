@@ -72,8 +72,8 @@ Set<String> parseSupportedResourcePaths(String payload) {
 }
 
 Future<Set<String>> fetchSupportedResourcePaths(BorneoCoapClient client, {CancellationToken? cancelToken}) async {
-  final request = CoapRequest.get(BorneoPaths.wellKnownCore, confirmable: true);
-  final response = await client.send(request).asCancellable(cancelToken);
+  final request = CoapRequest.get(BorneoPaths.wellKnownCore, confirmable: false);
+  final response = await client.send(request, cancellationToken: cancelToken);
   if (!response.isSuccess) {
     throw StateError('Failed to get `${response.location}`');
   }

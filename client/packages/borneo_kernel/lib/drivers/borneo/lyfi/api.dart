@@ -35,6 +35,8 @@ class LyfiPaths {
   static final Uri keepTemp = Uri(path: '/borneo/lyfi/v1/thermal/temp/keep');
   static final Uri fanMode = Uri(path: '/borneo/lyfi/v1/thermal/fan/mode');
   static final Uri fanManual = Uri(path: '/borneo/lyfi/v1/thermal/fan/manual');
+
+  static final Uri fanPower = Uri(path: '/borneo/lyfi/v1/fan/power');
 }
 
 abstract class ILyfiDeviceApi extends IBorneoDeviceApi {

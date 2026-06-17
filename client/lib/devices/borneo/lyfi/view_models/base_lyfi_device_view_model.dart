@@ -49,9 +49,13 @@ abstract class BaseLyfiDeviceViewModel extends BaseBorneoDeviceViewModel {
   @protected
   Future<void> onInitialize() async {
     super.onInitialize();
-    final supportedResourcePaths = super.boundDevice!.device.data<LyfiCoapDriverData>().supportedResourcePaths;
-    this.hasFan = supportedResourcePaths.contains(LyfiPaths.fanMode.path);
-    this.hasTempSensor = supportedResourcePaths.contains(LyfiPaths.currentTemp.path);
+    if (super.boundDevice != null) {
+      final supportedResourcePaths = super.boundDevice!.device.data<LyfiCoapDriverData>().supportedResourcePaths;
+      this.hasFan =
+          supportedResourcePaths.contains(LyfiPaths.fanMode.path) ||
+          supportedResourcePaths.contains(LyfiPaths.fanPower.path);
+      this.hasTempSensor = supportedResourcePaths.contains(LyfiPaths.currentTemp.path);
+    }
 
     _subscribeToLyfiThing();
   }
