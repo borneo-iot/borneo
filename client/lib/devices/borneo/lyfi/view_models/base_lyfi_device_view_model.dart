@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:borneo_app/devices/borneo/view_models/base_borneo_device_view_model.dart';
+import 'package:borneo_kernel/drivers/borneo/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/api.dart';
-import 'package:borneo_kernel/drivers/borneo/lyfi/coap_driver_data.dart';
 import 'package:borneo_kernel/drivers/borneo/lyfi/models.dart';
 import 'package:borneo_wot/borneo/lyfi/wot_thing.dart';
 import 'package:flutter/material.dart';
@@ -49,8 +49,9 @@ abstract class BaseLyfiDeviceViewModel extends BaseBorneoDeviceViewModel {
   @protected
   Future<void> onInitialize() async {
     super.onInitialize();
-    if (super.boundDevice != null) {
-      final supportedResourcePaths = super.boundDevice!.device.data<LyfiCoapDriverData>().supportedResourcePaths;
+    if (super.boundDevice != null && super.boundDevice!.device.driverData is BorneoSupportedResourceDriverData) {
+      final resourceDriverData = super.boundDevice!.device.driverData as BorneoSupportedResourceDriverData;
+      final supportedResourcePaths = resourceDriverData.supportedResourcePaths;
       this.hasFan =
           supportedResourcePaths.contains(LyfiPaths.fanMode.path) ||
           supportedResourcePaths.contains(LyfiPaths.fanPower.path);
