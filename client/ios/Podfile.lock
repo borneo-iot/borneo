@@ -1,14 +1,12 @@
 PODS:
-  - app_review (1.0.1):
-    - Flutter
   - bonsoir_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
   - connectivity_plus (0.0.1):
     - Flutter
-  - ESPProvision (3.0.3):
-    - ESPProvision/Core (= 3.0.3)
-  - ESPProvision/Core (3.0.3):
+  - ESPProvision (3.1.0):
+    - ESPProvision/Core (= 3.1.0)
+  - ESPProvision/Core (3.1.0):
     - SwiftProtobuf (~> 1.22.0)
   - Flutter (1.0.0)
   - flutter_esp_ble_prov (0.0.1):
@@ -32,7 +30,7 @@ PODS:
     - Flutter
   - package_info_plus (0.4.5):
     - Flutter
-  - permission_handler_apple (9.3.0):
+  - permission_handler_apple (9.4.8):
     - Flutter
   - pointer_interceptor_ios (0.0.1):
     - Flutter
@@ -47,7 +45,6 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - app_review (from `.symlinks/plugins/app_review/ios`)
   - bonsoir_darwin (from `.symlinks/plugins/bonsoir_darwin/darwin`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - Flutter (from `Flutter`)
@@ -73,8 +70,6 @@ SPEC REPOS:
     - TOCropViewController
 
 EXTERNAL SOURCES:
-  app_review:
-    :path: ".symlinks/plugins/app_review/ios"
   bonsoir_darwin:
     :path: ".symlinks/plugins/bonsoir_darwin/darwin"
   connectivity_plus:
@@ -111,10 +106,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  app_review: f75e3250ef5694e328a5ecb3f4c445bc7b32d821
   bonsoir_darwin: 29c7ccf356646118844721f36e1de4b61f6cbd0e
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
-  ESPProvision: 2368cd8dabef74272f50c76290891a9674035929
+  ESPProvision: a24f5156726f9dd4444f856cbed895a7af50aaf9
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_esp_ble_prov: 6cff8544535225431d58e5577706ba2a1a106303
   flutter_keyboard_visibility: 4625131e43015dbbe759d9b20daaf77e0e3f6619
@@ -125,7 +119,7 @@ SPEC CHECKSUMS:
   image_picker_ios: e0ece4aa2a75771a7de3fa735d26d90817041326
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
-  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  permission_handler_apple: 92d754bbaa7361d436db2d6c3c1c2a0fdcec462e
   pointer_interceptor_ios: da06a662d5bfd329602b45b2ab41bc0fb5fdb0f0
   screen_corner_radius: 64e0abb3920228a5f91c0680fa890222970025bd
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb

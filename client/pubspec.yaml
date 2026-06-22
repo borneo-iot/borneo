@@ -69,7 +69,7 @@ dependencies:
   url_launcher: ^6.3.0
   package_info_plus: ^10.1.0
   image_picker: ^1.2.0
-  image_cropper: 12.2.1
+  image_cropper: 11.0.0
   flutter_svg: ^2.0.0
   shared_preferences: ^2.5.0
   datetime_picker_formfield_new: ^2.1.0
