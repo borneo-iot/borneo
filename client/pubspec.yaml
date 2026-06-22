@@ -80,7 +80,7 @@ dependencies:
   geolocator: ^14.0.0
   synchronized: ^3.4.0
   collection: ^1.18.0
-  connectivity_plus: 7.1.1
+  connectivity_plus: ^7.0.0
   polly_dart: ^0.0.8
   flutter_settings_ui: ^3.0.0
   flutter_debounce_throttle: ^2.4.5
