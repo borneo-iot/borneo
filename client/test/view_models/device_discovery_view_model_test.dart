@@ -271,6 +271,7 @@ void main() {
     // permission stub.
     DeviceDiscoveryViewModel makeVm({
       required bool mobile,
+      bool windows = false,
       Future<bool> Function()? permissions,
       FakeBleProvisioner? ble,
     }) {
@@ -283,7 +284,7 @@ void main() {
         candidatesStore,
         bleProv,
         FakeDeviceModuleRegistry(),
-        FakePlatformService(isAndroid: mobile, isIOS: false, isWindows: !mobile),
+        FakePlatformService(isAndroid: mobile, isIOS: false, isWindows: windows, isLinux: !mobile && !windows),
         globalEventBus: EventBus(),
         gt: FakeGettext(),
         logger: Logger(),
@@ -347,11 +348,14 @@ void main() {
       expect(vm.scanError.value, 'Bluetooth permissions are required to discover devices.');
     });
 
-    test('non‑mobile platforms skip BLE scan entirely', () async {
-      vm = makeVm(mobile: false, permissions: () async => true);
+    test('desktop platforms run BLE scan without mobile permissions', () async {
+      vm = makeVm(mobile: false, windows: false);
+      expect(vm.blePermissionList(), isEmpty);
+
       await vm.startDiscovery();
-      expect(bleProv.scanCalled, isFalse);
-      expect(vm.scanError.value, isNull);
+      await Future.delayed(Duration.zero);
+
+      expect(bleProv.scanCalled, isTrue);
     });
 
     test('startDiscovery shows BLE device even when device info fetch fails', () async {
@@ -387,7 +391,7 @@ void main() {
     });
 
     test('startDiscovery keeps global new-device candidates visible', () async {
-      vm = makeVm(mobile: false, permissions: () async => true);
+      vm = makeVm(mobile: false, windows: false, permissions: () async => true);
       deviceManager.emitNewDeviceFound(makeSupportedDevice());
 
       await vm.startDiscovery();

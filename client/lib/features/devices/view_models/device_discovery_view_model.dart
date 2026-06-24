@@ -50,8 +50,9 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
   bool get isDiscovering => _isRefreshing;
   int get remainingSeconds => _remainingSeconds;
 
-  // Platform check
+  // Platform checks
   bool get isMobile => _platformService.isMobile;
+  bool get supportsBleProvisioning => true;
 
   DeviceDiscoveryViewModel(
     this._logger,
@@ -126,7 +127,7 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
 
   /// Begins a UI discovery session. mDNS itself is managed globally by the
   /// app lifecycle; this method refreshes the page state and optionally runs
-  /// BLE discovery on mobile.
+  /// BLE discovery on supported platforms.
   Future<void> startDiscovery() async {
     if (_isRefreshing) return; // Already refreshing
 
@@ -169,10 +170,7 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
     try {
       // Ensure global mDNS discovery is active.
 
-      // Start BLE discovery (Mobile only) - run in background
-      if (isMobile) {
-        await _beginBleScan();
-      }
+      await _beginBleScan();
 
       if (_scanCancelToken.isCancelled) {
         return;
@@ -195,6 +193,10 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
 
   @visibleForTesting
   List<Permission> blePermissionList() {
+    if (!_platformService.isAndroid && !_platformService.isIOS) {
+      return const [];
+    }
+
     // iOS only has a single Bluetooth permission; Android requires location +
     // separate scan/connect permissions.  The list is kept in a method so tests
     // can verify the behaviour without mocking the plugin itself.
@@ -216,6 +218,10 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
     }
 
     final permissions = blePermissionList();
+    if (permissions.isEmpty) {
+      return true;
+    }
+
     final statuses = await permissions.request();
     _logger.d('BLE permission statuses: $statuses');
 

@@ -95,16 +95,6 @@ class _DeviceDiscoveryContent extends StatelessWidget {
 
     return Column(
       children: [
-        if (!vm.isMobile)
-          Container(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            padding: EdgeInsets.all(8),
-            width: double.infinity,
-            child: Text(
-              context.translate('Bluetooth is not supported on this system; device WiFi provisioning is unavailable.'),
-              style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
-            ),
-          ),
         ValueListenableBuilder<String?>(
           valueListenable: vm.scanError,
           builder: (context, error, child) {
@@ -290,17 +280,15 @@ class _DeviceDiscoveryContent extends StatelessWidget {
       onTap: isBusy
           ? null
           : () async {
-              if (vm.isMobile) {
-                await vm.stopDiscovery();
-                if (context.mounted) {
-                  await Navigator.push(
-                    context,
-                    platformPageRoute(builder: (_) => ProvisioningScreen(deviceName: bleName)),
-                  );
-                }
-                if (context.mounted) {
-                  await vm.startDiscovery();
-                }
+              await vm.stopDiscovery();
+              if (context.mounted) {
+                await Navigator.push(
+                  context,
+                  platformPageRoute(builder: (_) => ProvisioningScreen(deviceName: bleName)),
+                );
+              }
+              if (context.mounted) {
+                await vm.startDiscovery();
               }
             },
     );
