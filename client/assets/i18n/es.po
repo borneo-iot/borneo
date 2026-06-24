@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 02:18+0800\n"
+"POT-Creation-Date: 2026-06-24 18:43+0800\n"
 "PO-Revision-Date: 2026-01-03 14:43+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -55,9 +55,6 @@ msgstr "Acerca de"
 
 msgid "Acclimation"
 msgstr "Aclimatación"
-
-msgid "Adaptive"
-msgstr "Adaptativo"
 
 msgid "Add"
 msgstr "Agregar"
@@ -141,13 +138,6 @@ msgstr "Estado del dispositivo incorrecto"
 
 msgid "Before proceeding, please read the following warnings carefully:"
 msgstr "Antes de continuar, lea cuidadosamente las siguientes advertencias:"
-
-msgid ""
-"Bluetooth is not supported on this system; device WiFi provisioning is "
-"unavailable."
-msgstr ""
-"Bluetooth no es compatible con este sistema; el aprovisionamiento WiFi del "
-"dispositivo no está disponible."
 
 msgid "Bluetooth permissions are required to discover devices."
 msgstr "Se requieren permisos de Bluetooth para descubrir dispositivos."
@@ -258,6 +248,9 @@ msgstr "DIMM"
 
 msgid "Dark"
 msgstr "Oscuro"
+
+msgid "Delete"
+msgstr "Eliminar"
 
 msgid "Delete device"
 msgstr "Eliminar dispositivo"
@@ -516,9 +509,6 @@ msgstr "Falló al actualizar el comportamiento de energía"
 
 msgid "Failed to update temporary duration"
 msgstr "Falló al actualizar la duración temporal"
-
-msgid "Fan"
-msgstr "Ventilador"
 
 msgid "Fan mode"
 msgstr "Modo de ventilador"
@@ -1311,6 +1301,19 @@ msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
 msgstr "℉ (Fahrenheit)"
+
+#~ msgid "Adaptive"
+#~ msgstr "Adaptativo"
+
+#~ msgid ""
+#~ "Bluetooth is not supported on this system; device WiFi provisioning is "
+#~ "unavailable."
+#~ msgstr ""
+#~ "Bluetooth no es compatible con este sistema; el aprovisionamiento WiFi "
+#~ "del dispositivo no está disponible."
+
+#~ msgid "Fan"
+#~ msgstr "Ventilador"
 
 #~ msgid "Manufacturer"
 #~ msgstr "Fabricante"

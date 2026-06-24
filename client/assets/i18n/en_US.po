@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 02:18+0800\n"
+"POT-Creation-Date: 2026-06-24 18:43+0800\n"
 "PO-Revision-Date: 2025-06-01 20:57+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -55,9 +55,6 @@ msgstr "About"
 
 msgid "Acclimation"
 msgstr "Acclimation"
-
-msgid "Adaptive"
-msgstr "Adaptive"
 
 msgid "Add"
 msgstr "Add"
@@ -139,13 +136,6 @@ msgstr "Bad device state"
 
 msgid "Before proceeding, please read the following warnings carefully:"
 msgstr "Before proceeding, please read the following warnings carefully:"
-
-msgid ""
-"Bluetooth is not supported on this system; device WiFi provisioning is "
-"unavailable."
-msgstr ""
-"Bluetooth is not supported on this system; device WiFi provisioning is "
-"unavailable."
 
 msgid "Bluetooth permissions are required to discover devices."
 msgstr "Bluetooth permissions are required to discover devices."
@@ -253,6 +243,9 @@ msgstr "DIMM"
 
 msgid "Dark"
 msgstr "Dark"
+
+msgid "Delete"
+msgstr "Delete"
 
 msgid "Delete device"
 msgstr "Delete device"
@@ -507,9 +500,6 @@ msgstr "Failed to update power behavior"
 
 msgid "Failed to update temporary duration"
 msgstr "Failed to update temporary duration"
-
-msgid "Fan"
-msgstr "Fan"
 
 msgid "Fan mode"
 msgstr "Fan mode"
@@ -1287,6 +1277,19 @@ msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
 msgstr "℉ (Fahrenheit)"
+
+#~ msgid "Adaptive"
+#~ msgstr "Adaptive"
+
+#~ msgid ""
+#~ "Bluetooth is not supported on this system; device WiFi provisioning is "
+#~ "unavailable."
+#~ msgstr ""
+#~ "Bluetooth is not supported on this system; device WiFi provisioning is "
+#~ "unavailable."
+
+#~ msgid "Fan"
+#~ msgstr "Fan"
 
 #~ msgid "Manufacturer"
 #~ msgstr "Manufacturer"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 02:18+0800\n"
+"POT-Creation-Date: 2026-06-24 18:43+0800\n"
 "PO-Revision-Date: 2024-12-22 15:38+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -54,9 +54,6 @@ msgstr "关于"
 
 msgid "Acclimation"
 msgstr "适应模式"
-
-msgid "Adaptive"
-msgstr "智能自适应"
 
 msgid "Add"
 msgstr "添加"
@@ -135,11 +132,6 @@ msgstr "设备状态异常"
 
 msgid "Before proceeding, please read the following warnings carefully:"
 msgstr "在继续之前，请仔细阅读以下警告："
-
-msgid ""
-"Bluetooth is not supported on this system; device WiFi provisioning is "
-"unavailable."
-msgstr "此系统不支持蓝牙；设备 WiFi 配置不可用。"
 
 msgid "Bluetooth permissions are required to discover devices."
 msgstr "发现设备需要蓝牙权限。"
@@ -246,6 +238,9 @@ msgstr "调光"
 
 msgid "Dark"
 msgstr "暗色"
+
+msgid "Delete"
+msgstr "删除"
 
 msgid "Delete device"
 msgstr "删除设备"
@@ -495,9 +490,6 @@ msgstr "更新电源行为失败"
 
 msgid "Failed to update temporary duration"
 msgstr "更新临时持续时间失败"
-
-msgid "Fan"
-msgstr "风扇"
 
 msgid "Fan mode"
 msgstr "风扇模式"
@@ -1054,6 +1046,7 @@ msgstr "经过此操作以后设备需要重新进行配置。"
 msgid "The device will restart automatically after the update is complete."
 msgstr "更新完成后设备将自动重启。"
 
+#, python-brace-format
 msgid ""
 "The time {0} is before the current point. Add it today or on the next day?"
 msgstr "时间 {0} 位于当前时间点之前。是把它作为今日时间还是第二日的时间？"
@@ -1262,6 +1255,17 @@ msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
 msgstr "℉（华氏度）"
+
+#~ msgid "Adaptive"
+#~ msgstr "智能自适应"
+
+#~ msgid ""
+#~ "Bluetooth is not supported on this system; device WiFi provisioning is "
+#~ "unavailable."
+#~ msgstr "此系统不支持蓝牙；设备 WiFi 配置不可用。"
+
+#~ msgid "Fan"
+#~ msgstr "风扇"
 
 #~ msgid "Manufacturer"
 #~ msgstr "制造商"

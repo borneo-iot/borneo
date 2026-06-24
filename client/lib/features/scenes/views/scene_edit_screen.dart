@@ -264,7 +264,7 @@ class _SceneEditBodyState extends ConsumerState<_SceneEditBody> {
       TextButton(
         key: const Key('btn_delete_scene'),
         onPressed: isBusy ? null : () => _onDeletePressed(context),
-        child: Text('Delete'),
+        child: Text(context.translate('Delete')),
       ),
     ];
   }

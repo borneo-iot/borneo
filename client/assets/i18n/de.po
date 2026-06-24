@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 02:18+0800\n"
+"POT-Creation-Date: 2026-06-24 18:43+0800\n"
 "PO-Revision-Date: 2025-09-09 14:10+0800\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -55,9 +55,6 @@ msgstr "Über"
 
 msgid "Acclimation"
 msgstr "Akklimatisierung"
-
-msgid "Adaptive"
-msgstr "Adaptiv"
 
 msgid "Add"
 msgstr "Hinzufügen"
@@ -146,13 +143,6 @@ msgid "Before proceeding, please read the following warnings carefully:"
 msgstr ""
 "Bevor Sie fortfahren, lesen Sie bitte die folgenden Warnungen sorgfältig "
 "durch:"
-
-msgid ""
-"Bluetooth is not supported on this system; device WiFi provisioning is "
-"unavailable."
-msgstr ""
-"Bluetooth wird auf diesem System nicht unterstützt; WLAN-Bereitstellung für "
-"Geräte ist nicht verfügbar."
 
 msgid "Bluetooth permissions are required to discover devices."
 msgstr "Bluetooth-Berechtigungen sind erforderlich, um Geräte zu finden."
@@ -263,6 +253,9 @@ msgstr "DIMM"
 
 msgid "Dark"
 msgstr "Dunkel"
+
+msgid "Delete"
+msgstr "Löschen"
 
 msgid "Delete device"
 msgstr "Gerät löschen"
@@ -520,9 +513,6 @@ msgstr "Fehler beim Aktualisieren des Stromverhaltens"
 
 msgid "Failed to update temporary duration"
 msgstr "Fehler beim Aktualisieren der temporären Dauer"
-
-msgid "Fan"
-msgstr "Lüfter"
 
 msgid "Fan mode"
 msgstr "Lüftermodus"
@@ -1092,8 +1082,8 @@ msgstr "Das Gerät wird nach Abschluss des Updates automatisch neu gestartet."
 msgid ""
 "The time {0} is before the current point. Add it today or on the next day?"
 msgstr ""
-"Die Zeit {0} liegt vor dem aktuellen Zeitpunkt. Möchten Sie sie heute oder am "
-"nächsten Tag hinzufügen?"
+"Die Zeit {0} liegt vor dem aktuellen Zeitpunkt. Möchten Sie sie heute oder "
+"am nächsten Tag hinzufügen?"
 
 msgid "The update may take several minutes. Do not close this app."
 msgstr "Das Update kann einige Minuten dauern. Schließen Sie diese App nicht."
@@ -1313,6 +1303,19 @@ msgstr "℉"
 
 msgid "℉ (Fahrenheit)"
 msgstr "℉ (Fahrenheit)"
+
+#~ msgid "Adaptive"
+#~ msgstr "Adaptiv"
+
+#~ msgid ""
+#~ "Bluetooth is not supported on this system; device WiFi provisioning is "
+#~ "unavailable."
+#~ msgstr ""
+#~ "Bluetooth wird auf diesem System nicht unterstützt; WLAN-Bereitstellung "
+#~ "für Geräte ist nicht verfügbar."
+
+#~ msgid "Fan"
+#~ msgstr "Lüfter"
 
 #~ msgid "Manufacturer"
 #~ msgstr "Hersteller"

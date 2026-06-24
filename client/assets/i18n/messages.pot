@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 02:18+0800\n"
+"POT-Creation-Date: 2026-06-24 18:43+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,9 +54,6 @@ msgid "About"
 msgstr ""
 
 msgid "Acclimation"
-msgstr ""
-
-msgid "Adaptive"
 msgstr ""
 
 msgid "Add"
@@ -132,11 +129,6 @@ msgid "Bad device state"
 msgstr ""
 
 msgid "Before proceeding, please read the following warnings carefully:"
-msgstr ""
-
-msgid ""
-"Bluetooth is not supported on this system; device WiFi provisioning is "
-"unavailable."
 msgstr ""
 
 msgid "Bluetooth permissions are required to discover devices."
@@ -243,6 +235,9 @@ msgid "DIMM"
 msgstr ""
 
 msgid "Dark"
+msgstr ""
+
+msgid "Delete"
 msgstr ""
 
 msgid "Delete device"
@@ -492,9 +487,6 @@ msgid "Failed to update power behavior"
 msgstr ""
 
 msgid "Failed to update temporary duration"
-msgstr ""
-
-msgid "Fan"
 msgstr ""
 
 msgid "Fan mode"

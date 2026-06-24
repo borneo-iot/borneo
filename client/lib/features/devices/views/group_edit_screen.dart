@@ -141,7 +141,11 @@ class _GroupEditBodyState extends ConsumerState<_GroupEditBody> {
     if (widget.args.isCreation) return const [];
 
     return [
-      TextButton(key: const Key('btn_delete_group'), onPressed: () => _onDeletePressed(context), child: Text('Delete')),
+      TextButton(
+        key: const Key('btn_delete_group'),
+        onPressed: () => _onDeletePressed(context),
+        child: Text(context.translate('Delete')),
+      ),
     ];
   }
 
