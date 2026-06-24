@@ -22,7 +22,7 @@ import 'package:borneo_app/features/devices/models/device_entity.dart';
 import 'package:borneo_app/features/devices/models/device_module_metadata.dart';
 import 'package:lw_wot/wot.dart';
 import 'package:cancellation_token/cancellation_token.dart';
-import 'package:flutter_esp_ble_prov/flutter_esp_ble_prov.dart';
+import 'package:esp_ble_prov_dart/esp_ble_prov_dart.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
 import '../mocks/mocks.dart';
 
@@ -191,7 +191,7 @@ class FakeBleProvisioner implements IBleProvisioner {
   }
 
   @override
-  Future<List<WifiNetwork>> scanWifiNetworks(
+  Future<List<WiFiNetwork>> scanWifiNetworks(
     String deviceName, {
     String pop = '',
     CancellationToken? cancelToken,
@@ -371,10 +371,11 @@ void main() {
 
     test('startDiscovery updates BLE device display name when device info fetch succeeds', () async {
       final ble = FakeBleProvisioner()
-        ..scanImpl = (String prefix, {CancellationToken? cancelToken}) async =>
-            ['BOPROV_63541C']
-              ..fetchImpl = ({required String deviceName, CancellationToken? cancelToken}) async =>
-                  makeDeviceInfo(name: 'Borneo Controller');
+        ..scanImpl = (String prefix, {CancellationToken? cancelToken}) async {
+          return ['BOPROV_63541C'];
+        }
+        ..fetchImpl = ({required String deviceName, CancellationToken? cancelToken}) async =>
+            makeDeviceInfo(name: 'Borneo Controller');
 
       vm = makeVm(mobile: true, permissions: () async => true, ble: ble);
       await vm.startDiscovery();
@@ -384,6 +385,7 @@ void main() {
       expect(vm.discoverableDevices.value.single.id, 'BOPROV_63541C');
       expect(vm.discoverableDevices.value.single.name, 'Borneo Controller');
     });
+
     test('startDiscovery keeps global new-device candidates visible', () async {
       vm = makeVm(mobile: false, permissions: () async => true);
       deviceManager.emitNewDeviceFound(makeSupportedDevice());

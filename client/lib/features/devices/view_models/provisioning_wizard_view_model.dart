@@ -8,7 +8,7 @@ import 'package:borneo_app/features/devices/models/events.dart';
 import 'package:borneo_app/features/devices/providers/new_device_candidates_store.dart';
 import 'package:borneo_app/shared/view_models/abstract_screen_view_model.dart';
 import 'package:cancellation_token/cancellation_token.dart';
-import 'package:flutter_esp_ble_prov/flutter_esp_ble_prov.dart';
+import 'package:esp_ble_prov_dart/esp_ble_prov_dart.dart';
 
 /// Maximum number of seconds to wait for a registered device to appear on the
 /// network after successful WiFi connection.  This is only used for the UI
@@ -47,8 +47,8 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
   String? _provisionedFingerprint;
   bool _isAutoAdding = false;
 
-  List<WifiNetwork>? _networks;
-  List<WifiNetwork>? get networks => _networks;
+  List<WiFiNetwork>? _networks;
+  List<WiFiNetwork>? get networks => _networks;
 
   String? _selectedSsid;
   String? get selectedSsid => _selectedSsid;

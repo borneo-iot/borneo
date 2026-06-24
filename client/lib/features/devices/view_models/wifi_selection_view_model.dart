@@ -2,15 +2,15 @@ import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:borneo_app/core/services/devices/ble_provisioner.dart';
 import 'package:borneo_app/shared/view_models/abstract_screen_view_model.dart';
 import 'package:cancellation_token/cancellation_token.dart';
-import 'package:flutter_esp_ble_prov/flutter_esp_ble_prov.dart';
+import 'package:esp_ble_prov_dart/esp_ble_prov_dart.dart';
 
 class WifiSelectionViewModel extends AbstractScreenViewModel {
   final IBleProvisioner _bleProvisioner;
   final String deviceName;
   final IAppNotificationService? notificationService;
 
-  List<WifiNetwork>? _networks;
-  List<WifiNetwork>? get networks => _networks;
+  List<WiFiNetwork>? _networks;
+  List<WiFiNetwork>? get networks => _networks;
   final CancellationToken _scanCancelToken = CancellationToken();
 
   WifiSelectionViewModel(

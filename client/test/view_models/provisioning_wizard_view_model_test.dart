@@ -9,7 +9,7 @@ import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel_abstractions/kernel.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:event_bus/event_bus.dart';
-import 'package:flutter_esp_ble_prov/flutter_esp_ble_prov.dart';
+import 'package:esp_ble_prov_dart/esp_ble_prov_dart.dart';
 import 'package:flutter_test/flutter_test.dart' hide EventDispatcher;
 import 'package:logger/logger.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -47,7 +47,7 @@ class ProvisioningBleProvisioner implements IBleProvisioner {
   Future<List<String>> scanBleDevices(String prefix, {CancellationToken? cancelToken}) async => [];
 
   @override
-  Future<List<WifiNetwork>> scanWifiNetworks(
+  Future<List<WiFiNetwork>> scanWifiNetworks(
     String deviceName, {
     String pop = '',
     CancellationToken? cancelToken,

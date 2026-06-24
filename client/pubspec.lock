@@ -65,6 +65,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  bluez:
+    dependency: transitive
+    description:
+      name: bluez
+      sha256: "61a7204381925896a374301498f2f5399e59827c6498ae1e924aaa598751b545"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.3"
   bonsoir:
     dependency: "direct main"
     description:
@@ -344,6 +352,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  cryptography:
+    dependency: transitive
+    description:
+      name: cryptography
+      sha256: "3eda3029d34ec9095a27a198ac9785630fe525c0eb6a49f3d575272f8e792ef0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.9.0"
   csslib:
     dependency: transitive
     description:
@@ -408,6 +424,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.8"
+  esp_ble_prov_dart:
+    dependency: "direct main"
+    description:
+      name: esp_ble_prov_dart
+      sha256: "77bb8c61e49927db99c8eda439121a68f19ba875db1eb6041a4c482b04834112"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   event_bus:
     dependency: "direct main"
     description:
@@ -546,13 +570,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
-  flutter_esp_ble_prov:
-    dependency: "direct main"
-    description:
-      path: "3rd-party/flutter_esp_ble_prov"
-      relative: true
-    source: path
-    version: "0.2.0"
   flutter_gettext:
     dependency: "direct main"
     description:
@@ -707,6 +724,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.0"
+  flutter_web_bluetooth:
+    dependency: transitive
+    description:
+      name: flutter_web_bluetooth
+      sha256: ad26a1b3fef95b86ea5f63793b9a0cdc1a33490f35d754e4e711046cae3ebbf8
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -1450,6 +1475,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  protobuf:
+    dependency: transitive
+    description:
+      name: protobuf
+      sha256: "75ec242d22e950bdcc79ee38dd520ce4ee0bc491d7fadc4ea47694604d22bf06"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.0"
   provider:
     dependency: "direct main"
     description:
@@ -1775,6 +1808,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  universal_ble:
+    dependency: transitive
+    description:
+      name: universal_ble
+      sha256: "8325ca9f5cce2fba2b4efef74a4fcfe7144f303b409d6fc6ed16197b00a1a241"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   universal_io:
     dependency: transitive
     description:
@@ -1992,5 +2033,5 @@ packages:
     source: hosted
     version: "2.2.4"
 sdks:
-  dart: ">=3.10.4 <3.22.0"
+  dart: ">=3.10.3 <3.22.0"
   flutter: "3.38.10"

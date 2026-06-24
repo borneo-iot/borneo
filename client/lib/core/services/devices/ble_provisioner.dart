@@ -1,72 +1,135 @@
 import 'dart:async';
 import 'dart:typed_data';
+
 import 'package:borneo_common/exceptions.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
 import 'package:borneo_kernel_abstractions/models/prov.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:cbor/simple.dart' as simple_cbor;
-import 'package:flutter_esp_ble_prov/flutter_esp_ble_prov.dart';
+import 'package:esp_ble_prov_dart/esp_ble_prov_dart.dart';
 
 abstract class IBleProvisioner {
   Future<List<String>> scanBleDevices(String prefix, {CancellationToken? cancelToken});
-  Future<List<WifiNetwork>> scanWifiNetworks(String deviceName, {String pop = '', CancellationToken? cancelToken});
+  Future<List<WiFiNetwork>> scanWifiNetworks(String deviceName, {String pop = '', CancellationToken? cancelToken});
   Future<void> provisionWifi(String deviceName, String ssid, String password, {CancellationToken? cancelToken});
   Future<GeneralBorneoDeviceInfo> fetchDeviceInfo({required String deviceName, CancellationToken? cancelToken});
 }
 
 class BleProvisioner implements IBleProvisioner {
-  final _plugin = FlutterEspBleProv(defaultSecurity: SecurityLevel.unsecure);
+  static const _customInfoEndpoint = 'cbor';
 
   BleProvisioner();
 
   @override
   Future<List<String>> scanBleDevices(String prefix, {CancellationToken? cancelToken}) async {
-    // The scanBleDevices returns List<String> which are device names properly prefixed.
-    final devices = await _plugin.scanBleDevices(prefix).asCancellable(cancelToken);
-    return devices;
+    final provisioner = EspBleProvisioner(
+      deviceNamePrefix: prefix,
+      security: Security1(pop: ''),
+    );
+    final devices = await provisioner.scanDevices().asCancellable(cancelToken);
+    return devices.map((device) => device.name ?? device.id).toList(growable: false);
   }
 
   @override
-  Future<List<WifiNetwork>> scanWifiNetworks(
+  Future<List<WiFiNetwork>> scanWifiNetworks(
     String deviceName, {
     String pop = '',
     CancellationToken? cancelToken,
   }) async {
-    // According to documentation, this returns List<String> of SSIDs.
-    // We pass empty string as proofOfPossession for devices without PoP.
-    return await _plugin.scanWifiNetworksWithDetails(deviceName, pop).asCancellable(cancelToken);
+    return _withProvisioner(
+      deviceName: deviceName,
+      pop: pop,
+      cancelToken: cancelToken,
+      action: (provisioner) => provisioner.scan(),
+    );
   }
 
   @override
   Future<void> provisionWifi(String deviceName, String ssid, String password, {CancellationToken? cancelToken}) async {
-    final result = await _plugin.provisionWifi(deviceName, '', ssid, password).asCancellable(cancelToken);
-    if (result != true) {
-      throw StateError('Provisioning failed');
-    }
+    await _withProvisioner(
+      deviceName: deviceName,
+      cancelToken: cancelToken,
+      action: (provisioner) => provisioner.sendCredentials(WiFiConfig(ssid: ssid, passphrase: password)),
+    );
   }
 
   @override
   Future<GeneralBorneoDeviceInfo> fetchDeviceInfo({required String deviceName, CancellationToken? cancelToken}) async {
     final request = ProvRequest(method: 1, id: DateTime.now().millisecondsSinceEpoch % 0xFFFFFF);
     final requestBuf = Uint8List.fromList(simple_cbor.cbor.encode(request.toMap()));
-    final repBytes = await _plugin
-        .sendDataToCustomEndPoint(deviceName, '', 'cbor', requestBuf)
-        .asCancellable(cancelToken);
-    if (repBytes != null) {
-      final repMap = simple_cbor.cbor.decode(repBytes);
-      final rep = ProvResponse.fromMap(repMap);
-      if (rep.id != request.id) {
-        throw InvalidDataException(message: 'Unmatched package ID: ${request.id}');
-      }
-      if (rep.errorCode != 0) {
-        throw InvalidDataException(message: 'Failed to get device info, error=${rep.errorCode}');
-      }
-      if (rep.results == null) {
-        throw InvalidDataException(message: 'Failed to get device info: `results` cannot be null');
-      }
-      return GeneralBorneoDeviceInfo.fromMap(rep.results);
-    } else {
-      throw InvalidDataException(message: 'Failed to parse device CBOR info');
+    final repBytes = await _withProvisioner(
+      deviceName: deviceName,
+      cancelToken: cancelToken,
+      action: (provisioner) async {
+        provisioner.registerCustomEndpoint(_customInfoEndpoint);
+        await provisioner.writeValueToEndpoint(_customInfoEndpoint, requestBuf).asCancellable(cancelToken);
+        await Future<void>.delayed(const Duration(milliseconds: 200)).asCancellable(cancelToken);
+        return provisioner.readValueFromEndpoint(_customInfoEndpoint).asCancellable(cancelToken);
+      },
+    );
+
+    final repMap = simple_cbor.cbor.decode(repBytes);
+    final rep = ProvResponse.fromMap(repMap);
+    if (rep.id != request.id) {
+      throw InvalidDataException(message: 'Unmatched package ID: ${request.id}');
     }
+    if (rep.errorCode != 0) {
+      throw InvalidDataException(message: 'Failed to get device info, error=${rep.errorCode}');
+    }
+    if (rep.results == null) {
+      throw InvalidDataException(message: 'Failed to get device info: `results` cannot be null');
+    }
+    return GeneralBorneoDeviceInfo.fromMap(rep.results);
+  }
+
+  Future<T> _withProvisioner<T>({
+    required String deviceName,
+    String pop = '',
+    CancellationToken? cancelToken,
+    required Future<T> Function(EspBleProvisioner provisioner) action,
+  }) async {
+    final securityCandidates = _securityCandidates(pop);
+    Object? lastError;
+    StackTrace? lastStackTrace;
+
+    for (final security in securityCandidates) {
+      final provisioner = EspBleProvisioner(deviceNamePrefix: deviceName, security: security);
+      try {
+        final devices = await provisioner.scanDevices().asCancellable(cancelToken);
+        final device = _findDeviceByName(devices, deviceName);
+        if (device == null) {
+          throw StateError('BLE device is not available: $deviceName');
+        }
+        await provisioner.connect(device: device).asCancellable(cancelToken);
+        await provisioner.establishSession().asCancellable(cancelToken);
+        return await action(provisioner).asCancellable(cancelToken);
+      } catch (error, stackTrace) {
+        lastError = error;
+        lastStackTrace = stackTrace;
+      } finally {
+        await provisioner.disconnect();
+      }
+    }
+
+    if (lastError != null) {
+      Error.throwWithStackTrace(lastError, lastStackTrace!);
+    }
+    throw StateError('No BLE provisioning security candidates available for $deviceName');
+  }
+
+  EspBleDevice? _findDeviceByName(List<EspBleDevice> devices, String deviceName) {
+    for (final device in devices) {
+      if (device.name == deviceName) {
+        return device;
+      }
+    }
+    return null;
+  }
+
+  List<Security> _securityCandidates(String pop) {
+    if (pop.isNotEmpty) {
+      return [Security1(pop: pop)];
+    }
+    return [Security1(pop: ''), const Security0()];
   }
 }
