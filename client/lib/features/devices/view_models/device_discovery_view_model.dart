@@ -250,23 +250,27 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
   Future<void> _startBleScan() async {
     try {
       final devices = await _bleProvisioner.scanBleDevices('BOPROV_', cancelToken: _scanCancelToken);
-      // Instead of publishing raw names immediately, resolve each one and only
-      // add to the unprovisioned list when we have a display name (or fall back
-      // to the BLE name if resolution fails).  This avoids flicker in the UI.
       _unprovisioned.clear();
-      for (var name in devices) {
+      _unprovisioned.addAll(devices);
+      _updateDiscoverableList();
+
+      for (final name in devices) {
         if (_scanCancelToken.isCancelled) {
           break;
         }
-        _logger.d('Fetching device info for BLE device: `$name`');
-        final info = await _bleProvisioner.fetchDeviceInfo(deviceName: name, cancelToken: _scanCancelToken);
-        // require successful info; if name blank treat as failure too
-        if (info.name.isNotEmpty) {
-          _resolvedDeviceNames[name] = info.name;
-          _unprovisioned.add(name);
-          _updateDiscoverableList();
-        } else {
-          _logger.w('Resolved info had empty name for $name, skipping');
+        try {
+          _logger.d('Fetching device info for BLE device: `$name`');
+          final info = await _bleProvisioner.fetchDeviceInfo(deviceName: name, cancelToken: _scanCancelToken);
+          if (info.name.isNotEmpty) {
+            _resolvedDeviceNames[name] = info.name;
+            _updateDiscoverableList();
+          } else {
+            _logger.w('Resolved info had empty name for $name, keeping BLE name');
+          }
+        } on CancelledException {
+          rethrow;
+        } catch (e, stackTrace) {
+          _logger.w('Failed to resolve BLE device info for $name; keeping BLE name', error: e, stackTrace: stackTrace);
         }
       }
     } on CancelledException {

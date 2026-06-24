@@ -177,7 +177,9 @@ class FakeDeviceManager implements IDeviceManager {
 
 class FakeBleProvisioner implements IBleProvisioner {
   bool scanCalled = false;
+  bool fetchCalled = false;
   Future<List<String>> Function(String prefix, {CancellationToken? cancelToken})? scanImpl;
+  Future<GeneralBorneoDeviceInfo> Function({required String deviceName, CancellationToken? cancelToken})? fetchImpl;
 
   @override
   Future<List<String>> scanBleDevices(String prefix, {CancellationToken? cancelToken}) async {
@@ -203,8 +205,11 @@ class FakeBleProvisioner implements IBleProvisioner {
   }
 
   @override
-  Future<GeneralBorneoDeviceInfo> fetchDeviceInfo({required String deviceName, CancellationToken? cancelToken}) {
-    // TODO: implement fetchDeviceInfo
+  Future<GeneralBorneoDeviceInfo> fetchDeviceInfo({required String deviceName, CancellationToken? cancelToken}) async {
+    fetchCalled = true;
+    if (fetchImpl != null) {
+      return await fetchImpl!(deviceName: deviceName, cancelToken: cancelToken);
+    }
     throw UnimplementedError();
   }
 }
@@ -212,6 +217,26 @@ class FakeBleProvisioner implements IBleProvisioner {
 class FakeDeviceModuleRegistry extends IDeviceModuleRegistry {
   @override
   UnmodifiableMapView<String, DeviceModuleMetadata> get metaModules => UnmodifiableMapView({});
+}
+
+GeneralBorneoDeviceInfo makeDeviceInfo({String name = 'Resolved Device'}) {
+  return GeneralBorneoDeviceInfo.fromMap({
+    'id': 'device-id-1',
+    'compatible': 'lyfi',
+    'name': name,
+    'serno': 'fp-1',
+    'pid': 'pid-1',
+    'productMode': 0,
+    'transport': 0,
+    'hasBT': true,
+    'hasWifi': true,
+    'hasMqtt': false,
+    'vendor': 'BST',
+    'model': 'Test Model',
+    'hwVer': '1.0.0',
+    'fwVer': '1.0.0',
+    'isCE': true,
+  });
 }
 
 SupportedDeviceDescriptor makeSupportedDevice({String fingerprint = 'fp-1', String name = 'Candidate'}) {
@@ -329,6 +354,36 @@ void main() {
       expect(vm.scanError.value, isNull);
     });
 
+    test('startDiscovery shows BLE device even when device info fetch fails', () async {
+      final ble = FakeBleProvisioner()
+        ..scanImpl = (String prefix, {CancellationToken? cancelToken}) async => ['BOPROV_63541C'];
+
+      vm = makeVm(mobile: true, permissions: () async => true, ble: ble);
+      await vm.startDiscovery();
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
+
+      expect(ble.fetchCalled, isTrue);
+      expect(vm.discoverableDevices.value.map((device) => device.id), contains('BOPROV_63541C'));
+      expect(vm.discoverableDevices.value.single.name, 'BOPROV_63541C');
+      expect(vm.scanError.value, isNull);
+    });
+
+    test('startDiscovery updates BLE device display name when device info fetch succeeds', () async {
+      final ble = FakeBleProvisioner()
+        ..scanImpl = (String prefix, {CancellationToken? cancelToken}) async =>
+            ['BOPROV_63541C']
+              ..fetchImpl = ({required String deviceName, CancellationToken? cancelToken}) async =>
+                  makeDeviceInfo(name: 'Borneo Controller');
+
+      vm = makeVm(mobile: true, permissions: () async => true, ble: ble);
+      await vm.startDiscovery();
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
+
+      expect(vm.discoverableDevices.value.single.id, 'BOPROV_63541C');
+      expect(vm.discoverableDevices.value.single.name, 'Borneo Controller');
+    });
     test('startDiscovery keeps global new-device candidates visible', () async {
       vm = makeVm(mobile: false, permissions: () async => true);
       deviceManager.emitNewDeviceFound(makeSupportedDevice());

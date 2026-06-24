@@ -53,6 +53,21 @@ class BleConnector(val device: BluetoothDevice, scanResult: ScanResult) {
 /**
  * Combined context from a method channel call from the Flutter side.
  */
+class ResultGuard(private val result: Result) {
+  private var completed = false
+
+  fun success(value: Any?) {
+    if (completed) return
+    completed = true
+    result.success(value)
+  }
+
+  fun error(code: String, message: String?, details: Any?) {
+    if (completed) return
+    completed = true
+    result.error(code, message, details)
+  }
+}
 class CallContext(val call: MethodCall, val result: Result) {
 
   /**
@@ -220,22 +235,64 @@ class Boss {
    * Connect to a named device with proofOfPossession string, and once connected, execute the
    * callback.
    */
-  fun connect(conn: BleConnector, proofOfPossession: String, security: String?, onConnectCallback: (ESPDevice) -> Unit) {
+  fun connect(
+    conn: BleConnector,
+    proofOfPossession: String,
+    security: String?,
+    onFailureCallback: (String, String, String?) -> Unit,
+    onConnectCallback: (ESPDevice) -> Unit
+  ) {
     val securityType = parseSecurity(security)
     val esp = espManager.createESPDevice(ESPConstants.TransportType.TRANSPORT_BLE, securityType)
-    EventBus.getDefault().register(object {
+    val handler = Handler(Looper.getMainLooper())
+    var completed = false
+    lateinit var subscriber: Any
+    lateinit var timeoutRunnable: Runnable
+
+    fun finishFailure(code: String, message: String, details: String? = null) {
+      if (completed) return
+      completed = true
+      handler.removeCallbacks(timeoutRunnable)
+      try {
+        EventBus.getDefault().unregister(subscriber)
+      } catch (_: java.lang.Exception) {
+      }
+      try {
+        esp.disconnectDevice()
+      } catch (_: java.lang.Exception) {
+      }
+      onFailureCallback(code, message, details)
+    }
+
+    timeoutRunnable = Runnable {
+      finishFailure("E_CONNECT_TIMEOUT", "BLE connection timed out", "Device: ${conn.device.name}")
+    }
+
+    subscriber = object {
       @Subscribe(threadMode = ThreadMode.MAIN)
       fun onEvent(event: DeviceConnectionEvent) {
         d("bus event $event ${event.eventType}")
         when (event.eventType) {
           ESPConstants.EVENT_DEVICE_CONNECTED -> {
+            if (completed) return
+            completed = true
+            handler.removeCallbacks(timeoutRunnable)
             EventBus.getDefault().unregister(this)
             esp.proofOfPossession = proofOfPossession
             onConnectCallback(esp)
           }
+          ESPConstants.EVENT_DEVICE_CONNECTION_FAILED -> {
+            finishFailure("E_CONNECT_FAILED", "BLE connection failed", "Device: ${conn.device.name}")
+          }
+          ESPConstants.EVENT_DEVICE_DISCONNECTED -> {
+            d("Ignoring disconnected event while waiting for BLE connection")
+          }
         }
       }
-    })
+    }
+
+    EventBus.getDefault().register(subscriber)
+    handler.postDelayed(timeoutRunnable, 30000)
     esp.connectBLEDevice(conn.device, conn.primaryServiceUuid)
   }
 
@@ -288,6 +345,7 @@ class BleScanManager(boss: Boss) : ActionManager(boss) {
   override fun call(ctx: CallContext) {
     boss.d("searchBleEspDevices: start")
     val prefix = ctx.arg("prefix") ?: return
+    boss.devices.clear()
 
     boss.espManager.searchBleEspDevices(prefix, object : BleScanListener {
       override fun scanStartFailed() {
@@ -318,47 +376,103 @@ class BleScanManager(boss: Boss) : ActionManager(boss) {
 
 class WifiScanManager(boss: Boss) : ActionManager(boss) {
   override fun call(ctx: CallContext) {
+    val guardedResult = ResultGuard(ctx.result)
     val name = ctx.arg("deviceName") ?: return
     val proofOfPossession = ctx.arg("proofOfPossession") ?: return
     val security = ctx.call.argument<String>("security")
-    val conn = boss.connector(name) ?: return
+    val conn = boss.connector(name)
+    if (conn == null) {
+      guardedResult.error("E_DEVICE_NOT_FOUND", "BLE device is not available", "Device: $name")
+      return
+    }
+    boss.networks.clear()
     boss.d("esp connect: start")
-    boss.connect(conn, proofOfPossession, security) { esp ->
+    boss.connect(conn, proofOfPossession, security, guardedResult::error) { esp ->
       boss.d("scanNetworks: start")
+      val handler = Handler(Looper.getMainLooper())
+      var completed = false
+      lateinit var timeoutRunnable: Runnable
+
+      fun finish(action: () -> Unit) {
+        if (completed) return
+        completed = true
+        handler.removeCallbacks(timeoutRunnable)
+        try {
+          esp.disconnectDevice()
+        } catch (_: java.lang.Exception) {
+        }
+        handler.postDelayed({ action() }, 600)
+      }
+
+      timeoutRunnable = Runnable {
+        boss.e("scanNetworks: timeout")
+        finish { guardedResult.error("E_WIFI_SCAN_TIMEOUT", "WiFi scan timed out", "Device: $name") }
+      }
+
+      handler.postDelayed(timeoutRunnable, 15000)
       esp.scanNetworks(object : WiFiScanListener {
         override fun onWifiListReceived(wifiList: ArrayList<WiFiAccessPoint>?) {
-          wifiList ?: return
+          if (wifiList == null) {
+            finish { guardedResult.error("E1", "WiFi scan failed", "WiFi list is null") }
+            return
+          }
           wifiList.forEach { boss.networks.add(it.wifiName) }
           boss.d("scanNetworks: complete ${boss.networks}")
           Handler(Looper.getMainLooper()).post {
-            ctx.result.success(ArrayList<String>(boss.networks))
+            finish { guardedResult.success(ArrayList<String>(boss.networks)) }
           }
           boss.d("scanNetworks: complete 2 ${boss.networks}")
-          esp.disconnectDevice()
         }
 
         override fun onWiFiScanFailed(e: java.lang.Exception?) {
           boss.e("scanNetworks: error $e")
-          ctx.result.error("E1", "WiFi scan failed", "Exception details $e")
+          finish { guardedResult.error("E1", "WiFi scan failed", "Exception details $e") }
         }
       })
     }
   }
 }
-
-
 class WifiScanWithDetailsManager(boss: Boss) : ActionManager(boss) {
   override fun call(ctx: CallContext) {
+    val guardedResult = ResultGuard(ctx.result)
     val name = ctx.arg("deviceName") ?: return
     val proofOfPossession = ctx.arg("proofOfPossession") ?: return
     val security = ctx.call.argument<String>("security")
-    val conn = boss.connector(name) ?: return
+    val conn = boss.connector(name)
+    if (conn == null) {
+      guardedResult.error("E_DEVICE_NOT_FOUND", "BLE device is not available", "Device: $name")
+      return
+    }
     boss.d("esp connect: start")
-    boss.connect(conn, proofOfPossession, security) { esp ->
+    boss.connect(conn, proofOfPossession, security, guardedResult::error) { esp ->
       boss.d("scanNetworksWithDetails: start")
+      val handler = Handler(Looper.getMainLooper())
+      var completed = false
+      lateinit var timeoutRunnable: Runnable
+
+      fun finish(action: () -> Unit) {
+        if (completed) return
+        completed = true
+        handler.removeCallbacks(timeoutRunnable)
+        try {
+          esp.disconnectDevice()
+        } catch (_: java.lang.Exception) {
+        }
+        handler.postDelayed({ action() }, 600)
+      }
+
+      timeoutRunnable = Runnable {
+        boss.e("scanNetworksWithDetails: timeout")
+        finish { guardedResult.error("E_WIFI_SCAN_TIMEOUT", "WiFi scan timed out", "Device: $name") }
+      }
+
+      handler.postDelayed(timeoutRunnable, 15000)
       esp.scanNetworks(object : WiFiScanListener {
         override fun onWifiListReceived(wifiList: ArrayList<WiFiAccessPoint>?) {
-          wifiList ?: return
+          if (wifiList == null) {
+            finish { guardedResult.error("E1", "WiFi scan failed", "WiFi list is null") }
+            return
+          }
           val networks = wifiList.map { accessPoint ->
             mapOf(
               "ssid" to accessPoint.wifiName,
@@ -368,37 +482,61 @@ class WifiScanWithDetailsManager(boss: Boss) : ActionManager(boss) {
           }
           boss.d("scanNetworksWithDetails: complete ${networks}")
           Handler(Looper.getMainLooper()).post {
-            ctx.result.success(networks)
+            finish { guardedResult.success(networks) }
           }
           boss.d("scanNetworksWithDetails: complete 2 ${networks}")
-          esp.disconnectDevice()
         }
 
         override fun onWiFiScanFailed(e: java.lang.Exception?) {
           boss.e("scanNetworksWithDetails: error $e")
-          ctx.result.error("E1", "WiFi scan failed", "Exception details $e")
+          finish { guardedResult.error("E1", "WiFi scan failed", "Exception details $e") }
         }
       })
     }
   }
 }
-
-
 class WifiProvisionManager(boss: Boss) : ActionManager(boss) {
   override fun call(ctx: CallContext) {
+    val guardedResult = ResultGuard(ctx.result)
     boss.e("provisionWifi ${ctx.call.arguments}")
     val ssid = ctx.arg("ssid") ?: return
     val passphrase = ctx.arg("passphrase") ?: return
     val deviceName = ctx.arg("deviceName") ?: return
     val proofOfPossession = ctx.arg("proofOfPossession") ?: return
     val security = ctx.call.argument<String>("security")
-    val conn = boss.connector(deviceName) ?: return
+    val conn = boss.connector(deviceName)
+    if (conn == null) {
+      guardedResult.error("E_DEVICE_NOT_FOUND", "BLE device is not available", "Device: $deviceName")
+      return
+    }
 
-    boss.connect(conn, proofOfPossession, security) { esp ->
+    boss.connect(conn, proofOfPossession, security, guardedResult::error) { esp ->
       boss.d("provision: start")
+      val handler = Handler(Looper.getMainLooper())
+      var completed = false
+      lateinit var timeoutRunnable: Runnable
+
+      fun finish(value: Boolean) {
+        if (completed) return
+        completed = true
+        handler.removeCallbacks(timeoutRunnable)
+        try {
+          esp.disconnectDevice()
+        } catch (_: java.lang.Exception) {
+        }
+        handler.postDelayed({ guardedResult.success(value) }, 600)
+      }
+
+      timeoutRunnable = Runnable {
+        boss.e("provision: timeout")
+        finish(false)
+      }
+
+      handler.postDelayed(timeoutRunnable, 45000)
       esp.provision(ssid, passphrase, object : ProvisionListener {
         override fun createSessionFailed(e: java.lang.Exception?) {
-          boss.e("wifiprovision createSessionFailed")
+          boss.e("wifiprovision createSessionFailed $e")
+          finish(false)
         }
 
         override fun wifiConfigSent() {
@@ -407,8 +545,7 @@ class WifiProvisionManager(boss: Boss) : ActionManager(boss) {
 
         override fun wifiConfigFailed(e: java.lang.Exception?) {
           boss.e("wifiConfiFailed $e")
-          ctx.result.success(false)
-          esp.disconnectDevice()
+          finish(false)
         }
 
         override fun wifiConfigApplied() {
@@ -417,26 +554,22 @@ class WifiProvisionManager(boss: Boss) : ActionManager(boss) {
 
         override fun wifiConfigApplyFailed(e: java.lang.Exception?) {
           boss.e("wifiConfigApplyFailed $e")
-          ctx.result.success(false)
-          esp.disconnectDevice()
+          finish(false)
         }
 
         override fun provisioningFailedFromDevice(failureReason: ESPConstants.ProvisionFailureReason?) {
           boss.e("provisioningFailedFromDevice $failureReason")
-          ctx.result.success(false)
-          esp.disconnectDevice()
+          finish(false)
         }
 
         override fun deviceProvisioningSuccess() {
           boss.d("deviceProvisioningSuccess")
-          ctx.result.success(true)
-          esp.disconnectDevice()
+          finish(true)
         }
 
         override fun onProvisioningFailed(e: java.lang.Exception?) {
-          boss.e("onProvisioningFailed")
-          ctx.result.success(false)
-          esp.disconnectDevice()
+          boss.e("onProvisioningFailed $e")
+          finish(false)
         }
 
       })
@@ -444,37 +577,60 @@ class WifiProvisionManager(boss: Boss) : ActionManager(boss) {
   }
 
 }
-
-
 class SendDataManager(boss: Boss) : ActionManager(boss) {
   override fun call(ctx: CallContext) {
+    val guardedResult = ResultGuard(ctx.result)
     boss.d("sendDataToCustomEndPoint: start")
     val deviceName = ctx.arg("deviceName") ?: return
     val proofOfPossession = ctx.arg("proofOfPossession") ?: return
     val path = ctx.arg("path") ?: return
     val data = ctx.argBytes("data") ?: return
     val security = ctx.call.argument<String>("security")
-    val conn = boss.connector(deviceName) ?: return
+    val conn = boss.connector(deviceName)
+    if (conn == null) {
+      guardedResult.error("E_DEVICE_NOT_FOUND", "BLE device is not available", "Device: $deviceName")
+      return
+    }
 
-    boss.connect(conn, proofOfPossession, security) { esp ->
+    boss.connect(conn, proofOfPossession, security, guardedResult::error) { esp ->
       boss.d("sendData: start")
+      val handler = Handler(Looper.getMainLooper())
+      var completed = false
+      lateinit var timeoutRunnable: Runnable
+
+      fun finish(action: () -> Unit) {
+        if (completed) return
+        completed = true
+        handler.removeCallbacks(timeoutRunnable)
+        try {
+          esp.disconnectDevice()
+        } catch (_: java.lang.Exception) {
+        }
+        handler.postDelayed({ action() }, 600)
+      }
+
+      timeoutRunnable = Runnable {
+        boss.e("sendData: timeout")
+        finish {
+          guardedResult.error("E_SEND_DATA_TIMEOUT", "Send data timed out", "Device: $deviceName, path: $path")
+        }
+      }
+
+      handler.postDelayed(timeoutRunnable, 10000)
       esp.sendDataToCustomEndPoint(path, data, object : ResponseListener {
         override fun onSuccess(returnData: ByteArray?) {
           boss.d("sendData: success")
-          ctx.result.success(returnData)
-          esp.disconnectDevice()
+          finish { guardedResult.success(returnData) }
         }
 
         override fun onFailure(e: java.lang.Exception?) {
           boss.e("sendData: failure $e")
-          ctx.result.error("E_SEND_DATA_FAILED", "Send data failed", "Exception details: $e")
-          esp.disconnectDevice()
+          finish { guardedResult.error("E_SEND_DATA_FAILED", "Send data failed", "Exception details: $e") }
         }
       })
     }
   }
 }
-
 
 /** FlutterEspBleProvPlugin */
 class FlutterEspBleProvPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
