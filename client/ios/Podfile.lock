@@ -4,14 +4,7 @@ PODS:
     - FlutterMacOS
   - connectivity_plus (0.0.1):
     - Flutter
-  - ESPProvision (3.1.0):
-    - ESPProvision/Core (= 3.1.0)
-  - ESPProvision/Core (3.1.0):
-    - SwiftProtobuf (~> 1.22.0)
   - Flutter (1.0.0)
-  - flutter_esp_ble_prov (0.0.1):
-    - ESPProvision
-    - Flutter
   - flutter_keyboard_visibility (0.0.1):
     - Flutter
   - flutter_native_splash (2.4.3):
@@ -39,8 +32,10 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - SwiftProtobuf (1.22.1)
   - TOCropViewController (2.8.0)
+  - universal_ble (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - url_launcher_ios (0.0.1):
     - Flutter
 
@@ -48,7 +43,6 @@ DEPENDENCIES:
   - bonsoir_darwin (from `.symlinks/plugins/bonsoir_darwin/darwin`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - Flutter (from `Flutter`)
-  - flutter_esp_ble_prov (from `.symlinks/plugins/flutter_esp_ble_prov/ios`)
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - flutter_timezone (from `.symlinks/plugins/flutter_timezone/ios`)
@@ -61,12 +55,11 @@ DEPENDENCIES:
   - pointer_interceptor_ios (from `.symlinks/plugins/pointer_interceptor_ios/ios`)
   - screen_corner_radius (from `.symlinks/plugins/screen_corner_radius/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+  - universal_ble (from `.symlinks/plugins/universal_ble/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
-    - ESPProvision
-    - SwiftProtobuf
     - TOCropViewController
 
 EXTERNAL SOURCES:
@@ -76,8 +69,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   Flutter:
     :path: Flutter
-  flutter_esp_ble_prov:
-    :path: ".symlinks/plugins/flutter_esp_ble_prov/ios"
   flutter_keyboard_visibility:
     :path: ".symlinks/plugins/flutter_keyboard_visibility/ios"
   flutter_native_splash:
@@ -102,15 +93,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/screen_corner_radius/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+  universal_ble:
+    :path: ".symlinks/plugins/universal_ble/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   bonsoir_darwin: 29c7ccf356646118844721f36e1de4b61f6cbd0e
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
-  ESPProvision: a24f5156726f9dd4444f856cbed895a7af50aaf9
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_esp_ble_prov: 6cff8544535225431d58e5577706ba2a1a106303
   flutter_keyboard_visibility: 4625131e43015dbbe759d9b20daaf77e0e3f6619
   flutter_native_splash: c32d145d68aeda5502d5f543ee38c192065986cf
   flutter_timezone: 7c838e17ffd4645d261e87037e5bebf6d38fe544
@@ -123,10 +114,10 @@ SPEC CHECKSUMS:
   pointer_interceptor_ios: da06a662d5bfd329602b45b2ab41bc0fb5fdb0f0
   screen_corner_radius: 64e0abb3920228a5f91c0680fa890222970025bd
   shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
-  SwiftProtobuf: 7773c4e96a99d7b8ab7cda0fc30a883732ff93b1
   TOCropViewController: 797deaf39c90e6e9ddd848d88817f6b9a8a09888
+  universal_ble: 45519b2aeafe62761e2c6309f8927edb5288b914
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
 
-PODFILE CHECKSUM: 952d936e6a8995c54f8b3e8373b00929c6e887c1
+PODFILE CHECKSUM: 062a678162a6cfb68d17c09aaf4ff5c066037cfc
 
 COCOAPODS: 1.16.2
