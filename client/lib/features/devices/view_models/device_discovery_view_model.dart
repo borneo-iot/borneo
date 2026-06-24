@@ -212,16 +212,15 @@ class DeviceDiscoveryViewModel extends AbstractScreenViewModel {
   }
 
   Future<bool> _ensureBlePermissions() async {
-    // allow injection for tests
-    if (requestBlePermissions != null) {
-      return await requestBlePermissions!();
-    }
-
     final permissions = blePermissionList();
     if (permissions.isEmpty) {
       return true;
     }
 
+    // allow injection for tests
+    if (requestBlePermissions != null) {
+      return await requestBlePermissions!();
+    }
     final statuses = await permissions.request();
     _logger.d('BLE permission statuses: $statuses');
 
