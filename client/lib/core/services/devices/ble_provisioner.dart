@@ -17,6 +17,9 @@ abstract class IBleProvisioner {
 
 class BleProvisioner implements IBleProvisioner {
   static const _customInfoEndpoint = 'cbor';
+  static const _retryDisconnectDelay = Duration(milliseconds: 500);
+
+  final Map<String, _ProvisioningSecurity> _preferredSecurityByDeviceName = {};
 
   BleProvisioner();
 
@@ -88,12 +91,13 @@ class BleProvisioner implements IBleProvisioner {
     CancellationToken? cancelToken,
     required Future<T> Function(EspBleProvisioner provisioner) action,
   }) async {
-    final securityCandidates = _securityCandidates(pop);
+    final securityCandidates = _securityCandidates(deviceName, pop);
     Object? lastError;
     StackTrace? lastStackTrace;
 
-    for (final security in securityCandidates) {
-      final provisioner = EspBleProvisioner(deviceNamePrefix: deviceName, security: security);
+    for (var i = 0; i < securityCandidates.length; i++) {
+      final security = securityCandidates[i];
+      final provisioner = EspBleProvisioner(deviceNamePrefix: deviceName, security: security.security);
       try {
         final devices = await provisioner.scanDevices().asCancellable(cancelToken);
         final device = _findDeviceByName(devices, deviceName);
@@ -102,12 +106,18 @@ class BleProvisioner implements IBleProvisioner {
         }
         await provisioner.connect(device: device).asCancellable(cancelToken);
         await provisioner.establishSession().asCancellable(cancelToken);
-        return await action(provisioner).asCancellable(cancelToken);
+        final result = await action(provisioner).asCancellable(cancelToken);
+        _preferredSecurityByDeviceName[deviceName] = security.kind;
+        return result;
       } catch (error, stackTrace) {
         lastError = error;
         lastStackTrace = stackTrace;
       } finally {
         await provisioner.disconnect();
+      }
+
+      if (i < securityCandidates.length - 1) {
+        await Future<void>.delayed(_retryDisconnectDelay).asCancellable(cancelToken);
       }
     }
 
@@ -126,10 +136,33 @@ class BleProvisioner implements IBleProvisioner {
     return null;
   }
 
-  List<Security> _securityCandidates(String pop) {
+  List<_SecurityCandidate> _securityCandidates(String deviceName, String pop) {
     if (pop.isNotEmpty) {
-      return [Security1(pop: pop)];
+      return [_SecurityCandidate(_ProvisioningSecurity.security1, Security1(pop: pop))];
     }
-    return [Security1(pop: ''), const Security0()];
+
+    final candidates = [
+      const _SecurityCandidate(_ProvisioningSecurity.security0, Security0()),
+      _SecurityCandidate(_ProvisioningSecurity.security1, Security1(pop: '')),
+    ];
+
+    final preferred = _preferredSecurityByDeviceName[deviceName];
+    if (preferred == null) {
+      return candidates;
+    }
+
+    return [
+      ...candidates.where((candidate) => candidate.kind == preferred),
+      ...candidates.where((candidate) => candidate.kind != preferred),
+    ];
   }
+}
+
+enum _ProvisioningSecurity { security0, security1 }
+
+class _SecurityCandidate {
+  const _SecurityCandidate(this.kind, this.security);
+
+  final _ProvisioningSecurity kind;
+  final Security security;
 }
