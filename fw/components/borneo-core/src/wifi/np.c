@@ -181,7 +181,7 @@ esp_err_t cbor_prov_data_handler(uint32_t session_id, const uint8_t* inbuf, ssiz
     CborValue it;
     if (cbor_parser_init(inbuf, (size_t)inlen, 0, &parser, &it) != CborNoError || !cbor_value_is_map(&it)) {
         ESP_LOGE(TAG, "RPC: malformed CBOR request");
-        send_error_response(resp_buf, sizeof(resp_buf), 0, outbuf, outlen);
+        send_error_response(resp_buf, resp_buf_size, 0, outbuf, outlen);
         return ESP_OK;
     }
 
@@ -191,7 +191,7 @@ esp_err_t cbor_prov_data_handler(uint32_t session_id, const uint8_t* inbuf, ssiz
     if (cbor_value_map_find_value(&it, "v", &field) != CborNoError || !cbor_value_is_integer(&field)
         || cbor_value_get_int(&field, &version) != CborNoError || version != 1) {
         ESP_LOGE(TAG, "RPC: bad or missing version");
-        send_error_response(resp_buf, sizeof(resp_buf), 0, outbuf, outlen);
+        send_error_response(resp_buf, resp_buf_size, 0, outbuf, outlen);
         return ESP_OK;
     }
 
