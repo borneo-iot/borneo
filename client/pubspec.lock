@@ -428,10 +428,10 @@ packages:
     dependency: "direct main"
     description:
       name: esp_ble_prov_dart
-      sha256: "1991aedf98dfd0954a7124f0d2767343f18744ba488100bfcfb97d727fc74ebc"
+      sha256: "239219af5ca0881e31f2a9e295ef5afd0f103b7f72e8e995e2fe845cfd507558"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.1"
+    version: "0.5.0"
   event_bus:
     dependency: "direct main"
     description:
