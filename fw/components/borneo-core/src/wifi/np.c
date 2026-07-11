@@ -44,6 +44,7 @@ typedef struct {
 static np_context_t* s_np_ctx = NULL;
 
 static void get_device_service_name(char* service_name, size_t max);
+static const char* wifi_prov_fail_reason_to_str(int reason);
 static esp_err_t cbor_prov_data_handler(uint32_t session_id, const uint8_t* inbuf, ssize_t inlen, uint8_t** outbuf,
                                         ssize_t* outlen, void* priv_data);
 
@@ -58,15 +59,34 @@ static void network_prov_event_handler(void* arg, esp_event_base_t event_base, i
 
     case NETWORK_PROV_WIFI_CRED_RECV: {
         wifi_sta_config_t* wifi_sta_cfg = (wifi_sta_config_t*)event_data;
-        ESP_LOGI(TAG,
-                 "Received Wi-Fi credentials"
-                 "\n\tSSID     : %s\n\tPassword : %s",
-                 (const char*)wifi_sta_cfg->ssid, (const char*)wifi_sta_cfg->password);
+        if (wifi_sta_cfg->bssid_set) {
+            ESP_LOGI(TAG,
+                     "Received Wi-Fi credentials"
+                     "\n\tSSID     : %s"
+                     "\n\tBSSID    : %02x:%02x:%02x:%02x:%02x:%02x"
+                     "\n\tChannel  : %u",
+                     (const char*)wifi_sta_cfg->ssid, wifi_sta_cfg->bssid[0], wifi_sta_cfg->bssid[1],
+                     wifi_sta_cfg->bssid[2], wifi_sta_cfg->bssid[3], wifi_sta_cfg->bssid[4], wifi_sta_cfg->bssid[5],
+                     wifi_sta_cfg->channel);
+        }
+        else {
+            ESP_LOGI(TAG,
+                     "Received Wi-Fi credentials"
+                     "\n\tSSID     : %s"
+                     "\n\tBSSID    : not set"
+                     "\n\tChannel  : %u",
+                     (const char*)wifi_sta_cfg->ssid, wifi_sta_cfg->channel);
+        }
     } break;
 
     case NETWORK_PROV_WIFI_CRED_FAIL: {
+        int reason = -1;
+        if (event_data != NULL) {
+            reason = *(network_prov_wifi_sta_fail_reason_t*)event_data;
+        }
         BO_MUST_ESP(network_prov_mgr_reset_wifi_sm_state_on_failure());
-        ESP_LOGE(TAG, "Provisioning failed! Reseting the wifi provisioning...");
+        ESP_LOGE(TAG, "Provisioning failed, reason=%d (%s). Resetting Wi-Fi provisioning state.", reason,
+                 wifi_prov_fail_reason_to_str(reason));
         esp_event_post(BO_WIFI_EVENTS, BO_EVENT_WIFI_PROVISIONING_FAIL, NULL, 0, portMAX_DELAY);
     } break;
 
@@ -119,7 +139,7 @@ int bo_wifi_np_init()
 
 int bo_wifi_np_start()
 {
-    /* Use security level 0 (no security, no POP) */
+    /* Use Security1 without PoP. */
     network_prov_security_t security = NETWORK_PROV_SECURITY_1;
     const void* sec_params = NULL;
     const char* service_key = NULL;
@@ -128,6 +148,18 @@ int bo_wifi_np_start()
     BO_TRY_ESP(network_prov_mgr_endpoint_register("cbor", cbor_prov_data_handler, NULL));
 
     return 0;
+}
+
+static const char* wifi_prov_fail_reason_to_str(int reason)
+{
+    switch (reason) {
+    case NETWORK_PROV_WIFI_STA_AUTH_ERROR:
+        return "Wi-Fi station authentication failed";
+    case NETWORK_PROV_WIFI_STA_AP_NOT_FOUND:
+        return "Wi-Fi access point not found";
+    default:
+        return "unknown";
+    }
 }
 
 static void get_device_service_name(char* service_name, size_t max)

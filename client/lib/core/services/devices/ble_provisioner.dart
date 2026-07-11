@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:borneo_common/exceptions.dart';
 import 'package:borneo_kernel/drivers/borneo/device_api.dart';
@@ -7,28 +6,40 @@ import 'package:borneo_kernel_abstractions/models/prov.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:cbor/simple.dart' as simple_cbor;
 import 'package:esp_ble_prov_dart/esp_ble_prov_dart.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class IBleProvisioner {
   Future<List<String>> scanBleDevices(String prefix, {CancellationToken? cancelToken});
   Future<List<WiFiNetwork>> scanWifiNetworks(String deviceName, {String pop = '', CancellationToken? cancelToken});
-  Future<void> provisionWifi(String deviceName, String ssid, String password, {CancellationToken? cancelToken});
+  Future<void> provisionWifi(
+    String deviceName,
+    String ssid,
+    String password, {
+    WiFiNetwork? network,
+    CancellationToken? cancelToken,
+  });
   Future<GeneralBorneoDeviceInfo> fetchDeviceInfo({required String deviceName, CancellationToken? cancelToken});
+  Future<void> closeDeviceSession(String deviceName);
 }
 
 class BleProvisioner implements IBleProvisioner {
   static const _customInfoEndpoint = 'cbor';
-  static const _retryDisconnectDelay = Duration(milliseconds: 500);
+  static const _postDisconnectDelay = Duration(milliseconds: 800);
+  static const _idleSessionTimeout = Duration(seconds: 90);
+  static const _bleResponseTimeout = Duration(seconds: 20);
+  static const _wifiScanTimeout = Duration(seconds: 45);
+  static const _wifiScanPollInterval = Duration(seconds: 1);
+  static const _wifiScanResultPageSize = 4;
 
-  final Map<String, _ProvisioningSecurity> _preferredSecurityByDeviceName = {};
+  EspBleProvisioner? _activeProvisioner;
+  String? _activeDeviceName;
+  Timer? _activeDisconnectTimer;
 
   BleProvisioner();
 
   @override
   Future<List<String>> scanBleDevices(String prefix, {CancellationToken? cancelToken}) async {
-    final provisioner = EspBleProvisioner(
-      deviceNamePrefix: prefix,
-      security: Security1(pop: ''),
-    );
+    final provisioner = _createProvisioner(deviceNamePrefix: prefix);
     final devices = await provisioner.scanDevices().asCancellable(cancelToken);
     return devices.map((device) => device.name ?? device.id).toList(growable: false);
   }
@@ -43,16 +54,25 @@ class BleProvisioner implements IBleProvisioner {
       deviceName: deviceName,
       pop: pop,
       cancelToken: cancelToken,
-      action: (provisioner) => provisioner.scan(),
+      keepAlive: true,
+      action: (provisioner) => _scanWifiNetworks(provisioner, cancelToken: cancelToken),
     );
   }
 
   @override
-  Future<void> provisionWifi(String deviceName, String ssid, String password, {CancellationToken? cancelToken}) async {
+  Future<void> provisionWifi(
+    String deviceName,
+    String ssid,
+    String password, {
+    WiFiNetwork? network,
+    CancellationToken? cancelToken,
+  }) async {
     await _withProvisioner(
       deviceName: deviceName,
       cancelToken: cancelToken,
-      action: (provisioner) => provisioner.sendCredentials(WiFiConfig(ssid: ssid, passphrase: password)),
+      action: (provisioner) => provisioner.sendCredentials(
+        WiFiConfig(ssid: ssid, passphrase: password, bssid: network?.bssid, channel: network?.channel ?? 0),
+      ),
     );
   }
 
@@ -63,6 +83,7 @@ class BleProvisioner implements IBleProvisioner {
     final repBytes = await _withProvisioner(
       deviceName: deviceName,
       cancelToken: cancelToken,
+      keepAlive: _hasActiveProvisioner(deviceName),
       action: (provisioner) async {
         provisioner.registerCustomEndpoint(_customInfoEndpoint);
         await provisioner.writeValueToEndpoint(_customInfoEndpoint, requestBuf).asCancellable(cancelToken);
@@ -85,46 +106,147 @@ class BleProvisioner implements IBleProvisioner {
     return GeneralBorneoDeviceInfo.fromMap(rep.results);
   }
 
+  @override
+  Future<void> closeDeviceSession(String deviceName) async {
+    if (_activeDeviceName != deviceName) {
+      return;
+    }
+    await _closeActiveProvisioner();
+  }
+
   Future<T> _withProvisioner<T>({
     required String deviceName,
     String pop = '',
     CancellationToken? cancelToken,
+    bool keepAlive = false,
     required Future<T> Function(EspBleProvisioner provisioner) action,
   }) async {
-    final securityCandidates = _securityCandidates(deviceName, pop);
-    Object? lastError;
-    StackTrace? lastStackTrace;
-
-    for (var i = 0; i < securityCandidates.length; i++) {
-      final security = securityCandidates[i];
-      final provisioner = EspBleProvisioner(deviceNamePrefix: deviceName, security: security.security);
+    final activeProvisioner = _activeProvisioner;
+    if (_activeDeviceName == deviceName && activeProvisioner != null && activeProvisioner.isConnected) {
+      _activeDisconnectTimer?.cancel();
       try {
-        final devices = await provisioner.scanDevices().asCancellable(cancelToken);
-        final device = _findDeviceByName(devices, deviceName);
-        if (device == null) {
-          throw StateError('BLE device is not available: $deviceName');
+        final result = await action(activeProvisioner).asCancellable(cancelToken);
+        if (keepAlive) {
+          _scheduleActiveDisconnect();
+        } else {
+          await _closeActiveProvisioner();
         }
-        await provisioner.connect(device: device).asCancellable(cancelToken);
-        await provisioner.establishSession().asCancellable(cancelToken);
-        final result = await action(provisioner).asCancellable(cancelToken);
-        _preferredSecurityByDeviceName[deviceName] = security.kind;
         return result;
       } catch (error, stackTrace) {
-        lastError = error;
-        lastStackTrace = stackTrace;
-      } finally {
-        await provisioner.disconnect();
-      }
-
-      if (i < securityCandidates.length - 1) {
-        await Future<void>.delayed(_retryDisconnectDelay).asCancellable(cancelToken);
+        await _closeActiveProvisioner();
+        Error.throwWithStackTrace(error, stackTrace);
       }
     }
 
-    if (lastError != null) {
-      Error.throwWithStackTrace(lastError, lastStackTrace!);
+    final provisioner = _createProvisioner(deviceNamePrefix: deviceName, pop: pop);
+    var keepProvisionerOpen = false;
+    try {
+      final devices = await provisioner.scanDevices().asCancellable(cancelToken);
+      final device = _findDeviceByName(devices, deviceName);
+      if (device == null) {
+        throw StateError('BLE device is not available: $deviceName');
+      }
+      await provisioner.connect(device: device).asCancellable(cancelToken);
+      await provisioner.establishSession().asCancellable(cancelToken);
+      final result = await action(provisioner).asCancellable(cancelToken);
+      if (keepAlive) {
+        _activeProvisioner = provisioner;
+        _activeDeviceName = deviceName;
+        keepProvisionerOpen = true;
+        _scheduleActiveDisconnect();
+      }
+      return result;
+    } catch (error, stackTrace) {
+      Error.throwWithStackTrace(error, stackTrace);
+    } finally {
+      if (!keepProvisionerOpen) {
+        await _disconnectProvisioner(provisioner);
+      }
     }
-    throw StateError('No BLE provisioning security candidates available for $deviceName');
+  }
+
+  bool _hasActiveProvisioner(String deviceName) {
+    return _activeDeviceName == deviceName && _activeProvisioner != null && _activeProvisioner!.isConnected;
+  }
+
+  EspBleProvisioner _createProvisioner({required String deviceNamePrefix, String pop = ''}) {
+    return EspBleProvisioner(
+      deviceNamePrefix: deviceNamePrefix,
+      security: Security1(pop: pop),
+      mtu: 256,
+      responseTimeout: _bleResponseTimeout,
+      readRetryInterval: const Duration(milliseconds: 250),
+      onLog: (message) => debugPrint('BLE provisioning: $message'),
+    );
+  }
+
+  Future<List<WiFiNetwork>> _scanWifiNetworks(EspBleProvisioner provisioner, {CancellationToken? cancelToken}) async {
+    await provisioner.startScan().asCancellable(cancelToken);
+
+    final deadline = DateTime.now().add(_wifiScanTimeout);
+    WiFiScanStatus? status;
+    while (DateTime.now().isBefore(deadline)) {
+      status = await provisioner.getScanStatusDetails().asCancellable(cancelToken);
+      if (status.scanFinished) {
+        return _readWifiScanResults(provisioner, status.resultCount, cancelToken: cancelToken);
+      }
+      await Future<void>.delayed(_wifiScanPollInterval).asCancellable(cancelToken);
+    }
+
+    throw TimeoutException('WiFi scan timed out', _wifiScanTimeout);
+  }
+
+  Future<List<WiFiNetwork>> _readWifiScanResults(
+    EspBleProvisioner provisioner,
+    int resultCount, {
+    CancellationToken? cancelToken,
+  }) async {
+    if (resultCount <= 0) {
+      return const <WiFiNetwork>[];
+    }
+
+    final networks = <WiFiNetwork>[];
+    for (var startIndex = 0; startIndex < resultCount; startIndex += _wifiScanResultPageSize) {
+      final count = resultCount - startIndex;
+      final page = await provisioner
+          .getScanResults(
+            startIndex: startIndex,
+            count: count < _wifiScanResultPageSize ? count : _wifiScanResultPageSize,
+          )
+          .asCancellable(cancelToken);
+      networks.addAll(page);
+    }
+    return networks;
+  }
+
+  void _scheduleActiveDisconnect() {
+    _activeDisconnectTimer?.cancel();
+    _activeDisconnectTimer = Timer(_idleSessionTimeout, () {
+      unawaited(_closeActiveProvisioner());
+    });
+  }
+
+  Future<void> _closeActiveProvisioner() async {
+    _activeDisconnectTimer?.cancel();
+    _activeDisconnectTimer = null;
+
+    final provisioner = _activeProvisioner;
+    _activeProvisioner = null;
+    _activeDeviceName = null;
+
+    if (provisioner != null) {
+      await _disconnectProvisioner(provisioner);
+    }
+  }
+
+  Future<void> _disconnectProvisioner(EspBleProvisioner provisioner) async {
+    try {
+      await provisioner.disconnect(timeout: const Duration(seconds: 5));
+    } catch (_) {
+      // Ignore cleanup errors so the provisioning operation reports the
+      // original failure.
+    }
+    await Future<void>.delayed(_postDisconnectDelay);
   }
 
   EspBleDevice? _findDeviceByName(List<EspBleDevice> devices, String deviceName) {
@@ -133,36 +255,9 @@ class BleProvisioner implements IBleProvisioner {
         return device;
       }
     }
+    if (devices.length == 1) {
+      return devices.single;
+    }
     return null;
   }
-
-  List<_SecurityCandidate> _securityCandidates(String deviceName, String pop) {
-    if (pop.isNotEmpty) {
-      return [_SecurityCandidate(_ProvisioningSecurity.security1, Security1(pop: pop))];
-    }
-
-    final candidates = [
-      const _SecurityCandidate(_ProvisioningSecurity.security0, Security0()),
-      _SecurityCandidate(_ProvisioningSecurity.security1, Security1(pop: '')),
-    ];
-
-    final preferred = _preferredSecurityByDeviceName[deviceName];
-    if (preferred == null) {
-      return candidates;
-    }
-
-    return [
-      ...candidates.where((candidate) => candidate.kind == preferred),
-      ...candidates.where((candidate) => candidate.kind != preferred),
-    ];
-  }
-}
-
-enum _ProvisioningSecurity { security0, security1 }
-
-class _SecurityCandidate {
-  const _SecurityCandidate(this.kind, this.security);
-
-  final _ProvisioningSecurity kind;
-  final Security security;
 }

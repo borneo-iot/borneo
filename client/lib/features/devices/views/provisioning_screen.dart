@@ -278,7 +278,7 @@ class _SelectWifiStep extends StatelessWidget {
           return ListTile(
             title: Text(network.ssid),
             trailing: _wifiIcon(network.rssi),
-            onTap: () => vm.selectNetwork(network.ssid),
+            onTap: () => vm.selectNetwork(network),
           );
         },
       ),

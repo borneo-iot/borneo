@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:borneo_app/core/services/app_notification_service.dart';
 import 'package:borneo_app/core/services/devices/ble_provisioner.dart';
 import 'package:borneo_app/core/services/devices/device_manager.dart';
@@ -10,6 +12,7 @@ import 'package:borneo_kernel_abstractions/kernel.dart';
 import 'package:cancellation_token/cancellation_token.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:esp_ble_prov_dart/esp_ble_prov_dart.dart';
+import 'package:esp_ble_prov_dart/src/proto/protos.dart' as pb;
 import 'package:flutter_test/flutter_test.dart' hide EventDispatcher;
 import 'package:logger/logger.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -19,8 +22,14 @@ import 'package:lw_wot/wot.dart';
 import '../mocks/gettext.dart';
 
 class ProvisioningBleProvisioner implements IBleProvisioner {
+  WiFiNetwork? provisionedNetwork;
+  bool failFetchDeviceInfo = false;
+
   @override
   Future<GeneralBorneoDeviceInfo> fetchDeviceInfo({required String deviceName, CancellationToken? cancelToken}) async {
+    if (failFetchDeviceInfo) {
+      throw StateError('BLE device is not available: $deviceName');
+    }
     return GeneralBorneoDeviceInfo.fromMap({
       'id': 'device-id-1',
       'compatible': 'lyfi',
@@ -41,10 +50,21 @@ class ProvisioningBleProvisioner implements IBleProvisioner {
   }
 
   @override
-  Future<void> provisionWifi(String deviceName, String ssid, String password, {CancellationToken? cancelToken}) async {}
+  Future<void> provisionWifi(
+    String deviceName,
+    String ssid,
+    String password, {
+    WiFiNetwork? network,
+    CancellationToken? cancelToken,
+  }) async {
+    provisionedNetwork = network;
+  }
 
   @override
   Future<List<String>> scanBleDevices(String prefix, {CancellationToken? cancelToken}) async => [];
+
+  @override
+  Future<void> closeDeviceSession(String deviceName) async {}
 
   @override
   Future<List<WiFiNetwork>> scanWifiNetworks(
@@ -52,6 +72,16 @@ class ProvisioningBleProvisioner implements IBleProvisioner {
     String pop = '',
     CancellationToken? cancelToken,
   }) async => [];
+}
+
+WiFiNetwork makeWifiNetwork({String ssid = 'Test WiFi', int channel = 6}) {
+  return WiFiNetwork(
+    ssid: ssid,
+    channel: channel,
+    rssi: -45,
+    bssid: Uint8List.fromList([0, 1, 2, 3, 4, 5]),
+    auth: pb.WifiAuthMode.WPA2_PSK,
+  );
 }
 
 class ProvisioningDeviceManager implements IDeviceManager {
@@ -222,13 +252,15 @@ void main() {
   group('ProvisioningWizardViewModel', () {
     late ProvisioningDeviceManager deviceManager;
     late NewDeviceCandidatesStore candidatesStore;
+    late ProvisioningBleProvisioner bleProvisioner;
     late ProvisioningWizardViewModel vm;
 
     setUp(() {
       deviceManager = ProvisioningDeviceManager();
       candidatesStore = NewDeviceCandidatesStore(deviceManager);
+      bleProvisioner = ProvisioningBleProvisioner();
       vm = ProvisioningWizardViewModel(
-        ProvisioningBleProvisioner(),
+        bleProvisioner,
         deviceManager,
         candidatesStore,
         'BOPROV_TEST',
@@ -238,7 +270,7 @@ void main() {
         notificationService: SilentNotificationService(),
         registerTimeoutSeconds: 1,
       );
-      vm.selectNetwork('Test WiFi');
+      vm.selectNetwork(makeWifiNetwork());
     });
 
     tearDown(() {
@@ -254,6 +286,8 @@ void main() {
 
       expect(deviceManager.startDiscoveryCalls, 1);
       expect(deviceManager.addedFingerprints, ['fp-1']);
+      expect(bleProvisioner.provisionedNetwork?.channel, 6);
+      expect(bleProvisioner.provisionedNetwork?.bssid, [0, 1, 2, 3, 4, 5]);
       expect(vm.provisioningSucceeded, isTrue);
       expect(vm.step, ProvisioningWizardStep.done);
     });
@@ -271,6 +305,17 @@ void main() {
 
       expect(deviceManager.addedFingerprints, ['fp-1']);
       expect(vm.provisioningSucceeded, isTrue);
+    });
+
+    test('continues provisioning when preflight device info fetch fails', () async {
+      bleProvisioner.failFetchDeviceInfo = true;
+
+      await vm.startProvisioning('password');
+      await Future<void>.delayed(Duration.zero);
+
+      expect(bleProvisioner.provisionedNetwork?.ssid, 'Test WiFi');
+      expect(deviceManager.startDiscoveryCalls, 1);
+      expect(vm.step, ProvisioningWizardStep.provisioning);
     });
 
     test('restarts discovery for registration when a previous discovery session is active', () async {

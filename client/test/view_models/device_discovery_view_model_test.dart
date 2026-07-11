@@ -191,6 +191,9 @@ class FakeBleProvisioner implements IBleProvisioner {
   }
 
   @override
+  Future<void> closeDeviceSession(String deviceName) async {}
+
+  @override
   Future<List<WiFiNetwork>> scanWifiNetworks(
     String deviceName, {
     String pop = '',
@@ -200,7 +203,13 @@ class FakeBleProvisioner implements IBleProvisioner {
   }
 
   @override
-  Future<void> provisionWifi(String deviceName, String ssid, String password, {CancellationToken? cancelToken}) async {
+  Future<void> provisionWifi(
+    String deviceName,
+    String ssid,
+    String password, {
+    WiFiNetwork? network,
+    CancellationToken? cancelToken,
+  }) async {
     throw UnimplementedError();
   }
 

@@ -50,8 +50,9 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
   List<WiFiNetwork>? _networks;
   List<WiFiNetwork>? get networks => _networks;
 
-  String? _selectedSsid;
-  String? get selectedSsid => _selectedSsid;
+  WiFiNetwork? _selectedNetwork;
+  WiFiNetwork? get selectedNetwork => _selectedNetwork;
+  String? get selectedSsid => _selectedNetwork?.ssid;
 
   BleProvisioningState _provisioningState = BleProvisioningState.idle;
   BleProvisioningState get provisioningState => _provisioningState;
@@ -98,15 +99,15 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
     }
   }
 
-  void selectNetwork(String ssid) {
-    _selectedSsid = ssid;
+  void selectNetwork(WiFiNetwork network) {
+    _selectedNetwork = network;
     _step = ProvisioningWizardStep.enterPassword;
     notifyListeners();
   }
 
   void backToWifiSelection() {
     _step = ProvisioningWizardStep.selectWifi;
-    _selectedSsid = null;
+    _selectedNetwork = null;
     notifyListeners();
   }
 
@@ -120,11 +121,20 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
     isBusy = true;
 
     try {
-      final info = await _bleProvisioner.fetchDeviceInfo(deviceName: deviceName, cancelToken: _cancelToken);
-      _provisionedFingerprint = info.serno.isNotEmpty ? info.serno : null;
+      await _tryResolveProvisionedFingerprint();
 
       _updateProvisioningState(BleProvisioningState.sendingCredentials);
-      await _bleProvisioner.provisionWifi(deviceName, _selectedSsid!, password, cancelToken: _cancelToken);
+      final network = _selectedNetwork;
+      if (network == null) {
+        throw StateError('No WiFi network selected');
+      }
+      await _bleProvisioner.provisionWifi(
+        deviceName,
+        network.ssid,
+        password,
+        network: network,
+        cancelToken: _cancelToken,
+      );
       _updateProvisioningState(BleProvisioningState.connectingToWifi);
 
       await Future.delayed(const Duration(seconds: 3)).asCancellable(_cancelToken);
@@ -149,12 +159,29 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
     }
   }
 
+  Future<void> _tryResolveProvisionedFingerprint() async {
+    try {
+      final info = await _bleProvisioner.fetchDeviceInfo(deviceName: deviceName, cancelToken: _cancelToken);
+      _provisionedFingerprint = info.serno.isNotEmpty ? info.serno : null;
+    } on CancelledException {
+      rethrow;
+    } catch (e, stackTrace) {
+      logger?.w(
+        'Failed to fetch device info before provisioning; continuing without fingerprint matching',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      _provisionedFingerprint = null;
+    }
+  }
+
   /// Retry from the beginning: back to WiFi scan.
   void retry() {
     unawaited(_stopOwnedRegistrationDiscovery());
+    unawaited(_bleProvisioner.closeDeviceSession(deviceName));
     _cancelRegisterTimer();
     _step = ProvisioningWizardStep.selectWifi;
-    _selectedSsid = null;
+    _selectedNetwork = null;
     _provisioningState = BleProvisioningState.idle;
     _errorMessage = null;
     _provisioningSucceeded = false;
@@ -276,6 +303,7 @@ class ProvisioningWizardViewModel extends AbstractScreenViewModel {
     if (isBusy) {
       _cancelToken.cancel();
     }
+    unawaited(_bleProvisioner.closeDeviceSession(deviceName));
     _cancelRegisterTimer();
     _registerSub?.cancel();
     _newDeviceCandidatesStore.removeListener(_onCandidatesChanged);
