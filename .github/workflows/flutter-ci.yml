@@ -255,7 +255,7 @@ jobs:
   build-ios:
     if: ${{ vars.BO_EDITION == 'ce' }}
     needs: [test, get-version]
-    runs-on: macos-14
+    runs-on: macos-15
     defaults:
       run:
         working-directory: ${{ env.FLUTTER_WORKING_DIR }}
@@ -265,6 +265,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Select Xcode 26.1.1
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.1.1.app/Contents/Developer
+          xcodebuild -version
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
