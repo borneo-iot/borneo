@@ -34,6 +34,7 @@ class BleProvisioner implements IBleProvisioner {
   EspBleProvisioner? _activeProvisioner;
   String? _activeDeviceName;
   Timer? _activeDisconnectTimer;
+  Future<void> _operationTail = Future<void>.value();
 
   BleProvisioner();
 
@@ -108,13 +109,32 @@ class BleProvisioner implements IBleProvisioner {
 
   @override
   Future<void> closeDeviceSession(String deviceName) async {
-    if (_activeDeviceName != deviceName) {
-      return;
-    }
-    await _closeActiveProvisioner();
+    await _runExclusive(() async {
+      if (_activeDeviceName == deviceName) {
+        await _closeActiveProvisioner();
+      }
+    });
   }
 
   Future<T> _withProvisioner<T>({
+    required String deviceName,
+    String pop = '',
+    CancellationToken? cancelToken,
+    bool keepAlive = false,
+    required Future<T> Function(EspBleProvisioner provisioner) action,
+  }) {
+    return _runExclusive(
+      () => _withProvisionerUnlocked(
+        deviceName: deviceName,
+        pop: pop,
+        cancelToken: cancelToken,
+        keepAlive: keepAlive,
+        action: action,
+      ),
+    );
+  }
+
+  Future<T> _withProvisionerUnlocked<T>({
     required String deviceName,
     String pop = '',
     CancellationToken? cancelToken,
@@ -136,6 +156,12 @@ class BleProvisioner implements IBleProvisioner {
         await _closeActiveProvisioner();
         Error.throwWithStackTrace(error, stackTrace);
       }
+    }
+
+    // Do not leave a stale session object around when the connection stream
+    // reported a disconnect before the next operation starts.
+    if (activeProvisioner != null) {
+      await _closeActiveProvisioner();
     }
 
     final provisioner = _createProvisioner(deviceNamePrefix: deviceName, pop: pop);
@@ -173,11 +199,23 @@ class BleProvisioner implements IBleProvisioner {
     return EspBleProvisioner(
       deviceNamePrefix: deviceNamePrefix,
       security: Security1(pop: pop),
-      mtu: 256,
+      mtu: 512,
       responseTimeout: _bleResponseTimeout,
       readRetryInterval: const Duration(milliseconds: 250),
       onLog: (message) => debugPrint('BLE provisioning: $message'),
     );
+  }
+
+  Future<T> _runExclusive<T>(Future<T> Function() action) {
+    final completer = Completer<T>();
+    _operationTail = _operationTail.catchError((_) {}).then((_) async {
+      try {
+        completer.complete(await action());
+      } catch (error, stackTrace) {
+        completer.completeError(error, stackTrace);
+      }
+    });
+    return completer.future;
   }
 
   Future<List<WiFiNetwork>> _scanWifiNetworks(EspBleProvisioner provisioner, {CancellationToken? cancelToken}) async {
