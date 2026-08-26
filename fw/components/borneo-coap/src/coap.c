@@ -59,6 +59,7 @@ static void _coap_server_proc(void* p)
         taskYIELD();
         int result = coap_io_process(_ctx, wait_ms);
         if (result < 0) {
+            ESP_LOGW(TAG, "coap_io_process() failed: %d", result);
             break;
         }
         else if (result != 0 && (uint32_t)result < wait_ms) {
@@ -82,7 +83,9 @@ void _bo_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id,
         coap_tick_t now;
         coap_clock_init();
         coap_ticks(&now);
-        coap_adjust_basetime(_ctx, now);
+        if (_ctx != NULL) {
+            coap_adjust_basetime(_ctx, now);
+        }
     }
     else if (event_base == BO_SYSTEM_EVENTS && event_id == BO_EVENT_SHUTDOWN_SCHEDULED) {
         _should_stop = true;
@@ -165,9 +168,12 @@ void bo_coap_deinit()
     esp_event_handler_unregister(BO_SYSTEM_EVENTS, ESP_EVENT_ANY_ID, _system_event_handler);
 
     if (s_notify_task != NULL) {
-        xTaskAbortDelay(s_notify_task);
+        TaskHandle_t notify_task_handle = s_notify_task;
+        xTaskAbortDelay(notify_task_handle);
 
-        for (int retries = 0; retries < 10 && s_notify_task != NULL; ++retries) {
+        // The notify task accesses the CoAP context.  Do not free it until
+        // that task has observed _should_stop and cleared its handle.
+        while (s_notify_task == notify_task_handle) {
             vTaskDelay(1);
         }
     }
@@ -175,8 +181,9 @@ void bo_coap_deinit()
     s_notify_queue = NULL;
 
     if (_ctx != NULL) {
-        coap_free_context(_ctx);
+        coap_context_t* ctx = _ctx;
         _ctx = NULL;
+        coap_free_context(ctx);
         coap_cleanup();
     }
 }
