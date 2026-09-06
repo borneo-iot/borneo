@@ -26,7 +26,7 @@ dependencies = [
   "cbor2>=5.9.0",
   "aiofiles",
   "typing-extensions>=4.3.0",
-  "zeroconf==0.148.0",
+  "zeroconf==0.149.12",
 ]
 
 [project.urls]
