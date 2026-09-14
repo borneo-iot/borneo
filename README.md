@@ -117,8 +117,8 @@ This project delivers a full-stack solution for smart aquarium LED:
 | Component | Status | Details |
 | :--- | :--- | :--- |
 | **Hardware** | Stable | Production-ready, OSHWA certified. |
-| **Firmware** | Beta | Full-featured and stable on my personal tanks for years. |
-| **Mobile App** | Beta | Core functionality working. |
+| **Firmware** | Nearly Perfect | Full-featured and stable on personal tanks for years. |
+| **Mobile App** | Nearly Perfect | Core functionality complete and ready for everyday use. |
 
 ## Roadmap
 
