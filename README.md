@@ -52,6 +52,16 @@ This project delivers a full-stack solution for smart aquarium LED:
 2.  **Firmware**: A robust ESP-IDF based firmware implementing CoAP/CBOR protocols, sunrise/sunset simulation, and cooling control.
 3.  **Mobile App**: A cross-platform Flutter application for intuitive real-time control, scheduling, and device management.
 
+## What Makes Borneo-IoT Stand Out
+
+- **Detailed, multi-channel dimming:** Supported controllers offer 6 or 12 PWM channels with at least 12-bit (4096-step) resolution. Users can set a custom brightness for each channel at multiple points throughout the day, then let the controller smoothly interpolate between those points.
+- **Schedules that cross midnight:** The schedule editor uses a 48-hour time axis, so a lighting curve can continue past midnight—for example, from 22:00 to 06:00 the following day.
+- **Location-aware Sun Simulation:** Using the device's location and time zone, the firmware calculates solar timing for the current date and generates a 13-point curve based on the sun's changing altitude from sunrise through solar noon to sunset. It recalculates the schedule daily, allowing the curve's timing and shape to change through the year instead of repeating a fixed daily pattern.
+- **Smoother, more natural transitions:** CIE1931 brightness correction and eased fades help make dimming appear more perceptually even, particularly at low brightness and during transitions.
+- **Control beyond lighting:** The firmware also includes temperature-based cooling control, acclimation features, time synchronization, and OTA (over-the-air) updates.
+- **Local-first, extensible ecosystem:** The mobile app supports multi-device management and group control over a local network. Developers can also use the Python SDK and command-line tools for automation, device discovery, and local firmware updates.
+- **Open from hardware to software:** The repository includes hardware designs, firmware, the mobile app, and the Python SDK, giving DIY builders and developers room to assemble, customize, and extend the platform.
+
 ## Quick Start
 
 **New users:** Follow the **[step-by-step guide](https://docs.borneoiot.com/getting-started/quick-start.html)** to flash firmware and connect your first device.
