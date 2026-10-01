@@ -39,6 +39,7 @@
 #endif
 
 struct sensor_current_data {
+    struct sensor_runtime runtime;
     const struct drvfx_device* adc_dev;
     int32_t current_ma;
     int32_t filtered_current;
@@ -87,13 +88,15 @@ static int _fetch_sample(const struct drvfx_device* dev)
     struct sensor_current_data* data = (struct sensor_current_data*)dev->data;
 
     int32_t adc_mv;
-    BO_TRY(adc_read_mv(data->adc_dev, CONFIG_LYFI_MEAS_CURRENT_ADC_CHANNEL, &adc_mv));
+    int rc = adc_read_mv(data->adc_dev, CONFIG_LYFI_MEAS_CURRENT_ADC_CHANNEL, &adc_mv);
+    if (rc != 0) { sensor_runtime_error(&data->runtime, rc); return rc; }
     adc_mv -= CONFIG_LYFI_MEAS_CURRENT_OFFSET;
     if (adc_mv < 0) {
         adc_mv = 0;
     }
     int32_t raw_ma = (adc_mv * 1000 + (CONFIG_LYFI_MEAS_CURRENT_FACTOR / 2)) / CONFIG_LYFI_MEAS_CURRENT_FACTOR;
     data->current_ma = ema_filter(raw_ma, &data->filtered_current, 1, 10);
+    sensor_runtime_ok(&data->runtime);
     return 0;
 }
 
@@ -106,6 +109,7 @@ static int _get_value(const struct drvfx_device* dev, int32_t* value)
         return -ENOSYS;
     }
     struct sensor_current_data* data = (struct sensor_current_data*)dev->data;
+    if (!data->runtime.valid) return data->runtime.last_error != 0 ? data->runtime.last_error : -EAGAIN;
     *value = data->current_ma;
     return 0;
 }
@@ -127,7 +131,8 @@ static int sensor_current_init(const struct drvfx_device* dev)
         ESP_LOGE(TAG, "Failed to get device 'adc'");
     }
 
-    BO_TRY(_fetch_sample(dev));
+    int rc = _fetch_sample(dev);
+    if (rc != 0) ESP_LOGW(TAG, "Initial current sample failed: %d; sensor will retry", rc);
 
     return 0;
 }

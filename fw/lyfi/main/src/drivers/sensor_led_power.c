@@ -36,6 +36,7 @@
 #endif
 
 struct sensor_data {
+    struct sensor_runtime runtime;
     const struct drvfx_device* vdev;
     const struct drvfx_device* cdev;
     int32_t power_mw;
@@ -52,12 +53,21 @@ static int _fetch_sample(const struct drvfx_device* dev)
     struct sensor_data* data = (struct sensor_data*)dev->data;
 
     int32_t v_mv;
-    BO_TRY(sensor_get_value(data->vdev, &v_mv));
+    int rc = sensor_get_value(data->vdev, &v_mv);
+    if (rc != 0) {
+        sensor_runtime_error(&data->runtime, rc);
+        return rc;
+    }
 
     int32_t c_ma;
-    BO_TRY(sensor_get_value(data->cdev, &c_ma));
+    rc = sensor_get_value(data->cdev, &c_ma);
+    if (rc != 0) {
+        sensor_runtime_error(&data->runtime, rc);
+        return rc;
+    }
 
     data->power_mw = (v_mv * c_ma + 500) / 1000; // Convert to mW
+    sensor_runtime_ok(&data->runtime);
     return 0;
 }
 
@@ -70,6 +80,8 @@ static int _get_value(const struct drvfx_device* dev, int32_t* value)
         return -ENOSYS;
     }
     struct sensor_data* data = (struct sensor_data*)dev->data;
+    if (!data->runtime.valid)
+        return data->runtime.last_error != 0 ? data->runtime.last_error : -EAGAIN;
     *value = data->power_mw;
     return 0;
 }
@@ -96,7 +108,9 @@ static int sensor_led_power_init(const struct drvfx_device* dev)
         ESP_LOGE(TAG, "Failed to get device 'sensor.led_current'");
     }
 
-    BO_TRY(_fetch_sample(dev));
+    int rc = _fetch_sample(dev);
+    if (rc != 0)
+        ESP_LOGW(TAG, "Initial power sample failed: %d; sensor will retry", rc);
 
     return 0;
 }

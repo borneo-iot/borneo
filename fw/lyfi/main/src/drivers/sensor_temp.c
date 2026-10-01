@@ -1,4 +1,5 @@
 #include <string.h>
+#include <errno.h>
 #include <sys/time.h>
 #include <stdbool.h>
 
@@ -26,6 +27,7 @@
 #define TAG "NTC"
 
 struct ntc_data {
+    struct sensor_runtime runtime;
     const struct drvfx_device* adc_dev;
     int8_t temp_value;
     int32_t filtered_temp;
@@ -147,17 +149,24 @@ static int _fetch_sample(const struct drvfx_device* dev)
     struct ntc_data* data = (struct ntc_data*)dev->data;
 
     int32_t adc_mv;
-    BO_TRY(adc_read_mv(data->adc_dev, CONFIG_LYFI_NTC_ADC_CHANNEL, &adc_mv));
+    int rc = adc_read_mv(data->adc_dev, CONFIG_LYFI_NTC_ADC_CHANNEL, &adc_mv);
+    if (rc != 0) {
+        sensor_runtime_error(&data->runtime, rc);
+        return rc;
+    }
     if (adc_mv == 0 || adc_mv == 4095) {
         ESP_LOGE(TAG, "No NTC connected! sample_avg=%d", adc_mv);
+        sensor_runtime_error(&data->runtime, -EIO);
         return -EIO;
     }
 
     int value = ntc_table_lookup(adc_mv);
     if (value == NTC_BAD_TEMPERATURE) {
+        sensor_runtime_error(&data->runtime, -EIO);
         return -EIO;
     }
     data->temp_value = ntc_filter_temperature(data, (int8_t)value);
+    sensor_runtime_ok(&data->runtime);
     return 0;
 }
 
@@ -170,6 +179,9 @@ static int _get_value(const struct drvfx_device* dev, int32_t* value)
         return -ENOSYS;
     }
     struct ntc_data* data = (struct ntc_data*)dev->data;
+    if (!data->runtime.valid) {
+        return data->runtime.last_error != 0 ? data->runtime.last_error : -EAGAIN;
+    }
     *value = data->temp_value;
     return 0;
 }
@@ -191,7 +203,12 @@ static int ntc_init(const struct drvfx_device* dev)
         ESP_LOGE(TAG, "Failed to get device 'adc'");
     }
 
-    BO_TRY(_fetch_sample(dev));
+    /* A failed first sample is a sensor fault, not a reason to abort the
+     * whole application.  The periodic sensor task will retry it. */
+    int rc = _fetch_sample(dev);
+    if (rc != 0) {
+        ESP_LOGW(TAG, "Initial NTC sample failed: %d; sensor will retry", rc);
+    }
 
     return 0;
 }
