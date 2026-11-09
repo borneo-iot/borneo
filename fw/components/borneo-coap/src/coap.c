@@ -5,6 +5,8 @@
 #include <esp_system.h>
 #include <esp_event.h>
 #include <esp_log.h>
+#include <errno.h>
+#include <string.h>
 #include <sys/socket.h>
 
 #include <coap3/coap.h>
@@ -59,8 +61,15 @@ static void _coap_server_proc(void* p)
         taskYIELD();
         int result = coap_io_process(_ctx, wait_ms);
         if (result < 0) {
-            ESP_LOGW(TAG, "coap_io_process() failed: %d", result);
-            break;
+            int io_errno = errno;
+            if (_should_stop) {
+                ESP_LOGI(TAG, "CoAP I/O stopped during shutdown: result=%d errno=%d (%s)", result, io_errno,
+                         strerror(io_errno));
+                break;
+            }
+            ESP_LOGW(TAG, "CoAP I/O error, continuing: result=%d errno=%d (%s)", result, io_errno, strerror(io_errno));
+            vTaskDelay(pdMS_TO_TICKS(10));
+            continue;
         }
         else if (result != 0 && (uint32_t)result < wait_ms) {
             /* decrement if there is a result wait time returned */
@@ -194,7 +203,7 @@ static int register_resource(coap_context_t* ctx, const struct coap_resource_des
         return -EINVAL;
     }
     ESP_LOGD(TAG, "Registering CoAP resource `%s`", res->path.s);
-    coap_resource_t* resource = coap_resource_init((coap_str_const_t*)&res->path, COAP_RESOURCE_FLAGS_RELEASE_URI);
+    coap_resource_t* resource = coap_resource_init((coap_str_const_t*)&res->path, 0);
     if (resource == NULL) {
         ESP_LOGE(TAG, "coap_resource_init() failed");
         return -EINVAL;
